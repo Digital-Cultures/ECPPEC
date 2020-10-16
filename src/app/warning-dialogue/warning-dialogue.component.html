@@ -1,0 +1,8 @@
+<p>Your search has returned {{data.numConstituenciesInSearch}} constituencies. Showing it on the map would be rather slow so we've unlinked the map. You can turn it back on by clicking the 'link map' button.</p>
+
+
+<mat-dialog-actions>
+	<button mat-button mat-dialog-close>Close</button>
+	<button mat-button mat-dialog-close (click)="closeAndStopUnlinking()">Close and stop unlinking the map!</button>
+
+</mat-dialog-actions>

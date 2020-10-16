@@ -1,0 +1,45 @@
+
+<div *ngIf="data.innerText" class="dialogue_background">
+	<div class="gradient">
+		<h2 mat-dialog-title>About <strong>{{data.constituency}}</strong> in the years <strong>{{data.yearRange}}</strong> from the History of Parliament website</h2>
+		<div *ngIf="data.innerText" [innerHTML]="data.innerText"></div>
+
+	</div>
+	<p>You can find out more about {{data.constituency}} from the History of Parliament website, <a target="_blank"  href="{{data.url}}">here</a></p>
+	<mat-dialog-actions>
+		<button mat-button mat-dialog-close>Close</button>
+		<button mat-button mat-dialog-close (click)="data.fetch=false">Close and stop showing me these</button>
+	</mat-dialog-actions>
+</div>
+<div id="my_poll_books" *ngIf="data">
+
+	<div *ngIf="data.num_results">
+		<h2 mat-dialog-title>Poll Books</h2>
+		<span *ngIf="data.num_results==1"> There is {{data.num_results}} poll book available:<br></span>
+		<span *ngIf="data.num_results>1"> There are {{data.num_results}} poll books available:<br></span>
+		-------------------------
+		<div *ngFor="let pollBook of data.poll_books">
+			<strong class="poll_book_strong">Print or Manuscript? </strong> {{ pollBook.PrintMS }}<br>
+			<strong class="poll_book_strong">Citation: </strong> <span style="font-style: italic;">{{ pollBook.Citation }}</span><br>
+			<strong class="poll_book_strong">Holdings: </strong>{{ pollBook.Holdings }}<br>
+			<strong class="poll_book_strong" >Source: </strong>{{ pollBook.Source }}<br>
+			<strong class="poll_book_strong">Election Code: </strong>{{ pollBook.ElectionCode }}<br>
+			<strong class="poll_book_strong">Notes: </strong>{{ pollBook.Notes }}<br><br>-------------------------
+		</div>
+
+		<button mat-icon-button aria-label="button flavo" (click)="downloadPollBooks()">
+			<mat-icon>cloud_download</mat-icon>
+		</button>
+	<div>
+
+	
+			
+
+</div>
+
+
+<mat-dialog-actions>
+	<button mat-button mat-dialog-close>Close</button>
+
+
+</mat-dialog-actions>

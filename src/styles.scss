@@ -1,0 +1,24 @@
+/* Add application styles & imports to this file! */
+
+
+$default-theme: mat-dark-theme(mat-palette($mat-green, A400), mat-palette($mat-light-blue, A400));
+@include angular-material-theme($default-theme);
+
+html body{
+	height:100%;
+	width:100%;
+	position: relative;
+	background-color: black;
+}
+@import "~igniteui-angular/lib/core/styles/themes/index";
+// Uncomment the following lines if you want to add a custom palette:
+// $primary: #731963 !default;
+// $secondary: #ce5712 !default;
+// $app-palette: igx-palette($primary, $secondary);
+
+/* autoprefixer grid: on */
+
+@include igx-core();
+@include igx-theme($default-palette);
+
+

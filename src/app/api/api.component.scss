@@ -1,0 +1,40 @@
+#container{
+	padding:5%;
+	background-color: black;
+
+	position: relative;
+	width: 100%;
+}
+#body_text{
+	color: lightGrey;
+}
+#about_section{
+	/*width: 50%;
+	text-align: center;
+	margin: 0px;*/
+	height: 100%;
+	margin: auto;
+		text-align: center;
+  width: 50%;
+  /*padding: 10px;*/
+
+}
+#spacer{
+	width: 100%;
+	height:40%;
+}
+p{
+	color: lightGrey;
+}
+h1{
+	color: #ffd740;
+	font-family: Roboto;
+	vertical-align: top;
+	line-height: 90%;
+	position: relative;
+
+}
+h2{
+	font-family: Roboto;
+	color: white;
+}

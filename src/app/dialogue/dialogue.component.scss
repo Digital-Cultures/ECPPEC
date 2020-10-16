@@ -1,0 +1,58 @@
+#modal_content{
+	text-align:center;
+	position: relative;
+
+	}
+.cdk-overlay-pane{
+
+
+}
+::ng-deep { mat-dialog-container {
+	/*background-color: rgb(50,50,50) !important;*/
+	/*color: white !important;*/
+	height:10% !important;
+}
+}
+#cdk-overlay-0{
+
+}
+#dialogue_form_info{
+	font-family: Catamaran;
+}
+.input_list{
+	border-radius: 3px;
+	background-color: darkGrey !important;
+}
+.dialogue_form{
+	margin: 1%;
+}
+#back_image_ground{
+	opacity: 50%;
+	height:100%;
+	position: absolute;
+	width: 100%;
+	z-index: 1;
+	/*overflow: hidden;*/
+}
+h1{
+	color:#0db9f0;
+	font-size: 200%;
+}
+h1 h2 div{
+
+}
+#inner{
+		padding: 5%;
+		position: relative;
+			z-index: 100;
+}
+#modal_credit{
+	position: absolute;
+	bottom:0px;
+}
+.image_credit{
+	background-color: rgba(200,200,200,0.5);
+	padding:10px;
+	border-radius: 10px 0px 0px 0px;
+
+}

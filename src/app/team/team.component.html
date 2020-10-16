@@ -1,0 +1,14 @@
+<div id="container" [style.height.px]="myInnerHeight">
+	
+	<div id="style-3" style="background-size: cover; background-repeat: no-repeat;" [ngStyle]="{'background-image': getUrl(member)}" class="team_member" *ngFor="let member of team">
+		<h1 style="font-family: Catamaran">{{ member.name }}</h1>
+		<div id="spacer"></div>
+		<h2 style="font-family: Catamaran">{{ member.position }}</h2>
+<!-- 		<div class="low_section">
+			
+		</div> -->
+		<div class="about_section">
+			<p style="height:100%; overflow: hidden;">{{ member.about }}</p>
+		</div>
+	</div>
+</div>
