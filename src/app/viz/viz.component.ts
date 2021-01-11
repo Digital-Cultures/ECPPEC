@@ -1211,7 +1211,7 @@ export class VizComponent implements OnInit, OnDestroy, OnChanges {
 
     						geoClicked(clickEvent) {
 								// this.showDataLayer = false;
-								// this.hopData.fetch = false
+								this.hopData.fetch = true;
 								// let centroid: Centroid = {
 								// 	name: clickEvent.feature.getProperty("name"),
 								// 	lat: 0,

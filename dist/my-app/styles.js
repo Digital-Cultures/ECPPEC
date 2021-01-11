@@ -376,8 +376,8 @@ module.exports = function (list, options) {
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
-__webpack_require__(/*! /Users/ntws2/Dropbox/htdocs/ECCPEC_code/elections_map/node_modules/@angular/material/prebuilt-themes/deeppurple-amber.css */"./node_modules/@angular/material/prebuilt-themes/deeppurple-amber.css");
-module.exports = __webpack_require__(/*! /Users/ntws2/Dropbox/htdocs/ECCPEC_code/elections_map/node_modules/ngx-draggable-resize/css/resizable.min.css */"./node_modules/ngx-draggable-resize/css/resizable.min.css");
+__webpack_require__(/*! /Users/ntws2/Dropbox/htdocs/ECCPEC_code/ECPPEC/node_modules/@angular/material/prebuilt-themes/deeppurple-amber.css */"./node_modules/@angular/material/prebuilt-themes/deeppurple-amber.css");
+module.exports = __webpack_require__(/*! /Users/ntws2/Dropbox/htdocs/ECCPEC_code/ECPPEC/node_modules/ngx-draggable-resize/css/resizable.min.css */"./node_modules/ngx-draggable-resize/css/resizable.min.css");
 
 
 /***/ })

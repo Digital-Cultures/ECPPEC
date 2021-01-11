@@ -8,7 +8,7 @@ export class HOPService {
 
 	constructor(private http: HttpClient) { }
 
-	dataUrl='http://localhost:8888/ECCPEC_code/php/getHOP.php/?constituency=';
+	dataUrl='https://ecppec.ncl.ac.uk/php/getHOP.php/?constituency=';
 //	dataUrl='/ECPPEC/php/getHOP.php/?constituency=';
 	getData(constituency, year) {
 		//console.log("this.dataUrl+constituency",this.dataUrl+constituency+"&year="+year);
