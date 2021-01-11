@@ -10,7 +10,7 @@ export class GetLocationsService {
 	//dataUrl='http://192.168.0.51:8888/ECCPEC_code/PHP/getElections.php';
  //dataUrl='http://localhost:8888/ECCPEC_code/PHP/getElections.php';
 //	dataUrl='/ECPPEC/php/getElections.php';
-dataUrl='https://tomschofieldart.com/ECPPEC/php/getElections.php';
+	dataUrl='https://ecppec.ncl.ac.uk/php/getElections.php';
 getData() {
 	return this.http.get(this.dataUrl);
 }
