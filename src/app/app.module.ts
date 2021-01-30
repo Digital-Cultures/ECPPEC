@@ -82,7 +82,7 @@ import {GoogleMapsAPIWrapper} from '@agm/core';
 		AgmCoreModule.forRoot({
 			// please get your own API key here:
 			// https://developers.google.com/maps/documentation/javascript/get-api-key?hl=en
-			apiKey: 'AIzaSyBkHakOMT0gjkUZr2fGDm2kJAC3wRLRkiQ'
+			apiKey: 'AIzaSyCj6zpSW9-aObD61sieRK8Xa1v4m1_1gmY'
 		}),
 		BrowserAnimationsModule,
 		AppRoutingModule
