@@ -42,7 +42,6 @@ import { ResizableModule } from 'angular-resizable-element';
 import { WalkthroughModule } from 'ngx-walkthrough';
 import { MatButtonToggleModule } from '@angular/material/button-toggle';
 import { WarningDialogueComponent } from './warning-dialogue/warning-dialogue.component';
-import { DatalayertestComponent } from './datalayertest/datalayertest.component';
 import {GoogleMapsAPIWrapper} from '@agm/core';
 
 // import { DialogElementsExampleDialog } from './app.component';
@@ -78,7 +77,6 @@ import {GoogleMapsAPIWrapper} from '@agm/core';
 		WalkthroughModule,
 		MatButtonToggleModule,
 
-
 		AgmCoreModule.forRoot({
 			// please get your own API key here:
 			// https://developers.google.com/maps/documentation/javascript/get-api-key?hl=en
@@ -87,12 +85,28 @@ import {GoogleMapsAPIWrapper} from '@agm/core';
 		BrowserAnimationsModule,
 		AppRoutingModule
 	],
-	providers: [
-        
+	declarations: [
+		AppComponent, 
+		HelloComponent, 
+		DatePipePipe, 
+		AboutComponent, 
+		VizComponent, 
+		TeamComponent, 
+		OutputsComponent, 
+		DialogueComponent, 
+		ApiComponent, 
+		PollbookDialogueComponent, 
+		WarningDialogueComponent
+	],
+	providers: [  
         AgmDataLayer , DataLayerManager, GoogleMapsAPIWrapper
     ],
-	entryComponents: [AppComponent, DialogueComponent,PollbookDialogueComponent,WarningDialogueComponent],
-	declarations: [AppComponent, HelloComponent, DatePipePipe, AboutComponent, VizComponent, TeamComponent, OutputsComponent, DialogueComponent, ApiComponent, PollbookDialogueComponent, WarningDialogueComponent, DatalayertestComponent],
+	entryComponents: [
+		AppComponent, 
+		DialogueComponent,
+		PollbookDialogueComponent,
+		WarningDialogueComponent
+	],
 	bootstrap: [AppComponent]
 })
 export class AppModule {
