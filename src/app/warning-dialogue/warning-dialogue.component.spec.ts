@@ -1,4 +1,4 @@
-import { async, ComponentFixture, TestBed } from '@angular/core/testing';
+import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 
 import { WarningDialogueComponent } from './warning-dialogue.component';
 
@@ -6,7 +6,7 @@ describe('WarningDialogueComponent', () => {
   let component: WarningDialogueComponent;
   let fixture: ComponentFixture<WarningDialogueComponent>;
 
-  beforeEach(async(() => {
+  beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
       declarations: [ WarningDialogueComponent ]
     })

@@ -6,7 +6,6 @@ import { VizComponent } from './viz/viz.component';
 import { TeamComponent } from './team/team.component';
 import { OutputsComponent } from './outputs/outputs.component';
 import { ApiComponent } from './api/api.component';
-import { DatalayertestComponent } from './datalayertest/datalayertest.component';
 
 const routes: Routes = [
 { path: '', redirectTo: '/viz', pathMatch: 'full' },
@@ -14,12 +13,11 @@ const routes: Routes = [
   { path: 'viz', component: VizComponent },
   { path: 'team', component: TeamComponent },
   { path: 'api', component: ApiComponent },
-  { path: 'outputs', component: OutputsComponent },
-  { path: 'datalayer', component: DatalayertestComponent}
+  { path: 'outputs', component: OutputsComponent }
 ];
 
 @NgModule({
-  imports: [RouterModule.forRoot(routes, { useHash: true })],
+  imports: [RouterModule.forRoot(routes, { useHash: true, relativeLinkResolution: 'legacy' })],
   exports: [RouterModule]
 })
 export class AppRoutingModule { }

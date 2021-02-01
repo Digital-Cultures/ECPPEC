@@ -38,7 +38,7 @@
 <mat-form-field  class="dialogue_form" appearance="fill">
 	<mat-label>Month</mat-label>
 	<!-- <input matInput class="form-field" [formControl]="monthFilter" placeholder="...."> -->
-	<mat-select (selectionChange)="monthChange($event)" [formControl]="monthFilter" [(value)]="monthFilter.value">
+	<mat-select (selectionChange)="monthChange($event)" [formControl]="monthFilter" [value]="monthFilter.value">
 		<mat-option value="Jan">January</mat-option>
 		<mat-option value="Feb">February</mat-option>
 		<mat-option value="Mar">March</mat-option>
@@ -96,7 +96,7 @@
 
 <mat-form-field class="dialogue_form" appearance="fill">
 	<mat-label>County/Borough/Univ</mat-label>
-	<mat-select [formControl]="countyFilter" [(value)]="countyFilter.value">
+	<mat-select [formControl]="countyFilter" [value]="countyFilter.value">
 		<mat-option value="">Any</mat-option>
 		<mat-option value="C">County</mat-option>
 		<mat-option value="B">Borough</mat-option>
@@ -107,7 +107,7 @@
 
 <mat-form-field class="dialogue_form" appearance="fill">
 	<mat-label>Contested?</mat-label>
-	<mat-select [formControl]="contestedFilter" [(value)]="contestedFilter.value">
+	<mat-select [formControl]="contestedFilter" [value]="contestedFilter.value">
 		<mat-option value="">Any</mat-option>
 		<mat-option value="Y">Yes</mat-option>
 		<mat-option value="N">No</mat-option>
@@ -116,7 +116,7 @@
 
 <mat-form-field class="dialogue_form" appearance="fill">
 	<mat-label>By/General Election </mat-label>
-	<mat-select [formControl]="byElectionGeneralFilter" [(value)]="byElectionGeneralFilter.value">
+	<mat-select [formControl]="byElectionGeneralFilter" [value]="byElectionGeneralFilter.value">
 		<mat-option value="">Any</mat-option>
 		<mat-option value="B">By Election</mat-option>
 		<mat-option value="G">General Election</mat-option>
@@ -126,7 +126,7 @@
 
 <mat-form-field class="dialogue_form" appearance="fill">
 	<mat-label>Has Poll Books? </mat-label>
-	<mat-select [formControl]="pollBookCodeFilter" [(value)]="pollBookCodeFilter.value">
+	<mat-select [formControl]="pollBookCodeFilter" [value]="pollBookCodeFilter.value">
 		<mat-option value="">Any</mat-option>
 		<mat-option value="Y">Yes</mat-option>
 		<mat-option value="N">No</mat-option>
