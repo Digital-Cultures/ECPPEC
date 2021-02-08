@@ -3,18 +3,10 @@
 require_once('config.php');
 //?from_year=1734&to_year=1760
 
-// Create connection
-$conn = new mysqli($servername, $username, $password, $dbname);
-// // Check connection
-if ($db->connect_error > 0) {
-	echo "no db";
-	die("Connection failed: " . $conn->connect_error);
-}
-// echo 'Connected successfully.';
-
+require_once('connect.php');
 // $year_range ="";
 
-$sql = "SELECT * FROM ELECTIONS";
+$sql = "SELECT * FROM elections";
 
 $is_first_filter = true;
 
