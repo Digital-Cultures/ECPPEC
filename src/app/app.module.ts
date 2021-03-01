@@ -17,7 +17,13 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import {MatPaginatorModule} from '@angular/material/paginator';
 // import {MatFormFieldModule} from '@angular/material/form-field';
 // import {MatTableDataSource} from '@angular/material/table';
-import { MatButtonModule, MatMenuModule, MatToolbarModule, MatTableModule, MatIconModule, MatCardModule , MatAutocompleteModule} from '@angular/material';
+import { MatAutocompleteModule } from '@angular/material/autocomplete';
+import { MatButtonModule } from '@angular/material/button';
+import { MatCardModule } from '@angular/material/card';
+import { MatIconModule } from '@angular/material/icon';
+import { MatMenuModule } from '@angular/material/menu';
+import { MatTableModule } from '@angular/material/table';
+import { MatToolbarModule } from '@angular/material/toolbar';
 import {MatRadioModule} from '@angular/material/radio';
 import {MatDialogModule} from '@angular/material/dialog';
 
