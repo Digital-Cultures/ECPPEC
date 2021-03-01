@@ -24,7 +24,7 @@ import { Options, ChangeContext, PointerType } from 'ng5-slider';
 import { HttpParams, HttpClient } from '@angular/common/http';
 import 'rxjs/add/operator/map';
 
-import { MatPaginator } from '@angular/material';
+import { MatPaginator } from '@angular/material/paginator';
 import { MatTableDataSource } from '@angular/material/table';
 
 import { Location } from '../location';
