@@ -1,7 +1,11 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit ,Inject} from '@angular/core';
 import { MatFormFieldControl } from '@angular/material/form-field';
 import { FormControl } from '@angular/forms';
-import {MAT_DIALOG_DATA, MatDialogRef} from "@angular/material";
+import {MatDialogRef, MatAutocomplete } from "@angular/material";
+import {Observable} from 'rxjs';
+import {map, startWith} from 'rxjs/operators';
+import {MAT_DIALOG_DATA} from '@angular/material/dialog';
+// import { EPERM } from 'constants';
 
 @Component({
 	selector: 'app-dialogue',
@@ -10,14 +14,17 @@ import {MAT_DIALOG_DATA, MatDialogRef} from "@angular/material";
 })
 
 export class DialogueComponent implements OnInit {
-	constructor(
-		private dialogRef: MatDialogRef<DialogueComponent>,
-		) { }
+//	constructor(private downloadPollBooksService: DownloadPollBooksService, @Inject(MAT_DIALOG_DATA) public data: any) { }
+
+	constructor(private dialogRef: MatDialogRef<DialogueComponent>, @Inject(MAT_DIALOG_DATA) public data: any) { }
 	filteredValues = {
 		Month: '', Constituency: '',Year: '', CountyBoroughUniv: '', Contested: '',ByElectionGeneral:'',PollBookCode:''
 
 	};
+
 	constituencyList : string []= [];
+	constituencyOptions : string []= ["York","Leeds","Devon"];
+	filteredConstituencyOptions: Observable<string[]>;
 	monthList : string []= [];
 	yearList : string []= [];
 	constituencyFilter = new FormControl();
@@ -31,6 +38,51 @@ export class DialogueComponent implements OnInit {
 	pollBookCodeFilter = new FormControl();
 	yearChooser: String = "single";
 	ngOnInit() {
+		
+		this.constituencyOptions = this.getConstituencyNames(this.data).sort((a, b) => a > b ? 1 : a === b ? 0 : -1);
+		
+		this.filteredConstituencyOptions = this.constituencyFilter.valueChanges
+		.pipe(
+		  startWith(''),
+		  map(value => this._filter(value))
+		);
+
+		this.countyFilter.valueChanges.subscribe((countyFilterValue) => {
+			this.filteredConstituencyOptions = this.constituencyFilter.valueChanges
+		.pipe(
+		  startWith(''),
+		  map(value => this._filter(value))
+		);
+			
+			this.constituencyOptions = this.getFilteredConstituencyNames(this.data,countyFilterValue.substring(0,1)).sort((a, b) => a > b ? 1 : a === b ? 0 : -1);
+			
+
+		});
+	}
+	consituencyFieldClicked(){
+		// console.log("clicked con");
+		// this.constituencyOptions = this.getFilteredConstituencyNames(this.data, this.countyFilter.value.substring(0,1)).sort((a, b) => a > b ? 1 : a === b ? 0 : -1);
+
+	}
+	// sortBy() {
+	// 	return this.constituencyOptions.sort((a, b) => a > b ? 1 : a === b ? 0 : -1);
+	//   }
+	getConstituencyNames(elections){
+		var names= [];
+		
+		elections.forEach(element => {
+			
+			names.push(element.constituency);
+		});
+		return names;
+	}
+	getFilteredConstituencyNames(elections, type){
+		var names= [];
+		
+		elections.forEach(element => {
+			if(element.countyboroughuniv==type)	names.push(element.constituency);
+		});
+		return names;
 	}
 	arrToCommaSeparatedString(list, value){
 		var listString = "";
@@ -48,6 +100,11 @@ export class DialogueComponent implements OnInit {
 		return listString.slice(0, -1);
 
 	}
+	private _filter(value: string): string[] {
+		const filterValue = value.toLowerCase();
+	
+		return this.constituencyOptions.filter(option => option.toLowerCase().includes(filterValue));
+	  }
 	closeWithRandomSearch(){
 		var obj = {
 			triggerRandomSearch: true,

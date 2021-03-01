@@ -61,6 +61,20 @@ export class TeamComponent implements OnInit {
 			about: "My work with archives and cultural data engages practically with issues of digital culture through creative art and design practice. As heritage is increasingly experienced through digital means, issues of objecthood become sites for potential scholarly and creative intervention. I use art and design methods to help us think about the value of cultural heritage, bring it to new publics and rethink scholarly approaches to it.",
 			link:"https://www.liverpool.ac.uk/history/staff/elaine-chalus/",
 			image:"tom.jpg"
+		},
+		{
+			name:"Dr John Shoneboom",
+			position:"Research Software Developer",
+			about: "John is a Research Software Developer with a longstanding focus on making complex data sets useful to a stakeholder community that ranges from lay people to experts. He is also a novelist and playwright with a PhD in Creative Writing, an MA in Science, Technology, and International Affairs, and a BA in Political Science. When he’s not writing code and taming databases, his practice-led research interest is in developing a surrealist mode of inquiry for interrogating (inter alia) the national security state.",
+			link:"https://www.ncl.ac.uk/sacs/staff/",
+			image:"john.jpg"
+		},
+		{
+			name:"Dan Foster Smith",
+			position:"Research Software Developer",
+			about: "Dan joined the ECPPEC project as a Research Software Developer in January 2021. He has a background in Graphic Design, Software Development and Data visualisation. He has previously worked as a Research Associate Newcastle University on a number of Cultural Heritage Projects and is also currently studding a PhD in AI and Design. For the ECPPEC project, he’s jointly focusing on the development of the API and online visualisation of the polling data and the surrounding electoral cultural.",
+			link:"https://www.ncl.ac.uk/sacs/staff/profile/danielfoster-smith.html",
+			image:"dan.jpg"
 		}
 	];
 }

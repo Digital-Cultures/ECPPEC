@@ -4,8 +4,8 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { Ng5SliderModule } from 'ng5-slider';
 import { AppComponent } from './app.component';
 import { HelloComponent } from './hello.component';
-import { AgmCoreModule } from '@agm/core';
-import { AgmDataLayer , DataLayerManager}  from '@agm/core';
+// import { AgmCoreModule } from '@agm/core';
+// import { AgmDataLayer , DataLayerManager}  from '@agm/core';
 
 import { HttpClientModule } from '@angular/common/http';
 import { ActivatedRoute } from '@angular/router';
@@ -17,7 +17,7 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import {MatPaginatorModule} from '@angular/material/paginator';
 // import {MatFormFieldModule} from '@angular/material/form-field';
 // import {MatTableDataSource} from '@angular/material/table';
-import { MatButtonModule, MatMenuModule, MatToolbarModule, MatTableModule, MatIconModule, MatCardModule } from '@angular/material';
+import { MatButtonModule, MatMenuModule, MatToolbarModule, MatTableModule, MatIconModule, MatCardModule , MatAutocompleteModule} from '@angular/material';
 import {MatRadioModule} from '@angular/material/radio';
 import {MatDialogModule} from '@angular/material/dialog';
 
@@ -42,7 +42,10 @@ import { ResizableModule } from 'angular-resizable-element';
 import { WalkthroughModule } from 'ngx-walkthrough';
 import { MatButtonToggleModule } from '@angular/material/button-toggle';
 import { WarningDialogueComponent } from './warning-dialogue/warning-dialogue.component';
-import {GoogleMapsAPIWrapper} from '@agm/core';
+// import {GoogleMapsAPIWrapper} from '@agm/core';
+
+import { GoogleMapsModule } from '@angular/google-maps'
+
 
 // import { DialogElementsExampleDialog } from './app.component';
 
@@ -66,6 +69,7 @@ import {GoogleMapsAPIWrapper} from '@agm/core';
 		MatButtonModule,
 		MatMenuModule,
 		MatToolbarModule,
+		MatAutocompleteModule,
 		MatIconModule,
 		MatCardModule,
 		MatTableModule,
@@ -76,12 +80,7 @@ import {GoogleMapsAPIWrapper} from '@agm/core';
 		ResizableModule,
 		WalkthroughModule,
 		MatButtonToggleModule,
-
-		AgmCoreModule.forRoot({
-			// please get your own API key here:
-			// https://developers.google.com/maps/documentation/javascript/get-api-key?hl=en
-			apiKey: 'AIzaSyCj6zpSW9-aObD61sieRK8Xa1v4m1_1gmY'
-		}),
+		GoogleMapsModule,
 		BrowserAnimationsModule,
 		AppRoutingModule
 	],
@@ -99,7 +98,7 @@ import {GoogleMapsAPIWrapper} from '@agm/core';
 		WarningDialogueComponent
 	],
 	providers: [  
-        AgmDataLayer , DataLayerManager, GoogleMapsAPIWrapper
+         
     ],
 	entryComponents: [
 		AppComponent, 

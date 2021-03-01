@@ -7,7 +7,7 @@ export class DownloadService {
 
 	// constructor() { }
 	downloadFile(data, filename='data') {
-		let csvData = this.ConvertToCSV(data, ['Constituency','Year', 'Month', 'CountyBoroughUniv', 'Contested','ByElectionGeneral','PollBookCode']);
+		let csvData = this.ConvertToCSV(data, ['constituency','election_year', 'election_month', 'countyboroughuniv', 'contested',  'franchise_type','byelectiongeneral','pollbook_id']);
 		// console.log(csvData)
 		let blob = new Blob(['\ufeff' + csvData], { type: 'text/csv;charset=utf-8;' });
 		let dwldLink = document.createElement("a");
