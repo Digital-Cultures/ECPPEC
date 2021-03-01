@@ -1,24 +1,26 @@
 import { Component, OnInit } from '@angular/core';
+import { SwaggerUIBundle, SwaggerUIStandalonePreset } from 'swagger-ui-dist';
 
 @Component({
-	selector: 'app-api',
-	templateUrl: './api.component.html',
-	styleUrls: ['./api.component.scss'],
-	host: {
-    '(window:resize)': 'onResize($event)'
-  }
+  selector: 'app-api',
+  templateUrl: './api.component.html',
+  styleUrls: ['./api.component.scss']
 })
 export class ApiComponent implements OnInit {
 
-	constructor() { }
-	myInnerHeight:number;
-	ngOnInit() {
-		this.myInnerHeight = window.innerHeight;
-		console.log("innerHeight",this.myInnerHeight);
-	}
-	onResize(event) {
-  // event.target.innerWidth;
-  this.myInnerHeight = event.target.innerHeight;
-  console.log(this.myInnerHeight);
-}
+  constructor() { }
+
+  ngOnInit(): void {
+    const ui = SwaggerUIBundle({
+      dom_id: '#swagger-ui',
+      layout: 'BaseLayout',
+      presets: [
+        SwaggerUIBundle.presets.apis,
+        SwaggerUIBundle.SwaggerUIStandalonePreset
+      ],
+      url: 'https://raw.githubusercontent.com/Digital-Cultures/ECPPEC/Angular11/src/ecppec.yaml',
+      operationsSorter: 'alpha'
+    });
+  }
+
 }
