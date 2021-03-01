@@ -4,8 +4,6 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { Ng5SliderModule } from 'ng5-slider';
 import { AppComponent } from './app.component';
 import { HelloComponent } from './hello.component';
-// import { AgmCoreModule } from '@agm/core';
-// import { AgmDataLayer , DataLayerManager}  from '@agm/core';
 
 import { HttpClientModule } from '@angular/common/http';
 import { ActivatedRoute } from '@angular/router';
@@ -48,7 +46,6 @@ import { ResizableModule } from 'angular-resizable-element';
 import { WalkthroughModule } from 'ngx-walkthrough';
 import { MatButtonToggleModule } from '@angular/material/button-toggle';
 import { WarningDialogueComponent } from './warning-dialogue/warning-dialogue.component';
-// import {GoogleMapsAPIWrapper} from '@agm/core';
 
 import { GoogleMapsModule } from '@angular/google-maps'
 

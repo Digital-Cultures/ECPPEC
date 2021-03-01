@@ -1,5 +1,4 @@
 import { Component ,OnInit, SimpleChanges, OnChanges, ViewChild} from '@angular/core';
-import { MouseEvent } from '@agm/core';
 
 // import { GeojsonServiceService } from './geojson-service.service';
 // // import {MatTableDataSource} from '@angular/material/table';
