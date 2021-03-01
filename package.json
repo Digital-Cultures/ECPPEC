@@ -27,7 +27,7 @@
     "ngx-draggable-resize": "^0.1.1",
     "ngx-walkthrough": "^0.3.2",
     "resize-observer-polyfill": "^1.5.1",
-    "rxjs": "6.6.3",
+    "rxjs": "6.6.6",
     "tslib": "^2.0.0",
     "web-animations-js": "^2.3.2",
     "zone.js": "~0.11.3"
