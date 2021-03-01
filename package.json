@@ -19,7 +19,7 @@
     "@types/hammerjs": "^2.0.36",
     "angular-resizable-element": "^3.3.2",
     "core-js": "2.5.1",
-    "igniteui-angular": "^8.2.28",
+    "igniteui-angular": "^11.0.15",
     "jszip": "^3.4.0",
     "lodash": "^4.17.15",
     "ng5-slider": "^1.2.4",
