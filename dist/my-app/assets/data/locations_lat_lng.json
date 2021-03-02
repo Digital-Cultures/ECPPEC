@@ -1,0 +1,842 @@
+{
+  "BEDFORDSHIRE": {
+    "formatted_address": "Bedfordshire, UK",
+    "lat": 52.0627394,
+    "lng": -0.5292091
+  },
+  "BERKSHIRE": {
+    "formatted_address": "Berkshire, UK",
+    "lat": 51.4669939,
+    "lng": -1.1853677
+  },
+  "BUCKINGHAMSHIRE": {
+    "formatted_address": "Buckinghamshire, UK",
+    "lat": 51.8072204,
+    "lng": -0.8127664
+  },
+  "CAMBRIDGESHIRE": {
+    "formatted_address": "Cambridgeshire, UK",
+    "lat": 52.2052973,
+    "lng": 0.1218195
+  },
+  "CHESHIRE": {
+    "formatted_address": "Cheshire, UK",
+    "lat": 53.23263439999999,
+    "lng": -2.6103158
+  },
+  "CORNWALL": {
+    "formatted_address": "Cornwall, UK",
+    "lat": 50.26604709999999,
+    "lng": -5.0527125
+  },
+  "CUMBERLAND": {
+    "formatted_address": "Cumbria, UK",
+    "lat": 54.5772323,
+    "lng": -2.7974835
+  },
+  "DERBYSHIRE": {
+    "formatted_address": "Derbyshire, UK",
+    "lat": 53.1046782,
+    "lng": -1.5623885
+  },
+  "DEVON": {
+    "formatted_address": "Devon, UK",
+    "lat": 50.7155591,
+    "lng": -3.530875
+  },
+  "DORSET": {
+    "formatted_address": "Dorset, UK",
+    "lat": 50.7487635,
+    "lng": -2.3444786
+  },
+  "DURHAM": {
+    "formatted_address": "Durham, UK",
+    "lat": 54.77525,
+    "lng": -1.584852
+  },
+  "ESSEX": {
+    "formatted_address": "Essex, UK",
+    "lat": 51.57424469999999,
+    "lng": 0.4856781
+  },
+  "GLOUCESTERSHIRE": {
+    "formatted_address": "Gloucestershire, UK",
+    "lat": 51.8642112,
+    "lng": -2.2380335
+  },
+  "HAMPSHIRE": {
+    "formatted_address": "Hampshire, UK",
+    "lat": 51.05769480000001,
+    "lng": -1.3080629
+  },
+  "HEREFORDSHIRE": {
+    "formatted_address": "Herefordshire, UK",
+    "lat": 52.0765164,
+    "lng": -2.6544182
+  },
+  "HERTFORDSHIRE": {
+    "formatted_address": "Hertfordshire, UK",
+    "lat": 51.80978229999999,
+    "lng": -0.2376744
+  },
+  "HUNTINGDONSHIRE": {
+    "formatted_address": "Huntingdonshire District, UK",
+    "lat": 52.4036809,
+    "lng": -0.2428121
+  },
+  "KENT": {
+    "formatted_address": "Kent, UK",
+    "lat": 51.2787075,
+    "lng": 0.5217254000000001
+  },
+  "LANCASHIRE": {
+    "formatted_address": "Lancashire, UK",
+    "lat": 53.7632254,
+    "lng": -2.7044052
+  },
+  "LEICESTERSHIRE": {
+    "formatted_address": "Leicestershire, UK",
+    "lat": 52.772571,
+    "lng": -1.2052126
+  },
+  "LINCOLNSHIRE": {
+    "formatted_address": "Lincolnshire, UK",
+    "lat": 52.9451889,
+    "lng": -0.1601246
+  },
+  "MIDDLESEX": {
+    "formatted_address": "The Burroughs, Hendon, London NW4 4BT, UK",
+    "lat": 51.5901102,
+    "lng": -0.228922
+  },
+  "MONMOUTHSHIRE": {
+    "formatted_address": "Monmouthshire, UK",
+    "lat": 51.81160999999999,
+    "lng": -2.7163417
+  },
+  "NORFOLK": {
+    "formatted_address": "Norfolk, UK",
+    "lat": 52.6139686,
+    "lng": 0.8864021
+  },
+  "NORTHAMPTONSHIRE": {
+    "formatted_address": "Northamptonshire, UK",
+    "lat": 52.27299439999999,
+    "lng": -0.8755514999999999
+  },
+  "NORTHUMBERLAND": {
+    "formatted_address": "Northumberland, UK",
+    "lat": 55.2082542,
+    "lng": -2.0784138
+  },
+  "NOTTINGHAMSHIRE": {
+    "formatted_address": "Nottinghamshire, UK",
+    "lat": 53.100319,
+    "lng": -0.9936305999999998
+  },
+  "OXFORDSHIRE": {
+    "formatted_address": "Oxfordshire, UK",
+    "lat": 51.7612056,
+    "lng": -1.2464674
+  },
+  "SHROPSHIRE": {
+    "formatted_address": "Shropshire, UK",
+    "lat": 52.7063657,
+    "lng": -2.7417849
+  },
+  "SOMERSET": {
+    "formatted_address": "Somerset, UK",
+    "lat": 51.105097,
+    "lng": -2.9262307
+  },
+  "STAFFORDSHIRE": {
+    "formatted_address": "Staffordshire, UK",
+    "lat": 52.8792745,
+    "lng": -2.0571868
+  },
+  "SUFFOLK": {
+    "formatted_address": "Suffolk, UK",
+    "lat": 52.1872472,
+    "lng": 0.9707800999999999
+  },
+  "SURREY": {
+    "formatted_address": "Surrey, UK",
+    "lat": 51.31475930000001,
+    "lng": -0.5599501
+  },
+  "SUSSEX": {
+    "formatted_address": "West Sussex, UK",
+    "lat": 50.9280143,
+    "lng": -0.4617075
+  },
+  "WARWICKSHIRE": {
+    "formatted_address": "Warwickshire, UK",
+    "lat": 52.2671353,
+    "lng": -1.4675216
+  },
+  "WILTSHIRE": {
+    "formatted_address": "Wiltshire, UK",
+    "lat": 51.3491996,
+    "lng": -1.9927105
+  },
+  "WORCESTERSHIRE": {
+    "formatted_address": "Worcestershire, UK",
+    "lat": 52.2545225,
+    "lng": -2.2668382
+  },
+  "YORKSHIRE": {
+    "formatted_address": "North Yorkshire, UK",
+    "lat": 53.9915028,
+    "lng": -1.5412015
+  },
+  "Abingdon": {
+    "formatted_address": "Abingdon, UK",
+    "lat": 51.67078,
+    "lng": -1.2879529
+  },
+  "Aldeburgh": {
+    "formatted_address": "Aldeburgh IP15, UK",
+    "lat": 52.155357,
+    "lng": 1.600446
+  },
+  "Andover": {
+    "formatted_address": "Andover, UK",
+    "lat": 51.2111975,
+    "lng": -1.4919233
+  },
+  "Appleby": {
+    "formatted_address": "Appleby-in-Westmorland CA16, UK",
+    "lat": 54.578302,
+    "lng": -2.489614
+  },
+  "Arundel": {
+    "formatted_address": "Arundel BN18, UK",
+    "lat": 50.855171,
+    "lng": -0.555119
+  },
+  "Aylesbury": {
+    "formatted_address": "Aylesbury, UK",
+    "lat": 51.815606,
+    "lng": -0.8084
+  },
+  "Banbury": {
+    "formatted_address": "Banbury, UK",
+    "lat": 52.0629009,
+    "lng": -1.339775
+  },
+  "Barnstaple": {
+    "formatted_address": "Barnstaple, UK",
+    "lat": 51.0781599,
+    "lng": -4.058338
+  },
+  "Bedford": {
+    "formatted_address": "Bedford, UK",
+    "lat": 52.1386394,
+    "lng": -0.4667782
+  },
+  "Berwick-on-Tweed": {
+    "formatted_address": "Berwick-upon-Tweed TD15, UK",
+    "lat": 55.770242,
+    "lng": -2.005395
+  },
+  "Beverley": {
+    "formatted_address": "Beverley HU17, UK",
+    "lat": 53.841963,
+    "lng": -0.435093
+  },
+  "Bishop's Castle": {
+    "formatted_address": null,
+    "lat": null,
+    "lng": null
+  },
+  "Boroughbridge": {
+    "formatted_address": "Boroughbridge, York YO51, UK",
+    "lat": 54.0942662,
+    "lng": -1.3953847
+  },
+  "Boston": {
+    "formatted_address": "Boston PE21, UK",
+    "lat": 52.97893999999999,
+    "lng": -0.026577
+  },
+  "Brackley": {
+    "formatted_address": "Brackley NN13, UK",
+    "lat": 52.027411,
+    "lng": -1.143152
+  },
+  "Bridgnorth": {
+    "formatted_address": "Bridgnorth, UK",
+    "lat": 52.53445499999999,
+    "lng": -2.424549
+  },
+  "Bridgwater": {
+    "formatted_address": "Bridgwater, UK",
+    "lat": 51.127889,
+    "lng": -3.003632
+  },
+  "Bridport": {
+    "formatted_address": "Bridport DT6, UK",
+    "lat": 50.7335769,
+    "lng": -2.758301
+  },
+  "Bristol": {
+    "formatted_address": "Bristol, UK",
+    "lat": 51.454513,
+    "lng": -2.58791
+  },
+  "Bury St Edmunds": {
+    "formatted_address": null,
+    "lat": null,
+    "lng": null
+  },
+  "Cambridge": {
+    "formatted_address": "Cambridge, UK",
+    "lat": 52.205337,
+    "lng": 0.121817
+  },
+  "Cambridge University": {
+    "formatted_address": null,
+    "lat": null,
+    "lng": null
+  },
+  "Canterbury": {
+    "formatted_address": "Canterbury, UK",
+    "lat": 51.280233,
+    "lng": 1.0789089
+  },
+  "Carlisle": {
+    "formatted_address": "Carlisle, UK",
+    "lat": 54.892473,
+    "lng": -2.932931
+  },
+  "Chester": {
+    "formatted_address": "Chester, UK",
+    "lat": 53.193392,
+    "lng": -2.893075
+  },
+  "Chichester": {
+    "formatted_address": "Chichester, UK",
+    "lat": 50.83761000000001,
+    "lng": -0.774936
+  },
+  "Christchurch": {
+    "formatted_address": "Christchurch, UK",
+    "lat": 50.735777,
+    "lng": -1.778586
+  },
+  "Cirencester": {
+    "formatted_address": "Cirencester GL7, UK",
+    "lat": 51.718495,
+    "lng": -1.968243
+  },
+  "Clitheroe": {
+    "formatted_address": "Clitheroe BB7, UK",
+    "lat": 53.871098,
+    "lng": -2.393083
+  },
+  "Cockermouth": {
+    "formatted_address": "Cockermouth CA13, UK",
+    "lat": 54.663261,
+    "lng": -3.367985
+  },
+  "Colchester": {
+    "formatted_address": "Colchester, UK",
+    "lat": 51.895927,
+    "lng": 0.8918740000000001
+  },
+  "Coventry": {
+    "formatted_address": "Coventry, UK",
+    "lat": 52.406822,
+    "lng": -1.519693
+  },
+  "Cricklade": {
+    "formatted_address": "Cricklade, Swindon SN6, UK",
+    "lat": 51.6380709,
+    "lng": -1.856351
+  },
+  "Derby": {
+    "formatted_address": "Derby, UK",
+    "lat": 52.9225301,
+    "lng": -1.4746186
+  },
+  "Dover": {
+    "formatted_address": "Dover, UK",
+    "lat": 51.1278758,
+    "lng": 1.3134027
+  },
+  "Durham City": {
+    "formatted_address": null,
+    "lat": null,
+    "lng": null
+  },
+  "East Retford": {
+    "formatted_address": null,
+    "lat": null,
+    "lng": null
+  },
+  "Evesham": {
+    "formatted_address": "Evesham WR11, UK",
+    "lat": 52.09214900000001,
+    "lng": -1.94677
+  },
+  "Exeter": {
+    "formatted_address": "Exeter, UK",
+    "lat": 50.718412,
+    "lng": -3.533899
+  },
+  "Folkestone": {
+    "formatted_address": "Folkestone, UK",
+    "lat": 51.081397,
+    "lng": 1.169456
+  },
+  "Gloucester": {
+    "formatted_address": "Gloucester, UK",
+    "lat": 51.8642449,
+    "lng": -2.238156
+  },
+  "Grantham": {
+    "formatted_address": "Grantham, UK",
+    "lat": 52.912524,
+    "lng": -0.643582
+  },
+  "Great Grimsby": {
+    "formatted_address": null,
+    "lat": null,
+    "lng": null
+  },
+  "Great Marlow": {
+    "formatted_address": null,
+    "lat": null,
+    "lng": null
+  },
+  "Great Yarmouth": {
+    "formatted_address": null,
+    "lat": null,
+    "lng": null
+  },
+  "Guildford": {
+    "formatted_address": "Guildford, UK",
+    "lat": 51.23622,
+    "lng": -0.570409
+  },
+  "Harwich": {
+    "formatted_address": "Harwich, UK",
+    "lat": 51.934731,
+    "lng": 1.260297
+  },
+  "Haslemere": {
+    "formatted_address": "Haslemere, UK",
+    "lat": 51.090856,
+    "lng": -0.7133729999999999
+  },
+  "Hastings": {
+    "formatted_address": "Hastings, UK",
+    "lat": 50.854259,
+    "lng": 0.573453
+  },
+  "Hedon": {
+    "formatted_address": "Hedon, Hull HU12, UK",
+    "lat": 53.7394596,
+    "lng": -0.2006222
+  },
+  "Hereford": {
+    "formatted_address": "Hereford, UK",
+    "lat": 52.05639799999999,
+    "lng": -2.715974
+  },
+  "Hertford": {
+    "formatted_address": "Hertford, UK",
+    "lat": 51.795756,
+    "lng": -0.08115699999999999
+  },
+  "Hindon": {
+    "formatted_address": "Hindon, Salisbury SP3, UK",
+    "lat": 51.0947817,
+    "lng": -2.1291153
+  },
+  "Honiton": {
+    "formatted_address": "Honiton EX14, UK",
+    "lat": 50.799468,
+    "lng": -3.188683
+  },
+  "Horsham": {
+    "formatted_address": "Horsham, UK",
+    "lat": 51.062883,
+    "lng": -0.325858
+  },
+  "Huntingdon": {
+    "formatted_address": "Huntingdon, UK",
+    "lat": 52.33146,
+    "lng": -0.182552
+  },
+  "Hythe": {
+    "formatted_address": "Hythe, UK",
+    "lat": 51.071739,
+    "lng": 1.081937
+  },
+  "Ipswich": {
+    "formatted_address": "Ipswich, UK",
+    "lat": 52.056736,
+    "lng": 1.14822
+  },
+  "King's Lynn": {
+    "formatted_address": null,
+    "lat": null,
+    "lng": null
+  },
+  "Kingston-upon-Hull": {
+    "formatted_address": "Hull, UK",
+    "lat": 53.76762360000001,
+    "lng": -0.3274198
+  },
+  "Lancaster": {
+    "formatted_address": "Lancaster, UK",
+    "lat": 54.046575,
+    "lng": -2.8007399
+  },
+  "Leicester": {
+    "formatted_address": "Leicester, UK",
+    "lat": 52.6368778,
+    "lng": -1.1397592
+  },
+  "Leominster": {
+    "formatted_address": "Leominster HR6, UK",
+    "lat": 52.2257,
+    "lng": -2.742772
+  },
+  "Lewes": {
+    "formatted_address": "Lewes, UK",
+    "lat": 50.87387200000001,
+    "lng": 0.00878
+  },
+  "Lichfield ": {
+    "formatted_address": null,
+    "lat": null,
+    "lng": null
+  },
+  "Lincoln ": {
+    "formatted_address": null,
+    "lat": null,
+    "lng": null
+  },
+  "Liverpool": {
+    "formatted_address": "Liverpool, UK",
+    "lat": 53.4083714,
+    "lng": -2.9915726
+  },
+  "London": {
+    "formatted_address": "London, UK",
+    "lat": 51.5073509,
+    "lng": -0.1277583
+  },
+  "Lostwithiel": {
+    "formatted_address": "Lostwithiel PL22, UK",
+    "lat": 50.406021,
+    "lng": -4.6750679
+  },
+  "Ludlow": {
+    "formatted_address": "Ludlow SY8, UK",
+    "lat": 52.367749,
+    "lng": -2.7139129
+  },
+  "Maidstone": {
+    "formatted_address": "Maidstone, UK",
+    "lat": 51.270363,
+    "lng": 0.522699
+  },
+  "Malton": {
+    "formatted_address": "Malton YO17, UK",
+    "lat": 54.136836,
+    "lng": -0.7978970000000001
+  },
+  "Midhurst": {
+    "formatted_address": "Midhurst GU29, UK",
+    "lat": 50.9868979,
+    "lng": -0.737274
+  },
+  "Minehead": {
+    "formatted_address": "Minehead, UK",
+    "lat": 51.20428,
+    "lng": -3.481152
+  },
+  "Monmouth": {
+    "formatted_address": "Monmouth NP25, UK",
+    "lat": 51.8116533,
+    "lng": -2.7163045
+  },
+  "Morpeth": {
+    "formatted_address": "Morpeth NE61, UK",
+    "lat": 55.16875,
+    "lng": -1.687493
+  },
+  "New Shoreham": {
+    "formatted_address": null,
+    "lat": null,
+    "lng": null
+  },
+  "New Windsor": {
+    "formatted_address": null,
+    "lat": null,
+    "lng": null
+  },
+  "Newark": {
+    "formatted_address": "Newark-on-Trent, Newark NG24, UK",
+    "lat": 53.0700391,
+    "lng": -0.80657
+  },
+  "Newcastle-under-Lyme": {
+    "formatted_address": "Newcastle-under-Lyme, UK",
+    "lat": 53.013208,
+    "lng": -2.2273002
+  },
+  "Newcastle-upon-Tyne": {
+    "formatted_address": "Newcastle upon Tyne, UK",
+    "lat": 54.978252,
+    "lng": -1.61778
+  },
+  "Northampton": {
+    "formatted_address": "Northampton, UK",
+    "lat": 52.240477,
+    "lng": -0.9026560000000001
+  },
+  "Norwich": {
+    "formatted_address": "Norwich, UK",
+    "lat": 52.6308859,
+    "lng": 1.297355
+  },
+  "Nottingham": {
+    "formatted_address": "Nottingham, UK",
+    "lat": 52.95478319999999,
+    "lng": -1.1581086
+  },
+  "Okehampton": {
+    "formatted_address": "Okehampton EX20, UK",
+    "lat": 50.738308,
+    "lng": -4.004263
+  },
+  "Oxford ": {
+    "formatted_address": null,
+    "lat": null,
+    "lng": null
+  },
+  "Oxford University": {
+    "formatted_address": null,
+    "lat": null,
+    "lng": null
+  },
+  "Peterborough": {
+    "formatted_address": "Peterborough, UK",
+    "lat": 52.56949849999999,
+    "lng": -0.2405299
+  },
+  "Petersfield": {
+    "formatted_address": "Petersfield, UK",
+    "lat": 51.007591,
+    "lng": -0.93899
+  },
+  "Pontefract": {
+    "formatted_address": "Pontefract WF8, UK",
+    "lat": 53.691688,
+    "lng": -1.308648
+  },
+  "Poole": {
+    "formatted_address": "Poole, UK",
+    "lat": 50.71505,
+    "lng": -1.987248
+  },
+  "Portsmouth": {
+    "formatted_address": "Portsmouth, UK",
+    "lat": 50.8197675,
+    "lng": -1.0879769
+  },
+  "Preston": {
+    "formatted_address": "Preston, UK",
+    "lat": 53.763201,
+    "lng": -2.70309
+  },
+  "Queensborough": {
+    "formatted_address": "Queenborough, UK",
+    "lat": 51.4172853,
+    "lng": 0.7470207
+  },
+  "Reading": {
+    "formatted_address": "Reading, UK",
+    "lat": 51.4542645,
+    "lng": -0.9781303
+  },
+  "Richmond": {
+    "formatted_address": "Richmond, UK",
+    "lat": 51.46131099999999,
+    "lng": -0.303742
+  },
+  "Rochester": {
+    "formatted_address": "Rochester, UK",
+    "lat": 51.38800000000001,
+    "lng": 0.506721
+  },
+  "Rutland": {
+    "formatted_address": "Rutland, UK",
+    "lat": 52.6583014,
+    "lng": -0.639643
+  },
+  "Salisbury": {
+    "formatted_address": "Salisbury, UK",
+    "lat": 51.068785,
+    "lng": -1.794472
+  },
+  "Sandwich": {
+    "formatted_address": "Sandwich, UK",
+    "lat": 51.274017,
+    "lng": 1.337427
+  },
+  "Seaford": {
+    "formatted_address": "Seaford, UK",
+    "lat": 50.7734669,
+    "lng": 0.101108
+  },
+  "Shaftesbury": {
+    "formatted_address": "Shaftesbury SP7, UK",
+    "lat": 51.0046,
+    "lng": -2.198083
+  },
+  "Shrewsbury": {
+    "formatted_address": "Shrewsbury, UK",
+    "lat": 52.70730289999999,
+    "lng": -2.7553268
+  },
+  "Southampton": {
+    "formatted_address": "Southampton, UK",
+    "lat": 50.90970040000001,
+    "lng": -1.4043509
+  },
+  "Southampton the County as listed in Cannon and Edwards": {
+    "formatted_address": null,
+    "lat": null,
+    "lng": null
+  },
+  "Southwark": {
+    "formatted_address": "London Borough of Southwark, UK",
+    "lat": 51.4880572,
+    "lng": -0.0762838
+  },
+  "St. Albans": {
+    "formatted_address": null,
+    "lat": null,
+    "lng": null
+  },
+  "Stafford": {
+    "formatted_address": "Stafford, UK",
+    "lat": 52.806693,
+    "lng": -2.12066
+  },
+  "Stamford": {
+    "formatted_address": "Stamford PE9, UK",
+    "lat": 52.65128199999999,
+    "lng": -0.4802159999999999
+  },
+  "Sudbury": {
+    "formatted_address": "Sudbury CO10, UK",
+    "lat": 52.041047,
+    "lng": 0.726706
+  },
+  "Sunderland": {
+    "formatted_address": "Sunderland, UK",
+    "lat": 54.906869,
+    "lng": -1.383801
+  },
+  "Tamworth": {
+    "formatted_address": "Tamworth, UK",
+    "lat": 52.633584,
+    "lng": -1.691032
+  },
+  "Taunton": {
+    "formatted_address": "Taunton, UK",
+    "lat": 51.015344,
+    "lng": -3.106849
+  },
+  "Tewkesbury": {
+    "formatted_address": "Tewkesbury GL20, UK",
+    "lat": 51.992265,
+    "lng": -2.15796
+  },
+  "Totnes": {
+    "formatted_address": "Totnes TQ9, UK",
+    "lat": 50.433741,
+    "lng": -3.685797
+  },
+  "Wakefield": {
+    "formatted_address": "Wakefield, UK",
+    "lat": 53.683298,
+    "lng": -1.505924
+  },
+  "Wallingford": {
+    "formatted_address": "Wallingford OX10, UK",
+    "lat": 51.5974177,
+    "lng": -1.1335613
+  },
+  "Wareham": {
+    "formatted_address": "Wareham, UK",
+    "lat": 50.687817,
+    "lng": -2.110981
+  },
+  "Warwick ": {
+    "formatted_address": null,
+    "lat": null,
+    "lng": null
+  },
+  "Wells": {
+    "formatted_address": "Wells BA5, UK",
+    "lat": 51.209347,
+    "lng": -2.6445979
+  },
+  "Wendover": {
+    "formatted_address": "Wendover, Aylesbury, UK",
+    "lat": 51.761877,
+    "lng": -0.739779
+  },
+  "Westminster": {
+    "formatted_address": "Westminster, London, UK",
+    "lat": 51.4974948,
+    "lng": -0.1356583
+  },
+  "Westmorland": {
+    "formatted_address": "Appleby-in-Westmorland CA16, UK",
+    "lat": 54.578302,
+    "lng": -2.489614
+  },
+  "Weymouth and Melcombe Regis": {
+    "formatted_address": null,
+    "lat": null,
+    "lng": null
+  },
+  "Whitehaven": {
+    "formatted_address": "Whitehaven, UK",
+    "lat": 54.549699,
+    "lng": -3.589233
+  },
+  "Wigan": {
+    "formatted_address": "Wigan, UK",
+    "lat": 53.5450645,
+    "lng": -2.6325074
+  },
+  "Winchester": {
+    "formatted_address": "Winchester, UK",
+    "lat": 51.059771,
+    "lng": -1.310142
+  },
+  "Wootton Bassett": {
+    "formatted_address": null,
+    "lat": null,
+    "lng": null
+  },
+  "Worcester": {
+    "formatted_address": "Worcester, UK",
+    "lat": 52.193636,
+    "lng": -2.221575
+  },
+  "York": {
+    "formatted_address": "York, UK",
+    "lat": 53.95996510000001,
+    "lng": -1.0872979
+  }
+}
