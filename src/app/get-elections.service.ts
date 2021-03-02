@@ -13,6 +13,7 @@ export class GetElectionsService {
 	//dataUrl='https://ecppec.ncl.ac.uk/php/getElections.php'
 	dataUrl='https://ecppec.ncl.ac.uk/php/getElections.php';
 	//dataUrl='/php/getElections.php';
+
 	getData() {
 		return this.http.get(this.dataUrl);
 	}
