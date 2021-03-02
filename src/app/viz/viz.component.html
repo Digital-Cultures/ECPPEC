@@ -6,10 +6,11 @@
             <!-- <map-marker *ngFor="let marker of markers" [options]="marker.options" [icon]="marker.icon" [position]="marker.position" [title]="marker.title"></map-marker>
             <map-marker *ngFor="let bmarker of boroughMarkerPositions; index as i;" [options]="boroughMarkerOptions[i]" [icon]="boroughMarkerOptions[i].icon" [position]="bmarker"></map-marker>
             -->
-            <map-marker *ngFor="let position of countyMarkerPositions; index as i;" [icon]="countyMarkerOptions[i].icon" [options]="countyMarkerOptions[i]" [position]="position"></map-marker>
+            <!-- <map-marker *ngFor="let position of countyMarkerPositions; index as i;" [icon]="countyMarkerOptions[i].icon" [options]="countyMarkerOptions[i]" [position]="position"></map-marker> -->
 
-            <map-marker *ngFor="let marker of mmarkers" [options]="getOptions(marker)" [icon]="getIcon(marker)" [position]="marker.position" [title]="marker.title"></map-marker>
-
+            <!-- <map-marker *ngFor="let marker of mmarkers" [options]="getOptions(marker)" [icon]="getIcon(marker)" [position]="marker.position" [title]="marker.title"></map-marker> -->
+            <!-- <map-marker [position]="dynamicMarker.getPosition()" [options]="{icon:dynamicMarker.getIcon()}"></map-marker> -->
+            <map-marker *ngFor="let dynamicMarker of dynamicMarkers" [position]="dynamicMarker.getPosition()" [options]="{icon:dynamicMarker.getIcon()}"></map-marker>
 
         </google-map>
 
@@ -42,6 +43,8 @@
 
         <button mat-raised-button class="button_option" (click)="openFormDialogue()">OPEN FORM</button>
         <button mat-raised-button class="button_option" (click)="clearSearch()">CLEAR</button>
+        <button mat-raised-button class="button_option" (click)="animateTimeLine()">ANIMATE</button>
+
         <!-- <button mat-raised-button class="button_option"  (click)="clearMap()">CLEAR THE MAP</button>    -->
 
 
