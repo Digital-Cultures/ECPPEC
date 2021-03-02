@@ -18,7 +18,7 @@ export class ApiComponent implements OnInit {
         SwaggerUIBundle.presets.apis,
         SwaggerUIBundle.SwaggerUIStandalonePreset
       ],
-      url: 'https://raw.githubusercontent.com/Digital-Cultures/ECPPEC/Angular11/src/ecppec.yaml',
+      url: 'https://raw.githubusercontent.com/Digital-Cultures/ECPPEC/Angular11/php/ecppec.yaml',
       operationsSorter: 'alpha'
     });
   }
