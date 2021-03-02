@@ -4,8 +4,6 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { Ng5SliderModule } from 'ng5-slider';
 import { AppComponent } from './app.component';
 import { HelloComponent } from './hello.component';
-// import { AgmCoreModule } from '@agm/core';
-// import { AgmDataLayer , DataLayerManager}  from '@agm/core';
 
 import { HttpClientModule } from '@angular/common/http';
 import { ActivatedRoute } from '@angular/router';
@@ -17,7 +15,13 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import {MatPaginatorModule} from '@angular/material/paginator';
 // import {MatFormFieldModule} from '@angular/material/form-field';
 // import {MatTableDataSource} from '@angular/material/table';
-import { MatButtonModule, MatMenuModule, MatToolbarModule, MatTableModule, MatIconModule, MatCardModule , MatAutocompleteModule} from '@angular/material';
+import { MatAutocompleteModule } from '@angular/material/autocomplete';
+import { MatButtonModule } from '@angular/material/button';
+import { MatCardModule } from '@angular/material/card';
+import { MatIconModule } from '@angular/material/icon';
+import { MatMenuModule } from '@angular/material/menu';
+import { MatTableModule } from '@angular/material/table';
+import { MatToolbarModule } from '@angular/material/toolbar';
 import {MatRadioModule} from '@angular/material/radio';
 import {MatDialogModule} from '@angular/material/dialog';
 
@@ -42,7 +46,6 @@ import { ResizableModule } from 'angular-resizable-element';
 import { WalkthroughModule } from 'ngx-walkthrough';
 import { MatButtonToggleModule } from '@angular/material/button-toggle';
 import { WarningDialogueComponent } from './warning-dialogue/warning-dialogue.component';
-// import {GoogleMapsAPIWrapper} from '@agm/core';
 
 import { GoogleMapsModule } from '@angular/google-maps'
 

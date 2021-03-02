@@ -1,7 +1,8 @@
 import { Component, OnInit ,Inject} from '@angular/core';
 import { MatFormFieldControl } from '@angular/material/form-field';
 import { FormControl } from '@angular/forms';
-import {MatDialogRef, MatAutocomplete } from "@angular/material";
+import { MatAutocomplete } from "@angular/material/autocomplete";
+import { MatDialogRef } from "@angular/material/dialog";
 import {Observable} from 'rxjs';
 import {map, startWith} from 'rxjs/operators';
 import {MAT_DIALOG_DATA} from '@angular/material/dialog';

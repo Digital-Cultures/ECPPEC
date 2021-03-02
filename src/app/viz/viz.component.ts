@@ -1,6 +1,4 @@
 import { ElementRef, ApplicationRef, Component, Directive, OnInit, OnDestroy, Output, EventEmitter, OnChanges, ViewChild } from '@angular/core';
-import { MouseEvent } from '@agm/core';
-import { DataMouseEvent, DataLayerManager, AgmDataLayer } from '@agm/core';
 // import { Subscription } from 'rxjs/Subscription';
 import { GoogleMapsModule,GoogleMap } from '@angular/google-maps'
 
@@ -24,7 +22,7 @@ import { Options, ChangeContext, PointerType } from 'ng5-slider';
 import { HttpParams, HttpClient } from '@angular/common/http';
 import 'rxjs/add/operator/map';
 
-import { MatPaginator } from '@angular/material';
+import { MatPaginator } from '@angular/material/paginator';
 import { MatTableDataSource } from '@angular/material/table';
 
 import { Location } from '../location';
@@ -1162,15 +1160,6 @@ export class VizComponent implements OnInit, OnDestroy, OnChanges {
 		    };
 		});
 
-	}
-	click(event: google.maps.MouseEvent) {
-		
-		// console.log(this.map);
-		// console.log(JSON.stringify(this.map.getCenter()));
-		
-
-
-		
 	}
 	mapZoomChanged() {
 		console.log("zoom");

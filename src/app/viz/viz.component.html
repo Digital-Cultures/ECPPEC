@@ -1,7 +1,7 @@
 <div id="container">
 
     <div class="map-container">
-        <google-map height="1000px" width="100%" [zoom]="zoom" [center]="center" [options]="options" (mapClick)="click($event)" (tilesloaded)="mapReady()" (zoomChanged)="mapZoomChanged()" (idle)="mapIdle()">
+        <google-map height="1000px" width="100%" [zoom]="zoom" [center]="center" [options]="options" (tilesloaded)="mapReady()" (zoomChanged)="mapZoomChanged()" (idle)="mapIdle()">
 
             <!-- <map-marker *ngFor="let marker of markers" [options]="marker.options" [icon]="marker.icon" [position]="marker.position" [title]="marker.title"></map-marker>
             <map-marker *ngFor="let bmarker of boroughMarkerPositions; index as i;" [options]="boroughMarkerOptions[i]" [icon]="boroughMarkerOptions[i].icon" [position]="bmarker"></map-marker>
