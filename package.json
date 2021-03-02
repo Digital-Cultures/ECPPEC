@@ -27,6 +27,8 @@
     "ngx-walkthrough": "^0.3.2",
     "resize-observer-polyfill": "^1.5.1",
     "rxjs": "6.6.3",
+    "swagger-ui": "^3.44.0",
+    "swagger-ui-dist": "^3.44.0",
     "tslib": "^2.0.0",
     "web-animations-js": "^2.3.2",
     "zone.js": "~0.11.3"
