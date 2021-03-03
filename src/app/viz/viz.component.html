@@ -10,7 +10,7 @@
 
             <!-- <map-marker *ngFor="let marker of mmarkers" [options]="getOptions(marker)" [icon]="getIcon(marker)" [position]="marker.position" [title]="marker.title"></map-marker> -->
             <!-- <map-marker [position]="dynamicMarker.getPosition()" [options]="{icon:dynamicMarker.getIcon()}"></map-marker> -->
-            <map-marker *ngFor="let dynamicMarker of dynamicMarkers" [position]="dynamicMarker.getPosition()" [options]="{icon:dynamicMarker.getIcon()}"></map-marker>
+            <map-marker *ngFor="let dynamicMarker of dynamicMarkers" [position]="dynamicMarker.getPosition()" [options]="{icon:dynamicMarker.getIcon(), title:dynamicMarker.title, visible :dynamicMarker.visible    }"></map-marker>
 
         </google-map>
 

@@ -619,10 +619,12 @@ export class VizComponent implements OnInit, OnDestroy, OnChanges {
 			//console.log("update ",this.dynamicMarkers);
 			this.dynamicMarkers.forEach(delement => {
 				var inData =false;
+				var cbu = "";
 			this.dataSource.filteredData.forEach(felement => {
+				
 				if(delement.getTitle().trim()==felement.constituency.trim()){
 					inData = true;
-				//	console.log("match for ",felement.constituency);
+					cbu = felement.countyboroughuniv;
 				}
 
 			});
@@ -637,7 +639,7 @@ export class VizComponent implements OnInit, OnDestroy, OnChanges {
 				  var options = {
 					icon:image,
 					title:	delement.getTitle(),
-					visible:true,
+					visible:cbu=="C" ? false : true,
 					label:  {text: delement.getTitle() , color: "white"}
 				}
 	
@@ -655,7 +657,7 @@ export class VizComponent implements OnInit, OnDestroy, OnChanges {
 				  var options = {
 					icon:image,
 					title:delement.getTitle(),
-					visible:true,
+					visible:cbu=="C" ? false : true,
 					label:  {text: delement.getTitle() , color: "white"}
 				}
 	
@@ -1039,11 +1041,11 @@ export class VizComponent implements OnInit, OnDestroy, OnChanges {
 		//TODO where's DURHAM?
 		this.map.data.addListener('mouseover', (event) => {
 		//	console.log("mouseover ",event.feature.getProperty("name"));
-			this.setMatchingCountyMarkerVisibility(false, event.feature.getProperty("name"));
+			this.setMatchingCountyMarkerVisibility(true, event.feature.getProperty("name"));
 		});
 		this.map.data.addListener('mouseout', (event) => {
 			//	console.log("mouseover ",event.feature.getProperty("name"));
-				this.setMatchingCountyMarkerVisibility(false, "none");
+				this.setMatchingCountyMarkerVisibility(false, event.feature.getProperty("name"));
 			});
 		
 			this.map.data.addListener('click', (event) => {
@@ -1303,27 +1305,50 @@ export class VizComponent implements OnInit, OnDestroy, OnChanges {
 
 	}
 	setMatchingCountyMarkerVisibility(visible, constituency){
-		
-		this.countyMarkerOptions= [];
-		this.countyMarkerPositions= [];
-		var markerLocations = [];
-		this.dataSource.data.forEach(element => {
-				if(markerLocations.indexOf(element.constituency)==-1 && element.constituency==constituency){
+		console.log("mouseover",constituency);
+		var image = {
+			url: './assets/images/dot.svg',
+			size: new google.maps.Size(20, 20),
+			origin: new google.maps.Point(0, 0),
+			anchor: new google.maps.Point(10, 10),
+			scaledSize: new google.maps.Size(20, 20)
+		  };
+		  var options = {
+			icon:image,
+			title:constituency,
+			visible:visible,
+			label:  {text: constituency , color: "white"}
+		}
+
+
 	
-					markerLocations.push(element.constituency);		
+		this.dynamicMarkers.forEach(element => {
+			if(element.getTitle()==constituency){
+			//	console.log("setting ",constituency, " to ", visible);
+				element.setOptions(options)
+			}
+		});
+		this.appRef.tick();
+		// this.countyMarkerOptions= [];
+		// this.countyMarkerPositions= [];
+		// var markerLocations = [];
+		// this.dataSource.data.forEach(element => {
+		// 		if(markerLocations.indexOf(element.constituency)==-1 && element.constituency==constituency){
+	
+		// 			markerLocations.push(element.constituency);		
 	
 		
-					if(element.countyboroughuniv=="C"){
-						this.makeCountyMarker(element);
+		// 			if(element.countyboroughuniv=="C"){
+		// 				this.makeCountyMarker(element);
 							
-					}
+		// 			}
 						
 		
 				
-				}
-			});
+		// 		}
+		// 	});
 	
-		this.appRef.tick() ;
+		// this.appRef.tick() ;
 
 	}
 	setBoroughCentreMarkers(){
@@ -1796,16 +1821,17 @@ export class VizComponent implements OnInit, OnDestroy, OnChanges {
 			//console.log(element.lat,typeof(element.lat))
 			thisDynamicMarker.setPosition({lat:+element.lat,lng:+element.lng});
 				var image = {
-					url: './assets/images/bmarker.svg',
-					size: new google.maps.Size(71, 71),
+					url: './assets/images/dot.svg',
+					size: new google.maps.Size(20, 20),
 					origin: new google.maps.Point(0, 0),
-					anchor: new google.maps.Point(17, 34),
-					scaledSize: new google.maps.Size(25, 25)
+					anchor: new google.maps.Point(10, 10),
+					scaledSize: new google.maps.Size(20, 20)
 				  };
+				  
 				  var options = {
 					icon:image,
 					title:	element.constituency,
-					visible:true,
+					visible:element.countyboroughuniv=="C" ? false : true,
 					label:  {text: element.constituency , color: "white"}
 				}
 	
