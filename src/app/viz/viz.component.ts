@@ -2505,4 +2505,3 @@ export class VizComponent implements OnInit, OnDestroy, OnChanges {
 		return styles;
 	}
 }
-

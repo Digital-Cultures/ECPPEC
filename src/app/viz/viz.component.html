@@ -3,14 +3,8 @@
     <div class="map-container">
         <google-map height="1000px" width="100%" [zoom]="zoom" [center]="center" [options]="options" (tilesloaded)="mapReady()" (zoomChanged)="mapZoomChanged()" (idle)="mapIdle()">
 
-            <!-- <map-marker *ngFor="let marker of markers" [options]="marker.options" [icon]="marker.icon" [position]="marker.position" [title]="marker.title"></map-marker>
-            <map-marker *ngFor="let bmarker of boroughMarkerPositions; index as i;" [options]="boroughMarkerOptions[i]" [icon]="boroughMarkerOptions[i].icon" [position]="bmarker"></map-marker>
-            -->
-            <!-- <map-marker *ngFor="let position of countyMarkerPositions; index as i;" [icon]="countyMarkerOptions[i].icon" [options]="countyMarkerOptions[i]" [position]="position"></map-marker> -->
 
-            <!-- <map-marker *ngFor="let marker of mmarkers" [options]="getOptions(marker)" [icon]="getIcon(marker)" [position]="marker.position" [title]="marker.title"></map-marker> -->
-            <!-- <map-marker [position]="dynamicMarker.getPosition()" [options]="{icon:dynamicMarker.getIcon()}"></map-marker> -->
-            <map-marker *ngFor="let dynamicMarker of dynamicMarkers" [position]="dynamicMarker.getPosition()" [options]="{icon:dynamicMarker.getIcon(), title:dynamicMarker.title, visible :dynamicMarker.visible    }"></map-marker>
+            <map-marker *ngFor="let dynamicMarker of dynamicMarkers" [position]="dynamicMarker.getPosition()" [options]="{icon:dynamicMarker.getIcon(), title:dynamicMarker.title   }"></map-marker>
 
         </google-map>
 
