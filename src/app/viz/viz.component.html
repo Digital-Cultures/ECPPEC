@@ -3,14 +3,8 @@
     <div class="map-container">
         <google-map height="1000px" width="100%" [zoom]="zoom" [center]="center" [options]="options" (tilesloaded)="mapReady()" (zoomChanged)="mapZoomChanged()" (idle)="mapIdle()">
 
-            <!-- <map-marker *ngFor="let marker of markers" [options]="marker.options" [icon]="marker.icon" [position]="marker.position" [title]="marker.title"></map-marker>
-            <map-marker *ngFor="let bmarker of boroughMarkerPositions; index as i;" [options]="boroughMarkerOptions[i]" [icon]="boroughMarkerOptions[i].icon" [position]="bmarker"></map-marker>
-            -->
-            <!-- <map-marker *ngFor="let position of countyMarkerPositions; index as i;" [icon]="countyMarkerOptions[i].icon" [options]="countyMarkerOptions[i]" [position]="position"></map-marker> -->
 
-            <!-- <map-marker *ngFor="let marker of mmarkers" [options]="getOptions(marker)" [icon]="getIcon(marker)" [position]="marker.position" [title]="marker.title"></map-marker> -->
-            <!-- <map-marker [position]="dynamicMarker.getPosition()" [options]="{icon:dynamicMarker.getIcon()}"></map-marker> -->
-            <map-marker *ngFor="let dynamicMarker of dynamicMarkers" [position]="dynamicMarker.getPosition()" [options]="{icon:dynamicMarker.getIcon()}"></map-marker>
+            <map-marker *ngFor="let dynamicMarker of dynamicMarkers" [position]="dynamicMarker.getPosition()" [options]="{icon:dynamicMarker.getIcon(), title:dynamicMarker.title   }"></map-marker>
 
         </google-map>
 
@@ -123,6 +117,8 @@
                 <td mat-cell *matCellDef="let element"> {{element.contested}} </td>
             </ng-container>
 
+
+
             <ng-container matColumnDef="by_election_general">
                 <th mat-header-cell *matHeaderCellDef> <span matTooltip="general elections happened every 4 years. click to find out more about them" [matTooltipPosition]="'above'">By/General Election </span>
                     <div>
@@ -139,6 +135,20 @@
                 </th>
                 <td mat-cell *matCellDef="let element"> {{element.by_election_general}} </td>
             </ng-container>
+
+            <ng-container matColumnDef="by_election_cause">
+                <th mat-header-cell *matHeaderCellDef> <span matTooltip="general elections happened every 4 years. click to find out more about them" [matTooltipPosition]="'above'">By Election Cause </span>
+                    <div>
+                        <mat-form-field>
+
+                            <input matInput class="form-field" [formControl]="byElectionCauseFilter" placeholder="....">
+
+                        </mat-form-field>
+                    </div>
+                </th>
+                <td mat-cell *matCellDef="let element"> {{element.by_election_cause}} </td>
+            </ng-container>
+
 
             <ng-container matColumnDef="franchise_type">
                 <th mat-header-cell *matHeaderCellDef> <span matTooltip="click to find out more about franchiseTypes" [matTooltipPosition]="'above'">Franchise </span>

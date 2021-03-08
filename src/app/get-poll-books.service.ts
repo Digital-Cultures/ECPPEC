@@ -11,9 +11,10 @@ export class GetPollBooksService {
   ///dataUrl='http://192.168.0.51:8888/ECCPEC_code/php/getPollBooks.php/?BookCode=';
  // dataUrl='http://localhost:8888/ECCPEC_code/php/getPollBooks.php/?BookCode=';
   //dataUrl='/php/getPollBooks.php/?BookCode=';
-  dataUrl = 'https://ecppec.com/php/getPollBooks.php/?BookCode=';
+  dataUrl = 'https://ecppec.ncl.ac.uk/php/getPollBooks.php/?BookCode=';
 	getData(pollBookCode) {
-		console.log("this.dataUrl+pollBookCode",this.dataUrl+pollBookCode);
-	  return this.http.get(this.dataUrl+pollBookCode);
+    var fullURL = this.dataUrl+pollBookCode;
+		console.log(fullURL);
+	  return this.http.get(fullURL);
 	}
 }

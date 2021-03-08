@@ -1,5 +1,4 @@
 import { ElementRef, ApplicationRef, Component, Directive, OnInit, OnDestroy, Output, EventEmitter, OnChanges, ViewChild } from '@angular/core';
-// import { Subscription } from 'rxjs/Subscription';
 import { GoogleMapsModule,GoogleMap } from '@angular/google-maps'
 
 import { ResizeEvent } from 'angular-resizable-element';
@@ -44,22 +43,7 @@ import { MatButtonModule } from '@angular/material/button';
 import { Injectable } from '@angular/core';
 import { ThisReceiver, ThrowStmt } from '@angular/compiler';
 
-// export interface Election {
-// 	Year: string;
-// 	Month: string;
-// 	Constituency: string;
-// 	CountyBoroughUniv: string;
-// 	ByElectionGeneral: string;
-// 	Contested: string;
-// 	ElectionCode: string;
-// 	Franchise:string;
-// 	PollBookCode: string;
-// 	Notes: string;
-// 	Latitude: string;
-// 	Longitude: string;
-// 	lat:number;
-// 	lng:number;
-// }
+
 export interface Election {
 	election_year: string;
 	election_month: string;
@@ -70,6 +54,7 @@ export interface Election {
 	election_id: string;
 	franchise_type:string;
 	pollbook_id: string;
+	by_election_cause: string;
 	notes: string;
 	latitude: string;
 	longitude: string;
@@ -113,31 +98,10 @@ export interface HOPData {
 	constituency: string;
 	fetch: boolean;
 }
-export interface Borough {
-	formatted_address: string;
-	lat: number;
-	lng: number;
-	// books:PollBook[];
-}
-export interface Boroughs {
-	[key: string]: Borough;
-	// books:PollBook[];
-}
+
 export interface GEOJSON {
 	type: string;
 	features: any[];
-}
-export interface County {
-	name: string;
-	lat: number;
-	lng: number;
-	isOpen: boolean;
-	// books:PollBook[];
-}
-export interface Centroid {
-	name: string;
-	lat: number;
-	lng: number;
 }
 
 export interface googleMapsMarkerWrapper {
@@ -147,26 +111,13 @@ export interface googleMapsMarkerWrapper {
 	type:string;
 }
 
-export interface Marker {
-	position:{
-		lat:number;
-		lng: number;
-		}
-		title:string;
-		options:any;
-		icon:string;
-		visible:boolean;
-		// label:string;
-	// formatted_address?: string;
-	// selected: boolean;
-	// draggable: boolean;
-}
+
 export interface constituency {
 	lat: number;
 	lng: number;
 	formatted_address?: string;
 	pollbooks: PollBook[];
-	// draggable: boolean;
+	
 }
 
 
@@ -191,30 +142,23 @@ export class VizComponent implements OnInit, OnDestroy, OnChanges {
 	//@dan hop is history of parliament. I have a service which goes and scrapes their etnry for an election
 	hopData: HOPData;
 
-	boroughs: Boroughs;
 
-	//I had to make my own data for cetnroids of the boroughs by hand
-	centroids: Centroid[] = [];
-	counties: County[] = [];
 	 elections: Election[];
 	 uniqueElections: Election []=[];
-	//electionsNew: ElectionNew [];
-	a: string = "wiating";
 
 	public style: object = {};
 
 	gotPollBooks: boolean = false;
 
 	locationLookup: any;
-	clicked:boolean = false; //debouncer for the datalayer click
+	//debouncer for the datalayer click
+	clicked:boolean = false; 
 
 	zoom: number = 7;
 	mapIsReady:boolean = false;
 	options: google.maps.MapOptions = {
 		mapTypeId: 'hybrid',
-		// zoomControl: false,
-		// scrollwheel: false,
-		// disableDoubleClickZoom: true,
+
 		maxZoom: 10,
 		minZoom: 2,
 		styles:[
@@ -482,12 +426,9 @@ export class VizComponent implements OnInit, OnDestroy, OnChanges {
 	}
 
 
-
-
-
 	pollBooks: PollBookResponse;
 
-	mapLinked: boolean = true;
+
 
 	electionsMeta: Elections;
 
@@ -500,63 +441,17 @@ export class VizComponent implements OnInit, OnDestroy, OnChanges {
 
 	constituencyNames: string [] = [];
 
-	markers: Marker[] = [];
-	mmarkers: googleMapsMarkerWrapper[] = [];
+	
 	dynamicMarker: google.maps.Marker;
 	dynamicMarkers: google.maps.Marker []=[];
 
-	boroughMarkers:Marker[] = [];//google.maps.Marker [] = [		
-		image: google.maps.Icon  = {
-			url: './assets/images/dot.svg',
-			size: new google.maps.Size(10, 10),
-			origin: new google.maps.Point(0, 0),
-			anchor: new google.maps.Point(5, 5),
-			scaledSize: new google.maps.Size(10, 10)
-		  };
-		  countyMarkerOption: google.maps.MarkerOptions = {
-			icon:this.image,
-			//                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                         title:	element.constituency,
-			visible:true
-			// label:  {text: element.constituency , color: "white"}
-		}
-
-		imageFore: google.maps.Icon  = {
-			url: './assets/images/smarker.svg',
-			size: new google.maps.Size(20, 20),
-			origin: new google.maps.Point(0, 0),
-			anchor: new google.maps.Point(10, 10),
-			scaledSize: new google.maps.Size(20, 20)
-		  };
-		  countyForegroundMarkerOption: google.maps.MarkerOptions = {
-			icon:this.imageFore,
-			// animation: google.maps.Animation.DROP,
-			//                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                         title:	element.constituency,
-			visible:true
-			// label:  {text: element.constituency , color: "white"}
-		}
-
-	boroughCentreMarkers:google.maps.Marker [] = [];
-	countyMarkers: google.maps.Marker [] = [];
-//	countyMarkerOption: google.maps.MarkerOptions = {draggable: false};
-
-
-	countyMarkerOptions: google.maps.MarkerOptions []= [];
-	countyMarkerPositions: google.maps.LatLngLiteral[] = [];
-
-	boroughMarkerOptions: google.maps.MarkerOptions []= [];
-	boroughMarkerPositions: google.maps.LatLngLiteral[] = [];
-
-
-	myCenter: google.maps.LatLngLiteral = {lat: 24, lng: 12};
-	///the filtered markers currently on display
-	displayedMarkers: Marker[] = [];
 
 
 	forceLink: boolean = false;
 
 	//the main filters for the table/database
 	filteredValues = {
-		election_month: '', constituency: '', election_year: '', countyboroughuniv: '', contested: '', by_election_general: '', franchise_type: '',pollbook_id: ''
+		election_month: '', constituency: '', election_year: '', countyboroughuniv: '', contested: '', by_election_general: '', by_election_cause: '' ,franchise_type: '',pollbook_id: ''
 
 	};
 	
@@ -570,24 +465,18 @@ export class VizComponent implements OnInit, OnDestroy, OnChanges {
 	countyFilter = new FormControl();
 	contestedFilter = new FormControl();
 	byElectionGeneralFilter = new FormControl();
+	byElectionCauseFilter = new FormControl();
 	franchiseFilter = new FormControl();
 	pollBookCodeFilter = new FormControl();
 	globalFilter = '';
 
-	highlightedConsituencies: string[] = [];
 
-	displayedColumns: string[] = ['constituency', 'election_year', 'election_month', 'countyboroughuniv', 'by_election_general', 'franchise_type', 'contested', 'pollbook_id'];
+	displayedColumns: string[] = ['constituency', 'election_year', 'election_month', 'countyboroughuniv', 'by_election_general', 'by_election_cause','franchise_type', 'contested', 'pollbook_id'];
 	dataSource = new MatTableDataSource<Election>();
 
-	updatingMapStyles: boolean = false;
 	//for the timelines
 	minYear: number = 1695;
 	maxYear: number = 1832;
-
-	prevDataSourceSize: number = 0;
-
-	// currentMinValue: number = this.minYear;
-	// currentMaxValue: number = this.maxYear;
 
 	sliderOptions: Options = {
 		floor: 1695,
@@ -603,70 +492,70 @@ export class VizComponent implements OnInit, OnDestroy, OnChanges {
 	ngDoCheck() {
 
 
-		var datObj = {};
-		if (this.dataSource.filter.length > 0) {
+		// var datObj = {};
+		// if (this.dataSource.filter.length > 0) {
 
-			datObj = JSON.parse(this.dataSource.filter);
-		}
-		const change = this._differ.diff(datObj);
+		// 	datObj = JSON.parse(this.dataSource.filter);
+		// }
+		// const change = this._differ.diff(datObj);
 		
-		if (change) {
-			this.electionsPerYear = this.getElectionsPerYear();
-			this.updateIsActive(this.getFilteredConstituencies());
-			this.setMapStyle();
-			this.makeAllMarkers();
-			this.getUniqueMarkers();
-			//console.log("update ",this.dynamicMarkers);
-			this.dynamicMarkers.forEach(delement => {
-				var inData =false;
-			this.dataSource.filteredData.forEach(felement => {
-				if(delement.getTitle().trim()==felement.constituency.trim()){
-					inData = true;
-				//	console.log("match for ",felement.constituency);
-				}
+		// if (change) {
+		// 	this.electionsPerYear = this.getElectionsPerYear();
+		// 	this.updateIsActive(this.getFilteredConstituencies());
+		// 	this.setMapStyle();
 
-			});
-			if(inData){
-				var image = {
-					url: './assets/images/smarker.svg',
-					size: new google.maps.Size(71, 71),
-					origin: new google.maps.Point(0, 0),
-					anchor: new google.maps.Point(17, 34),
-					scaledSize: new google.maps.Size(25, 25)
-				  };
-				  var options = {
-					icon:image,
-					title:	delement.getTitle(),
-					visible:true,
-					label:  {text: delement.getTitle() , color: "white"}
-				}
+		// 	this.dynamicMarkers.forEach(delement => {
+		// 		var inData =false;
+		// 		var cbu = "";
+		// 	this.dataSource.filteredData.forEach(felement => {
+				
+		// 		if(delement.getTitle().trim()==felement.constituency.trim()){
+		// 			inData = true;
+		// 			cbu = felement.countyboroughuniv;
+		// 		}
+
+		// 	});
+		// 	if(inData){
+		// 		var image = {
+		// 			url: './assets/images/smarker.svg',
+		// 			size: new google.maps.Size(71, 71),
+		// 			origin: new google.maps.Point(0, 0),
+		// 			anchor: new google.maps.Point(17, 34),
+		// 			scaledSize: new google.maps.Size(25, 25)
+		// 		  };
+		// 		  var options = {
+		// 			icon:image,
+		// 			title:	delement.getTitle(),
+		// 			visible:cbu=="C" ? false : true,
+		// 			label:  {text: delement.getTitle() , color: "white"}
+		// 		}
 	
 	
-			 delement.setOptions(options);
+		// 	 delement.setOptions(options);
 
-			}else{
-				var image = {
-					url: './assets/images/dot.svg',
-					size: new google.maps.Size(20, 20),
-					origin: new google.maps.Point(0, 0),
-					anchor: new google.maps.Point(10, 10),
-					scaledSize: new google.maps.Size(20, 20)
-				  };
-				  var options = {
-					icon:image,
-					title:delement.getTitle(),
-					visible:true,
-					label:  {text: delement.getTitle() , color: "white"}
-				}
+		// 	}else{
+		// 		var image = {
+		// 			url: './assets/images/dot.svg',
+		// 			size: new google.maps.Size(20, 20),
+		// 			origin: new google.maps.Point(0, 0),
+		// 			anchor: new google.maps.Point(10, 10),
+		// 			scaledSize: new google.maps.Size(20, 20)
+		// 		  };
+		// 		  var options = {
+		// 			icon:image,
+		// 			title:delement.getTitle(),
+		// 			visible:cbu=="C" ? false : true,
+		// 			label:  {text: delement.getTitle() , color: "white"}
+		// 		}
 	
 	
-			 delement.setOptions(options);
+		// 	 delement.setOptions(options);
 
-			}
-		});
+		// 	}
+		// });
 
 
-		}
+		// }
 	}
 
 	ngOnDestroy() {
@@ -691,25 +580,7 @@ export class VizComponent implements OnInit, OnDestroy, OnChanges {
 
 
 		 this.dynamicMarker.setOptions(options);
-		// 	path: google.maps.SymbolPath.CIRCLE,
-		// 	scale: 8.5,
-		// 	fillColor: "#F00",
-		// 	fillOpacity: 0.4,
-		// 	strokeWeight: 0.4
-		// });
-		//this.dynamicMarker.setMap(this.map);
-		// this.dynamicMarker = {
-		// 	position: {lat: 51,lng:0},
-		// 	sName: "Marker Name",
-		// 	map: this.map,
-			// icon: {
-			// 	path: google.maps.SymbolPath.CIRCLE,
-			// 	scale: 8.5,
-			// 	fillColor: "#F00",
-			// 	fillOpacity: 0.4,
-			// 	strokeWeight: 0.4
-			// },
-		// };
+
 		for(var i=this.minYear;i<=this.maxYear;i++){
 			var obj = {
 				year:i,
@@ -727,7 +598,7 @@ export class VizComponent implements OnInit, OnDestroy, OnChanges {
 		// when we land, open the initial modal with the search options in it
 		
 
-		this.mapLinked = true;
+	
 		this.hopData = {
 			innerText: "",
 			yearRange: "",
@@ -769,11 +640,7 @@ export class VizComponent implements OnInit, OnDestroy, OnChanges {
 	//main data grabbign  function called in ngonint 
 	getData() {
 
-		// this.boroughService.getData().subscribe(
-		// 	(data: Boroughs) => this.boroughs = data
-		// 	, err => console.error(err), () => this.makeBoroughMarkers());
-
-
+		
 
 		this.getElectionsService.getData()
 		.subscribe(
@@ -813,11 +680,8 @@ export class VizComponent implements OnInit, OnDestroy, OnChanges {
 		console.log('Element was resized', event);
 		this.style = {
 			position: 'fixed',
-			// left: `${event.rectangle.left}px`,
 			right: "3%",
-			// top: `${event.rectangle.top}px`,
 			width: `${event.rectangle.width}px`,
-			// height: `${event.rectangle.height}px`
 		};
 	}
 
@@ -875,8 +739,8 @@ export class VizComponent implements OnInit, OnDestroy, OnChanges {
 		var maxMin = this.getMaxMinElectionsPerYear();
 		var yearRange = this.maxYear - this.minYear + 1;
 		//var barWidth = divWidth / yearRange;
-		var barWidth = divWidth / 137;//this.electionsPerYear.length;
-		var left = bar.year - 1695;//this.d;
+		var barWidth = divWidth / 137;
+		var left = bar.year - 1695;
 		left *= barWidth;
 		var leftStr = left.toString();
 		leftStr += "px";
@@ -901,33 +765,14 @@ export class VizComponent implements OnInit, OnDestroy, OnChanges {
 
 	}
 	getElectionsPerYear() {
-		// var filteredConstituencies = this.getFilteredConstituencies();
 		this.electionsPerYear.forEach(element => {
 			element.numElections = 0;
 			element.numContested = 0;
 		});
 
-		// for(var i=this.minYear;i<=this.maxYear;i++){
-		// 	var obj = {
-		// 		year:i,
-		// 		numElections:0,
-		// 		numContested:0
-		// 	}
-		// 	this.electionsPerYear.push(obj);
-		// }
-		
-		// for (var i = this.minYear; i <= this.maxYear; i++) {
-		// 	var obj = {
-		// 		year: i,
-		// 		numElections: 0,
-		// 		numContested: 0
-		// 	};
-		// 	this.electionsPerYear.push(obj);
-
-		// }
-		// console.log("this.electionsPerYear",this.electionsPerYear);
+	
 		for (var i = 0; i < this.dataSource.filteredData.length; i++) {
-			var index = parseInt(this.dataSource.filteredData[i]['election_year']) - 1695;// this.minYear;
+			var index = parseInt(this.dataSource.filteredData[i]['election_year']) - 1695;
 			if (index >= 0 && index < this.electionsPerYear.length) {
 
 
@@ -938,37 +783,10 @@ export class VizComponent implements OnInit, OnDestroy, OnChanges {
 			}
 
 		}
-		//console.log(this.electionsPerYear);
 		return this.electionsPerYear;
 	}
 	
-	getElectionsPerYearOld() {
-		// var filteredConstituencies = this.getFilteredConstituencies();
-		this.electionsPerYear = [];
-		for (var i = this.minYear; i <= this.maxYear; i++) {
-			var obj = {
-				year: i,
-				numElections: 0,
-				numContested: 0
-			};
-			this.electionsPerYear.push(obj);
 
-		}
-		// console.log("this.electionsPerYear",this.electionsPerYear);
-		for (var i = 0; i < this.dataSource.filteredData.length; i++) {
-			var index = parseInt(this.dataSource.filteredData[i]['election_year']) - this.minYear;
-			if (index >= 0 && index < this.electionsPerYear.length) {
-
-
-				this.electionsPerYear[index]['numElections']++;
-				if (this.dataSource.filteredData[i]['contested'] == 'Y') {
-					this.electionsPerYear[index]['numContested']++;
-				}
-			}
-
-		}
-		return this.electionsPerYear;
-	}
 	//just for neatness in the text of the graph
 	getPlural(number) {
 		if (number == 1) {
@@ -1003,7 +821,6 @@ export class VizComponent implements OnInit, OnDestroy, OnChanges {
 
 	}
 	sliderChange(changeContext: ChangeContext): void {
-		// this.yearFilter.setValue("");
 
 		this.minYear = changeContext.value;
 		this.maxYear = changeContext.highValue;
@@ -1038,12 +855,12 @@ export class VizComponent implements OnInit, OnDestroy, OnChanges {
 		});
 		//TODO where's DURHAM?
 		this.map.data.addListener('mouseover', (event) => {
-		//	console.log("mouseover ",event.feature.getProperty("name"));
-			this.setMatchingCountyMarkerVisibility(false, event.feature.getProperty("name"));
+		
+			this.setMatchingCountyMarkerVisibility(true, event.feature.getProperty("name"));
 		});
 		this.map.data.addListener('mouseout', (event) => {
-			//	console.log("mouseover ",event.feature.getProperty("name"));
-				this.setMatchingCountyMarkerVisibility(false, "none");
+			
+				this.setMatchingCountyMarkerVisibility(false, event.feature.getProperty("name"));
 			});
 		
 			this.map.data.addListener('click', (event) => {
@@ -1083,14 +900,10 @@ export class VizComponent implements OnInit, OnDestroy, OnChanges {
 		if(!this.mapIsReady){
 			console.log("map ready");
 			this.setUpMapData();
-			this.makeAllMarkers();
 		
 		}
 		
-		//this.setStyles();
-		// this.center.lat = 35;
-		
-		//this.getUniqueMarkers();
+	
 
 	}
 	setMapStyle(){
@@ -1113,14 +926,12 @@ export class VizComponent implements OnInit, OnDestroy, OnChanges {
 		      strokeWeight: index,
 			  zIndex:index,
 			  fillColor: "grey"
-		      // z-index:index,
 		    };
 		});
 
 	}
 	setallInActive(){
 		this.map.data.forEach(function(feature) {
-	//		console.log("setting ",feature.getProperty("name")," in active")
 			feature.setProperty("isActive",false)
 		});
 	}
@@ -1138,8 +949,7 @@ export class VizComponent implements OnInit, OnDestroy, OnChanges {
 		});
 	}
 	updateMapStyles(constituencies: String []){
-		//console.log(constituencies);
-		// this.map.data.revertStyle();
+
 		this.map.data.setStyle(function(feature) {
 		    var name = feature.getProperty('name');
 		    var color = "white";
@@ -1156,27 +966,21 @@ export class VizComponent implements OnInit, OnDestroy, OnChanges {
 		      strokeColor: color,
 		      strokeWeight: index,
 			  zIndex:index
-		      // z-index:index,
+		   
 		    };
 		});
 
 	}
 	mapZoomChanged() {
-		console.log("zoom");
+	
 
-		// console.log(this.map);
-		// console.log(JSON.stringify(this.map.getCenter()));
-		
-		//this.updateMapStyles(this.getFilteredConstituencies());
+	
 
 		
 	}
 	//TODO What is the actual call back for the data
 	mapIdle(){
-		// console.log("idle");
-		//  setTimeout(()=> {this.updateMapStyles(this.getFilteredConstituencies());}, 3000);
-
-		//this is my hacky solution for cheacking the data is actually returned. I can't find a listener function for this
+		
 		var featureCount = 0;
 		this.map.data.forEach(function(feature) {
 			featureCount++;
@@ -1203,7 +1007,7 @@ export class VizComponent implements OnInit, OnDestroy, OnChanges {
 	}
 	clearMap() {
 
-		this.displayedMarkers = this.markers.filter(marker => this.getFilteredConstituencies().includes("gobbldeygook"));
+		// this.displayedMarkers = this.markers.filter(marker => this.getFilteredConstituencies().includes("gobbldeygook"));
 
 
 	}
@@ -1226,377 +1030,53 @@ export class VizComponent implements OnInit, OnDestroy, OnChanges {
 
 
 	/////////////////////////////////////////*********START UTILITY FUNCTIONS***********/////////////////////////////////////////
-	getOptions(marker){
-		if(marker.type=='B' ){
-			//	console.log("returning background");
-				 return this.countyMarkerOption 
-			}
-			else{
-			//	console.log("returning foregeground");
-	
-				return this.countyForegroundMarkerOption
-			}
-			
-	}
-	getIcon(marker){
-		//console.log("got marker", marker.type);
-		if(marker.type=='B' ){
-		//	console.log("returning background");
-			 return this.countyMarkerOption.icon 
-		}
-		else{
-		//	console.log("returning foregeground");
 
-			return this.countyForegroundMarkerOption.icon
-		}
-	}
-	makeCountyMarker(element){
-		var lat: number = +element.lat;
-		var lng: number = +element.lng;
-		
-		
-			
-			
-
-				  var myLatLng = { lat: lat, lng: lng };
-			
-	
-				var image = {
-					url: './assets/images/bmarker.svg',
-					size: new google.maps.Size(71, 71),
-					origin: new google.maps.Point(0, 0),
-					anchor: new google.maps.Point(17, 34),
-					scaledSize: new google.maps.Size(25, 25)
-				  };
-				  var options = {
-					icon:image,
-					title:	element.constituency,
-					visible:true,
-					label:  {text: element.constituency , color: "white"}
-				}
-				//this.countyMarkerOption.title="test";
-					 this.countyMarkerPositions.push({ lat: lat, lng: lng });
-					 this.countyMarkerOptions.push(options);
-	}
-	
-	getUniqueCountyMarkers(){
-		console.log("getting unique county markers");
-		var markerLocations = [];
-		this.markers = [] ;
-		
-		this.dataSource.data.forEach(element => {
-		//	console.log("Element",element);
-			if(markerLocations.indexOf(element.constituency)==-1){
-
-				markerLocations.push(element.constituency);			//console.log(element.lat,element.lng)
-
-			//	if(typeof element.lat == "number" && typeof element.lng == "number"){
-				if(element.countyboroughuniv=="C"){
-					this.makeCountyMarker(element);
-						
-				}
-					
-	
-			
-			}
-		});
-
-	}
 	setMatchingCountyMarkerVisibility(visible, constituency){
-		
-		this.countyMarkerOptions= [];
-		this.countyMarkerPositions= [];
-		var markerLocations = [];
-		this.dataSource.data.forEach(element => {
-				if(markerLocations.indexOf(element.constituency)==-1 && element.constituency==constituency){
-	
-					markerLocations.push(element.constituency);		
-	
-		
-					if(element.countyboroughuniv=="C"){
-						this.makeCountyMarker(element);
-							
-					}
-						
-		
-				
-				}
-			});
-	
-		this.appRef.tick() ;
+		console.log("mouseover",constituency);
+		var image = {
+			url: './assets/images/dot.svg',
+			size: new google.maps.Size(20, 20),
+			origin: new google.maps.Point(0, 0),
+			anchor: new google.maps.Point(10, 10),
+			scaledSize: new google.maps.Size(20, 20)
+		  };
+		  var options = {
+			icon:image,
+			title:constituency,
+			visible:visible,
+			label:  {text: constituency , color: "white"}
+		}
 
-	}
-	setBoroughCentreMarkers(){
-		this.boroughMarkers = [];
-		var markerLocations = [];
-		//this.markers = [] ;
-		this.dataSource.data.forEach(element => {
-			if(markerLocations.indexOf(element.constituency.trim())==-1){
-			//	console.log("adding point for ",element.constituency.trim())
-			
-				var lat: number = +element.lat;
-				var lng: number = +element.lng;
-				
-					markerLocations.push(element.constituency.trim());
-					if(element.countyboroughuniv=="B"){
-						var myLatLng = { lat: lat, lng: lng };
-			
-	
-						var image = {
-							url: './assets/images/dot.svg',
-							size: new google.maps.Size(20, 20),
-							origin: new google.maps.Point(0, 0),
-							anchor: new google.maps.Point(10, 10),
-							scaledSize: new google.maps.Size(20, 20)
-						  };
-						  var options = {
-							icon:image,
-							title:	element.constituency,
-							visible:true
-							// label:  {text: element.constituency , color: "white"}
-						}
-						this.boroughMarkerPositions.push({ lat: lat, lng: lng });
-						this.boroughMarkerOptions.push(options);
-						
-					//	this.boroughMarkers.push(marker);
-					}
 
+	
+		this.dynamicMarkers.forEach(element => {
+			if(element.getTitle()==constituency){
+			//	console.log("setting ",constituency, " to ", visible);
+				element.setOptions(options)
 			}
 		});
-	}
-	makeMarker(element, isBackgroundBorough){
-		var lat: number = +element.lat;
-		var lng: number = +element.lng;
-		
-		var myLatLng = { lat: lat, lng: lng };
-			if(element.countyboroughuniv=="B" && isBackgroundBorough){
-				
-				//console.log("Making background marker for ", element.constituency);
-	
+		this.appRef.tick();
 
-				var image = {
-					url: './assets/images/dot.svg',
-					size: new google.maps.Size(20, 20),
-					origin: new google.maps.Point(0, 0),
-					anchor: new google.maps.Point(10, 10),
-					scaledSize: new google.maps.Size(20, 20)
-				  };
-				  var options = {
-					icon:image,
-					title:	element.constituency,
-					visible:true
-					// label:  {text: element.constituency , color: "white"}
-				}
-			
-				var thisMarker: googleMapsMarkerWrapper = {
-					position:myLatLng,
-					options:options,
-					title: element.constituency,
-					type:"B"
-				}
-				this.mmarkers.push(thisMarker);
-			}
-			else if(element.countyboroughuniv=="B" && !isBackgroundBorough){
-			//	console.log("Making foreground marker for ", element.constituency);
-				var image = {
-					url: './assets/images/dot.svg',
-					size: new google.maps.Size(20, 20),
-					origin: new google.maps.Point(0, 0),
-					anchor: new google.maps.Point(10, 10),
-					scaledSize: new google.maps.Size(20, 20)
-				  };
-				  var options = {
-					icon:image,
-					title:	element.constituency,
-					visible:true
-					// label:  {text: element.constituency , color: "white"}
-				}
-			
-				var thisMarker: googleMapsMarkerWrapper = {
-					position:myLatLng,
-					options:options,
-					title: element.constituency,
-					type:"BB"
-				}
-				this.mmarkers.push(thisMarker);
 
-			}
-			else if(element.countyboroughuniv=="C" && !isBackgroundBorough){
-				var image = {
-					url: './assets/images/dot.svg',
-					size: new google.maps.Size(20, 20),
-					origin: new google.maps.Point(0, 0),
-					anchor: new google.maps.Point(10, 10),
-					scaledSize: new google.maps.Size(20, 20)
-				  };
-				  var options = {
-					icon:image,
-					title:	element.constituency,
-					visible:true
-					// label:  {text: element.constituency , color: "white"}
-				}
-			
-				var thisMarker: googleMapsMarkerWrapper = {
-					position:myLatLng,
-					options:options,
-					title: element.constituency,
-					type:"C"
-				}
-				this.mmarkers.push(thisMarker);
-			}
-			
-			//	this.boroughMarkers.push(marker);
-			
-			
 	}
-	updateMarkers() {
-		
-		// this.displayedMarkers = this.markers;
-		// this.displayedMarkers = this.markers.filter(marker => this.getFilteredConstituencies().includes(marker.formatted_address));
-		// this.updateMapStyles(this.getFilteredConstituencies());
-		this.dataSource.filteredData.forEach(element => {
-			this.mmarkers.forEach(melement => {
-				melement.type="B";
-				if(element.constituency == melement.title){
 
-					melement.type="BB";
-				}
-			});
-		});
-	}
-	getUniqueConstituencies(){
-		var constituencies = [];
-		if(this.uniqueElections!=undefined){
-		this.dataSource.data.forEach(element => {
-			if(constituencies.indexOf(element.constituency)==-1){
-			//	console.log("adding ",element)
-			constituencies.push(element.constituency);
-			this.uniqueElections.push(element);
-			}
-		});
-	}
-	//	return constituencies;
-	}
-	makeAllMarkers(){
-		this.mmarkers = [];
-		var markerLocations = [];
-		var filteredConstituencies = this.getFilteredConstituencies();
-		//first make all the boroughs that sit in the background
-		var flipper = true;
-	//	console.log("making markers");
+	getUniqueElections(){
+	// 	var constituencies = [];
+	// 	if(this.uniqueElections!=undefined){
+	// 	this.dataSource.data.forEach(element => {
+	// 		if(constituencies.indexOf(element.constituency)==-1){
+	// 		//	console.log("adding ",element)
+	// 		constituencies.push(element.constituency);
+	// 		this.uniqueElections.push(element);
+	// 		}
+	// 	});
+	// }
+	this.uniqueElections = this.dataSource.data.filter((value, index, self) => self.map(x => x.constituency).indexOf(value.constituency) == index);
 	//console.log("this.uniqueElections",this.uniqueElections);
-	if(this.uniqueElections!=undefined){
-	this.uniqueElections.forEach(element => {
-		//this.dataSource.data.forEach(element => {
-			if(markerLocations.indexOf(element.constituency.trim())==-1){
-			//	console.log("adding point for ",element.constituency.trim())
-			markerLocations.push(element.constituency.trim());
-			if(filteredConstituencies.indexOf(element.constituency)!=-1){
-				this.makeMarker(element, false);
-			}
-			else{
-				this.makeMarker(element, true);
-			}
-			
-			//flipper=!flipper;
-
-			}
-		});
-	//	console.log("made markers",this.mmarkers);
-		markerLocations = [];
-		//now add any boroughs currently in the filtered data
-		this.dataSource.filteredData.forEach(element => {
-			this.mmarkers.forEach(melement => {
-				if(element.constituency == melement.title){
-					//melement.type="BB";
-			// 		var lat: number = +element.lat;
-			// var lng: number = +element.lng;
-					
-			// 		var myLatLng = { lat: lat, lng: lng };
-			// 		var image = {
-			// 			url: './assets/images/dot.svg',
-			// 			size: new google.maps.Size(20, 20),
-			// 			origin: new google.maps.Point(0, 0),
-			// 			anchor: new google.maps.Point(10, 10),
-			// 			scaledSize: new google.maps.Size(20, 20)
-			// 		  };
-			// 		  var options = {
-			// 			icon:image,
-			// 			title:	element.constituency,
-			// 			visible:true
-			// 			// label:  {text: element.constituency , color: "white"}
-			// 		}
-				
-			// 		var thisMarker: googleMapsMarkerWrapper = {
-			// 			position:myLatLng,
-			// 			options:options,
-			// 			title: element.constituency,
-			// 			type:"C"
-			// 		}
-			// 		melement = thisMarker;
-				}
-			});
-			
-		});
-
-		// image: google.maps.Icon  = {
-		// 	url: './assets/images/dot.svg',
-		// 	size: new google.maps.Size(20, 20),
-		// 	origin: new google.maps.Point(0, 0),
-		// 	anchor: new google.maps.Point(10, 10),
-		// 	scaledSize: new google.maps.Size(20, 20)
-		//   };
-		//   countyMarkerOption: google.maps.MarkerOptions = {
-		// 	icon:this.image,
-		// 	//                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                         title:	element.constituency,
-		// 	visible:true
-		// 	// label:  {text: element.constituency , color: "white"}
-		// }
-	}
-	}
-	getUniqueMarkers(){
-		var markerLocations = [];
-		this.markers = [] ;
-		this.dataSource.filteredData.forEach(element => {
-			if(markerLocations.indexOf(element.constituency)==-1){
-
-			
-				var lat: number = +element.lat;
-				var lng: number = +element.lng;
-				
-					markerLocations.push(element.constituency);
-					if(element.countyboroughuniv=="B"){
-						var image = {
-							url: './assets/images/smarker.svg',
-							size: new google.maps.Size(71, 71),
-							origin: new google.maps.Point(0, 0),
-							anchor: new google.maps.Point(17, 34),
-							scaledSize: new google.maps.Size(25, 25)
-						  };
-
-
-						var marker: Marker = {
-							position: { lat:lat,lng:lng  },
-							title:element.constituency,
-							icon:  "./assets/images/smarker.svg",
-							visible:true,
-							options: { 
-								opacity:1,
-								zIndex:10,
-								animation: google.maps.Animation.DROP,
-								icon:  image,// google.maps.MarkerImage('./assets/images/smarker.svg',null, null, null, new google.maps.Size(200,200)), //"./assets/images/smarker.svg",
-			
-								 }
-						
-		
-						}
-						this.markers.push(marker);
-					}
-
-			}
-		});
+	//this.uniqueElections = this.dataSource.filteredData.map(item => item.constituency).filter((value, index, self) => self.indexOf(value) === index);
 
 	}
+	
 	getPosition(marker){
 		return {lat:51.0,lng:1.8};
 	}
@@ -1621,7 +1101,7 @@ export class VizComponent implements OnInit, OnDestroy, OnChanges {
 		this.maxYear = spread + start;
 		console.log("years", this.minYear, this.maxYear);
 		var y = 1777;
-
+		//TODO add some other filters here like by election cause
 		this.yearFilter.setValue(this.minYear.toString() + "-" + this.maxYear.toString());
 
 		this.constituencyFilter.setValue(this.getRandomConstituenciesString(20));
@@ -1687,22 +1167,7 @@ export class VizComponent implements OnInit, OnDestroy, OnChanges {
 
 
 	animateTimeLine(){
-		// var image = {
-		// 	url: './assets/images/dot.svg',
-		// 	size: new google.maps.Size(71, 71),
-		// 	origin: new google.maps.Point(0, 0),
-		// 	anchor: new google.maps.Point(17, 34),
-		// 	scaledSize: new google.maps.Size(25, 25)
-		//   };
-		//   var options = {
-		// 	icon:image,
-		// 	title:	"test",
-		// 	visible:true,
-		// 	label:  {text: "test" , color: "white"}
-		// }
-
-
-	// this.dynamicMarker.setOptions(options);
+	
 		if(this.animating){
 			if (this.animatingId) {
 				clearInterval(this.animatingId);
@@ -1732,24 +1197,28 @@ export class VizComponent implements OnInit, OnDestroy, OnChanges {
 
 	//called when the filter updates I think
 	setDateSlider() {
-
+		console.log(this.yearFilter.value);
 		var years = this.yearFilter.value;
-		if (years.split("-").length == 2) {
+		if (years.split("-").length == 2 && years.trim().length==9) {
+			console.log("year range");
 			this.minYear = years.split("-")[0].trim();
 			this.maxYear = years.split("-")[1].trim();
 		}
 		else if (years.split(",").length > 1) {
-			this.minYear = 1695;
-			this.maxYear = 1832;
+			console.log("year list");
+			// this.minYear = years.split(",")[0];
+			// this.maxYear = 1832;
 
 		}
 		else if (years.length == 4) {
+			console.log("single year");
 			this.minYear = parseInt(years.trim());
 			this.maxYear = parseInt(years.trim());
 		}
 		else {
-			this.minYear = 1695;
-			this.maxYear = 1832;
+			console.log("no match for year format");
+			// this.minYear = 1695;
+			// this.maxYear = 1832;
 		}
 	}
 
@@ -1781,31 +1250,27 @@ export class VizComponent implements OnInit, OnDestroy, OnChanges {
 
 	//called at the start I think and sets up all the filter subscriptions
 	setUpFilters() {
-		// this.addMarkers();
-		
-		
-		//this.electionsMeta
-	//	console.log("data",this.electionsMeta.elections);
+	
 		this.dataSource = new MatTableDataSource<Election>(this.electionsMeta.elections);
 		this.dataSource.paginator = this.paginator;
-		this.getUniqueConstituencies();
-		this.getUniqueMarkers();
-		this.setBoroughCentreMarkers();
+		this.getUniqueElections();
+	
 		this.uniqueElections.forEach(element => {
 			var thisDynamicMarker = new google.maps.Marker();
-			//console.log(element.lat,typeof(element.lat))
+			
 			thisDynamicMarker.setPosition({lat:+element.lat,lng:+element.lng});
 				var image = {
-					url: './assets/images/bmarker.svg',
-					size: new google.maps.Size(71, 71),
+					url: './assets/images/dot.svg',
+					size: new google.maps.Size(20, 20),
 					origin: new google.maps.Point(0, 0),
-					anchor: new google.maps.Point(17, 34),
-					scaledSize: new google.maps.Size(25, 25)
+					anchor: new google.maps.Point(10, 10),
+					scaledSize: new google.maps.Size(20, 20)
 				  };
+				  
 				  var options = {
 					icon:image,
 					title:	element.constituency,
-					visible:true,
+					visible:element.countyboroughuniv=="C" ? false : true,
 					label:  {text: element.constituency , color: "white"}
 				}
 	
@@ -1829,7 +1294,7 @@ export class VizComponent implements OnInit, OnDestroy, OnChanges {
 			this.filteredValues['constituency'] = constituencyFilterValue;
 			this.dataSource.filter = JSON.stringify(this.filteredValues);
 
-
+			this.onDataSubscriptionChange();
 			
 
 		});
@@ -1837,6 +1302,7 @@ export class VizComponent implements OnInit, OnDestroy, OnChanges {
 		this.monthFilter.valueChanges.subscribe((monthFilterValue) => {
 			this.filteredValues['election_month'] = monthFilterValue;
 			this.dataSource.filter = JSON.stringify(this.filteredValues);
+			this.onDataSubscriptionChange();
 
 		});
 
@@ -1847,37 +1313,108 @@ export class VizComponent implements OnInit, OnDestroy, OnChanges {
 
 			this.filteredValues['election_year'] = yearFilterValue;
 			this.dataSource.filter = JSON.stringify(this.filteredValues);
-			// this.updateMarkers();
+			this.onDataSubscriptionChange();
+		
 		});
 
 
 		this.countyFilter.valueChanges.subscribe((countyFilterValue) => {
 			this.filteredValues['countyboroughuniv'] = countyFilterValue;
 			this.dataSource.filter = JSON.stringify(this.filteredValues);
+			this.onDataSubscriptionChange();
 		});
 
 		this.contestedFilter.valueChanges.subscribe((contestedFilterValue) => {
 			this.filteredValues['contested'] = contestedFilterValue;
 			this.dataSource.filter = JSON.stringify(this.filteredValues);
+			this.onDataSubscriptionChange();
 		});
 
 		this.byElectionGeneralFilter.valueChanges.subscribe((byElectionGeneralFilterValue) => {
 			this.filteredValues['by_election_general'] = byElectionGeneralFilterValue;
 			this.dataSource.filter = JSON.stringify(this.filteredValues);
+			this.onDataSubscriptionChange();
+
+		});
+		
+		this.byElectionCauseFilter.valueChanges.subscribe((byElectionCauseFilterValue) => {
+			this.filteredValues['by_election_cause'] = byElectionCauseFilterValue;
+			this.dataSource.filter = JSON.stringify(this.filteredValues);
+			this.onDataSubscriptionChange();
 
 		});
 		this.franchiseFilter.valueChanges.subscribe((franchiseFilterValue) => {
 			this.filteredValues['franchise_type'] = franchiseFilterValue;
 			this.dataSource.filter = JSON.stringify(this.filteredValues);
+			this.onDataSubscriptionChange();
 
 		});
 		this.pollBookCodeFilter.valueChanges.subscribe((pollBookCodeFilterValue) => {
 			this.filteredValues['pollbook_id'] = pollBookCodeFilterValue;
 			this.dataSource.filter = JSON.stringify(this.filteredValues);
+			this.onDataSubscriptionChange();
 
 		});
 
 		this.dataSource.filterPredicate = this.customFilterPredicate();
+
+	}
+	onDataSubscriptionChange(){
+		console.log("sub change");
+		this.electionsPerYear = this.getElectionsPerYear();
+		this.updateIsActive(this.getFilteredConstituencies());
+		this.setMapStyle();
+
+		this.dynamicMarkers.forEach(delement => {
+			var inData =false;
+			var cbu = "";
+		this.dataSource.filteredData.forEach(felement => {
+			
+			if(delement.getTitle().trim()==felement.constituency.trim()){
+				inData = true;
+				cbu = felement.countyboroughuniv;
+			}
+
+		});
+		if(inData){
+			var image = {
+				url: './assets/images/smarker.svg',
+				size: new google.maps.Size(71, 71),
+				origin: new google.maps.Point(0, 0),
+				anchor: new google.maps.Point(17, 34),
+				scaledSize: new google.maps.Size(25, 25)
+			  };
+			  var options = {
+				icon:image,
+				title:	delement.getTitle(),
+				visible:cbu=="C" ? false : true,
+				label:  {text: delement.getTitle() , color: "white"}
+			}
+
+
+		 delement.setOptions(options);
+
+		}else{
+			var image = {
+				url: './assets/images/dot.svg',
+				size: new google.maps.Size(20, 20),
+				origin: new google.maps.Point(0, 0),
+				anchor: new google.maps.Point(10, 10),
+				scaledSize: new google.maps.Size(20, 20)
+			  };
+			  var options = {
+				icon:image,
+				title:delement.getTitle(),
+				visible:cbu=="C" ? false : true,
+				label:  {text: delement.getTitle() , color: "white"}
+			}
+
+
+		 delement.setOptions(options);
+
+		}
+	});
+
 
 	}
 	//what it sound slike, set all the searches to blank and include all daata
@@ -1895,19 +1432,14 @@ export class VizComponent implements OnInit, OnDestroy, OnChanges {
 		this.franchiseFilter.setValue("");
 		this.pollBookCodeFilter.setValue("");
 		this.constituencyFilter.setValue("");
-//		 this.constituencyFilter.setValue(this.constituencyFilter.value+",Yorkshire");
 
 		this.dataSource.filter = JSON.stringify(this.filteredValues);
 		
 	}
-
+	//returns a list of unique consituency names
 	getFilteredConstituencies() {
-		var filteredConstituencies = [];
-		for (var i = 0; i < this.dataSource.filteredData.length; i++) {
-			if (!filteredConstituencies.includes(this.dataSource.filteredData[i].constituency)) {
-				filteredConstituencies.push(this.dataSource.filteredData[i].constituency);
-			}
-		}
+
+		var filteredConstituencies = this.dataSource.filteredData.map(item => item.constituency).filter((value, index, self) => self.indexOf(value) === index);
 		return filteredConstituencies;
 	}
 
@@ -1915,9 +1447,8 @@ export class VizComponent implements OnInit, OnDestroy, OnChanges {
 		this.pollBooks = null;
 		const myFilterPredicate = (data: Election, filter: string): boolean => {
 			var globalMatch = !this.globalFilter;
-			//  console.log('globalMatch',globalMatch);
 			if (this.globalFilter) {
-				// search all text fields
+				
 				globalMatch = data.election_month.toString().trim().toLowerCase().indexOf(this.globalFilter.toLowerCase()) !== -1
 				|| data.constituency.toString().trim().toLowerCase().indexOf(this.globalFilter.toLowerCase()) !== -1
 				|| data.countyboroughuniv.toString().trim().toLowerCase().indexOf(this.globalFilter.toLowerCase()) !== -1
@@ -1931,19 +1462,15 @@ export class VizComponent implements OnInit, OnDestroy, OnChanges {
 			}
 
 			let searchString = JSON.parse(filter);
-			// return data.constituency.toString().trim().indexOf(searchString.constituency) !== -1  
 			return this.hasConstituencies(data, searchString)
 			&& this.hasMonths(data, searchString)
 			&& this.hasYears(data, searchString)
-			// && data.election_month.toString().trim().toLowerCase().indexOf(searchString.election_month.toLowerCase()) !== -1 
-			// && data.Year.toString().trim().toLowerCase().indexOf(searchString.Year.toLowerCase()) !== -1 
+		
 			&& data.countyboroughuniv.toString().trim().toLowerCase().indexOf(searchString.countyboroughuniv.toLowerCase()) !== -1
-
 			&& data.contested.toString().trim().toLowerCase().indexOf(searchString.contested.toLowerCase()) !== -1
 			&& data.by_election_general.toString().trim().toLowerCase().indexOf(searchString.by_election_general.toLowerCase()) !== -1
 			&& data.contested.toString().trim().toLowerCase().indexOf(searchString.contested.toLowerCase()) !== -1
 			&& data.franchise_type.toString().trim().toLowerCase().indexOf(searchString.franchise_type.toLowerCase()) !== -1
-			// && data.pollbook_id.toString().trim().toLowerCase().indexOf(searchString.pollbook_id.toLowerCase()) !== -1 
 			&& this.getHasPollBooksFilter(data.pollbook_id.toString().trim().toLowerCase(), searchString.pollbook_id.toLowerCase()) !== -1
 
 			;
@@ -2058,7 +1585,6 @@ export class VizComponent implements OnInit, OnDestroy, OnChanges {
 			}
 		}
 
-		//	if(year>=lowYear && year<=this.currentMaxValue) return 0;
 		return -1;
 
 	}
@@ -2479,4 +2005,3 @@ export class VizComponent implements OnInit, OnDestroy, OnChanges {
 		return styles;
 	}
 }
-
