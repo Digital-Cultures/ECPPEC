@@ -1429,6 +1429,7 @@ export class VizComponent implements OnInit, OnDestroy, OnChanges {
 		this.contestedFilter.setValue("");
 
 		this.byElectionGeneralFilter.setValue("");
+		this.byElectionCauseFilter.setValue("");
 		this.franchiseFilter.setValue("");
 		this.pollBookCodeFilter.setValue("");
 		this.constituencyFilter.setValue("");
@@ -1469,6 +1470,7 @@ export class VizComponent implements OnInit, OnDestroy, OnChanges {
 			&& data.countyboroughuniv.toString().trim().toLowerCase().indexOf(searchString.countyboroughuniv.toLowerCase()) !== -1
 			&& data.contested.toString().trim().toLowerCase().indexOf(searchString.contested.toLowerCase()) !== -1
 			&& data.by_election_general.toString().trim().toLowerCase().indexOf(searchString.by_election_general.toLowerCase()) !== -1
+			&& data.by_election_cause.toString().trim().toLowerCase().indexOf(searchString.by_election_cause.toLowerCase()) !== -1
 			&& data.contested.toString().trim().toLowerCase().indexOf(searchString.contested.toLowerCase()) !== -1
 			&& data.franchise_type.toString().trim().toLowerCase().indexOf(searchString.franchise_type.toLowerCase()) !== -1
 			&& this.getHasPollBooksFilter(data.pollbook_id.toString().trim().toLowerCase(), searchString.pollbook_id.toLowerCase()) !== -1

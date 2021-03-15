@@ -445,11 +445,12 @@ var GetPollBooksService = /** @class */ (function () {
         ///dataUrl='http://192.168.0.51:8888/ECCPEC_code/php/getPollBooks.php/?BookCode=';
         // dataUrl='http://localhost:8888/ECCPEC_code/php/getPollBooks.php/?BookCode=';
         //dataUrl='/php/getPollBooks.php/?BookCode=';
-        this.dataUrl = 'https://ecppec.com/php/getPollBooks.php/?BookCode=';
+        this.dataUrl = 'https://ecppec.ncl.ac.uk/php/getPollBooks.php/?BookCode=';
     }
     GetPollBooksService.prototype.getData = function (pollBookCode) {
-        console.log("this.dataUrl+pollBookCode", this.dataUrl + pollBookCode);
-        return this.http.get(this.dataUrl + pollBookCode);
+        var fullURL = this.dataUrl + pollBookCode;
+        console.log(fullURL);
+        return this.http.get(fullURL);
     };
     GetPollBooksService.ɵfac = function GetPollBooksService_Factory(t) { return new (t || GetPollBooksService)(_angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵinject"](_angular_common_http__WEBPACK_IMPORTED_MODULE_0__["HttpClient"])); };
     GetPollBooksService.ɵprov = _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵdefineInjectable"]({ token: GetPollBooksService, factory: GetPollBooksService.ɵfac, providedIn: 'root' });
@@ -1999,7 +2000,6 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _angular_material_select__WEBPACK_IMPORTED_MODULE_27__ = __webpack_require__(/*! @angular/material/select */ "2+6u");
 /* harmony import */ var _angular_material_core__WEBPACK_IMPORTED_MODULE_28__ = __webpack_require__(/*! @angular/material/core */ "j14s");
 
-// import { Subscription } from 'rxjs/Subscription';
 
 
 
@@ -2046,12 +2046,12 @@ __webpack_require__.r(__webpack_exports__);
 
 
 
-var _c0 = function (a0, a1, a2) { return { icon: a0, title: a1, visible: a2 }; };
+var _c0 = function (a0, a1) { return { icon: a0, title: a1 }; };
 function VizComponent_map_marker_3_Template(rf, ctx) { if (rf & 1) {
     _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelement"](0, "map-marker", 16);
 } if (rf & 2) {
     var dynamicMarker_r7 = ctx.$implicit;
-    _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵproperty"]("position", dynamicMarker_r7.getPosition())("options", _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵpureFunction3"](2, _c0, dynamicMarker_r7.getIcon(), dynamicMarker_r7.title, dynamicMarker_r7.visible));
+    _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵproperty"]("position", dynamicMarker_r7.getPosition())("options", _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵpureFunction2"](2, _c0, dynamicMarker_r7.getIcon(), dynamicMarker_r7.title));
 } }
 function VizComponent_div_5_Template(rf, ctx) { if (rf & 1) {
     _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementStart"](0, "div", 17);
@@ -2092,13 +2092,13 @@ function VizComponent_div_10_Template(rf, ctx) { if (rf & 1) {
     _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵproperty"]("ngStyle", ctx_r4.getBarStyle(bar_r9, _r2.offsetWidth, _r2.offsetHeight, true));
 } }
 function VizComponent_table_21_th_2_Template(rf, ctx) { if (rf & 1) {
-    _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementStart"](0, "th", 36);
-    _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementStart"](1, "span", 37);
+    _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementStart"](0, "th", 37);
+    _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementStart"](1, "span", 38);
     _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵtext"](2, "Constituency");
     _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementEnd"]();
     _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementStart"](3, "div");
     _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementStart"](4, "mat-form-field");
-    _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelement"](5, "input", 38);
+    _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelement"](5, "input", 39);
     _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementEnd"]();
     _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementEnd"]();
     _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementEnd"]();
@@ -2110,22 +2110,22 @@ function VizComponent_table_21_th_2_Template(rf, ctx) { if (rf & 1) {
     _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵproperty"]("formControl", ctx_r10.constituencyFilter);
 } }
 function VizComponent_table_21_td_3_Template(rf, ctx) { if (rf & 1) {
-    _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementStart"](0, "td", 39);
+    _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementStart"](0, "td", 40);
     _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵtext"](1);
     _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementEnd"]();
 } if (rf & 2) {
-    var element_r28 = ctx.$implicit;
+    var element_r30 = ctx.$implicit;
     _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵadvance"](1);
-    _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵtextInterpolate1"](" ", element_r28.constituency, " ");
+    _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵtextInterpolate1"](" ", element_r30.constituency, " ");
 } }
 function VizComponent_table_21_th_5_Template(rf, ctx) { if (rf & 1) {
-    _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementStart"](0, "th", 36);
-    _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementStart"](1, "span", 40);
+    _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementStart"](0, "th", 37);
+    _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementStart"](1, "span", 41);
     _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵtext"](2, "Month ");
     _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementEnd"]();
     _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementStart"](3, "div");
     _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementStart"](4, "mat-form-field");
-    _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelement"](5, "input", 38);
+    _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelement"](5, "input", 39);
     _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementEnd"]();
     _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementEnd"]();
     _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementEnd"]();
@@ -2137,22 +2137,22 @@ function VizComponent_table_21_th_5_Template(rf, ctx) { if (rf & 1) {
     _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵproperty"]("formControl", ctx_r12.monthFilter);
 } }
 function VizComponent_table_21_td_6_Template(rf, ctx) { if (rf & 1) {
-    _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementStart"](0, "td", 39);
+    _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementStart"](0, "td", 40);
     _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵtext"](1);
     _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementEnd"]();
 } if (rf & 2) {
-    var element_r29 = ctx.$implicit;
+    var element_r31 = ctx.$implicit;
     _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵadvance"](1);
-    _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵtextInterpolate1"](" ", element_r29.election_month, " ");
+    _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵtextInterpolate1"](" ", element_r31.election_month, " ");
 } }
 function VizComponent_table_21_th_8_Template(rf, ctx) { if (rf & 1) {
-    _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementStart"](0, "th", 36);
-    _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementStart"](1, "span", 41);
+    _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementStart"](0, "th", 37);
+    _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementStart"](1, "span", 42);
     _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵtext"](2, "Year ");
     _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementEnd"]();
     _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementStart"](3, "div");
     _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementStart"](4, "mat-form-field");
-    _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelement"](5, "input", 38);
+    _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelement"](5, "input", 39);
     _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementEnd"]();
     _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementEnd"]();
     _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementEnd"]();
@@ -2164,33 +2164,33 @@ function VizComponent_table_21_th_8_Template(rf, ctx) { if (rf & 1) {
     _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵproperty"]("formControl", ctx_r14.yearFilter);
 } }
 function VizComponent_table_21_td_9_Template(rf, ctx) { if (rf & 1) {
-    _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementStart"](0, "td", 39);
+    _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementStart"](0, "td", 40);
     _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵtext"](1);
     _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementEnd"]();
 } if (rf & 2) {
-    var element_r30 = ctx.$implicit;
+    var element_r32 = ctx.$implicit;
     _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵadvance"](1);
-    _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵtextInterpolate1"](" ", element_r30.election_year, " ");
+    _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵtextInterpolate1"](" ", element_r32.election_year, " ");
 } }
 function VizComponent_table_21_th_11_Template(rf, ctx) { if (rf & 1) {
-    var _r32 = _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵgetCurrentView"]();
-    _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementStart"](0, "th", 36);
-    _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementStart"](1, "span", 42);
+    var _r34 = _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵgetCurrentView"]();
+    _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementStart"](0, "th", 37);
+    _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementStart"](1, "span", 43);
     _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵtext"](2, "County/Borough/Univ ");
     _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementEnd"]();
     _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementStart"](3, "div");
-    _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementStart"](4, "mat-select", 43);
-    _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵlistener"]("valueChange", function VizComponent_table_21_th_11_Template_mat_select_valueChange_4_listener($event) { _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵrestoreView"](_r32); var ctx_r31 = _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵnextContext"](2); return ctx_r31.countyFilter.value = $event; });
-    _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementStart"](5, "mat-option", 44);
+    _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementStart"](4, "mat-select", 44);
+    _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵlistener"]("valueChange", function VizComponent_table_21_th_11_Template_mat_select_valueChange_4_listener($event) { _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵrestoreView"](_r34); var ctx_r33 = _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵnextContext"](2); return ctx_r33.countyFilter.value = $event; });
+    _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementStart"](5, "mat-option", 45);
     _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵtext"](6, "Any");
     _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementEnd"]();
-    _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementStart"](7, "mat-option", 45);
+    _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementStart"](7, "mat-option", 46);
     _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵtext"](8, "C");
     _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementEnd"]();
-    _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementStart"](9, "mat-option", 46);
+    _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementStart"](9, "mat-option", 47);
     _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵtext"](10, "B");
     _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementEnd"]();
-    _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementStart"](11, "mat-option", 47);
+    _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementStart"](11, "mat-option", 48);
     _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵtext"](12, "U");
     _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementEnd"]();
     _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementEnd"]();
@@ -2204,31 +2204,31 @@ function VizComponent_table_21_th_11_Template(rf, ctx) { if (rf & 1) {
     _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵproperty"]("formControl", ctx_r16.countyFilter)("value", ctx_r16.countyFilter.value);
 } }
 function VizComponent_table_21_td_12_Template(rf, ctx) { if (rf & 1) {
-    _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementStart"](0, "td", 39);
+    _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementStart"](0, "td", 40);
     _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵtext"](1);
     _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementEnd"]();
 } if (rf & 2) {
-    var element_r33 = ctx.$implicit;
+    var element_r35 = ctx.$implicit;
     _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵadvance"](1);
-    _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵtextInterpolate1"](" ", element_r33.countyboroughuniv, " ");
+    _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵtextInterpolate1"](" ", element_r35.countyboroughuniv, " ");
 } }
 function VizComponent_table_21_th_14_Template(rf, ctx) { if (rf & 1) {
-    var _r35 = _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵgetCurrentView"]();
-    _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementStart"](0, "th", 36);
-    _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementStart"](1, "span", 48);
+    var _r37 = _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵgetCurrentView"]();
+    _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementStart"](0, "th", 37);
+    _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementStart"](1, "span", 49);
     _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵtext"](2, "Contested?");
     _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementEnd"]();
     _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementStart"](3, "div");
     _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementStart"](4, "mat-form-field");
-    _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementStart"](5, "mat-select", 43);
-    _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵlistener"]("valueChange", function VizComponent_table_21_th_14_Template_mat_select_valueChange_5_listener($event) { _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵrestoreView"](_r35); var ctx_r34 = _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵnextContext"](2); return ctx_r34.contestedFilter.value = $event; });
-    _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementStart"](6, "mat-option", 44);
+    _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementStart"](5, "mat-select", 44);
+    _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵlistener"]("valueChange", function VizComponent_table_21_th_14_Template_mat_select_valueChange_5_listener($event) { _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵrestoreView"](_r37); var ctx_r36 = _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵnextContext"](2); return ctx_r36.contestedFilter.value = $event; });
+    _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementStart"](6, "mat-option", 45);
     _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵtext"](7, "Any");
     _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementEnd"]();
-    _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementStart"](8, "mat-option", 49);
+    _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementStart"](8, "mat-option", 50);
     _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵtext"](9, "Yes");
     _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementEnd"]();
-    _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementStart"](10, "mat-option", 50);
+    _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementStart"](10, "mat-option", 51);
     _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵtext"](11, "No");
     _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementEnd"]();
     _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementEnd"]();
@@ -2243,31 +2243,31 @@ function VizComponent_table_21_th_14_Template(rf, ctx) { if (rf & 1) {
     _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵproperty"]("formControl", ctx_r18.contestedFilter)("value", ctx_r18.contestedFilter.value);
 } }
 function VizComponent_table_21_td_15_Template(rf, ctx) { if (rf & 1) {
-    _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementStart"](0, "td", 39);
+    _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementStart"](0, "td", 40);
     _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵtext"](1);
     _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementEnd"]();
 } if (rf & 2) {
-    var element_r36 = ctx.$implicit;
+    var element_r38 = ctx.$implicit;
     _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵadvance"](1);
-    _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵtextInterpolate1"](" ", element_r36.contested, " ");
+    _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵtextInterpolate1"](" ", element_r38.contested, " ");
 } }
 function VizComponent_table_21_th_17_Template(rf, ctx) { if (rf & 1) {
-    var _r38 = _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵgetCurrentView"]();
-    _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementStart"](0, "th", 36);
-    _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementStart"](1, "span", 51);
+    var _r40 = _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵgetCurrentView"]();
+    _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementStart"](0, "th", 37);
+    _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementStart"](1, "span", 52);
     _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵtext"](2, "By/General Election ");
     _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementEnd"]();
     _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementStart"](3, "div");
     _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementStart"](4, "mat-form-field");
-    _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementStart"](5, "mat-select", 43);
-    _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵlistener"]("valueChange", function VizComponent_table_21_th_17_Template_mat_select_valueChange_5_listener($event) { _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵrestoreView"](_r38); var ctx_r37 = _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵnextContext"](2); return ctx_r37.byElectionGeneralFilter.value = $event; });
-    _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementStart"](6, "mat-option", 44);
+    _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementStart"](5, "mat-select", 44);
+    _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵlistener"]("valueChange", function VizComponent_table_21_th_17_Template_mat_select_valueChange_5_listener($event) { _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵrestoreView"](_r40); var ctx_r39 = _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵnextContext"](2); return ctx_r39.byElectionGeneralFilter.value = $event; });
+    _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementStart"](6, "mat-option", 45);
     _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵtext"](7, "Any");
     _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementEnd"]();
-    _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementStart"](8, "mat-option", 46);
+    _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementStart"](8, "mat-option", 47);
     _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵtext"](9, "By Election");
     _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementEnd"]();
-    _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementStart"](10, "mat-option", 52);
+    _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementStart"](10, "mat-option", 53);
     _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵtext"](11, "General Election");
     _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementEnd"]();
     _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementEnd"]();
@@ -2282,22 +2282,22 @@ function VizComponent_table_21_th_17_Template(rf, ctx) { if (rf & 1) {
     _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵproperty"]("formControl", ctx_r20.byElectionGeneralFilter)("value", ctx_r20.byElectionGeneralFilter.value);
 } }
 function VizComponent_table_21_td_18_Template(rf, ctx) { if (rf & 1) {
-    _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementStart"](0, "td", 39);
+    _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementStart"](0, "td", 40);
     _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵtext"](1);
     _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementEnd"]();
 } if (rf & 2) {
-    var element_r39 = ctx.$implicit;
+    var element_r41 = ctx.$implicit;
     _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵadvance"](1);
-    _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵtextInterpolate1"](" ", element_r39.by_election_general, " ");
+    _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵtextInterpolate1"](" ", element_r41.by_election_general, " ");
 } }
 function VizComponent_table_21_th_20_Template(rf, ctx) { if (rf & 1) {
-    _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementStart"](0, "th", 36);
-    _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementStart"](1, "span", 53);
-    _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵtext"](2, "Franchise ");
+    _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementStart"](0, "th", 37);
+    _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementStart"](1, "span", 52);
+    _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵtext"](2, "By Election Cause ");
     _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementEnd"]();
     _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementStart"](3, "div");
     _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementStart"](4, "mat-form-field");
-    _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelement"](5, "input", 38);
+    _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelement"](5, "input", 39);
     _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementEnd"]();
     _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementEnd"]();
     _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementEnd"]();
@@ -2306,37 +2306,25 @@ function VizComponent_table_21_th_20_Template(rf, ctx) { if (rf & 1) {
     _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵadvance"](1);
     _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵproperty"]("matTooltipPosition", "above");
     _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵadvance"](4);
-    _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵproperty"]("formControl", ctx_r22.franchiseFilter);
+    _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵproperty"]("formControl", ctx_r22.byElectionCauseFilter);
 } }
 function VizComponent_table_21_td_21_Template(rf, ctx) { if (rf & 1) {
-    _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementStart"](0, "td", 39);
+    _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementStart"](0, "td", 40);
     _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵtext"](1);
     _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementEnd"]();
 } if (rf & 2) {
-    var element_r40 = ctx.$implicit;
+    var element_r42 = ctx.$implicit;
     _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵadvance"](1);
-    _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵtextInterpolate1"](" ", element_r40.franchise_type, " ");
+    _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵtextInterpolate1"](" ", element_r42.by_election_cause, " ");
 } }
 function VizComponent_table_21_th_23_Template(rf, ctx) { if (rf & 1) {
-    var _r42 = _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵgetCurrentView"]();
-    _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementStart"](0, "th", 36);
+    _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementStart"](0, "th", 37);
     _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementStart"](1, "span", 54);
-    _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵtext"](2, " Has Poll Books? ");
+    _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵtext"](2, "Franchise ");
     _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementEnd"]();
     _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementStart"](3, "div");
     _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementStart"](4, "mat-form-field");
-    _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementStart"](5, "mat-select", 43);
-    _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵlistener"]("valueChange", function VizComponent_table_21_th_23_Template_mat_select_valueChange_5_listener($event) { _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵrestoreView"](_r42); var ctx_r41 = _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵnextContext"](2); return ctx_r41.pollBookCodeFilter.value = $event; });
-    _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementStart"](6, "mat-option", 44);
-    _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵtext"](7, "Any");
-    _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementEnd"]();
-    _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementStart"](8, "mat-option", 49);
-    _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵtext"](9, "Yes");
-    _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementEnd"]();
-    _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementStart"](10, "mat-option", 50);
-    _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵtext"](11, "No");
-    _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementEnd"]();
-    _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementEnd"]();
+    _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelement"](5, "input", 39);
     _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementEnd"]();
     _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementEnd"]();
     _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementEnd"]();
@@ -2345,25 +2333,64 @@ function VizComponent_table_21_th_23_Template(rf, ctx) { if (rf & 1) {
     _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵadvance"](1);
     _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵproperty"]("matTooltipPosition", "above");
     _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵadvance"](4);
-    _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵproperty"]("formControl", ctx_r24.pollBookCodeFilter)("value", ctx_r24.pollBookCodeFilter.value);
+    _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵproperty"]("formControl", ctx_r24.franchiseFilter);
 } }
 function VizComponent_table_21_td_24_Template(rf, ctx) { if (rf & 1) {
-    var _r45 = _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵgetCurrentView"]();
-    _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementStart"](0, "td", 55);
-    _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵlistener"]("click", function VizComponent_table_21_td_24_Template_td_click_0_listener($event) { _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵrestoreView"](_r45); var element_r43 = ctx.$implicit; var ctx_r44 = _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵnextContext"](2); return ctx_r44.getBook($event, element_r43); });
+    _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementStart"](0, "td", 40);
     _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵtext"](1);
     _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementEnd"]();
 } if (rf & 2) {
     var element_r43 = ctx.$implicit;
-    var ctx_r25 = _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵnextContext"](2);
     _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵadvance"](1);
-    _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵtextInterpolate1"](" ", ctx_r25.getHasPollBooks(element_r43.pollbook_id), "");
+    _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵtextInterpolate1"](" ", element_r43.franchise_type, " ");
 } }
-function VizComponent_table_21_tr_25_Template(rf, ctx) { if (rf & 1) {
-    _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelement"](0, "tr", 56);
+function VizComponent_table_21_th_26_Template(rf, ctx) { if (rf & 1) {
+    var _r45 = _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵgetCurrentView"]();
+    _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementStart"](0, "th", 37);
+    _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementStart"](1, "span", 55);
+    _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵtext"](2, " Has Poll Books? ");
+    _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementEnd"]();
+    _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementStart"](3, "div");
+    _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementStart"](4, "mat-form-field");
+    _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementStart"](5, "mat-select", 44);
+    _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵlistener"]("valueChange", function VizComponent_table_21_th_26_Template_mat_select_valueChange_5_listener($event) { _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵrestoreView"](_r45); var ctx_r44 = _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵnextContext"](2); return ctx_r44.pollBookCodeFilter.value = $event; });
+    _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementStart"](6, "mat-option", 45);
+    _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵtext"](7, "Any");
+    _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementEnd"]();
+    _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementStart"](8, "mat-option", 50);
+    _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵtext"](9, "Yes");
+    _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementEnd"]();
+    _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementStart"](10, "mat-option", 51);
+    _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵtext"](11, "No");
+    _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementEnd"]();
+    _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementEnd"]();
+    _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementEnd"]();
+    _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementEnd"]();
+    _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementEnd"]();
+} if (rf & 2) {
+    var ctx_r26 = _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵnextContext"](2);
+    _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵadvance"](1);
+    _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵproperty"]("matTooltipPosition", "above");
+    _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵadvance"](4);
+    _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵproperty"]("formControl", ctx_r26.pollBookCodeFilter)("value", ctx_r26.pollBookCodeFilter.value);
 } }
-function VizComponent_table_21_tr_26_Template(rf, ctx) { if (rf & 1) {
+function VizComponent_table_21_td_27_Template(rf, ctx) { if (rf & 1) {
+    var _r48 = _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵgetCurrentView"]();
+    _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementStart"](0, "td", 56);
+    _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵlistener"]("click", function VizComponent_table_21_td_27_Template_td_click_0_listener($event) { _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵrestoreView"](_r48); var element_r46 = ctx.$implicit; var ctx_r47 = _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵnextContext"](2); return ctx_r47.getBook($event, element_r46); });
+    _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵtext"](1);
+    _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementEnd"]();
+} if (rf & 2) {
+    var element_r46 = ctx.$implicit;
+    var ctx_r27 = _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵnextContext"](2);
+    _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵadvance"](1);
+    _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵtextInterpolate1"](" ", ctx_r27.getHasPollBooks(element_r46.pollbook_id), "");
+} }
+function VizComponent_table_21_tr_28_Template(rf, ctx) { if (rf & 1) {
     _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelement"](0, "tr", 57);
+} }
+function VizComponent_table_21_tr_29_Template(rf, ctx) { if (rf & 1) {
+    _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelement"](0, "tr", 58);
 } }
 function VizComponent_table_21_Template(rf, ctx) { if (rf & 1) {
     _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementStart"](0, "table", 22);
@@ -2396,22 +2423,26 @@ function VizComponent_table_21_Template(rf, ctx) { if (rf & 1) {
     _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵtemplate"](21, VizComponent_table_21_td_21_Template, 2, 1, "td", 25);
     _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementContainerEnd"]();
     _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementContainerStart"](22, 32);
-    _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵtemplate"](23, VizComponent_table_21_th_23_Template, 12, 3, "th", 24);
-    _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵtemplate"](24, VizComponent_table_21_td_24_Template, 2, 1, "td", 33);
+    _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵtemplate"](23, VizComponent_table_21_th_23_Template, 6, 2, "th", 24);
+    _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵtemplate"](24, VizComponent_table_21_td_24_Template, 2, 1, "td", 25);
     _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementContainerEnd"]();
-    _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵtemplate"](25, VizComponent_table_21_tr_25_Template, 1, 0, "tr", 34);
-    _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵtemplate"](26, VizComponent_table_21_tr_26_Template, 1, 0, "tr", 35);
+    _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementContainerStart"](25, 33);
+    _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵtemplate"](26, VizComponent_table_21_th_26_Template, 12, 3, "th", 24);
+    _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵtemplate"](27, VizComponent_table_21_td_27_Template, 2, 1, "td", 34);
+    _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementContainerEnd"]();
+    _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵtemplate"](28, VizComponent_table_21_tr_28_Template, 1, 0, "tr", 35);
+    _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵtemplate"](29, VizComponent_table_21_tr_29_Template, 1, 0, "tr", 36);
     _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementEnd"]();
 } if (rf & 2) {
     var ctx_r5 = _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵnextContext"]();
     _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵproperty"]("dataSource", ctx_r5.dataSource);
-    _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵadvance"](25);
+    _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵadvance"](28);
     _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵproperty"]("matHeaderRowDef", ctx_r5.displayedColumns);
     _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵadvance"](1);
     _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵproperty"]("matRowDefColumns", ctx_r5.displayedColumns);
 } }
 function VizComponent_div_26_Template(rf, ctx) { if (rf & 1) {
-    _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementStart"](0, "div", 58);
+    _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementStart"](0, "div", 59);
     _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵtext"](1);
     _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementEnd"]();
 } if (rf & 2) {
@@ -2436,22 +2467,15 @@ var VizComponent = /** @class */ (function () {
         this.geojsonServiceService = geojsonServiceService;
         this.getPollBooksService = getPollBooksService;
         this.getLatLonService = getLatLonService;
-        //I had to make my own data for cetnroids of the boroughs by hand
-        this.centroids = [];
-        this.counties = [];
         this.uniqueElections = [];
-        //electionsNew: ElectionNew [];
-        this.a = "wiating";
         this.style = {};
         this.gotPollBooks = false;
-        this.clicked = false; //debouncer for the datalayer click
+        //debouncer for the datalayer click
+        this.clicked = false;
         this.zoom = 7;
         this.mapIsReady = false;
         this.options = {
             mapTypeId: 'hybrid',
-            // zoomControl: false,
-            // scrollwheel: false,
-            // disableDoubleClickZoom: true,
             maxZoom: 10,
             minZoom: 2,
             styles: [
@@ -2716,55 +2740,14 @@ var VizComponent = /** @class */ (function () {
             lat: 52.4862,
             lng: 1.8904
         };
-        this.mapLinked = true;
         this.HOPtext = "";
         this.animating = false;
         this.constituencyNames = [];
-        this.markers = [];
-        this.mmarkers = [];
         this.dynamicMarkers = [];
-        this.boroughMarkers = []; //google.maps.Marker [] = [		
-        this.image = {
-            url: '/assets/images/dot.svg',
-            size: new google.maps.Size(10, 10),
-            origin: new google.maps.Point(0, 0),
-            anchor: new google.maps.Point(5, 5),
-            scaledSize: new google.maps.Size(10, 10)
-        };
-        this.countyMarkerOption = {
-            icon: this.image,
-            //                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                         title:	element.constituency,
-            visible: true
-            // label:  {text: element.constituency , color: "white"}
-        };
-        this.imageFore = {
-            url: '/assets/images/smarker.svg',
-            size: new google.maps.Size(20, 20),
-            origin: new google.maps.Point(0, 0),
-            anchor: new google.maps.Point(10, 10),
-            scaledSize: new google.maps.Size(20, 20)
-        };
-        this.countyForegroundMarkerOption = {
-            icon: this.imageFore,
-            // animation: google.maps.Animation.DROP,
-            //                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                         title:	element.constituency,
-            visible: true
-            // label:  {text: element.constituency , color: "white"}
-        };
-        this.boroughCentreMarkers = [];
-        this.countyMarkers = [];
-        //	countyMarkerOption: google.maps.MarkerOptions = {draggable: false};
-        this.countyMarkerOptions = [];
-        this.countyMarkerPositions = [];
-        this.boroughMarkerOptions = [];
-        this.boroughMarkerPositions = [];
-        this.myCenter = { lat: 24, lng: 12 };
-        ///the filtered markers currently on display
-        this.displayedMarkers = [];
         this.forceLink = false;
         //the main filters for the table/database
         this.filteredValues = {
-            election_month: '', constituency: '', election_year: '', countyboroughuniv: '', contested: '', by_election_general: '', franchise_type: '', pollbook_id: ''
+            election_month: '', constituency: '', election_year: '', countyboroughuniv: '', contested: '', by_election_general: '', by_election_cause: '', franchise_type: '', pollbook_id: ''
         };
         //for the graph
         this.electionsPerYear = [];
@@ -2774,19 +2757,15 @@ var VizComponent = /** @class */ (function () {
         this.countyFilter = new _angular_forms__WEBPACK_IMPORTED_MODULE_16__["FormControl"]();
         this.contestedFilter = new _angular_forms__WEBPACK_IMPORTED_MODULE_16__["FormControl"]();
         this.byElectionGeneralFilter = new _angular_forms__WEBPACK_IMPORTED_MODULE_16__["FormControl"]();
+        this.byElectionCauseFilter = new _angular_forms__WEBPACK_IMPORTED_MODULE_16__["FormControl"]();
         this.franchiseFilter = new _angular_forms__WEBPACK_IMPORTED_MODULE_16__["FormControl"]();
         this.pollBookCodeFilter = new _angular_forms__WEBPACK_IMPORTED_MODULE_16__["FormControl"]();
         this.globalFilter = '';
-        this.highlightedConsituencies = [];
-        this.displayedColumns = ['constituency', 'election_year', 'election_month', 'countyboroughuniv', 'by_election_general', 'franchise_type', 'contested', 'pollbook_id'];
+        this.displayedColumns = ['constituency', 'election_year', 'election_month', 'countyboroughuniv', 'by_election_general', 'by_election_cause', 'franchise_type', 'contested', 'pollbook_id'];
         this.dataSource = new _angular_material_table__WEBPACK_IMPORTED_MODULE_15__["MatTableDataSource"]();
-        this.updatingMapStyles = false;
         //for the timelines
         this.minYear = 1695;
         this.maxYear = 1832;
-        this.prevDataSourceSize = 0;
-        // currentMinValue: number = this.minYear;
-        // currentMaxValue: number = this.maxYear;
         this.sliderOptions = {
             floor: 1695,
             ceil: 1832
@@ -2799,62 +2778,57 @@ var VizComponent = /** @class */ (function () {
     }
     //this is a big inefficient watcher on the dataSource
     VizComponent.prototype.ngDoCheck = function () {
-        var _this = this;
-        var datObj = {};
-        if (this.dataSource.filter.length > 0) {
-            datObj = JSON.parse(this.dataSource.filter);
-        }
-        var change = this._differ.diff(datObj);
-        if (change) {
-            this.electionsPerYear = this.getElectionsPerYear();
-            this.updateIsActive(this.getFilteredConstituencies());
-            this.setMapStyle();
-            this.makeAllMarkers();
-            this.getUniqueMarkers();
-            //console.log("update ",this.dynamicMarkers);
-            this.dynamicMarkers.forEach(function (delement) {
-                var inData = false;
-                var cbu = "";
-                _this.dataSource.filteredData.forEach(function (felement) {
-                    if (delement.getTitle().trim() == felement.constituency.trim()) {
-                        inData = true;
-                        cbu = felement.countyboroughuniv;
-                    }
-                });
-                if (inData) {
-                    var image = {
-                        url: '/assets/images/smarker.svg',
-                        size: new google.maps.Size(71, 71),
-                        origin: new google.maps.Point(0, 0),
-                        anchor: new google.maps.Point(17, 34),
-                        scaledSize: new google.maps.Size(25, 25)
-                    };
-                    var options = {
-                        icon: image,
-                        title: delement.getTitle(),
-                        visible: cbu == "C" ? false : true,
-                        label: { text: delement.getTitle(), color: "white" }
-                    };
-                    delement.setOptions(options);
-                }
-                else {
-                    var image = {
-                        url: '/assets/images/dot.svg',
-                        size: new google.maps.Size(20, 20),
-                        origin: new google.maps.Point(0, 0),
-                        anchor: new google.maps.Point(10, 10),
-                        scaledSize: new google.maps.Size(20, 20)
-                    };
-                    var options = {
-                        icon: image,
-                        title: delement.getTitle(),
-                        visible: cbu == "C" ? false : true,
-                        label: { text: delement.getTitle(), color: "white" }
-                    };
-                    delement.setOptions(options);
-                }
-            });
-        }
+        // var datObj = {};
+        // if (this.dataSource.filter.length > 0) {
+        // 	datObj = JSON.parse(this.dataSource.filter);
+        // }
+        // const change = this._differ.diff(datObj);
+        // if (change) {
+        // 	this.electionsPerYear = this.getElectionsPerYear();
+        // 	this.updateIsActive(this.getFilteredConstituencies());
+        // 	this.setMapStyle();
+        // 	this.dynamicMarkers.forEach(delement => {
+        // 		var inData =false;
+        // 		var cbu = "";
+        // 	this.dataSource.filteredData.forEach(felement => {
+        // 		if(delement.getTitle().trim()==felement.constituency.trim()){
+        // 			inData = true;
+        // 			cbu = felement.countyboroughuniv;
+        // 		}
+        // 	});
+        // 	if(inData){
+        // 		var image = {
+        // 			url: './assets/images/smarker.svg',
+        // 			size: new google.maps.Size(71, 71),
+        // 			origin: new google.maps.Point(0, 0),
+        // 			anchor: new google.maps.Point(17, 34),
+        // 			scaledSize: new google.maps.Size(25, 25)
+        // 		  };
+        // 		  var options = {
+        // 			icon:image,
+        // 			title:	delement.getTitle(),
+        // 			visible:cbu=="C" ? false : true,
+        // 			label:  {text: delement.getTitle() , color: "white"}
+        // 		}
+        // 	 delement.setOptions(options);
+        // 	}else{
+        // 		var image = {
+        // 			url: './assets/images/dot.svg',
+        // 			size: new google.maps.Size(20, 20),
+        // 			origin: new google.maps.Point(0, 0),
+        // 			anchor: new google.maps.Point(10, 10),
+        // 			scaledSize: new google.maps.Size(20, 20)
+        // 		  };
+        // 		  var options = {
+        // 			icon:image,
+        // 			title:delement.getTitle(),
+        // 			visible:cbu=="C" ? false : true,
+        // 			label:  {text: delement.getTitle() , color: "white"}
+        // 		}
+        // 	 delement.setOptions(options);
+        // 	}
+        // });
+        // }
     };
     VizComponent.prototype.ngOnDestroy = function () {
     };
@@ -2862,7 +2836,7 @@ var VizComponent = /** @class */ (function () {
         this.dynamicMarker = new google.maps.Marker();
         this.dynamicMarker.setPosition({ lat: 51, lng: 0 });
         var image = {
-            url: '/assets/images/bmarker.svg',
+            url: './assets/images/bmarker.svg',
             size: new google.maps.Size(71, 71),
             origin: new google.maps.Point(0, 0),
             anchor: new google.maps.Point(17, 34),
@@ -2875,25 +2849,6 @@ var VizComponent = /** @class */ (function () {
             label: { text: "test", color: "white" }
         };
         this.dynamicMarker.setOptions(options);
-        // 	path: google.maps.SymbolPath.CIRCLE,
-        // 	scale: 8.5,
-        // 	fillColor: "#F00",
-        // 	fillOpacity: 0.4,
-        // 	strokeWeight: 0.4
-        // });
-        //this.dynamicMarker.setMap(this.map);
-        // this.dynamicMarker = {
-        // 	position: {lat: 51,lng:0},
-        // 	sName: "Marker Name",
-        // 	map: this.map,
-        // icon: {
-        // 	path: google.maps.SymbolPath.CIRCLE,
-        // 	scale: 8.5,
-        // 	fillColor: "#F00",
-        // 	fillOpacity: 0.4,
-        // 	strokeWeight: 0.4
-        // },
-        // };
         for (var i = this.minYear; i <= this.maxYear; i++) {
             var obj = {
                 year: i,
@@ -2907,7 +2862,6 @@ var VizComponent = /** @class */ (function () {
         //tedious material stuff to add pagination to the table
         this.dataSource.paginator = this.paginator;
         // when we land, open the initial modal with the search options in it
-        this.mapLinked = true;
         this.hopData = {
             innerText: "",
             yearRange: "",
@@ -2933,9 +2887,6 @@ var VizComponent = /** @class */ (function () {
     };
     //main data grabbign  function called in ngonint 
     VizComponent.prototype.getData = function () {
-        // this.boroughService.getData().subscribe(
-        // 	(data: Boroughs) => this.boroughs = data
-        // 	, err => console.error(err), () => this.makeBoroughMarkers());
         var _this = this;
         this.getElectionsService.getData()
             .subscribe(function (data) { return _this.electionsMeta = {
@@ -2953,9 +2904,7 @@ var VizComponent = /** @class */ (function () {
         console.log('Element was resized', event);
         this.style = {
             position: 'fixed',
-            // left: `${event.rectangle.left}px`,
             right: "3%",
-            // top: `${event.rectangle.top}px`,
             width: event.rectangle.width + "px",
         };
     };
@@ -2992,8 +2941,8 @@ var VizComponent = /** @class */ (function () {
         var maxMin = this.getMaxMinElectionsPerYear();
         var yearRange = this.maxYear - this.minYear + 1;
         //var barWidth = divWidth / yearRange;
-        var barWidth = divWidth / 137; //this.electionsPerYear.length;
-        var left = bar.year - 1695; //this.d;
+        var barWidth = divWidth / 137;
+        var left = bar.year - 1695;
         left *= barWidth;
         var leftStr = left.toString();
         leftStr += "px";
@@ -3013,54 +2962,12 @@ var VizComponent = /** @class */ (function () {
         };
     };
     VizComponent.prototype.getElectionsPerYear = function () {
-        // var filteredConstituencies = this.getFilteredConstituencies();
         this.electionsPerYear.forEach(function (element) {
             element.numElections = 0;
             element.numContested = 0;
         });
-        // for(var i=this.minYear;i<=this.maxYear;i++){
-        // 	var obj = {
-        // 		year:i,
-        // 		numElections:0,
-        // 		numContested:0
-        // 	}
-        // 	this.electionsPerYear.push(obj);
-        // }
-        // for (var i = this.minYear; i <= this.maxYear; i++) {
-        // 	var obj = {
-        // 		year: i,
-        // 		numElections: 0,
-        // 		numContested: 0
-        // 	};
-        // 	this.electionsPerYear.push(obj);
-        // }
-        // console.log("this.electionsPerYear",this.electionsPerYear);
         for (var i = 0; i < this.dataSource.filteredData.length; i++) {
-            var index = parseInt(this.dataSource.filteredData[i]['election_year']) - 1695; // this.minYear;
-            if (index >= 0 && index < this.electionsPerYear.length) {
-                this.electionsPerYear[index]['numElections']++;
-                if (this.dataSource.filteredData[i]['contested'] == 'Y') {
-                    this.electionsPerYear[index]['numContested']++;
-                }
-            }
-        }
-        //console.log(this.electionsPerYear);
-        return this.electionsPerYear;
-    };
-    VizComponent.prototype.getElectionsPerYearOld = function () {
-        // var filteredConstituencies = this.getFilteredConstituencies();
-        this.electionsPerYear = [];
-        for (var i = this.minYear; i <= this.maxYear; i++) {
-            var obj = {
-                year: i,
-                numElections: 0,
-                numContested: 0
-            };
-            this.electionsPerYear.push(obj);
-        }
-        // console.log("this.electionsPerYear",this.electionsPerYear);
-        for (var i = 0; i < this.dataSource.filteredData.length; i++) {
-            var index = parseInt(this.dataSource.filteredData[i]['election_year']) - this.minYear;
+            var index = parseInt(this.dataSource.filteredData[i]['election_year']) - 1695;
             if (index >= 0 && index < this.electionsPerYear.length) {
                 this.electionsPerYear[index]['numElections']++;
                 if (this.dataSource.filteredData[i]['contested'] == 'Y') {
@@ -3086,7 +2993,6 @@ var VizComponent = /** @class */ (function () {
         console.log(changeContext);
     };
     VizComponent.prototype.sliderChange = function (changeContext) {
-        // this.yearFilter.setValue("");
         this.minYear = changeContext.value;
         this.maxYear = changeContext.highValue;
         this.yearFilter.setValue(changeContext.value.toString() + "-" + changeContext.highValue.toString());
@@ -3108,11 +3014,9 @@ var VizComponent = /** @class */ (function () {
         });
         //TODO where's DURHAM?
         this.map.data.addListener('mouseover', function (event) {
-            //	console.log("mouseover ",event.feature.getProperty("name"));
             _this.setMatchingCountyMarkerVisibility(true, event.feature.getProperty("name"));
         });
         this.map.data.addListener('mouseout', function (event) {
-            //	console.log("mouseover ",event.feature.getProperty("name"));
             _this.setMatchingCountyMarkerVisibility(false, event.feature.getProperty("name"));
         });
         this.map.data.addListener('click', function (event) {
@@ -3144,11 +3048,7 @@ var VizComponent = /** @class */ (function () {
         if (!this.mapIsReady) {
             console.log("map ready");
             this.setUpMapData();
-            this.makeAllMarkers();
         }
-        //this.setStyles();
-        // this.center.lat = 35;
-        //this.getUniqueMarkers();
     };
     VizComponent.prototype.setMapStyle = function () {
         this.map.data.setStyle(function (feature) {
@@ -3169,13 +3069,11 @@ var VizComponent = /** @class */ (function () {
                 strokeWeight: index,
                 zIndex: index,
                 fillColor: "grey"
-                // z-index:index,
             };
         });
     };
     VizComponent.prototype.setallInActive = function () {
         this.map.data.forEach(function (feature) {
-            //		console.log("setting ",feature.getProperty("name")," in active")
             feature.setProperty("isActive", false);
         });
     };
@@ -3191,8 +3089,6 @@ var VizComponent = /** @class */ (function () {
         });
     };
     VizComponent.prototype.updateMapStyles = function (constituencies) {
-        //console.log(constituencies);
-        // this.map.data.revertStyle();
         this.map.data.setStyle(function (feature) {
             var name = feature.getProperty('name');
             var color = "white";
@@ -3210,21 +3106,13 @@ var VizComponent = /** @class */ (function () {
                 strokeColor: color,
                 strokeWeight: index,
                 zIndex: index
-                // z-index:index,
             };
         });
     };
     VizComponent.prototype.mapZoomChanged = function () {
-        console.log("zoom");
-        // console.log(this.map);
-        // console.log(JSON.stringify(this.map.getCenter()));
-        //this.updateMapStyles(this.getFilteredConstituencies());
     };
     //TODO What is the actual call back for the data
     VizComponent.prototype.mapIdle = function () {
-        // console.log("idle");
-        //  setTimeout(()=> {this.updateMapStyles(this.getFilteredConstituencies());}, 3000);
-        //this is my hacky solution for cheacking the data is actually returned. I can't find a listener function for this
         var featureCount = 0;
         this.map.data.forEach(function (feature) {
             featureCount++;
@@ -3241,73 +3129,14 @@ var VizComponent = /** @class */ (function () {
         var filteredConstituencies = this.getFilteredConstituencies();
     };
     VizComponent.prototype.clearMap = function () {
-        var _this = this;
-        this.displayedMarkers = this.markers.filter(function (marker) { return _this.getFilteredConstituencies().includes("gobbldeygook"); });
+        // this.displayedMarkers = this.markers.filter(marker => this.getFilteredConstituencies().includes("gobbldeygook"));
     };
     /////////////////////////////////////////*********END MAP UPDATE FUNCTIONS***********/////////////////////////////////////////
     /////////////////////////////////////////*********START UTILITY FUNCTIONS***********/////////////////////////////////////////
-    VizComponent.prototype.getOptions = function (marker) {
-        if (marker.type == 'B') {
-            //	console.log("returning background");
-            return this.countyMarkerOption;
-        }
-        else {
-            //	console.log("returning foregeground");
-            return this.countyForegroundMarkerOption;
-        }
-    };
-    VizComponent.prototype.getIcon = function (marker) {
-        //console.log("got marker", marker.type);
-        if (marker.type == 'B') {
-            //	console.log("returning background");
-            return this.countyMarkerOption.icon;
-        }
-        else {
-            //	console.log("returning foregeground");
-            return this.countyForegroundMarkerOption.icon;
-        }
-    };
-    VizComponent.prototype.makeCountyMarker = function (element) {
-        var lat = +element.lat;
-        var lng = +element.lng;
-        var myLatLng = { lat: lat, lng: lng };
-        var image = {
-            url: '/assets/images/bmarker.svg',
-            size: new google.maps.Size(71, 71),
-            origin: new google.maps.Point(0, 0),
-            anchor: new google.maps.Point(17, 34),
-            scaledSize: new google.maps.Size(25, 25)
-        };
-        var options = {
-            icon: image,
-            title: element.constituency,
-            visible: true,
-            label: { text: element.constituency, color: "white" }
-        };
-        //this.countyMarkerOption.title="test";
-        this.countyMarkerPositions.push({ lat: lat, lng: lng });
-        this.countyMarkerOptions.push(options);
-    };
-    VizComponent.prototype.getUniqueCountyMarkers = function () {
-        var _this = this;
-        console.log("getting unique county markers");
-        var markerLocations = [];
-        this.markers = [];
-        this.dataSource.data.forEach(function (element) {
-            //	console.log("Element",element);
-            if (markerLocations.indexOf(element.constituency) == -1) {
-                markerLocations.push(element.constituency); //console.log(element.lat,element.lng)
-                //	if(typeof element.lat == "number" && typeof element.lng == "number"){
-                if (element.countyboroughuniv == "C") {
-                    _this.makeCountyMarker(element);
-                }
-            }
-        });
-    };
     VizComponent.prototype.setMatchingCountyMarkerVisibility = function (visible, constituency) {
-        //	console.log("mouseover",constituency);
+        console.log("mouseover", constituency);
         var image = {
-            url: '/assets/images/dot.svg',
+            url: './assets/images/dot.svg',
             size: new google.maps.Size(20, 20),
             origin: new google.maps.Point(0, 0),
             anchor: new google.maps.Point(10, 10),
@@ -3326,259 +3155,21 @@ var VizComponent = /** @class */ (function () {
             }
         });
         this.appRef.tick();
-        // this.countyMarkerOptions= [];
-        // this.countyMarkerPositions= [];
-        // var markerLocations = [];
-        // this.dataSource.data.forEach(element => {
-        // 		if(markerLocations.indexOf(element.constituency)==-1 && element.constituency==constituency){
-        // 			markerLocations.push(element.constituency);		
-        // 			if(element.countyboroughuniv=="C"){
-        // 				this.makeCountyMarker(element);
-        // 			}
+    };
+    VizComponent.prototype.getUniqueElections = function () {
+        // 	var constituencies = [];
+        // 	if(this.uniqueElections!=undefined){
+        // 	this.dataSource.data.forEach(element => {
+        // 		if(constituencies.indexOf(element.constituency)==-1){
+        // 		//	console.log("adding ",element)
+        // 		constituencies.push(element.constituency);
+        // 		this.uniqueElections.push(element);
         // 		}
         // 	});
-        // this.appRef.tick() ;
-    };
-    VizComponent.prototype.setBoroughCentreMarkers = function () {
-        var _this = this;
-        this.boroughMarkers = [];
-        var markerLocations = [];
-        //this.markers = [] ;
-        this.dataSource.data.forEach(function (element) {
-            if (markerLocations.indexOf(element.constituency.trim()) == -1) {
-                //	console.log("adding point for ",element.constituency.trim())
-                var lat = +element.lat;
-                var lng = +element.lng;
-                markerLocations.push(element.constituency.trim());
-                if (element.countyboroughuniv == "B") {
-                    var myLatLng = { lat: lat, lng: lng };
-                    var image = {
-                        url: '/assets/images/dot.svg',
-                        size: new google.maps.Size(20, 20),
-                        origin: new google.maps.Point(0, 0),
-                        anchor: new google.maps.Point(10, 10),
-                        scaledSize: new google.maps.Size(20, 20)
-                    };
-                    var options = {
-                        icon: image,
-                        title: element.constituency,
-                        visible: true
-                        // label:  {text: element.constituency , color: "white"}
-                    };
-                    _this.boroughMarkerPositions.push({ lat: lat, lng: lng });
-                    _this.boroughMarkerOptions.push(options);
-                    //	this.boroughMarkers.push(marker);
-                }
-            }
-        });
-    };
-    VizComponent.prototype.makeMarker = function (element, isBackgroundBorough) {
-        var lat = +element.lat;
-        var lng = +element.lng;
-        var myLatLng = { lat: lat, lng: lng };
-        if (element.countyboroughuniv == "B" && isBackgroundBorough) {
-            //console.log("Making background marker for ", element.constituency);
-            var image = {
-                url: '/assets/images/dot.svg',
-                size: new google.maps.Size(20, 20),
-                origin: new google.maps.Point(0, 0),
-                anchor: new google.maps.Point(10, 10),
-                scaledSize: new google.maps.Size(20, 20)
-            };
-            var options = {
-                icon: image,
-                title: element.constituency,
-                visible: true
-                // label:  {text: element.constituency , color: "white"}
-            };
-            var thisMarker = {
-                position: myLatLng,
-                options: options,
-                title: element.constituency,
-                type: "B"
-            };
-            this.mmarkers.push(thisMarker);
-        }
-        else if (element.countyboroughuniv == "B" && !isBackgroundBorough) {
-            //	console.log("Making foreground marker for ", element.constituency);
-            var image = {
-                url: '/assets/images/dot.svg',
-                size: new google.maps.Size(20, 20),
-                origin: new google.maps.Point(0, 0),
-                anchor: new google.maps.Point(10, 10),
-                scaledSize: new google.maps.Size(20, 20)
-            };
-            var options = {
-                icon: image,
-                title: element.constituency,
-                visible: true
-                // label:  {text: element.constituency , color: "white"}
-            };
-            var thisMarker = {
-                position: myLatLng,
-                options: options,
-                title: element.constituency,
-                type: "BB"
-            };
-            this.mmarkers.push(thisMarker);
-        }
-        else if (element.countyboroughuniv == "C" && !isBackgroundBorough) {
-            var image = {
-                url: '/assets/images/dot.svg',
-                size: new google.maps.Size(20, 20),
-                origin: new google.maps.Point(0, 0),
-                anchor: new google.maps.Point(10, 10),
-                scaledSize: new google.maps.Size(20, 20)
-            };
-            var options = {
-                icon: image,
-                title: element.constituency,
-                visible: true
-                // label:  {text: element.constituency , color: "white"}
-            };
-            var thisMarker = {
-                position: myLatLng,
-                options: options,
-                title: element.constituency,
-                type: "C"
-            };
-            this.mmarkers.push(thisMarker);
-        }
-        //	this.boroughMarkers.push(marker);
-    };
-    VizComponent.prototype.updateMarkers = function () {
-        var _this = this;
-        // this.displayedMarkers = this.markers;
-        // this.displayedMarkers = this.markers.filter(marker => this.getFilteredConstituencies().includes(marker.formatted_address));
-        // this.updateMapStyles(this.getFilteredConstituencies());
-        this.dataSource.filteredData.forEach(function (element) {
-            _this.mmarkers.forEach(function (melement) {
-                melement.type = "B";
-                if (element.constituency == melement.title) {
-                    melement.type = "BB";
-                }
-            });
-        });
-    };
-    VizComponent.prototype.getUniqueConstituencies = function () {
-        var _this = this;
-        var constituencies = [];
-        if (this.uniqueElections != undefined) {
-            this.dataSource.data.forEach(function (element) {
-                if (constituencies.indexOf(element.constituency) == -1) {
-                    //	console.log("adding ",element)
-                    constituencies.push(element.constituency);
-                    _this.uniqueElections.push(element);
-                }
-            });
-        }
-        //	return constituencies;
-    };
-    VizComponent.prototype.makeAllMarkers = function () {
-        var _this = this;
-        this.mmarkers = [];
-        var markerLocations = [];
-        var filteredConstituencies = this.getFilteredConstituencies();
-        //first make all the boroughs that sit in the background
-        var flipper = true;
-        //	console.log("making markers");
+        // }
+        this.uniqueElections = this.dataSource.data.filter(function (value, index, self) { return self.map(function (x) { return x.constituency; }).indexOf(value.constituency) == index; });
         //console.log("this.uniqueElections",this.uniqueElections);
-        if (this.uniqueElections != undefined) {
-            this.uniqueElections.forEach(function (element) {
-                //this.dataSource.data.forEach(element => {
-                if (markerLocations.indexOf(element.constituency.trim()) == -1) {
-                    //	console.log("adding point for ",element.constituency.trim())
-                    markerLocations.push(element.constituency.trim());
-                    if (filteredConstituencies.indexOf(element.constituency) != -1) {
-                        _this.makeMarker(element, false);
-                    }
-                    else {
-                        _this.makeMarker(element, true);
-                    }
-                    //flipper=!flipper;
-                }
-            });
-            //	console.log("made markers",this.mmarkers);
-            markerLocations = [];
-            //now add any boroughs currently in the filtered data
-            this.dataSource.filteredData.forEach(function (element) {
-                _this.mmarkers.forEach(function (melement) {
-                    if (element.constituency == melement.title) {
-                        //melement.type="BB";
-                        // 		var lat: number = +element.lat;
-                        // var lng: number = +element.lng;
-                        // 		var myLatLng = { lat: lat, lng: lng };
-                        // 		var image = {
-                        // 			url: '/assets/images/dot.svg',
-                        // 			size: new google.maps.Size(20, 20),
-                        // 			origin: new google.maps.Point(0, 0),
-                        // 			anchor: new google.maps.Point(10, 10),
-                        // 			scaledSize: new google.maps.Size(20, 20)
-                        // 		  };
-                        // 		  var options = {
-                        // 			icon:image,
-                        // 			title:	element.constituency,
-                        // 			visible:true
-                        // 			// label:  {text: element.constituency , color: "white"}
-                        // 		}
-                        // 		var thisMarker: googleMapsMarkerWrapper = {
-                        // 			position:myLatLng,
-                        // 			options:options,
-                        // 			title: element.constituency,
-                        // 			type:"C"
-                        // 		}
-                        // 		melement = thisMarker;
-                    }
-                });
-            });
-            // image: google.maps.Icon  = {
-            // 	url: '/assets/images/dot.svg',
-            // 	size: new google.maps.Size(20, 20),
-            // 	origin: new google.maps.Point(0, 0),
-            // 	anchor: new google.maps.Point(10, 10),
-            // 	scaledSize: new google.maps.Size(20, 20)
-            //   };
-            //   countyMarkerOption: google.maps.MarkerOptions = {
-            // 	icon:this.image,
-            // 	//                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                         title:	element.constituency,
-            // 	visible:true
-            // 	// label:  {text: element.constituency , color: "white"}
-            // }
-        }
-    };
-    VizComponent.prototype.getUniqueMarkers = function () {
-        var _this = this;
-        var markerLocations = [];
-        this.markers = [];
-        this.dataSource.filteredData.forEach(function (element) {
-            if (markerLocations.indexOf(element.constituency) == -1) {
-                var lat = +element.lat;
-                var lng = +element.lng;
-                markerLocations.push(element.constituency);
-                if (element.countyboroughuniv == "B") {
-                    var image = {
-                        url: '/assets/images/smarker.svg',
-                        size: new google.maps.Size(71, 71),
-                        origin: new google.maps.Point(0, 0),
-                        anchor: new google.maps.Point(17, 34),
-                        scaledSize: new google.maps.Size(25, 25)
-                    };
-                    var marker = {
-                        position: { lat: lat, lng: lng },
-                        title: element.constituency,
-                        icon: "/assets/images/smarker.svg",
-                        visible: true,
-                        options: {
-                            opacity: 1,
-                            zIndex: 10,
-                            animation: google.maps.Animation.DROP,
-                            icon: image,
-                        }
-                    };
-                    _this.markers.push(marker);
-                }
-            }
-        });
+        //this.uniqueElections = this.dataSource.filteredData.map(item => item.constituency).filter((value, index, self) => self.indexOf(value) === index);
     };
     VizComponent.prototype.getPosition = function (marker) {
         return { lat: 51.0, lng: 1.8 };
@@ -3598,6 +3189,7 @@ var VizComponent = /** @class */ (function () {
         this.maxYear = spread + start;
         console.log("years", this.minYear, this.maxYear);
         var y = 1777;
+        //TODO add some other filters here like by election cause
         this.yearFilter.setValue(this.minYear.toString() + "-" + this.maxYear.toString());
         this.constituencyFilter.setValue(this.getRandomConstituenciesString(20));
         this.dataSource.filter = JSON.stringify(this.filteredValues);
@@ -3631,21 +3223,7 @@ var VizComponent = /** @class */ (function () {
     /////////////////////////////////////////*********END UTILITY FUNCTIONS***********/////////////////////////////////////////
     /////////////////////////////////////////*********START BUTTONS AND SLIDERS FUNCTIONS***********/////////////////////////////////////////
     VizComponent.prototype.animateTimeLine = function () {
-        // var image = {
-        // 	url: '/assets/images/dot.svg',
-        // 	size: new google.maps.Size(71, 71),
-        // 	origin: new google.maps.Point(0, 0),
-        // 	anchor: new google.maps.Point(17, 34),
-        // 	scaledSize: new google.maps.Size(25, 25)
-        //   };
-        //   var options = {
-        // 	icon:image,
-        // 	title:	"test",
-        // 	visible:true,
-        // 	label:  {text: "test" , color: "white"}
-        // }
         var _this = this;
-        // this.dynamicMarker.setOptions(options);
         if (this.animating) {
             if (this.animatingId) {
                 clearInterval(this.animatingId);
@@ -3671,22 +3249,27 @@ var VizComponent = /** @class */ (function () {
     };
     //called when the filter updates I think
     VizComponent.prototype.setDateSlider = function () {
+        console.log(this.yearFilter.value);
         var years = this.yearFilter.value;
-        if (years.split("-").length == 2) {
+        if (years.split("-").length == 2 && years.trim().length == 9) {
+            console.log("year range");
             this.minYear = years.split("-")[0].trim();
             this.maxYear = years.split("-")[1].trim();
         }
         else if (years.split(",").length > 1) {
-            this.minYear = 1695;
-            this.maxYear = 1832;
+            console.log("year list");
+            // this.minYear = years.split(",")[0];
+            // this.maxYear = 1832;
         }
         else if (years.length == 4) {
+            console.log("single year");
             this.minYear = parseInt(years.trim());
             this.maxYear = parseInt(years.trim());
         }
         else {
-            this.minYear = 1695;
-            this.maxYear = 1832;
+            console.log("no match for year format");
+            // this.minYear = 1695;
+            // this.maxYear = 1832;
         }
     };
     /////////////////////////////////////////*********END BUTTONS AND SLIDERS FUNCTIONS***********/////////////////////////////////////////
@@ -3694,21 +3277,15 @@ var VizComponent = /** @class */ (function () {
     //https://timdeschryver.dev/blog/google-maps-as-an-angular-component
     //called at the start I think and sets up all the filter subscriptions
     VizComponent.prototype.setUpFilters = function () {
-        // this.addMarkers();
         var _this = this;
-        //this.electionsMeta
-        //	console.log("data",this.electionsMeta.elections);
         this.dataSource = new _angular_material_table__WEBPACK_IMPORTED_MODULE_15__["MatTableDataSource"](this.electionsMeta.elections);
         this.dataSource.paginator = this.paginator;
-        this.getUniqueConstituencies();
-        this.getUniqueMarkers();
-        this.setBoroughCentreMarkers();
+        this.getUniqueElections();
         this.uniqueElections.forEach(function (element) {
             var thisDynamicMarker = new google.maps.Marker();
-            //console.log(element.lat,typeof(element.lat))
             thisDynamicMarker.setPosition({ lat: +element.lat, lng: +element.lng });
             var image = {
-                url: '/assets/images/dot.svg',
+                url: './assets/images/dot.svg',
                 size: new google.maps.Size(20, 20),
                 origin: new google.maps.Point(0, 0),
                 anchor: new google.maps.Point(10, 10),
@@ -3731,39 +3308,100 @@ var VizComponent = /** @class */ (function () {
             console.log("change in consituencyfilter");
             _this.filteredValues['constituency'] = constituencyFilterValue;
             _this.dataSource.filter = JSON.stringify(_this.filteredValues);
+            _this.onDataSubscriptionChange();
         });
         this.monthFilter.valueChanges.subscribe(function (monthFilterValue) {
             _this.filteredValues['election_month'] = monthFilterValue;
             _this.dataSource.filter = JSON.stringify(_this.filteredValues);
+            _this.onDataSubscriptionChange();
         });
         this.yearFilter.valueChanges.subscribe(function (yearFilterValue) {
             var yearRange = yearFilterValue.split(",");
             _this.setDateSlider();
             _this.filteredValues['election_year'] = yearFilterValue;
             _this.dataSource.filter = JSON.stringify(_this.filteredValues);
-            // this.updateMarkers();
+            _this.onDataSubscriptionChange();
         });
         this.countyFilter.valueChanges.subscribe(function (countyFilterValue) {
             _this.filteredValues['countyboroughuniv'] = countyFilterValue;
             _this.dataSource.filter = JSON.stringify(_this.filteredValues);
+            _this.onDataSubscriptionChange();
         });
         this.contestedFilter.valueChanges.subscribe(function (contestedFilterValue) {
             _this.filteredValues['contested'] = contestedFilterValue;
             _this.dataSource.filter = JSON.stringify(_this.filteredValues);
+            _this.onDataSubscriptionChange();
         });
         this.byElectionGeneralFilter.valueChanges.subscribe(function (byElectionGeneralFilterValue) {
             _this.filteredValues['by_election_general'] = byElectionGeneralFilterValue;
             _this.dataSource.filter = JSON.stringify(_this.filteredValues);
+            _this.onDataSubscriptionChange();
+        });
+        this.byElectionCauseFilter.valueChanges.subscribe(function (byElectionCauseFilterValue) {
+            _this.filteredValues['by_election_cause'] = byElectionCauseFilterValue;
+            _this.dataSource.filter = JSON.stringify(_this.filteredValues);
+            _this.onDataSubscriptionChange();
         });
         this.franchiseFilter.valueChanges.subscribe(function (franchiseFilterValue) {
             _this.filteredValues['franchise_type'] = franchiseFilterValue;
             _this.dataSource.filter = JSON.stringify(_this.filteredValues);
+            _this.onDataSubscriptionChange();
         });
         this.pollBookCodeFilter.valueChanges.subscribe(function (pollBookCodeFilterValue) {
             _this.filteredValues['pollbook_id'] = pollBookCodeFilterValue;
             _this.dataSource.filter = JSON.stringify(_this.filteredValues);
+            _this.onDataSubscriptionChange();
         });
         this.dataSource.filterPredicate = this.customFilterPredicate();
+    };
+    VizComponent.prototype.onDataSubscriptionChange = function () {
+        var _this = this;
+        console.log("sub change");
+        this.electionsPerYear = this.getElectionsPerYear();
+        this.updateIsActive(this.getFilteredConstituencies());
+        this.setMapStyle();
+        this.dynamicMarkers.forEach(function (delement) {
+            var inData = false;
+            var cbu = "";
+            _this.dataSource.filteredData.forEach(function (felement) {
+                if (delement.getTitle().trim() == felement.constituency.trim()) {
+                    inData = true;
+                    cbu = felement.countyboroughuniv;
+                }
+            });
+            if (inData) {
+                var image = {
+                    url: './assets/images/smarker.svg',
+                    size: new google.maps.Size(71, 71),
+                    origin: new google.maps.Point(0, 0),
+                    anchor: new google.maps.Point(17, 34),
+                    scaledSize: new google.maps.Size(25, 25)
+                };
+                var options = {
+                    icon: image,
+                    title: delement.getTitle(),
+                    visible: cbu == "C" ? false : true,
+                    label: { text: delement.getTitle(), color: "white" }
+                };
+                delement.setOptions(options);
+            }
+            else {
+                var image = {
+                    url: './assets/images/dot.svg',
+                    size: new google.maps.Size(20, 20),
+                    origin: new google.maps.Point(0, 0),
+                    anchor: new google.maps.Point(10, 10),
+                    scaledSize: new google.maps.Size(20, 20)
+                };
+                var options = {
+                    icon: image,
+                    title: delement.getTitle(),
+                    visible: cbu == "C" ? false : true,
+                    label: { text: delement.getTitle(), color: "white" }
+                };
+                delement.setOptions(options);
+            }
+        });
     };
     //what it sound slike, set all the searches to blank and include all daata
     VizComponent.prototype.clearSearch = function () {
@@ -3772,19 +3410,15 @@ var VizComponent = /** @class */ (function () {
         this.countyFilter.setValue("");
         this.contestedFilter.setValue("");
         this.byElectionGeneralFilter.setValue("");
+        this.byElectionCauseFilter.setValue("");
         this.franchiseFilter.setValue("");
         this.pollBookCodeFilter.setValue("");
         this.constituencyFilter.setValue("");
-        //		 this.constituencyFilter.setValue(this.constituencyFilter.value+",Yorkshire");
         this.dataSource.filter = JSON.stringify(this.filteredValues);
     };
+    //returns a list of unique consituency names
     VizComponent.prototype.getFilteredConstituencies = function () {
-        var filteredConstituencies = [];
-        for (var i = 0; i < this.dataSource.filteredData.length; i++) {
-            if (!filteredConstituencies.includes(this.dataSource.filteredData[i].constituency)) {
-                filteredConstituencies.push(this.dataSource.filteredData[i].constituency);
-            }
-        }
+        var filteredConstituencies = this.dataSource.filteredData.map(function (item) { return item.constituency; }).filter(function (value, index, self) { return self.indexOf(value) === index; });
         return filteredConstituencies;
     };
     VizComponent.prototype.customFilterPredicate = function () {
@@ -3792,9 +3426,7 @@ var VizComponent = /** @class */ (function () {
         this.pollBooks = null;
         var myFilterPredicate = function (data, filter) {
             var globalMatch = !_this.globalFilter;
-            //  console.log('globalMatch',globalMatch);
             if (_this.globalFilter) {
-                // search all text fields
                 globalMatch = data.election_month.toString().trim().toLowerCase().indexOf(_this.globalFilter.toLowerCase()) !== -1
                     || data.constituency.toString().trim().toLowerCase().indexOf(_this.globalFilter.toLowerCase()) !== -1
                     || data.countyboroughuniv.toString().trim().toLowerCase().indexOf(_this.globalFilter.toLowerCase()) !== -1
@@ -3805,18 +3437,15 @@ var VizComponent = /** @class */ (function () {
                 return;
             }
             var searchString = JSON.parse(filter);
-            // return data.constituency.toString().trim().indexOf(searchString.constituency) !== -1  
             return _this.hasConstituencies(data, searchString)
                 && _this.hasMonths(data, searchString)
                 && _this.hasYears(data, searchString)
-                // && data.election_month.toString().trim().toLowerCase().indexOf(searchString.election_month.toLowerCase()) !== -1 
-                // && data.Year.toString().trim().toLowerCase().indexOf(searchString.Year.toLowerCase()) !== -1 
                 && data.countyboroughuniv.toString().trim().toLowerCase().indexOf(searchString.countyboroughuniv.toLowerCase()) !== -1
                 && data.contested.toString().trim().toLowerCase().indexOf(searchString.contested.toLowerCase()) !== -1
                 && data.by_election_general.toString().trim().toLowerCase().indexOf(searchString.by_election_general.toLowerCase()) !== -1
+                && data.by_election_cause.toString().trim().toLowerCase().indexOf(searchString.by_election_cause.toLowerCase()) !== -1
                 && data.contested.toString().trim().toLowerCase().indexOf(searchString.contested.toLowerCase()) !== -1
                 && data.franchise_type.toString().trim().toLowerCase().indexOf(searchString.franchise_type.toLowerCase()) !== -1
-                // && data.pollbook_id.toString().trim().toLowerCase().indexOf(searchString.pollbook_id.toLowerCase()) !== -1 
                 && _this.getHasPollBooksFilter(data.pollbook_id.toString().trim().toLowerCase(), searchString.pollbook_id.toLowerCase()) !== -1;
         };
         return myFilterPredicate;
@@ -3909,7 +3538,6 @@ var VizComponent = /** @class */ (function () {
                 return this.yearFilter.value.toString().trim().indexOf(year) !== -1;
             }
         }
-        //	if(year>=lowYear && year<=this.currentMaxValue) return 0;
         return -1;
     };
     VizComponent.prototype.getHasPollBooksFilter = function (pollbook_id, searchTerm) {
@@ -4273,12 +3901,12 @@ var VizComponent = /** @class */ (function () {
             var _t = void 0;
             _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵqueryRefresh"](_t = _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵloadQuery"]()) && (ctx.paginator = _t.first);
             _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵqueryRefresh"](_t = _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵloadQuery"]()) && (ctx.map = _t.first);
-        } }, features: [_angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵNgOnChangesFeature"]], decls: 27, vars: 19, consts: [["id", "container"], [1, "map-container"], ["height", "1000px", "width", "100%", 3, "zoom", "center", "options", "tilesloaded", "zoomChanged", "idle"], [3, "position", "options", 4, "ngFor", "ngForOf"], ["mwlResizable", "", "id", "info_window", 3, "enableGhostResize", "ngStyle", "resizeEdges", "resizeEnd", "resizeStart"], ["style", "color:white; margin-top: 2%", 4, "ngIf"], ["id", "graph_container", 2, "width", "100%", "position", "relative"], ["gcontainer", ""], ["style", "width:100%; background-color: #ffd740;  ", "class", "bar", 3, "matTooltip", "ngStyle", 4, "ngFor", "ngForOf"], ["style", "width:100%;background-color: #0db9f0;   ", "class", "bar", 3, "matTooltip", "ngStyle", 4, "ngFor", "ngForOf"], ["mat-raised-button", "", 1, "button_option", 3, "click"], [2, "z-index", "20000", 3, "value", "highValue", "options", "valueChange", "highValueChange", "userChange"], ["mat-table", "", "class", "mat-elevation-z8 mytable style-3 stay_inline", 3, "dataSource", 4, "ngIf"], ["id", "pagin", "showFirstLastButtons", "", 3, "pageSize", "pageSizeOptions"], ["mat-icon-button", "", "aria-label", "download our data", 3, "click"], ["id", "HOPtext", 4, "ngIf"], [3, "position", "options"], [2, "color", "white", "margin-top", "2%"], [2, "color", "#ffd740"], [2, "color", "#0db9f0"], [1, "bar", 2, "width", "100%", "background-color", "#ffd740", 3, "matTooltip", "ngStyle"], [1, "bar", 2, "width", "100%", "background-color", "#0db9f0", 3, "matTooltip", "ngStyle"], ["mat-table", "", 1, "mat-elevation-z8", "mytable", "style-3", "stay_inline", 3, "dataSource"], ["matColumnDef", "constituency"], ["mat-header-cell", "", 4, "matHeaderCellDef"], ["mat-cell", "", 4, "matCellDef"], ["matColumnDef", "election_month"], ["matColumnDef", "election_year"], ["matColumnDef", "countyboroughuniv"], ["matColumnDef", "contested"], ["matColumnDef", "by_election_general"], ["matColumnDef", "franchise_type"], ["matColumnDef", "pollbook_id"], ["mat-cell", "", "id", "pollBookCell", 3, "click", 4, "matCellDef"], ["mat-header-row", "", 4, "matHeaderRowDef"], ["mat-row", "", 4, "matRowDef", "matRowDefColumns"], ["mat-header-cell", ""], ["matTooltip", "click to find out more about consitituencies", 3, "matTooltipPosition"], ["matInput", "", "placeholder", "....", 1, "form-field", 3, "formControl"], ["mat-cell", ""], ["matTooltip", "click to find out more about months", 3, "matTooltipPosition"], ["matTooltip", "click to find out more about years", 3, "matTooltipPosition"], ["matTooltip", "click to find out more about the different kinds of elections", 3, "matTooltipPosition"], [3, "formControl", "value", "valueChange"], ["value", ""], ["value", "C"], ["value", "B"], ["value", "U"], ["matTooltip", "Not all elections were fought. click to find out more", 3, "matTooltipPosition"], ["value", "Y"], ["value", "N"], ["matTooltip", "general elections happened every 4 years. click to find out more about them", 3, "matTooltipPosition"], ["value", "G"], ["matTooltip", "click to find out more about franchiseTypes", 3, "matTooltipPosition"], ["matTooltip", "poll books contain important details of voters. click to find out more", 3, "matTooltipPosition"], ["mat-cell", "", "id", "pollBookCell", 3, "click"], ["mat-header-row", ""], ["mat-row", ""], ["id", "HOPtext"]], template: function VizComponent_Template(rf, ctx) { if (rf & 1) {
+        } }, features: [_angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵNgOnChangesFeature"]], decls: 27, vars: 19, consts: [["id", "container"], [1, "map-container"], ["height", "1000px", "width", "100%", 3, "zoom", "center", "options", "tilesloaded", "zoomChanged", "idle"], [3, "position", "options", 4, "ngFor", "ngForOf"], ["mwlResizable", "", "id", "info_window", 3, "enableGhostResize", "ngStyle", "resizeEdges", "resizeEnd", "resizeStart"], ["style", "color:white; margin-top: 2%", 4, "ngIf"], ["id", "graph_container", 2, "width", "100%", "position", "relative"], ["gcontainer", ""], ["style", "width:100%; background-color: #ffd740;  ", "class", "bar", 3, "matTooltip", "ngStyle", 4, "ngFor", "ngForOf"], ["style", "width:100%;background-color: #0db9f0;   ", "class", "bar", 3, "matTooltip", "ngStyle", 4, "ngFor", "ngForOf"], ["mat-raised-button", "", 1, "button_option", 3, "click"], [2, "z-index", "20000", 3, "value", "highValue", "options", "valueChange", "highValueChange", "userChange"], ["mat-table", "", "class", "mat-elevation-z8 mytable style-3 stay_inline", 3, "dataSource", 4, "ngIf"], ["id", "pagin", "showFirstLastButtons", "", 3, "pageSize", "pageSizeOptions"], ["mat-icon-button", "", "aria-label", "download our data", 3, "click"], ["id", "HOPtext", 4, "ngIf"], [3, "position", "options"], [2, "color", "white", "margin-top", "2%"], [2, "color", "#ffd740"], [2, "color", "#0db9f0"], [1, "bar", 2, "width", "100%", "background-color", "#ffd740", 3, "matTooltip", "ngStyle"], [1, "bar", 2, "width", "100%", "background-color", "#0db9f0", 3, "matTooltip", "ngStyle"], ["mat-table", "", 1, "mat-elevation-z8", "mytable", "style-3", "stay_inline", 3, "dataSource"], ["matColumnDef", "constituency"], ["mat-header-cell", "", 4, "matHeaderCellDef"], ["mat-cell", "", 4, "matCellDef"], ["matColumnDef", "election_month"], ["matColumnDef", "election_year"], ["matColumnDef", "countyboroughuniv"], ["matColumnDef", "contested"], ["matColumnDef", "by_election_general"], ["matColumnDef", "by_election_cause"], ["matColumnDef", "franchise_type"], ["matColumnDef", "pollbook_id"], ["mat-cell", "", "id", "pollBookCell", 3, "click", 4, "matCellDef"], ["mat-header-row", "", 4, "matHeaderRowDef"], ["mat-row", "", 4, "matRowDef", "matRowDefColumns"], ["mat-header-cell", ""], ["matTooltip", "click to find out more about consitituencies", 3, "matTooltipPosition"], ["matInput", "", "placeholder", "....", 1, "form-field", 3, "formControl"], ["mat-cell", ""], ["matTooltip", "click to find out more about months", 3, "matTooltipPosition"], ["matTooltip", "click to find out more about years", 3, "matTooltipPosition"], ["matTooltip", "click to find out more about the different kinds of elections", 3, "matTooltipPosition"], [3, "formControl", "value", "valueChange"], ["value", ""], ["value", "C"], ["value", "B"], ["value", "U"], ["matTooltip", "Not all elections were fought. click to find out more", 3, "matTooltipPosition"], ["value", "Y"], ["value", "N"], ["matTooltip", "general elections happened every 4 years. click to find out more about them", 3, "matTooltipPosition"], ["value", "G"], ["matTooltip", "click to find out more about franchiseTypes", 3, "matTooltipPosition"], ["matTooltip", "poll books contain important details of voters. click to find out more", 3, "matTooltipPosition"], ["mat-cell", "", "id", "pollBookCell", 3, "click"], ["mat-header-row", ""], ["mat-row", ""], ["id", "HOPtext"]], template: function VizComponent_Template(rf, ctx) { if (rf & 1) {
             _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementStart"](0, "div", 0);
             _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementStart"](1, "div", 1);
             _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementStart"](2, "google-map", 2);
             _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵlistener"]("tilesloaded", function VizComponent_Template_google_map_tilesloaded_2_listener() { return ctx.mapReady(); })("zoomChanged", function VizComponent_Template_google_map_zoomChanged_2_listener() { return ctx.mapZoomChanged(); })("idle", function VizComponent_Template_google_map_idle_2_listener() { return ctx.mapIdle(); });
-            _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵtemplate"](3, VizComponent_map_marker_3_Template, 1, 6, "map-marker", 3);
+            _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵtemplate"](3, VizComponent_map_marker_3_Template, 1, 5, "map-marker", 3);
             _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementEnd"]();
             _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementEnd"]();
             _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementStart"](4, "div", 4);
@@ -4307,7 +3935,7 @@ var VizComponent = /** @class */ (function () {
             _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementStart"](20, "ng5-slider", 11);
             _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵlistener"]("valueChange", function VizComponent_Template_ng5_slider_valueChange_20_listener($event) { return ctx.minYear = $event; })("highValueChange", function VizComponent_Template_ng5_slider_highValueChange_20_listener($event) { return ctx.maxYear = $event; })("userChange", function VizComponent_Template_ng5_slider_userChange_20_listener($event) { return ctx.sliderChange($event); });
             _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementEnd"]();
-            _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵtemplate"](21, VizComponent_table_21_Template, 27, 3, "table", 12);
+            _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵtemplate"](21, VizComponent_table_21_Template, 30, 3, "table", 12);
             _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelement"](22, "mat-paginator", 13);
             _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementStart"](23, "button", 14);
             _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵlistener"]("click", function VizComponent_Template_button_click_23_listener() { return ctx.download(); });
