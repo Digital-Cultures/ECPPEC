@@ -71,8 +71,11 @@ if(count($options)) {
 }
 
 $stmt  = $conn->prepare($sql); // prepare
-$types = str_repeat('s', count($big_array)); //types
-$stmt->bind_param($types, ...$big_array); // bind array at once
+$n = count($big_array);
+if($n) {
+	$types = str_repeat('s', $n); //types
+	$stmt->bind_param($types, ...$big_array); // bind array at once
+}
 $stmt->execute();
 $result = $stmt->get_result(); // get the mysqli result
 $rows = $result->fetch_all(MYSQLI_ASSOC); // fetch the data
