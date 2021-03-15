@@ -83,7 +83,13 @@ import { GoogleMapsModule } from '@angular/google-maps'
 		ResizableModule,
 		WalkthroughModule,
 		MatButtonToggleModule,
-		GoogleMapsModule,
+
+
+		AgmCoreModule.forRoot({
+			// please get your own API key here:
+			// https://developers.google.com/maps/documentation/javascript/get-api-key?hl=en
+			apiKey: 'AIzaSyBkHakOMT0gjkUZr2fGDm2kJAC3wRLRkiQ'
+		}),
 		BrowserAnimationsModule,
 		AppRoutingModule
 	],

@@ -1,53 +1,201 @@
 <div id="container">
 
-    <div class="map-container">
-        <google-map height="1000px" width="100%" [zoom]="zoom" [center]="center" [options]="options" (tilesloaded)="mapReady()" (zoomChanged)="mapZoomChanged()" (idle)="mapIdle()">
+	<div  class="map-container">
+		<agm-map #agmSearch
+
+		[latitude]="lat"
+		[longitude]="lng"
+		[styles]="styles"
+		[zoom]="zoom"
+		[disableDefaultUI]="false"
+		[zoomControl]="false"
+		(mapClick)="mapClicked($event)"
+		class="fill">
+		<!-- [iconUrl]="marker.iconUrl" -->
+		<!-- [iconUrl]="'./assets/images/marker.svg'"  -->
+
+		<agm-marker *ngFor="let marker of  displayedMarkers" 
+		style="color:white"
+		[iconUrl]="{
+		url: './assets/images/marker.svg',
+		scaledSize: {
+		width: 40,
+		height: 60
+	}
+}"
+[animation]="'DROP'"  (mouseOver)="mouseOverMarker(marker, $event)"
+
+(mouseOut)="mouseOutMarker(marker, $event)" [title]="marker.formatted_address" [label]="marker.label"  (markerClick)="markerClicked(marker)" [latitude]="marker.lat" [longitude]="marker.lng" ></agm-marker>
+<!-- <agm-data-layer *ngIf="geojson" [style]="styleFunc" [geoJson]="geojson" (layerClick)="geoClicked($event)"> </agm-data-layer> -->
+
+<agm-info-window  *ngFor="let county of counties" [isOpen]="county.isOpen" [latitude]="county.lat" [longitude]="county.lng" [disableAutoPan]="true">
+    {{county.name}}
+</agm-info-window>
+<ng-container *ngIf="showDataLayer">
+      <agm-data-layer  *ngFor="let geo of geojsons"  [style]="styleFunc" [geoJson]="geo"  (layerSetproperty)="setMyProperty($event, geo)" (mouseOver)="layerMouseOver($event,geo)" (layerClick)="geoClicked($event)"> </agm-data-layer></ng-container>
+</agm-map>
+</div>
+<div mwlResizable
+[enableGhostResize]="true"
+(resizeEnd)="onResizeEnd($event)"
+(resizeStart)="onResizeStart($event)"
+[ngStyle]="style"
+[resizeEdges]="{ bottom: false, right: false, top: false, left: true }"
+id="info_window" >
+
+<!-- <div id="slider-container"> -->
 
 
-            <map-marker *ngFor="let dynamicMarker of dynamicMarkers" [position]="dynamicMarker.getPosition()" [options]="{icon:dynamicMarker.getIcon(), title:dynamicMarker.title   }"></map-marker>
+      <!-- @Dan material tables have this really complicated data binding structure. the filtered stuff from the columns is a property of the dataSource object -->
+      <div *ngIf="dataSource.filteredData" style="color:white; margin-top: 2%">
 
-        </google-map>
 
+
+
+
+          <strong style="color:#ffd740">         {{dataSource.filteredData.length}}</strong> Elections of which <strong style="color:#0db9f0">{{getNumberOfContested()}}</strong>{{getPlural(getNumberOfContested())}}</div><br>
+
+          <div #gcontainer id="graph_container" style="width:100%;  position:relative; ">
+               <div *ngFor="let bar of electionsPerYear" matTooltip="{{bar.year}}: {{bar.numElections}} elections" style="width:100%; background-color: #ffd740;  " [ngStyle]="getBarStyle(bar, gcontainer.offsetWidth,gcontainer.offsetHeight, false)" class="bar" ></div>
+               <div *ngFor="let bar of electionsPerYear" matTooltip="{{bar.year}}: {{bar.numContested}} contested elections" style="width:100%;background-color: #0db9f0;   " [ngStyle]="getBarStyle(bar, gcontainer.offsetWidth,gcontainer.offsetHeight, true)" class="bar" ></div>
+               <!-- </div> -->
+         </div>
+         <mat-radio-group >
+               <mat-radio-button style="margin-right: 20px" [checked]="mapLinked" (click)="toggleMapLinked(true)" value="true">Map Linked</mat-radio-button>
+               <mat-radio-button style="margin-right: 20px" [checked]="!mapLinked" (click)="toggleMapLinked(false)" value="false">Map Unlinked         </mat-radio-button>
+         </mat-radio-group>
+         <br>
+         <!-- id="clear_map" -->
+
+         <button mat-raised-button class="button_option" (click)="openDialogue()">OPEN THE FORM</button> 
+         <button mat-raised-button  class="button_option"  (click)="clearSearch()">CLEAR MY SEARCH</button>  
+         <button mat-raised-button class="button_option"  (click)="clearMap()">CLEAR THE MAP</button>   
+
+
+         <br><br>
+
+         <!-- </div> -->
+
+         <ng5-slider [(value)]="minValue" [(highValue)]="maxValue" (userChange)="onUserChange($event)" style="z-index:20000;" [options]="options"></ng5-slider>
+
+
+         <table *ngIf="dataSource" mat-table [dataSource]="dataSource"  class="mat-elevation-z8 mytable style-3 stay_inline">
+
+           <ng-container  matColumnDef="Constituency">
+                <th  mat-header-cell *matHeaderCellDef> <span matTooltip="click to find out more about consitituencies" [matTooltipPosition]="'above'">Constituency</span>
+                     <div>
+                          <mat-form-field>
+                               <input matInput class="form-field" [formControl]="constituencyFilter" placeholder="...." >
+                         </mat-form-field>
+                   </div>
+             </th>
+             <td mat-cell *matCellDef="let element"> {{element.Constituency}} </td>
+       </ng-container>
+
+       <ng-container matColumnDef="Month">
+          <th mat-header-cell *matHeaderCellDef> <span matTooltip="click to find out more about months" [matTooltipPosition]="'above'">Month </span>
+               <div>
+                    <mat-form-field>
+                         <input matInput class="form-field" [formControl]="monthFilter" placeholder="....">
+                   </mat-form-field>
+             </div>
+       </th>
+       <td mat-cell *matCellDef="let element"> {{element.Month}} </td>
+ </ng-container>
+
+ <ng-container matColumnDef="Year">
+    <th mat-header-cell *matHeaderCellDef> <span matTooltip="click to find out more about years" [matTooltipPosition]="'above'">Year </span>
+         <div>
+              <mat-form-field>
+                   <input matInput class="form-field" [formControl]="yearFilter" placeholder="....">
+             </mat-form-field>
+       </div>
+ </th>
+ <td mat-cell *matCellDef="let element"> {{element.Year}} </td>
+</ng-container>
+
+<ng-container matColumnDef="CountyBoroughUniv">
+    <th mat-header-cell *matHeaderCellDef> <span matTooltip="click to find out more about the different kinds of elections" [matTooltipPosition]="'above'">County/Borough/Univ </span>
+         <div>
+              <mat-form-field>
+                   <input matInput class="form-field" [formControl]="countyFilter" placeholder="....">
+             </mat-form-field>
+       </div>
+ </th>
+ <td mat-cell *matCellDef="let element"> {{element.CountyBoroughUniv}} </td>
+</ng-container>
+
+<ng-container matColumnDef="Contested">
+    <th mat-header-cell *matHeaderCellDef> <span matTooltip="Not all elections were fought. click to find out more" [matTooltipPosition]="'above'">Contested?</span>
+         <div>
+              <mat-form-field>
+
+                   <mat-select [formControl]="contestedFilter" [(value)]="contestedFilter.value">
+                        <mat-option value="">Any</mat-option>
+                        <mat-option value="Y">Yes</mat-option>
+                        <mat-option value="N">No</mat-option>
+                  </mat-select>
+            </mat-form-field>
+      </div>
+</th>
+<td mat-cell *matCellDef="let element"> {{element.Contested}} </td>
+</ng-container>
+
+<ng-container matColumnDef="ByElectionGeneral">
+    <th mat-header-cell *matHeaderCellDef> <span matTooltip="general elections happened every 4 years. click to find out more about them" [matTooltipPosition]="'above'">By/General Election </span>
+         <div>
+              <mat-form-field>
+
+                   <mat-select [formControl]="byElectionGeneralFilter" [(value)]="byElectionGeneralFilter.value">
+                        <mat-option value="">Any</mat-option>
+                        <mat-option value="B">By Election</mat-option>
+                        <mat-option value="G">General Election</mat-option>
+                  </mat-select>
+
+            </mat-form-field>
+      </div>
+</th>
+<td mat-cell *matCellDef="let element"> {{element.ByElectionGeneral}} </td>
+</ng-container>
+
+<ng-container matColumnDef="PollBookCode">
+    <th mat-header-cell *matHeaderCellDef><span matTooltip="poll books contain important details of voters. click to find out more" [matTooltipPosition]="'above'"> Has Poll Books? </span>
+         <div>
+              <mat-form-field>
+                   <mat-select [formControl]="pollBookCodeFilter" [(value)]="pollBookCodeFilter.value">
+                        <mat-option value="">Any</mat-option>
+                        <mat-option value="Y">Yes</mat-option>
+                        <mat-option value="N">No</mat-option>
+                  </mat-select>
+
+            </mat-form-field>
+      </div>
+</th>
+<td mat-cell id="pollBookCell" (click)="getBook($event, element)" *matCellDef="let element">  {{getHasPollBooks(element.PollBookCode)}}</td>
+</ng-container>
+
+
+
+<tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+<tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+</table>
+<mat-paginator  id="pagin" [pageSize]="10" [pageSizeOptions]="[5, 10, 20, 50, 100, 500]" showFirstLastButtons></mat-paginator>
+<button mat-icon-button aria-label="download our data" (click)="download()">
+     <mat-icon>cloud_download</mat-icon>
+</button>
+<div id="HOPtext" *ngIf="HOPtext">
+     <!-- <pre><code> -->
+          {{HOPtext.date_range}}
+          {{HOPtext.innerText}}
+          <!-- </code></pre> -->
     </div>
-    <div mwlResizable [enableGhostResize]="true" (resizeEnd)="onResizeEnd($event)" (resizeStart)="onResizeStart($event)" [ngStyle]="style" [resizeEdges]="{ bottom: false, right: false, top: false, left: true }" id="info_window">
-
-        <!-- <div id="slider-container"> -->
-
-
-        <!-- @Dan material tables have this really complicated data binding structure. the filtered stuff from the columns is a property of the dataSource object -->
-        <div *ngIf="dataSource.filteredData" style="color:white; margin-top: 2%">
 
 
 
+</div>
 
 
-            <strong style="color:#ffd740">         {{dataSource.filteredData.length}}</strong> elections of which <strong style="color:#0db9f0">{{getNumberOfContested()}}</strong>{{getPlural(getNumberOfContested())}}</div><br>
-
-        <div #gcontainer id="graph_container" style="width:100%;  position:relative; ">
-            <div *ngFor="let bar of electionsPerYear" matTooltip="{{bar.year}}: {{bar.numElections}} elections" style="width:100%; background-color: #ffd740;  " [ngStyle]="getBarStyle(bar, gcontainer.offsetWidth,gcontainer.offsetHeight, false)" class="bar"></div>
-            <div *ngFor="let bar of electionsPerYear" matTooltip="{{bar.year}}: {{bar.numContested}} contested elections" style="width:100%;background-color: #0db9f0;   " [ngStyle]="getBarStyle(bar, gcontainer.offsetWidth,gcontainer.offsetHeight, true)" class="bar"></div>
-            <!-- </div> -->
-        </div>
-        <!--      <mat-radio-group >
-       <mat-radio-button style="margin-right: 20px" [checked]="mapLinked" (click)="toggleMapLinked(true)" value="true">Map Linked</mat-radio-button>
-       <mat-radio-button style="margin-right: 20px" [checked]="!mapLinked" (click)="toggleMapLinked(false)" value="false">Map Unlinked         </mat-radio-button>
-     </mat-radio-group> -->
-        <br>
-        <!-- id="clear_map" -->
-
-        <button mat-raised-button class="button_option" (click)="openFormDialogue()">OPEN FORM</button>
-        <button mat-raised-button class="button_option" (click)="clearSearch()">CLEAR</button>
-        <button mat-raised-button class="button_option" (click)="animateTimeLine()">ANIMATE</button>
-
-        <!-- <button mat-raised-button class="button_option"  (click)="clearMap()">CLEAR THE MAP</button>    -->
-
-
-        <br><br>
-
-        <!-- </div> -->
-
-        <ng5-slider [(value)]="minYear" [(highValue)]="maxYear" (userChange)="sliderChange($event)" style="z-index:20000;" [options]="sliderOptions"></ng5-slider>
-
+</div>
 
         <table *ngIf="dataSource" mat-table [dataSource]="dataSource" class="mat-elevation-z8 mytable style-3 stay_inline">
 
