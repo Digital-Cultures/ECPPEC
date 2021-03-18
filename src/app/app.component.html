@@ -1,54 +1,58 @@
-
 <div id="container" [style.height.px]="myInnerHeight" class="style-3">
 
-  <div id="nav_toggle" >
-    <mat-icon style="font-size: 400%;  margin-right: 5%;"  color="accent" aria-hidden="false" aria-label="Example home icon" (click)="toggleSidenav()">{{navSwitch}}</mat-icon>
-  </div>
-  <div id="info" >
-    
-    <img style="width:200px;  margin-right: 2%;" src="./assets/images/logos/newcastle.png" alt="newcastle university logo"/>
-    <img style="width:200px;  margin-right: 2%;" src="./assets/images/logos/liverpool.png" alt="liverpool university logo"/>
-    <img style="width:200px;  margin-right: 2%;" src="./assets/images/logos/ahrc.png" alt="arts and humanities research council logo"/>
+    <div id="nav_toggle">
+        <mat-icon style="font-size: 400%;  margin-right: 5%;" color="accent" aria-hidden="false" aria-label="Example home icon" (click)="toggleSidenav()">{{navSwitch}}</mat-icon>
+    </div>
+    <div id="info">
 
-  </div>
+        <img style="width:200px;  margin-right: 2%;" src="./assets/images/logos/newcastle.png" alt="newcastle university logo" />
+        <img style="width:200px;  margin-right: 2%;" src="./assets/images/logos/liverpool.png" alt="liverpool university logo" />
+        <img style="width:200px;  margin-right: 2%;" src="./assets/images/logos/ahrc.png" alt="arts and humanities research council logo" />
 
-  <!-- nav bar content start -->
-  <mat-drawer-container [style.height.px]="myInnerHeight" style="overflow: hidden; background-color: rgba(0,0,0,0);" class="gradient" >
+    </div>
 
-    <mat-drawer fixedInViewport="true" style="overflow: hidden;background-color: rgba(0,0,0,0)" [style.height.px]="myInnerHeight" #drawer class="main-menu-sidenav "  [opened]="isShowing"  mode="side">
-      <!-- [style.width.px]="sideBarWidth" -->
+    <!-- nav bar content start -->
+    <mat-drawer-container [style.height.px]="myInnerHeight" style="overflow: hidden; background-color: rgba(0,0,0,0);" class="gradient">
 
-     <!--  <div id="titles">
+        <mat-drawer fixedInViewport="true" style="overflow: hidden;background-color: rgba(0,0,0,0)" [style.height.px]="myInnerHeight" #drawer class="main-menu-sidenav " [opened]="isShowing" mode="side">
+            <!-- [style.width.px]="sideBarWidth" -->
+
+            <!--  <div id="titles">
        <span id=my_title>ECPPEC</span><br>
        <span id=my_sub>Eighteenth-Century Political Participation<br>  and Electoral Culture</span>
      </div> -->
-     <br>
-     <!-- matTooltip= "get the data" [matTooltipPosition]="'below'" -->
-     <div id="main_nav_content" >
-      <div style="margin-top:100%"  id="spacer"></div>
-      <mat-icon class="link_icon" color="accent" aria-hidden="false" aria-label="Example home icon" ><a routerLink="/viz" routerLinkActive="active">poll</a></mat-icon><div class="nav_label">MAPS</div><br>
-      <mat-icon class="link_icon" color="accent" aria-hidden="false" aria-label="Example home icon" ><a routerLink="/about" routerLinkActive="active">info</a></mat-icon><div class="nav_label">ABOUT</div><br>
-      <mat-icon class="link_icon" color="accent" aria-hidden="false" aria-label="Example home icon" ><a routerLink="/team" routerLinkActive="active">group</a></mat-icon><div class="nav_label">TEAM</div><br>
-      <mat-icon  class="link_icon" color="accent" aria-hidden="false" aria-label="Example home icon" ><a routerLink="/api" routerLinkActive="active">architecture</a></mat-icon><div class="nav_label">DATA</div><br>
-      
+            <br>
+            <!-- matTooltip= "get the data" [matTooltipPosition]="'below'" -->
+            <div id="main_nav_content">
+                <div style="margin-top:100%" id="spacer"></div>
+                <mat-icon class="link_icon" color="accent" aria-hidden="false" aria-label="Example home icon"><a routerLink="/viz" routerLinkActive="active">poll</a></mat-icon>
+                <div class="nav_label">MAPS</div><br>
+                <mat-icon class="link_icon" color="accent" aria-hidden="false" aria-label="Example home icon"><a routerLink="/about" routerLinkActive="active">info</a></mat-icon>
+                <div class="nav_label">ABOUT</div><br>
+                <mat-icon class="link_icon" color="accent" aria-hidden="false" aria-label="Example home icon"><a routerLink="/team" routerLinkActive="active">group</a></mat-icon>
+                <div class="nav_label">TEAM</div><br>
+                <mat-icon class="link_icon" color="accent" aria-hidden="false" aria-label="Example home icon"><a routerLink="/api" routerLinkActive="active">architecture</a></mat-icon>
+                <div class="nav_label">DATA</div><br>
 
-    <!--   <div class="nav_item"><a routerLink="/about" routerLinkActive="active">About the project</a></div>
+
+                <!--   <div class="nav_item"><a routerLink="/about" routerLinkActive="active">About the project</a></div>
       <div class="nav_item"><a routerLink="/team" routerLinkActive="active">The team</a></div>
       <div class="nav_item"><a routerLink="/viz" routerLinkActive="active">Our maps</a></div>
       <div class="nav_item"><a routerLink="/api" routerLinkActive="active">Get the data</a></div> -->
-      <!-- <div id="sidebar_content"  [style.height.px]="sideBarContentHeight" class="style-3" >
+                <!-- <div id="sidebar_content"  [style.height.px]="sideBarContentHeight" class="style-3" >
 
         ECPPEC aims to produce new understanding of parliamentary elections in England between 1696 and 1832. Even though few could vote, these elections were often accompanied by an explosion of print, sermons, and song; processions, assemblies, and entertainments; and even new modes of dress, decoration, and behaviour. 
         Men and women, adults and children, rich and poor, franchised and unenfranchised, all participated - as consumers, but also as active makers of these extraordinary cultural and political experiences. <br><br>ECPPEC will combine literary and historical study of the print, visual, musical and material culture of elections, with ‘big data’ analysis of poll books, including innovative mapping, visualisation and psephological assessment of who voted, who they voted for, and how this changed over time and place. The project has sharp, contemporary relevance in an age when fewer people are voting, and when data analytics and targeted media interventions are changing the way we think about electoral processes.
       </div>
  -->
 
-    </div>
-  </mat-drawer>
+            </div>
+        </mat-drawer>
+        <app-team></app-team>
 
-  <!-- main page content goes here -->
-  <router-outlet ></router-outlet>
+        <!-- main page content goes here -->
+        <router-outlet></router-outlet>
 
 
-</mat-drawer-container>
+    </mat-drawer-container>
 </div>

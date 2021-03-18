@@ -6,6 +6,7 @@ import { VizComponent } from './viz/viz.component';
 import { TeamComponent } from './team/team.component';
 import { OutputsComponent } from './outputs/outputs.component';
 import { ApiComponent } from './api/api.component';
+import { SandpitComponent } from './sandpit/sandpit.component';
 
 const routes: Routes = [
 { path: '', redirectTo: '/viz', pathMatch: 'full' },
@@ -13,6 +14,7 @@ const routes: Routes = [
   { path: 'viz', component: VizComponent },
   { path: 'team', component: TeamComponent },
   { path: 'api', component: ApiComponent },
+  { path: 'sandpit', component: SandpitComponent },
   { path: 'outputs', component: OutputsComponent }
 ];
 

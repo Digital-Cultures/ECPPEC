@@ -48,6 +48,8 @@ import { MatButtonToggleModule } from '@angular/material/button-toggle';
 import { WarningDialogueComponent } from './warning-dialogue/warning-dialogue.component';
 
 import { GoogleMapsModule } from '@angular/google-maps'
+import { NgxEchartsModule } from 'ngx-echarts';
+import { SandpitComponent } from './sandpit/sandpit.component';
 
 
 // import { DialogElementsExampleDialog } from './app.component';
@@ -85,7 +87,15 @@ import { GoogleMapsModule } from '@angular/google-maps'
 		MatButtonToggleModule,
 		GoogleMapsModule,
 		BrowserAnimationsModule,
-		AppRoutingModule
+		AppRoutingModule,
+		NgxEchartsModule.forRoot({
+			/**
+			 * This will import all modules from echarts.
+			 * If you only need custom modules,
+			 * please refer to [Custom Build] section.
+			 */
+			echarts: () => import('echarts'), // or import('./path-to-my-custom-echarts')
+		  })
 	],
 	declarations: [
 		AppComponent, 
@@ -98,7 +108,7 @@ import { GoogleMapsModule } from '@angular/google-maps'
 		DialogueComponent, 
 		ApiComponent, 
 		PollbookDialogueComponent, 
-		WarningDialogueComponent
+		WarningDialogueComponent, SandpitComponent
 	],
 	providers: [  
          

@@ -1,10 +1,10 @@
 <div id="container">
 
     <div class="map-container">
-        <google-map height="1000px" width="100%" [zoom]="zoom" [center]="center" [options]="options" (tilesloaded)="mapReady()" (zoomChanged)="mapZoomChanged()" (idle)="mapIdle()">
+        <google-map height="1000px" width="100%" [options]="{styles:mystyles}" [zoom]="zoom" [center]="center" (tilesloaded)="mapReady()" (zoomChanged)="mapZoomChanged()" (idle)="mapIdle()">
 
-
-            <map-marker *ngFor="let dynamicMarker of dynamicMarkers" [position]="dynamicMarker.getPosition()" [options]="{icon:dynamicMarker.getIcon(), title:dynamicMarker.title   }"></map-marker>
+            <!-- [options]="options" -->
+            <map-marker *ngFor="let dynamicMarker of dynamicMarkers" [position]="dynamicMarker.getPosition()" [options]="{icon:dynamicMarker.getIcon(), title:dynamicMarker.title, visible:dynamicMarker.visible   }"></map-marker>
 
         </google-map>
 

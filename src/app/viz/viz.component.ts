@@ -156,12 +156,232 @@ export class VizComponent implements OnInit, OnDestroy, OnChanges {
 
 	zoom: number = 7;
 	mapIsReady:boolean = false;
-	options: google.maps.MapOptions = {
-		mapTypeId: 'hybrid',
+	// options:google.maps.MapOptions= {
+	// 	mapTypeId: 'hybrid',
 
-		maxZoom: 10,
-		minZoom: 2,
-		styles:[
+	// 	maxZoom: 10,
+	// 	minZoom: 2,
+	// 	styles:[
+	// 		{
+	// 		  "elementType": "geometry",
+	// 		  "stylers": [
+	// 			{
+	// 			  "color": "#f5f5f5"
+	// 			}
+	// 		  ]
+	// 		},
+	// 		{
+	// 		  "elementType": "labels",
+	// 		  "stylers": [
+	// 			{
+	// 			  "visibility": "off"
+	// 			}
+	// 		  ]
+	// 		},
+	// 		{
+	// 		  "elementType": "labels.icon",
+	// 		  "stylers": [
+	// 			{
+	// 			  "visibility": "off"
+	// 			}
+	// 		  ]
+	// 		},
+	// 		{
+	// 		  "elementType": "labels.text.fill",
+	// 		  "stylers": [
+	// 			{
+	// 			  "color": "#616161"
+	// 			}
+	// 		  ]
+	// 		},
+	// 		{
+	// 		  "elementType": "labels.text.stroke",
+	// 		  "stylers": [
+	// 			{
+	// 			  "color": "#f5f5f5"
+	// 			}
+	// 		  ]
+	// 		},
+	// 		{
+	// 		  "featureType": "administrative.land_parcel",
+	// 		  "elementType": "labels.text.fill",
+	// 		  "stylers": [
+	// 			{
+	// 			  "color": "#bdbdbd"
+	// 			}
+	// 		  ]
+	// 		},
+	// 		{
+	// 		  "featureType": "administrative.neighborhood",
+	// 		  "stylers": [
+	// 			{
+	// 			  "visibility": "off"
+	// 			}
+	// 		  ]
+	// 		},
+	// 		{
+	// 		  "featureType": "poi",
+	// 		  "elementType": "geometry",
+	// 		  "stylers": [
+	// 			{
+	// 			  "color": "#eeeeee"
+	// 			}
+	// 		  ]
+	// 		},
+	// 		{
+	// 		  "featureType": "poi",
+	// 		  "elementType": "labels.text",
+	// 		  "stylers": [
+	// 			{
+	// 			  "visibility": "off"
+	// 			}
+	// 		  ]
+	// 		},
+	// 		{
+	// 		  "featureType": "poi",
+	// 		  "elementType": "labels.text.fill",
+	// 		  "stylers": [
+	// 			{
+	// 			  "color": "#757575"
+	// 			}
+	// 		  ]
+	// 		},
+	// 		{
+	// 		  "featureType": "poi.business",
+	// 		  "stylers": [
+	// 			{
+	// 			  "visibility": "off"
+	// 			}
+	// 		  ]
+	// 		},
+	// 		{
+	// 		  "featureType": "poi.park",
+	// 		  "elementType": "geometry",
+	// 		  "stylers": [
+	// 			{
+	// 			  "color": "#e5e5e5"
+	// 			}
+	// 		  ]
+	// 		},
+	// 		{
+	// 		  "featureType": "poi.park",
+	// 		  "elementType": "labels.text.fill",
+	// 		  "stylers": [
+	// 			{
+	// 			  "color": "#9e9e9e"
+	// 			}
+	// 		  ]
+	// 		},
+	// 		{
+	// 		  "featureType": "road",
+	// 		  "stylers": [
+	// 			{
+	// 			  "visibility": "off"
+	// 			}
+	// 		  ]
+	// 		},
+	// 		{
+	// 		  "featureType": "road",
+	// 		  "elementType": "geometry",
+	// 		  "stylers": [
+	// 			{
+	// 			  "color": "#ffffff"
+	// 			}
+	// 		  ]
+	// 		},
+	// 		{
+	// 		  "featureType": "road",
+	// 		  "elementType": "labels.icon",
+	// 		  "stylers": [
+	// 			{
+	// 			  "visibility": "off"
+	// 			}
+	// 		  ]
+	// 		},
+	// 		{
+	// 		  "featureType": "road.arterial",
+	// 		  "elementType": "labels.text.fill",
+	// 		  "stylers": [
+	// 			{
+	// 			  "color": "#757575"
+	// 			}
+	// 		  ]
+	// 		},
+	// 		{
+	// 		  "featureType": "road.highway",
+	// 		  "elementType": "geometry",
+	// 		  "stylers": [
+	// 			{
+	// 			  "color": "#dadada"
+	// 			}
+	// 		  ]
+	// 		},
+	// 		{
+	// 		  "featureType": "road.highway",
+	// 		  "elementType": "labels.text.fill",
+	// 		  "stylers": [
+	// 			{
+	// 			  "color": "#616161"
+	// 			}
+	// 		  ]
+	// 		},
+	// 		{
+	// 		  "featureType": "road.local",
+	// 		  "elementType": "labels.text.fill",
+	// 		  "stylers": [
+	// 			{
+	// 			  "color": "#9e9e9e"
+	// 			}
+	// 		  ]
+	// 		},
+	// 		{
+	// 		  "featureType": "transit",
+	// 		  "stylers": [
+	// 			{
+	// 			  "visibility": "off"
+	// 			}
+	// 		  ]
+	// 		},
+	// 		{
+	// 		  "featureType": "transit.line",
+	// 		  "elementType": "geometry",
+	// 		  "stylers": [
+	// 			{
+	// 			  "color": "#e5e5e5"
+	// 			}
+	// 		  ]
+	// 		},
+	// 		{
+	// 		  "featureType": "transit.station",
+	// 		  "elementType": "geometry",
+	// 		  "stylers": [
+	// 			{
+	// 			  "color": "#eeeeee"
+	// 			}
+	// 		  ]
+	// 		},
+	// 		{
+	// 		  "featureType": "water",
+	// 		  "elementType": "geometry",
+	// 		  "stylers": [
+	// 			{
+	// 			  "color": "#c9c9c9"
+	// 			}
+	// 		  ]
+	// 		},
+	// 		{
+	// 		  "featureType": "water",
+	// 		  "elementType": "labels.text.fill",
+	// 		  "stylers": [
+	// 			{
+	// 			  "color": "#9e9e9e"
+	// 			}
+	// 		  ]
+	// 		}
+	// 	  ]
+	// }
+	
+	mystyles: any[] =[
 		{
 			"elementType": "geometry",
 			"stylers": [
@@ -419,7 +639,6 @@ export class VizComponent implements OnInit, OnDestroy, OnChanges {
 		}
 		]
 
-	}
 	center: google.maps.LatLngLiteral= {
 		lat: 52.4862,
 		lng: 1.8904
@@ -677,7 +896,7 @@ export class VizComponent implements OnInit, OnDestroy, OnChanges {
 
 	//the database table is draggable
 	onResizeEnd(event: ResizeEvent): void {
-		console.log('Element was resized', event);
+		
 		this.style = {
 			position: 'fixed',
 			right: "3%",
@@ -686,7 +905,7 @@ export class VizComponent implements OnInit, OnDestroy, OnChanges {
 	}
 
 	onResizeStart(event: ResizeEvent): void {
-		console.log('Element was resized start', event);
+	
 
 	}
 	///////////////////////////////////****END RESIZE FUNCTIONS****///////////////////////////////////
@@ -814,10 +1033,10 @@ export class VizComponent implements OnInit, OnDestroy, OnChanges {
 	///////////////////////////////////****START LISTENER FUNCTIONS****///////////////////////////////////
 
 	ngOnChanges(changes) {
-		console.log(changes);
+	
 	}
 	onValueChange(changeContext: ChangeContext): void {
-		console.log(changeContext);
+	
 
 	}
 	sliderChange(changeContext: ChangeContext): void {
@@ -859,12 +1078,10 @@ export class VizComponent implements OnInit, OnDestroy, OnChanges {
 			this.setMatchingCountyMarkerVisibility(true, event.feature.getProperty("name"));
 		});
 		this.map.data.addListener('mouseout', (event) => {
-			
 				this.setMatchingCountyMarkerVisibility(false, event.feature.getProperty("name"));
 			});
 		
 			this.map.data.addListener('click', (event) => {
-				console.log("click");
 				if(!this.clicked){
 					this.clicked =true;
 			if(event.feature.getProperty('isActive')){
@@ -898,7 +1115,6 @@ export class VizComponent implements OnInit, OnDestroy, OnChanges {
 	}
 	mapReady(){
 		if(!this.mapIsReady){
-			console.log("map ready");
 			this.setUpMapData();
 		
 		}
@@ -1032,27 +1248,26 @@ export class VizComponent implements OnInit, OnDestroy, OnChanges {
 	/////////////////////////////////////////*********START UTILITY FUNCTIONS***********/////////////////////////////////////////
 
 	setMatchingCountyMarkerVisibility(visible, constituency){
-		console.log("mouseover",constituency);
-		var image = {
-			url: './assets/images/dot.svg',
-			size: new google.maps.Size(20, 20),
-			origin: new google.maps.Point(0, 0),
-			anchor: new google.maps.Point(10, 10),
-			scaledSize: new google.maps.Size(20, 20)
-		  };
-		  var options = {
-			icon:image,
-			title:constituency,
-			visible:visible,
-			label:  {text: constituency , color: "white"}
-		}
+		// var image = {
+		// 	url: './assets/images/dot.svg',
+		// 	size: new google.maps.Size(20, 20),
+		// 	origin: new google.maps.Point(0, 0),
+		// 	anchor: new google.maps.Point(10, 10),
+		// 	scaledSize: new google.maps.Size(20, 20)
+		//   };
+		//   var options = {
+		// 	icon:image,
+		// 	title:constituency,
+		// 	visible:visible,
+		// 	label:  {text: constituency , color: "white"}
+		// }
 
 
 	
 		this.dynamicMarkers.forEach(element => {
 			if(element.getTitle()==constituency){
-			//	console.log("setting ",constituency, " to ", visible);
-				element.setOptions(options)
+			//	element.setOptions(options);
+				element.setVisible(visible);
 			}
 		});
 		this.appRef.tick();
@@ -1099,8 +1314,7 @@ export class VizComponent implements OnInit, OnDestroy, OnChanges {
 		var start = Math.floor(Math.random() * fullRange) + 1696;
 		this.minYear = start;
 		this.maxYear = spread + start;
-		console.log("years", this.minYear, this.maxYear);
-		var y = 1777;
+		// var y = 1777;
 		//TODO add some other filters here like by election cause
 		this.yearFilter.setValue(this.minYear.toString() + "-" + this.maxYear.toString());
 
@@ -1290,7 +1504,7 @@ export class VizComponent implements OnInit, OnDestroy, OnChanges {
 			);
 
 		this.constituencyFilter.valueChanges.subscribe((constituencyFilterValue) => {
-			console.log("change in consituencyfilter");
+		//	console.log("change in consituencyfilter");
 			this.filteredValues['constituency'] = constituencyFilterValue;
 			this.dataSource.filter = JSON.stringify(this.filteredValues);
 
@@ -1360,7 +1574,7 @@ export class VizComponent implements OnInit, OnDestroy, OnChanges {
 
 	}
 	onDataSubscriptionChange(){
-		console.log("sub change");
+	
 		this.electionsPerYear = this.getElectionsPerYear();
 		this.updateIsActive(this.getFilteredConstituencies());
 		this.setMapStyle();
@@ -1429,6 +1643,7 @@ export class VizComponent implements OnInit, OnDestroy, OnChanges {
 		this.contestedFilter.setValue("");
 
 		this.byElectionGeneralFilter.setValue("");
+		this.byElectionCauseFilter.setValue("");
 		this.franchiseFilter.setValue("");
 		this.pollBookCodeFilter.setValue("");
 		this.constituencyFilter.setValue("");
@@ -1469,6 +1684,7 @@ export class VizComponent implements OnInit, OnDestroy, OnChanges {
 			&& data.countyboroughuniv.toString().trim().toLowerCase().indexOf(searchString.countyboroughuniv.toLowerCase()) !== -1
 			&& data.contested.toString().trim().toLowerCase().indexOf(searchString.contested.toLowerCase()) !== -1
 			&& data.by_election_general.toString().trim().toLowerCase().indexOf(searchString.by_election_general.toLowerCase()) !== -1
+			&& data.by_election_cause.toString().trim().toLowerCase().indexOf(searchString.by_election_cause.toLowerCase()) !== -1
 			&& data.contested.toString().trim().toLowerCase().indexOf(searchString.contested.toLowerCase()) !== -1
 			&& data.franchise_type.toString().trim().toLowerCase().indexOf(searchString.franchise_type.toLowerCase()) !== -1
 			&& this.getHasPollBooksFilter(data.pollbook_id.toString().trim().toLowerCase(), searchString.pollbook_id.toLowerCase()) !== -1
