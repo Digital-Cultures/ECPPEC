@@ -170,9 +170,14 @@ function election_results($election_id) {
 	global $conn;
 	$sql = "SELECT 
 	count(*) votes,
-	(SELECT candidate_name FROM candidates c WHERE c.candidate_id = v.candidate_id) candidate
+	(
+		SELECT IF(ce.running_as IS NOT NULL, ce.running_as, c.candidate_name) 
+		FROM candidates c 
+		JOIN candidates_elections ce ON ce.candidate_id = c.candidate_id
+		WHERE c.candidate_id = v.candidate_id AND ce.election_id = v.election_id
+	) candidate
 	FROM votes v
-	WHERE election_id = ?
+	WHERE v.election_id = ?
 	GROUP BY candidate_id 
 	ORDER BY votes desc";
 	$stmt = $conn->prepare($sql);
