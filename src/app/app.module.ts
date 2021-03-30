@@ -24,6 +24,7 @@ import { MatTableModule } from '@angular/material/table';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import {MatRadioModule} from '@angular/material/radio';
 import {MatDialogModule} from '@angular/material/dialog';
+// import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 
 import { MatSidenavModule } from '@angular/material/sidenav';
 
@@ -50,6 +51,7 @@ import { WarningDialogueComponent } from './warning-dialogue/warning-dialogue.co
 import { GoogleMapsModule } from '@angular/google-maps'
 import { NgxEchartsModule } from 'ngx-echarts';
 import { SandpitComponent } from './sandpit/sandpit.component';
+import { TableComponent } from './table/table.component';
 
 
 // import { DialogElementsExampleDialog } from './app.component';
@@ -72,6 +74,7 @@ import { SandpitComponent } from './sandpit/sandpit.component';
 		Ng5SliderModule,
 		MatPaginatorModule,
 		MatButtonModule,
+		// MatSlideToggleModule,
 		MatMenuModule,
 		MatToolbarModule,
 		MatAutocompleteModule,
@@ -108,7 +111,7 @@ import { SandpitComponent } from './sandpit/sandpit.component';
 		DialogueComponent, 
 		ApiComponent, 
 		PollbookDialogueComponent, 
-		WarningDialogueComponent, SandpitComponent
+		WarningDialogueComponent, SandpitComponent, TableComponent
 	],
 	providers: [  
          
