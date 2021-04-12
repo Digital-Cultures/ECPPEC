@@ -17,13 +17,16 @@ export interface TeamMember{
 export class TeamComponent implements OnInit {
 
 	constructor() { }
-	myInnerHeight: number;
+	myInnerHeight: string;
 	sideBarWidth: number;
 	team: any [];
+	hover:boolean =false;
+	shuffledTeam :any []=[];
+
 	ngOnInit() {
 
 
-		this.myInnerHeight = window.innerHeight;
+		this.myInnerHeight = "600px";//window.innerHeight;
 	//	console.log("innerHeight",this.myInnerHeight);
 
 	this.team = [
@@ -77,14 +80,50 @@ export class TeamComponent implements OnInit {
 			image:"dan.jpg"
 		}
 	];
+
+	this.shuffledTeam = this.shuffle(this.team);
 }
+getWindowHeight(){
+
+}
+shuffle(array) {
+	var currentIndex = array.length, temporaryValue, randomIndex;
+  
+	// While there remain elements to shuffle...
+	while (0 !== currentIndex) {
+  
+	  // Pick a remaining element...
+	  randomIndex = Math.floor(Math.random() * currentIndex);
+	  currentIndex -= 1;
+  
+	  // And swap it with the current element.
+	  temporaryValue = array[currentIndex];
+	  array[currentIndex] = array[randomIndex];
+	  array[randomIndex] = temporaryValue;
+	}
+  
+	return array;
+  }
+  
+shufflea(list) {
+	return list.reduce((p, n) => {
+	  const size = p.length;
+	  const index = Math.trunc(Math.random() * (size - 1));
+	  p.splice(index, 0, n);
+	  return p;
+	}, []);
+  };
 onResize(event) {
   // event.target.innerWidth;
   this.myInnerHeight = event.target.innerHeight;
 }
 getUrl(member)
 {
-	//console.log("url('./assets/images/team/"+member.image+"')");
-	return "url('./assets/images/team/"+member.image+"')";
+//console.log("url('./assets/images/team/"+member.image+"')");
+	return "./assets/images/team/"+member.image;
+}
+getAbout(member){
+	if(member.hover) return member.about;
+	return member.about.substring(0,150)+"[...]";
 }
 }

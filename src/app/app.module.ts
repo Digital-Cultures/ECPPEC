@@ -1,9 +1,12 @@
 import { NgModule } from '@angular/core';
-import { BrowserModule } from '@angular/platform-browser';
+import { BrowserModule, HammerModule} from '@angular/platform-browser';
+import { GestureConfig } from '@angular/material';
+
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { Ng5SliderModule } from 'ng5-slider';
+import { NgxSliderModule } from '@angular-slider/ngx-slider';
 import { AppComponent } from './app.component';
 import { HelloComponent } from './hello.component';
+import * as Hammer from 'hammerjs';
 
 import { HttpClientModule } from '@angular/common/http';
 import { ActivatedRoute } from '@angular/router';
@@ -24,6 +27,7 @@ import { MatTableModule } from '@angular/material/table';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import {MatRadioModule} from '@angular/material/radio';
 import {MatDialogModule} from '@angular/material/dialog';
+import {MatSliderModule} from '@angular/material/slider';
 // import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 
 import { MatSidenavModule } from '@angular/material/sidenav';
@@ -52,6 +56,9 @@ import { GoogleMapsModule } from '@angular/google-maps'
 import { NgxEchartsModule } from 'ngx-echarts';
 import { SandpitComponent } from './sandpit/sandpit.component';
 import { TableComponent } from './table/table.component';
+import { ElectionsMapComponent } from './elections-map/elections-map.component';
+import { NgxMatRangeSliderModule } from 'ngx-mat-range-slider';
+import { MapComponent } from './map/map.component';
 
 
 // import { DialogElementsExampleDialog } from './app.component';
@@ -61,7 +68,8 @@ import { TableComponent } from './table/table.component';
 
 @NgModule({
 	imports: [
-		// MatSliderModule,
+
+		NgxMatRangeSliderModule,
 		FormsModule,
 	    ReactiveFormsModule,
 		BrowserModule,
@@ -71,7 +79,6 @@ import { TableComponent } from './table/table.component';
 		FormsModule,
 		MatDialogModule,
 		MatTooltipModule,
-		Ng5SliderModule,
 		MatPaginatorModule,
 		MatButtonModule,
 		// MatSlideToggleModule,
@@ -82,6 +89,7 @@ import { TableComponent } from './table/table.component';
 		MatCardModule,
 		MatTableModule,
 		MatSelectModule,
+		MatSliderModule,
 		MatInputModule,
 		AppRoutingModule,
 		AngularDraggableModule,
@@ -91,6 +99,8 @@ import { TableComponent } from './table/table.component';
 		GoogleMapsModule,
 		BrowserAnimationsModule,
 		AppRoutingModule,
+		HammerModule,
+		NgxSliderModule,
 		NgxEchartsModule.forRoot({
 			/**
 			 * This will import all modules from echarts.
@@ -111,10 +121,10 @@ import { TableComponent } from './table/table.component';
 		DialogueComponent, 
 		ApiComponent, 
 		PollbookDialogueComponent, 
-		WarningDialogueComponent, SandpitComponent, TableComponent
+		WarningDialogueComponent, SandpitComponent, TableComponent, ElectionsMapComponent, MapComponent
 	],
 	providers: [  
-         
+		
     ],
 	entryComponents: [
 		AppComponent, 

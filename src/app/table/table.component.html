@@ -1,134 +1,137 @@
 <!-- <div id="spacer" style="height:200px"></div> -->
-<div id="table_container">
-    <table *ngIf="ready" mat-table [dataSource]="datasourceService.dataSource" class="mat-elevation-z8 mytable style-3 stay_inline">
+<!-- <div mwlResizable [enableGhostResize]="true" (resizeEnd)="onResizeEnd($event)" (resizeStart)="onResizeStart($event)" [ngStyle]="style" [resizeEdges]="{ bottom: false, right: false, top: false, left: true }" id="info_window"> -->
 
-        <ng-container matColumnDef="constituency">
-            <th mat-header-cell *matHeaderCellDef> <span matTooltip="click to find out more about consitituencies" [matTooltipPosition]="'above'">Constituency</span>
-                <div>
-                    <mat-form-field>
-                        <input matInput class="form-field" [formControl]="datasourceService.constituencyFilter" placeholder="....">
-                    </mat-form-field>
-                </div>
-            </th>
-            <td mat-cell *matCellDef="let element"> {{element.constituency}} </td>
-        </ng-container>
-        <ng-container matColumnDef="election_month">
-            <th mat-header-cell *matHeaderCellDef> <span matTooltip="click to find out more about months" [matTooltipPosition]="'above'">Month </span>
-                <div>
-                    <mat-form-field>
-                        <input matInput class="form-field" [formControl]="datasourceService.monthFilter" placeholder="....">
-                    </mat-form-field>
-                </div>
-            </th>
-            <td mat-cell *matCellDef="let element"> {{element.election_month}} </td>
-        </ng-container>
+<ngx-slider [(value)]="minYear" [(highValue)]="maxYear" (userChangeEnd)="sliderChange($event)" style="color:white !important; margin-left:10%;margin-top:8%;margin-bottom:5%;width:80%;z-index:20000;" [options]="sliderOptions"></ngx-slider>
+<table *ngIf="ready" mat-table [dataSource]="datasourceService.dataSource" class="mat-elevation-z8 mytable style-3 stay_inline">
 
-        <ng-container matColumnDef="election_year">
-            <th mat-header-cell *matHeaderCellDef> <span matTooltip="click to find out more about years" [matTooltipPosition]="'above'">Year </span>
-                <div>
-                    <mat-form-field>
-                        <input matInput class="form-field" [formControl]="datasourceService.yearFilter" placeholder="....">
-                    </mat-form-field>
-                </div>
-            </th>
-            <td mat-cell *matCellDef="let element"> {{element.election_year}} </td>
-        </ng-container>
+    <ng-container style="padding-top:100px" matColumnDef="constituency">
+        <th style="padding-top: 15px;" mat-header-cell *matHeaderCellDef> <span matTooltip="click to find out more about consitituencies" [matTooltipPosition]="'above'">Constituency</span>
+            <div>
+                <mat-form-field>
+                    <input matInput class="form-field" [formControl]="datasourceService.constituencyFilter" placeholder="....">
+                </mat-form-field>
+            </div>
+        </th>
+        <td mat-cell *matCellDef="let element"> {{element.constituency}} </td>
+    </ng-container>
+    <ng-container matColumnDef="election_month">
+        <th style="padding-top: 15px;" mat-header-cell *matHeaderCellDef> <span matTooltip="click to find out more about months" [matTooltipPosition]="'above'">Month </span>
+            <div>
+                <mat-form-field>
+                    <input matInput class="form-field" [formControl]="datasourceService.monthFilter" placeholder="....">
+                </mat-form-field>
+            </div>
+        </th>
+        <td mat-cell *matCellDef="let element"> {{element.election_month}} </td>
+    </ng-container>
 
-        <ng-container matColumnDef="countyboroughuniv">
-            <th mat-header-cell *matHeaderCellDef> <span matTooltip="click to find out more about the different kinds of elections" [matTooltipPosition]="'above'">County/Borough/Univ </span>
-                <div>
+    <ng-container matColumnDef="election_year">
+        <th style="padding-top: 15px;" mat-header-cell *matHeaderCellDef> <span matTooltip="click to find out more about years" [matTooltipPosition]="'above'">Year </span>
+            <div>
+                <mat-form-field>
+                    <input matInput class="form-field" [formControl]="datasourceService.yearFilter" placeholder="....">
+                </mat-form-field>
+            </div>
+        </th>
+        <td mat-cell *matCellDef="let element"> {{element.election_year}} </td>
+    </ng-container>
 
-                    <mat-select [formControl]="datasourceService.countyFilter" [(value)]="datasourceService.countyFilter.value">
+    <ng-container matColumnDef="countyboroughuniv">
+        <th style="padding-top: 15px;" mat-header-cell *matHeaderCellDef> <span matTooltip="click to find out more about the different kinds of elections" [matTooltipPosition]="'above'">County/Borough/Univ </span>
+            <div>
+
+                <mat-select [formControl]="datasourceService.countyFilter" [(value)]="datasourceService.countyFilter.value">
+                    <mat-option value="">Any</mat-option>
+                    <mat-option value="C">C</mat-option>
+                    <mat-option value="B">B</mat-option>
+                    <mat-option value="U">U</mat-option>
+                </mat-select>
+            </div>
+        </th>
+        <td mat-cell *matCellDef="let element"> {{element.countyboroughuniv}} </td>
+    </ng-container>
+
+    <ng-container matColumnDef="contested">
+        <th style="padding-top: 15px;" mat-header-cell *matHeaderCellDef> <span matTooltip="Not all elections were fought. click to find out more" [matTooltipPosition]="'above'">Contested?</span>
+            <div>
+                <mat-form-field>
+
+                    <mat-select [formControl]="datasourceService.contestedFilter" [(value)]="datasourceService.contestedFilter.value">
                         <mat-option value="">Any</mat-option>
-                        <mat-option value="C">C</mat-option>
-                        <mat-option value="B">B</mat-option>
-                        <mat-option value="U">U</mat-option>
+                        <mat-option value="Y">Yes</mat-option>
+                        <mat-option value="N">No</mat-option>
                     </mat-select>
-                </div>
-            </th>
-            <td mat-cell *matCellDef="let element"> {{element.countyboroughuniv}} </td>
-        </ng-container>
-
-        <ng-container matColumnDef="contested">
-            <th mat-header-cell *matHeaderCellDef> <span matTooltip="Not all elections were fought. click to find out more" [matTooltipPosition]="'above'">Contested?</span>
-                <div>
-                    <mat-form-field>
-
-                        <mat-select [formControl]="datasourceService.contestedFilter" [(value)]="datasourceService.contestedFilter.value">
-                            <mat-option value="">Any</mat-option>
-                            <mat-option value="Y">Yes</mat-option>
-                            <mat-option value="N">No</mat-option>
-                        </mat-select>
-                    </mat-form-field>
-                </div>
-            </th>
-            <td mat-cell *matCellDef="let element"> {{element.contested}} </td>
-        </ng-container>
+                </mat-form-field>
+            </div>
+        </th>
+        <td mat-cell *matCellDef="let element"> {{element.contested}} </td>
+    </ng-container>
 
 
 
-        <ng-container matColumnDef="by_election_general">
-            <th mat-header-cell *matHeaderCellDef> <span matTooltip="general elections happened every 4 years. click to find out more about them" [matTooltipPosition]="'above'">By/General Election </span>
-                <div>
-                    <mat-form-field>
+    <ng-container matColumnDef="by_election_general">
+        <th style="padding-top: 15px;" mat-header-cell *matHeaderCellDef> <span matTooltip="general elections happened every 4 years. click to find out more about them" [matTooltipPosition]="'above'">By/General Election </span>
+            <div>
+                <mat-form-field>
 
-                        <mat-select [formControl]="datasourceService.byElectionGeneralFilter" [(value)]="datasourceService.byElectionGeneralFilter.value">
-                            <mat-option value="">Any</mat-option>
-                            <mat-option value="B">By Election</mat-option>
-                            <mat-option value="G">General Election</mat-option>
-                        </mat-select>
+                    <mat-select [formControl]="datasourceService.byElectionGeneralFilter" [(value)]="datasourceService.byElectionGeneralFilter.value">
+                        <mat-option value="">Any</mat-option>
+                        <mat-option value="B">By Election</mat-option>
+                        <mat-option value="G">General Election</mat-option>
+                    </mat-select>
 
-                    </mat-form-field>
-                </div>
-            </th>
-            <td mat-cell *matCellDef="let element"> {{element.by_election_general}} </td>
-        </ng-container>
+                </mat-form-field>
+            </div>
+        </th>
+        <td mat-cell *matCellDef="let element"> {{element.by_election_general}} </td>
+    </ng-container>
 
-        <ng-container matColumnDef="by_election_cause">
-            <th mat-header-cell *matHeaderCellDef> <span matTooltip="general elections happened every 4 years. click to find out more about them" [matTooltipPosition]="'above'">By Election Cause </span>
-                <div>
-                    <mat-form-field>
+    <ng-container matColumnDef="by_election_cause">
+        <th style="padding-top: 15px;" mat-header-cell *matHeaderCellDef> <span matTooltip="general elections happened every 4 years. click to find out more about them" [matTooltipPosition]="'above'">By Election Cause </span>
+            <div>
+                <mat-form-field>
 
-                        <input matInput class="form-field" [formControl]="datasourceService.byElectionCauseFilter" placeholder="....">
+                    <input matInput class="form-field" [formControl]="datasourceService.byElectionCauseFilter" placeholder="....">
 
-                    </mat-form-field>
-                </div>
-            </th>
-            <td mat-cell *matCellDef="let element"> {{element.by_election_cause}} </td>
-        </ng-container>
-
-
-        <ng-container matColumnDef="franchise_type">
-            <th mat-header-cell *matHeaderCellDef> <span matTooltip="click to find out more about franchiseTypes" [matTooltipPosition]="'above'">Franchise </span>
-                <div>
-                    <mat-form-field>
-                        <input matInput class="form-field" [formControl]="datasourceService.franchiseFilter" placeholder="....">
-                    </mat-form-field>
-                </div>
-            </th>
-            <td mat-cell *matCellDef="let element"> {{element.franchise_type}} </td>
-        </ng-container>
-
-        <ng-container matColumnDef="pollbook_id">
-            <th mat-header-cell *matHeaderCellDef><span matTooltip="poll books contain important details of voters. click to find out more" [matTooltipPosition]="'above'"> Has Poll Books? </span>
-                <div>
-                    <mat-form-field>
-                        <mat-select [formControl]="datasourceService.pollBookCodeFilter" [(value)]="datasourceService.pollBookCodeFilter.value">
-                            <mat-option value="">Any</mat-option>
-                            <mat-option value="Y">Yes</mat-option>
-                            <mat-option value="N">No</mat-option>
-                        </mat-select>
-
-                    </mat-form-field>
-                </div>
-            </th>
-            <td mat-cell id="pollBookCell" (click)="getBook($event, element)" *matCellDef="let element"> {{getHasPollBooks(element.pollbook_id)}}</td>
-        </ng-container>
-        -->
+                </mat-form-field>
+            </div>
+        </th>
+        <td mat-cell *matCellDef="let element"> {{element.by_election_cause}} </td>
+    </ng-container>
 
 
-        <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
-        <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
-    </table>
-    <mat-paginator id="pagin" [pageSize]="10" [pageSizeOptions]="[5, 10, 20, 50, 100, 500]" showFirstLastButtons></mat-paginator>
-</div>
+    <ng-container matColumnDef="franchise_type">
+        <th style="padding-top: 15px;" mat-header-cell *matHeaderCellDef> <span matTooltip="click to find out more about franchiseTypes" [matTooltipPosition]="'above'">Franchise </span>
+            <div>
+                <mat-form-field>
+                    <input matInput class="form-field" [formControl]="datasourceService.franchiseFilter" placeholder="....">
+                </mat-form-field>
+            </div>
+        </th>
+        <td mat-cell *matCellDef="let element"> {{element.franchise_type}} </td>
+    </ng-container>
+
+    <ng-container matColumnDef="pollbook_id">
+        <th style="padding-top: 15px;" mat-header-cell *matHeaderCellDef><span matTooltip="poll books contain important details of voters. click to find out more" [matTooltipPosition]="'above'"> Has Poll Books? </span>
+            <div>
+                <mat-form-field>
+                    <mat-select [formControl]="datasourceService.pollBookCodeFilter" [(value)]="datasourceService.pollBookCodeFilter.value">
+                        <mat-option value="">Any</mat-option>
+                        <mat-option value="Y">Yes</mat-option>
+                        <mat-option value="N">No</mat-option>
+                    </mat-select>
+
+                </mat-form-field>
+            </div>
+        </th>
+        <td mat-cell id="pollBookCell" (click)="getBook($event, element)" *matCellDef="let element"> {{getHasPollBooks(element.pollbook_id)}}</td>
+    </ng-container>
+    -->
+
+
+    <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+    <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+</table>
+<mat-paginator id="paginator" [pageSize]="10" [pageSizeOptions]="[5, 10, 20, 50, 100, 500]" showFirstLastButtons></mat-paginator>
+
+<!-- <w/div> -->

@@ -8,6 +8,7 @@ import { OutputsComponent } from './outputs/outputs.component';
 import { ApiComponent } from './api/api.component';
 import { SandpitComponent } from './sandpit/sandpit.component';
 import { TableComponent } from './table/table.component';
+import { ElectionsMapComponent } from './elections-map/elections-map.component';
 
 const routes: Routes = [
 { path: '', redirectTo: '/viz', pathMatch: 'full' },
@@ -17,7 +18,8 @@ const routes: Routes = [
   { path: 'api', component: ApiComponent },
   { path: 'sandpit', component: SandpitComponent },
   { path: 'table', component: TableComponent },
-  { path: 'outputs', component: OutputsComponent }
+  { path: 'outputs', component: OutputsComponent },
+  { path: 'map', component:ElectionsMapComponent}
 ];
 
 @NgModule({

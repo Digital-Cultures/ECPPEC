@@ -6,7 +6,6 @@ import { FormControl } from '@angular/forms';
 import * as cloneDeep from 'lodash/cloneDeep';
 import { FilterObj, Elections, Election , PollBook, PollBookResponse, HOPData} from  './viz/viz.component';
 import { HttpParams, HttpClient } from '@angular/common/http';
-import 'rxjs/add/operator/map';
 import { GetElectionsService } from './get-elections.service';
 import { BehaviorSubject, Observable, of, Subscription } from 'rxjs';
 import { switchMap ,delay, timeout, map} from 'rxjs/operators';
@@ -21,6 +20,9 @@ export class DatasourceService {
 		election_month: '', constituency: '', election_year: '', countyboroughuniv: '', contested: '', by_election_general: '', by_election_cause: '' ,franchise_type: '',pollbook_id: ''
 
 	};
+	uniqueElections: Election []=[];
+	electionsPerYear: any[] = [];
+
 	dataReady: Observable<any>;
 	dataReadySubscription: Subscription;
 	pollBooksMeta: PollBookResponse;
@@ -46,9 +48,12 @@ export class DatasourceService {
 //   init(){
 	
   }
-  onDataSubscriptionChange(): Observable<any> {
-	return of({id:1,data:"hello word"});
+  onDataSubscriptionChange(){
+
   }
+//   onDataSubscriptionChange(): Observable<any> {
+// 	return of({id:1,data:"hello word"});
+//   }
   customFilterPredicate() {
 	this.pollBooks = null;
 	const myFilterPredicate = (data: Election, filter: string): boolean => {
@@ -171,6 +176,32 @@ hasMonths(data, searchString) {
 	}
 	return 0;
 }
+getFilteredConstituencies() {
+
+	var filteredConstituencies = this.dataSource.filteredData.map(item => item.constituency).filter((value, index, self) => self.indexOf(value) === index);
+	return filteredConstituencies;
+}
+getElectionsPerYear() {
+	this.electionsPerYear.forEach(element => {
+		element.numElections = 0;
+		element.numContested = 0;
+	});
+
+
+	for (var i = 0; i < this.dataSource.filteredData.length; i++) {
+		var index = parseInt(this.dataSource.filteredData[i]['election_year']) - 1695;
+		if (index >= 0 && index < this.electionsPerYear.length) {
+
+
+			this.electionsPerYear[index]['numElections']++;
+			if (this.dataSource.filteredData[i]['contested'] == 'Y') {
+				this.electionsPerYear[index]['numContested']++;
+			}
+		}
+
+	}
+	return this.electionsPerYear;
+}
 hasYears(data, searchString) {
 	if (searchString.election_year.includes(",")) {
 
@@ -248,6 +279,11 @@ yearInRange(data, searchString, year) {
 	return -1;
 
 }
+getUniqueElections(){
+ 
+    this.uniqueElections = this.dataSource.data.filter((value, index, self) => self.map(x => x.constituency).indexOf(value.constituency) == index);
+    
+    }
 getHasPollBooksFilter(pollbook_id, searchTerm) {
 	if (searchTerm == 'y') {
 		if (pollbook_id.length > 1) {
@@ -289,6 +325,7 @@ getHasPollBooksFilter(pollbook_id, searchTerm) {
 //   }
   gotData(){
 	  	this.dataSource = new MatTableDataSource<Election>(this.electionsMeta.elections);
+		  this.getUniqueElections();
 			this.constituencyFilter.valueChanges.pipe(
 
 			);

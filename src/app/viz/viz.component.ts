@@ -16,10 +16,10 @@ import { DownloadPollBooksService } from '../download-poll-books.service';
 
 
 import { GetLatLonService } from '../get-lat-lon.service';
-import { Options, ChangeContext, PointerType } from 'ng5-slider';
+//import { Options, ChangeContext, PointerType } from 'ng5-slider';
 
 import { HttpParams, HttpClient } from '@angular/common/http';
-import 'rxjs/add/operator/map';
+import { map } from 'rxjs/operators';
 
 import { MatPaginator } from '@angular/material/paginator';
 import { MatTableDataSource } from '@angular/material/table';
@@ -697,10 +697,10 @@ export class VizComponent implements OnInit, OnDestroy, OnChanges {
 	minYear: number = 1695;
 	maxYear: number = 1832;
 
-	sliderOptions: Options = {
-		floor: 1695,
-		ceil: 1832
-	};
+	// sliderOptions: Options = {
+	// 	floor: 1695,
+	// 	ceil: 1832
+	// };
 
 
 	// 
@@ -1035,20 +1035,20 @@ export class VizComponent implements OnInit, OnDestroy, OnChanges {
 	ngOnChanges(changes) {
 	
 	}
-	onValueChange(changeContext: ChangeContext): void {
+	// onValueChange(changeContext: ChangeContext): void {
 	
 
-	}
-	sliderChange(changeContext: ChangeContext): void {
+	// }
+	// sliderChange(changeContext: ChangeContext): void {
 
-		this.minYear = changeContext.value;
-		this.maxYear = changeContext.highValue;
+	// 	this.minYear = changeContext.value;
+	// 	this.maxYear = changeContext.highValue;
 
-		this.yearFilter.setValue(changeContext.value.toString() + "-" + changeContext.highValue.toString());
-		this.dataSource.filter = JSON.stringify(this.filteredValues);
+	// 	this.yearFilter.setValue(changeContext.value.toString() + "-" + changeContext.highValue.toString());
+	// 	this.dataSource.filter = JSON.stringify(this.filteredValues);
 
 
-	}
+	// }
 
 	///////////////////////////////////****END LISTENER FUNCTIONS****///////////////////////////////////
 

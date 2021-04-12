@@ -1,7 +1,7 @@
 import { ElementRef, ApplicationRef, Component, Directive, OnInit, OnDestroy, Output, EventEmitter, OnChanges, ViewChild } from '@angular/core';
 import { EChartsOption } from 'echarts';
 import { HttpParams, HttpClient } from '@angular/common/http';
-import 'rxjs/add/operator/map';
+import { map } from 'rxjs/operators';
 import { GetElectionsService } from '../get-elections.service';
 import { MatTableDataSource } from '@angular/material/table';
 import { MatFormFieldControl } from '@angular/material/form-field';
@@ -115,7 +115,7 @@ export class SandpitComponent implements OnInit {
     this.years.push(i);
     }
     if(this.normalise){
-      this.seriesData = this.getNormalisedContestedPerYear(this.years);
+      this.seriesData = this.getPercentageContestedPerYear(this.years);
     }
     else{
       this.seriesData = this.getContestedPerYear(this.years);
@@ -136,7 +136,7 @@ export class SandpitComponent implements OnInit {
     this.datasourceService.franchiseFilter.valueChanges.subscribe(() => this.dataChange());
     this.datasourceService.pollBookCodeFilter.valueChanges.subscribe(() => this.dataChange());
 
-    
+    //this.datasourceService.dataSource.subscribe()
     }
   }
   onChartInit(e: any) {
@@ -188,7 +188,7 @@ export class SandpitComponent implements OnInit {
     if(this.normalise){
       this.updateOptions = {
         series: [{
-          data: this.getNormalisedContestedPerYear(this.years)
+          data: this.getPercentageContestedPerYear(this.years)
         }]
       }
     }
@@ -230,19 +230,57 @@ export class SandpitComponent implements OnInit {
  numberMap (val, in_min, in_max, out_min, out_max) {
     return (val - in_min) * (out_max - out_min) / (in_max - in_min) + out_min;
   }
+  getMax(arr){
+    var max=0;
+    arr.forEach(element => {
+      if(element>max) max = element;
+    });
+    return max;
+  }
+  getMin(arr){
+    var min=100000000;
+    arr.forEach(element => {
+      if(element<min) min = element;
+    });
+    return min;
+  }
+  getPercentageContestedPerYear(years){
+    var cpy :number[]=[];
+    var epy :number[]=[];
+    this.years.forEach(element => {
+      cpy.push(0);
+      epy.push(0);
+    });
+    for(var i=0;i<this.datasourceService.dataSource.filteredData.length;i++){
+      var isContested= this.datasourceService.dataSource.filteredData[i].contested;
+      console.log(isContested,"isCont");
+      var index = parseInt(this.datasourceService.dataSource.filteredData[i].election_year)-this.datasourceService.electionsMeta.earliest_year;
+      if(isContested.trim()=="Y") cpy[index]++;
+
+      epy[index]++;
+    }
+    
+    for(var i=0;i<epy.length;i++){
+      epy[i] = cpy[i]/epy[i];
+    }
+    return epy;
+  }
   getNormalisedContestedPerYear(years){
-    var cpy :number[];
+    var cpy :number[]=[];
     this.years.forEach(element => {
       cpy.push(0);
     });
     for(var i=0;i<this.datasourceService.dataSource.filteredData.length;i++){
       var index = parseInt(this.datasourceService.dataSource.filteredData[i].election_year)-this.datasourceService.electionsMeta.earliest_year;
+      
       cpy[index]++;
     }
     var nor = [];
     var i=0;
     cpy.forEach(element => {
-      nor.push(this.numberMap( element, Math.min(...cpy), Math.max(...cpy), 0, 100)  );
+      var mapped =  this.numberMap( element, this.getMin(cpy), this.getMax(cpy), 0, 100) ;
+      console.log(element,mapped, this.getMin(cpy))
+      nor.push(mapped );
       i++;
     });
 
