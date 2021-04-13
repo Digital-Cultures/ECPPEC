@@ -11,7 +11,7 @@
                     <div class="flex-grow sm:pl-8">
                         <h2 class="title-font font-medium md:font-large text-lg text-white">{{ member.name }}</h2>
                         <h3 class="text-gray-500 mb-3">{{ member.position }}</h3>
-                        <p (mouseenter)="member.hover=true" (mouseleave)="member.hover=false" class="mb-4">{{getAbout(member)}}</p>
+                        <app-smooth-height (mouseenter)="member.hover=true" (mouseleave)="member.hover=false" [trigger]="getAbout(member)">{{getAbout(member)}}</app-smooth-height> 
                         <span class="inline-flex">
               <!-- <a class="text-gray-500">
                 <svg fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" class="w-5 h-5" viewBox="0 0 24 24">

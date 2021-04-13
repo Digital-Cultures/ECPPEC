@@ -59,6 +59,7 @@ import { TableComponent } from './table/table.component';
 import { ElectionsMapComponent } from './elections-map/elections-map.component';
 import { NgxMatRangeSliderModule } from 'ngx-mat-range-slider';
 import { MapComponent } from './map/map.component';
+import { SmoothHeightComponent } from './smooth-height/smooth-height.component';
 
 
 // import { DialogElementsExampleDialog } from './app.component';
@@ -121,7 +122,7 @@ import { MapComponent } from './map/map.component';
 		DialogueComponent, 
 		ApiComponent, 
 		PollbookDialogueComponent, 
-		WarningDialogueComponent, SandpitComponent, TableComponent, ElectionsMapComponent, MapComponent
+		WarningDialogueComponent, SandpitComponent, TableComponent, ElectionsMapComponent, MapComponent, SmoothHeightComponent
 	],
 	providers: [  
 		
