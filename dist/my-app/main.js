@@ -61,6 +61,294 @@ var DownloadPollBooksService = /** @class */ (function () {
 
 /***/ }),
 
+/***/ "/ikp":
+/*!**********************************************!*\
+  !*** ./src/app/sandpit/sandpit.component.ts ***!
+  \**********************************************/
+/*! exports provided: SandpitComponent */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "SandpitComponent", function() { return SandpitComponent; });
+/* harmony import */ var _angular_material_table__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @angular/material/table */ "tmTa");
+/* harmony import */ var _angular_material_paginator__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! @angular/material/paginator */ "sCmA");
+/* harmony import */ var _datasource_service__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../datasource.service */ "OU0Q");
+/* harmony import */ var _angular_core__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! @angular/core */ "fXoL");
+
+
+
+
+
+var SandpitComponent = /** @class */ (function () {
+    function SandpitComponent(datasourceService) {
+        this.datasourceService = datasourceService;
+        this.electionsPerYear = [];
+        this.dataSource = new _angular_material_table__WEBPACK_IMPORTED_MODULE_0__["MatTableDataSource"]();
+        this.normalise = false;
+        this.years = [];
+        this.seriesData = [];
+        this.chartOption = {
+            xAxis: {
+                type: 'category',
+                data: this.years,
+            },
+            yAxis: {
+                type: 'value',
+            },
+            series: [
+                {
+                    data: this.seriesData,
+                    type: 'line',
+                },
+            ],
+        };
+        this.theme = "macarons";
+        this.pieOptions = {
+            title: {
+                text: 'Franchise type',
+                subtext: '',
+                x: 'center'
+            },
+            tooltip: {
+                trigger: 'item',
+                formatter: '{a} <br/>{b} : {c} ({d}%)'
+            },
+            legend: {
+                x: 'center',
+                y: 'bottom',
+                data: ['rose1', 'rose2', 'rose3', 'rose4', 'rose5', 'rose6', 'rose7', 'rose8']
+            },
+            calculable: true,
+            series: [
+                {
+                    name: 'area',
+                    type: 'pie',
+                    radius: [30, 110],
+                    roseType: 'area',
+                    data: [
+                        { value: 10, name: 'rose1' },
+                        { value: 5, name: 'rose2' },
+                        { value: 15, name: 'rose3' },
+                        { value: 25, name: 'rose4' },
+                        { value: 20, name: 'rose5' },
+                        { value: 35, name: 'rose6' },
+                        { value: 30, name: 'rose7' },
+                        { value: 40, name: 'rose8' }
+                    ]
+                }
+            ]
+        };
+    }
+    // bSubject.subscribe(value => {
+    //   console.log("Subscription got", value); // Subscription got b, 
+    //                                           // ^ This would not happen 
+    //                                           // for a generic observable 
+    //                                           // or generic subject by default
+    // });
+    SandpitComponent.prototype.ngOnInit = function () {
+        var _this = this;
+        //this.datasourceService.dataSourceService.getData();
+        // this.datasourceService.dataSourceService.ready.subscribe(() => this.gotData()
+        // );
+        this.datasourceService.ready.subscribe(function (value) { _this.gotData(value); });
+        // this.datasourceService.onDataSubscriptionChange().subscribe(() => this.dataChange());
+    };
+    SandpitComponent.prototype.gotData = function (value) {
+        var _this = this;
+        if (value) {
+            console.log("this.datasourceService.electionsMeta", this.datasourceService.electionsMeta, this.datasourceService.dataSource.data);
+            for (var i = this.datasourceService.electionsMeta.earliest_year; i < this.datasourceService.electionsMeta.latest_year; i++) {
+                this.years.push(i);
+            }
+            if (this.normalise) {
+                this.seriesData = this.getPercentageContestedPerYear(this.years);
+            }
+            else {
+                this.seriesData = this.getContestedPerYear(this.years);
+            }
+            this.updateOptions = {
+                series: [{
+                        data: this.seriesData
+                    }]
+            };
+            this.datasourceService.constituencyFilter.valueChanges.subscribe(function () { return _this.dataChange(); });
+            this.datasourceService.monthFilter.valueChanges.subscribe(function () { return _this.dataChange(); });
+            this.datasourceService.yearFilter.valueChanges.subscribe(function () { return _this.dataChange(); });
+            this.datasourceService.countyFilter.valueChanges.subscribe(function () { return _this.dataChange(); });
+            this.datasourceService.contestedFilter.valueChanges.subscribe(function () { return _this.dataChange(); });
+            this.datasourceService.byElectionGeneralFilter.valueChanges.subscribe(function () { return _this.dataChange(); });
+            this.datasourceService.byElectionCauseFilter.valueChanges.subscribe(function () { return _this.dataChange(); });
+            this.datasourceService.franchiseFilter.valueChanges.subscribe(function () { return _this.dataChange(); });
+            this.datasourceService.pollBookCodeFilter.valueChanges.subscribe(function () { return _this.dataChange(); });
+            //this.datasourceService.dataSource.subscribe()
+        }
+    };
+    SandpitComponent.prototype.onChartInit = function (e) {
+        this.chartInstance = e;
+        console.log('on chart init:', e);
+    };
+    SandpitComponent.prototype.getFranchiseTypes = function () {
+        var franchise_types = [];
+        var franchise_data = [];
+        this.datasourceService.dataSource.filteredData.forEach(function (element) {
+            if (franchise_types.indexOf(element.franchise_type) == -1) {
+                franchise_types.push(element.franchise_type);
+            }
+        });
+    };
+    SandpitComponent.prototype.toggleNormalise = function () {
+        this.normalise = !this.normalise;
+        this.dataChange();
+    };
+    SandpitComponent.prototype.getFranchiseData = function () {
+        var franchise_data = {};
+        //  franchise_types.forEach(element =>{
+        //   franchise_data[element]=0;
+        // });
+        this.datasourceService.dataSource.filteredData.forEach(function (element) {
+            if (element.franchise_type in franchise_data) {
+                franchise_data[element.franchise_type]++;
+            }
+            else {
+                franchise_data[element.franchise_type] = 1;
+            }
+        });
+        console.log("franchise_data", franchise_data);
+        var clean_data = [];
+        for (var property in franchise_data) {
+            var obj = {
+                value: franchise_data[property],
+                name: property
+            };
+            clean_data.push(obj);
+        }
+        return clean_data;
+    };
+    SandpitComponent.prototype.dataChange = function () {
+        console.log("after", this.datasourceService.dataSource.filteredData);
+        if (this.normalise) {
+            this.updateOptions = {
+                series: [{
+                        data: this.getPercentageContestedPerYear(this.years)
+                    }]
+            };
+        }
+        else {
+            this.updateOptions = {
+                series: [{
+                        data: this.getContestedPerYear(this.years)
+                    }]
+            };
+        }
+        var names = [];
+        var franchiseData = this.getFranchiseData();
+        console.log("franchiseData", franchiseData);
+        for (var i = 0; i < franchiseData.length; i++) {
+            names.push(franchiseData[i].name);
+        }
+        this.updatePieOptions = {
+            series: [
+                {
+                    name: 'area',
+                    type: 'pie',
+                    radius: [30, 110],
+                    roseType: 'area',
+                    data: franchiseData
+                }
+            ],
+            legend: {
+                x: 'center',
+                y: 'bottom',
+                data: names
+            },
+        };
+        console.log("updatePieOptions", this.updatePieOptions);
+    };
+    SandpitComponent.prototype.numberMap = function (val, in_min, in_max, out_min, out_max) {
+        return (val - in_min) * (out_max - out_min) / (in_max - in_min) + out_min;
+    };
+    SandpitComponent.prototype.getMax = function (arr) {
+        var max = 0;
+        arr.forEach(function (element) {
+            if (element > max)
+                max = element;
+        });
+        return max;
+    };
+    SandpitComponent.prototype.getMin = function (arr) {
+        var min = 100000000;
+        arr.forEach(function (element) {
+            if (element < min)
+                min = element;
+        });
+        return min;
+    };
+    SandpitComponent.prototype.getPercentageContestedPerYear = function (years) {
+        var cpy = [];
+        var epy = [];
+        this.years.forEach(function (element) {
+            cpy.push(0);
+            epy.push(0);
+        });
+        for (var i = 0; i < this.datasourceService.dataSource.filteredData.length; i++) {
+            var isContested = this.datasourceService.dataSource.filteredData[i].contested;
+            console.log(isContested, "isCont");
+            var index = parseInt(this.datasourceService.dataSource.filteredData[i].election_year) - this.datasourceService.electionsMeta.earliest_year;
+            if (isContested.trim() == "Y")
+                cpy[index]++;
+            epy[index]++;
+        }
+        for (var i = 0; i < epy.length; i++) {
+            epy[i] = cpy[i] / epy[i];
+        }
+        return epy;
+    };
+    SandpitComponent.prototype.getNormalisedContestedPerYear = function (years) {
+        var _this = this;
+        var cpy = [];
+        this.years.forEach(function (element) {
+            cpy.push(0);
+        });
+        for (var i = 0; i < this.datasourceService.dataSource.filteredData.length; i++) {
+            var index = parseInt(this.datasourceService.dataSource.filteredData[i].election_year) - this.datasourceService.electionsMeta.earliest_year;
+            cpy[index]++;
+        }
+        var nor = [];
+        var i = 0;
+        cpy.forEach(function (element) {
+            var mapped = _this.numberMap(element, _this.getMin(cpy), _this.getMax(cpy), 0, 100);
+            console.log(element, mapped, _this.getMin(cpy));
+            nor.push(mapped);
+            i++;
+        });
+        return nor;
+    };
+    SandpitComponent.prototype.getContestedPerYear = function (years) {
+        var cpy = [];
+        this.years.forEach(function (element) {
+            cpy.push(0);
+        });
+        for (var i = 0; i < this.datasourceService.dataSource.filteredData.length; i++) {
+            var index = parseInt(this.datasourceService.dataSource.filteredData[i].election_year) - this.datasourceService.electionsMeta.earliest_year;
+            cpy[index]++;
+        }
+        return cpy;
+    };
+    SandpitComponent.ɵfac = function SandpitComponent_Factory(t) { return new (t || SandpitComponent)(_angular_core__WEBPACK_IMPORTED_MODULE_3__["ɵɵdirectiveInject"](_datasource_service__WEBPACK_IMPORTED_MODULE_2__["DatasourceService"])); };
+    SandpitComponent.ɵcmp = _angular_core__WEBPACK_IMPORTED_MODULE_3__["ɵɵdefineComponent"]({ type: SandpitComponent, selectors: [["app-sandpit"]], viewQuery: function SandpitComponent_Query(rf, ctx) { if (rf & 1) {
+            _angular_core__WEBPACK_IMPORTED_MODULE_3__["ɵɵviewQuery"](_angular_material_paginator__WEBPACK_IMPORTED_MODULE_1__["MatPaginator"], 3);
+        } if (rf & 2) {
+            var _t = void 0;
+            _angular_core__WEBPACK_IMPORTED_MODULE_3__["ɵɵqueryRefresh"](_t = _angular_core__WEBPACK_IMPORTED_MODULE_3__["ɵɵloadQuery"]()) && (ctx.paginator = _t.first);
+        } }, decls: 0, vars: 0, template: function SandpitComponent_Template(rf, ctx) { }, styles: [".demo-chart[_ngcontent-%COMP%] {\n  height: 400px;\n}\n\n#slider[_ngcontent-%COMP%] {\n  height: 200px;\n}\n/*# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW9uIjozLCJzb3VyY2VzIjpbIi4uLy4uLy4uL3NhbmRwaXQuY29tcG9uZW50LnNjc3MiXSwibmFtZXMiOltdLCJtYXBwaW5ncyI6IkFBQUE7RUFDSSxhQUFBO0FBQ0o7O0FBRUE7RUFDSSxhQUFBO0FBQ0oiLCJmaWxlIjoic2FuZHBpdC5jb21wb25lbnQuc2NzcyIsInNvdXJjZXNDb250ZW50IjpbIi5kZW1vLWNoYXJ0IHtcbiAgICBoZWlnaHQ6IDQwMHB4O1xufVxuXG4jc2xpZGVyIHtcbiAgICBoZWlnaHQ6IDIwMHB4O1xufSJdfQ== */"] });
+    return SandpitComponent;
+}());
+
+
+
+/***/ }),
+
 /***/ 0:
 /*!***************************!*\
   !*** multi ./src/main.ts ***!
@@ -115,6 +403,8 @@ var HelloComponent = /** @class */ (function () {
 __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "AboutComponent", function() { return AboutComponent; });
 /* harmony import */ var _angular_core__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @angular/core */ "fXoL");
+/* harmony import */ var _angular_router__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! @angular/router */ "tyNb");
+
 
 var AboutComponent = /** @class */ (function () {
     function AboutComponent() {
@@ -131,43 +421,88 @@ var AboutComponent = /** @class */ (function () {
     AboutComponent.ɵfac = function AboutComponent_Factory(t) { return new (t || AboutComponent)(); };
     AboutComponent.ɵcmp = _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵdefineComponent"]({ type: AboutComponent, selectors: [["app-about"]], hostBindings: function AboutComponent_HostBindings(rf, ctx) { if (rf & 1) {
             _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵlistener"]("resize", function AboutComponent_resize_HostBindingHandler($event) { return ctx.onResize($event); }, false, _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵresolveWindow"]);
-        } }, decls: 21, vars: 2, consts: [["id", "container"], ["id", "style-3", 1, "scrollbar"], ["id", "about_section"]], template: function AboutComponent_Template(rf, ctx) { if (rf & 1) {
-            _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementStart"](0, "div", 0);
+        } }, decls: 46, vars: 0, consts: [[1, "text-gray-400", "body-font", "bg-gray-900"], [1, "container", "px-5", "py-24", "mx-auto"], [1, "flex", "flex-col", "text-center", "w-full", "mb-20"], [1, "text-xs", "text-yellow-400", "tracking-widest", "font-medium", "title-font", "mb-1", "lg:text-xl", "md:text-3xl"], [1, "sm:text-3xl", "text-2xl", "font-medium", "title-font", "mb-4", "text-white"], [1, "lg:w-2/3", "mx-auto", "leading-relaxed", "text-base", "lg:text-base", "sm:text-2xl"], [1, "flex", "flex-wrap"], [1, "xl:w-1/4", "lg:w-1/2", "md:w-full", "px-8", "py-6", "border-l-2", "border-gray-800"], [1, "text-lg", "sm:text-3xl", "text-white", "font-medium", "title-font", "mb-2"], [1, "leading-relaxed", "text-base", "mb-4", "lg:text-base", "sm:text-2xl"], ["routerLink", "/map", 1, "text-yellow-400", "inline-flex", "items-center", "lg:text-base", "sm:text-2xl"], ["fill", "none", "stroke", "currentColor", "stroke-linecap", "round", "stroke-linejoin", "round", "stroke-width", "2", "viewBox", "0 0 24 24", 1, "w-4", "h-4", "ml-2"], ["d", "M5 12h14M12 5l7 7-7 7"], ["routerLink", "/team", 1, "text-yellow-400", "inline-flex", "items-center", "lg:text-base", "sm:text-2xl"], [1, "text-yellow-400", "inline-flex", "items-center", "lg:text-base", "sm:text-2xl"], ["routerLink", "/api", 1, "text-yellow-400", "inline-flex", "items-center", "lg:text-base", "sm:text-2xl"]], template: function AboutComponent_Template(rf, ctx) { if (rf & 1) {
+            _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementStart"](0, "section", 0);
             _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementStart"](1, "div", 1);
             _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementStart"](2, "div", 2);
-            _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementStart"](3, "h1");
-            _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵtext"](4, "About ECPPEC");
+            _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementStart"](3, "h2", 3);
+            _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵtext"](4, "ABOUT THE ECPPECT PROJECT");
             _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementEnd"]();
-            _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementStart"](5, "p");
-            _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵtext"](6, "\nEighteenth-century elections are largely synonymous with corruption and debauchery, epitomised by the infamous 'rotten' and 'pocket' boroughs, and memorably represented by William Hogarth's 'Humours of an Election' series (1755). Certainly only a small proportion of the population could vote. Even fewer could exercise their vote freely. Although general elections were supposed to be held every three, then seven, years, the huge expense of campaigning ensured only a small proportion of constituencies were contested. This was no modern democracy.");
+            _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementStart"](5, "h1", 4);
+            _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵtext"](6, "Eighteenth-Century Political Participation and Electoral Culture");
             _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementEnd"]();
-            _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementStart"](7, "p");
-            _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵtext"](8, "\nYet parliamentary elections were fundamentally important to all, not only for the selection of MPs, but also in bestowing a sense of power and belonging (even if only temporarily), in helping to form the nation's self-image, and in helping to forge a new constitutionalist tradition. Moreover, we want to show, elections not only affected, but also engaged, a wide section of the population - both those enfranchised and those not. Elections were often accompanied by an explosion of print, sermons, and song; countless ceremonies, assemblies, and entertainments; new modes of dress, decoration, and behaviour. Men and women, adults and children, rich and poor, franchised and unenfranchised, all participated - as consumers, but also as active makers of this unique cultural and political experience.");
+            _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementStart"](7, "p", 5);
+            _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵtext"](8, " The project aims to produce new understanding of parliamentary elections in England between 1696 and 1832. Even though few could vote, these elections were often accompanied by an explosion of print, sermons, and song; processions, assemblies, and entertainments; and even new modes of dress, decoration, and behaviour. Men and women, adults and children, rich and poor, franchised and unenfranchised, all participated - as consumers, but also as active makers of these extraordinary cultural and political experiences. ECPPEC will combine literary and historical study of the print, visual, musical and material culture of elections, with \u2018big data\u2019 analysis of poll books, including innovative mapping, visualisation and psephological assessment of who voted, who they voted for, and how this changed over time and place. The project has sharp, contemporary relevance in an age when fewer people are voting, and when data analytics and targeted media interventions are changing the way we think about electoral processes.");
             _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementEnd"]();
-            _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementStart"](9, "p");
-            _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵtext"](10, "\nOur project's fundamental aims are to shine an intense light on these extraordinary moments of participation, ritual, and sometimes carnival, and to consider their consequences and legacies. To do this we will collect new polling data from constituencies across England 1696-1831, working in partnership with local historian groups; subject this data to new kinds of scrutiny using innovative digital tools; and gather the cultural artefacts and practices which constituted people's lived experiences of elections. We will gain new insight into electoral demography, voter behaviour, and how voting patterns changed over time, across regions, and in different types of constituency. And from a combination of archival and creative practice research (the latter designed to reimagine and re-enact important elements of elections now lost) we will gain new understanding of the extent, pervasiveness, and inclusiveness of electoral culture. By placing polling data in its cultural contexts, we will come to understand whether the elements of campaigning - print and processions, banquets and ballads, sashes and sermons - made a difference to political outcomes, or left any significant legacy beyond election time.");
             _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementEnd"]();
-            _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementStart"](11, "p");
-            _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵtext"](12, "\nSo this project is about two things: how people participate in politics, both with and without the vote; and how interventions across a proliferating range of media affect polling behaviour and outcomes. Both remain highly relevant in our own time. Today, many choose not to vote. This is very different from being excluded from the franchise, as was the great majority in the 18th century. But our research will challenge us to think differently about how non-voters may engage with democratic processes - through music, literature, fashion and art, for example, or via broadcast journalism and social media when once it was handbills and the hustings. We will want to ask whether contemporary phenomena such as data analytics and targeted digital communication strategies have counterparts, even origins, in pre-Reform Britain, and what effects, if any, these kinds of interventions have on people's relationship to the demos. Working with our partners, History of Parliament and the IHR, we aim to communicate our findings to audiences well beyond academia, particularly to schools and at a series of events timed (if possible) to accompany the next UK General Election. As well as reshaping our understanding of how elections functioned before parliamentary reform, we intend that this project should usefully inform pressing debates about political communication and political participation today.\n");
+            _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementStart"](9, "div", 6);
+            _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementStart"](10, "div", 7);
+            _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementStart"](11, "h2", 8);
+            _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵtext"](12, "Maps");
             _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementEnd"]();
-            _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementStart"](13, "h2");
-            _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵtext"](14, "Planned Impact");
+            _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementStart"](13, "p", 9);
+            _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵtext"](14, "Explore our visualisations");
             _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementEnd"]();
-            _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementStart"](15, "p");
-            _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵtext"](16, "\nA central aim of this project is to increase public knowledge of electoral processes in 18th-century England. In particular, we intend that the project will inform a range of audiences about (a) different ways in which people have been able to engage in elections whether or not they had the vote; and (b) the ways in which elections were (we will argue) composed of numerous small interventions taking many different forms, aimed at engaging public opinion and securing or altering the poll's result. Disseminating the new knowledge the project generates about pre-1832 voter behaviour and electoral culture may not change the way people regard democracy today, still less how (or if) they vote. But our intention is that, working with influential non-HEI organisations (History of Parliament, Institute of Historical Research, and Hansard Trust), our historical research should inform debate about issues that remain current: (a) Does political participation inhere purely in the act of voting or might other forms of engagement be just as significant? And (b) what is the history, and what effects should we anticipate, of sophisticated multi-channel campaigns to draw people into elections, from the handbills and hustings of the 18th century to the broadcast and social media of today?");
-            _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementEnd"]();
-            _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementStart"](17, "p");
-            _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵtext"](18, "\nCollaboration with non-academic partners forms a key element of our methodology. Our aim is not simply to 'employ' volunteer citizen historians to help collect and process data; rather local history groups have been (during the pilot phase), and will continue to be, instrumental in setting the project's agenda and providing guidance on the most useful forms for its outputs. The chief vehicle for this co-production will be the Constituency Panels we will establish for each of our case studies, each including volunteers collaborating with the project and, where possible, representatives from local archives. The support of our partners the Institute for Historical Research will be invaluable here, since they have huge experience in recruiting and working with community historians, for instance through networks associated with the Victoria County History, as well as a substantial reach through their social media channels.");
-            _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementEnd"]();
-            _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementStart"](19, "p");
-            _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵtext"](20, "\nWe see local historians also as key (non-HEI) beneficiaries of the research. By the end of the project, many local historians will have received specialised training, and will be empowered to continue and expand the project after its funding comes to an end. Other channels through which we will transmit our research, and debate its implications, to non-academic audiences are set out in our full Pathways to Impact document. They include a substantial and imaginative programme of public engagement events, based in each of our twelve case study constituencies, and provisionally timed to coincide with the next UK General Election (although we appreciate that the present political situation may lead to an election much sooner); a major public lecture; high-profile public launch event, potentially at the Speaker's House (facilitated by History of Parliament); and posts on the Hansard Society's respected and widely-read 'Despatch Box' blog. The element of our project with the widest potential impact is our work aimed at schools. Drawing on successful models already developed and deployed by the project team, we will develop a Learning Framework for use with Key Stage 3 pupils that fits with the requirements of the National Curriculum, supporting teachers in their delivery of mandated/recommended elements of the Citizenship and History programmes. This has the potential to reach very many young people. It will also bring significant benefits to History of Parliament, through whose website the packages will be made available. Their remit is to engage new audiences, ideally including children, with the history of democratic process, and, to an extent, the continuation of their public funding is dependent on fulfilling this objective.\n");
+            _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementStart"](15, "a", 10);
+            _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵtext"](16, "Learn More ");
+            _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵnamespaceSVG"]();
+            _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementStart"](17, "svg", 11);
+            _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelement"](18, "path", 12);
             _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementEnd"]();
             _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementEnd"]();
             _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementEnd"]();
+            _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵnamespaceHTML"]();
+            _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementStart"](19, "div", 7);
+            _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementStart"](20, "h2", 8);
+            _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵtext"](21, "Team");
             _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementEnd"]();
-        } if (rf & 2) {
-            _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵstyleProp"]("height", ctx.myInnerHeight, "px");
-        } }, styles: ["#container[_ngcontent-%COMP%] {\n  padding: 5%;\n  background-color: black;\n  position: relative;\n  width: 90%;\n}\n\n.scroll_style[_ngcontent-%COMP%]::-webkit-scrollbar-thumb {\n  border-radius: 10px !important;\n  -webkit-box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.3) !important;\n  background-color: #D62929 !important;\n}\n\n#about_section[_ngcontent-%COMP%] {\n  \n  height: 100%;\n  margin: auto;\n  text-align: center;\n  width: 80%;\n  \n  text-align: justify;\n}\n\n#spacer[_ngcontent-%COMP%] {\n  width: 100%;\n  height: 40%;\n}\n\np[_ngcontent-%COMP%] {\n  color: lightGrey;\n}\n\nh1[_ngcontent-%COMP%] {\n  color: #ffd740;\n  font-family: Roboto;\n  vertical-align: top;\n  line-height: 90%;\n  position: relative;\n}\n\nh2[_ngcontent-%COMP%] {\n  font-family: Roboto;\n  color: white;\n}\n\n.scrollbar[_ngcontent-%COMP%] {\n  \n  \n  \n  height: 80%;\n  overflow-y: scroll;\n  margin-bottom: 25px;\n}\n\n.force-overflow[_ngcontent-%COMP%] {\n  min-height: 450px;\n}\n\n#wrapper[_ngcontent-%COMP%] {\n  text-align: center;\n  width: 500px;\n  margin: auto;\n}\n\n\n\n#style-1[_ngcontent-%COMP%]::-webkit-scrollbar-track {\n  -webkit-box-shadow: inset 0 0 6px rgba(255, 0, 0, 0.3);\n  border-radius: 10px;\n  background-color: #F5F5F5;\n}\n\n#style-1[_ngcontent-%COMP%]::-webkit-scrollbar {\n  width: 12px;\n  background-color: #F5F5F5;\n}\n\n#style-1[_ngcontent-%COMP%]::-webkit-scrollbar-thumb {\n  border-radius: 10px;\n  -webkit-box-shadow: inset 0 0 6px rgba(255, 0, 0, 0.3);\n  background-color: #555;\n}\n\n\n\n#style-2[_ngcontent-%COMP%]::-webkit-scrollbar-track {\n  -webkit-box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.3);\n  border-radius: 10px;\n  background-color: #F5F5F5;\n}\n\n#style-2[_ngcontent-%COMP%]::-webkit-scrollbar {\n  width: 12px;\n  background-color: #F5F5F5;\n}\n\n#style-2[_ngcontent-%COMP%]::-webkit-scrollbar-thumb {\n  border-radius: 10px;\n  -webkit-box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.3);\n  background-color: #D62929;\n}\n\n\n\n#style-3[_ngcontent-%COMP%]::-webkit-scrollbar-track {\n  -webkit-box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.63);\n  background-color: orange;\n}\n\n#style-3[_ngcontent-%COMP%]::-webkit-scrollbar {\n  width: 6px;\n  background-color: orange;\n}\n\n#style-3[_ngcontent-%COMP%]::-webkit-scrollbar-thumb {\n  background-color: orange;\n}\n/*# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW9uIjozLCJzb3VyY2VzIjpbIi4uLy4uLy4uL2Fib3V0LmNvbXBvbmVudC5zY3NzIl0sIm5hbWVzIjpbXSwibWFwcGluZ3MiOiJBQUFBO0VBQ0MsV0FBQTtFQUNBLHVCQUFBO0VBRUEsa0JBQUE7RUFDQSxVQUFBO0FBQUQ7O0FBRUE7RUFFSSw4QkFBQTtFQUNBLCtEQUFBO0VBQ0Esb0NBQUE7QUFBSjs7QUFFQTtFQUNDOztlQUFBO0VBR0EsWUFBQTtFQUNBLFlBQUE7RUFDQyxrQkFBQTtFQUNBLFVBQUE7RUFDQSxpQkFBQTtFQUNBLG1CQUFBO0FBQ0Y7O0FBRUE7RUFDQyxXQUFBO0VBQ0EsV0FBQTtBQUNEOztBQUNBO0VBQ0MsZ0JBQUE7QUFFRDs7QUFBQTtFQUNDLGNBQUE7RUFDQSxtQkFBQTtFQUNBLG1CQUFBO0VBQ0EsZ0JBQUE7RUFDQSxrQkFBQTtBQUdEOztBQUFBO0VBQ0MsbUJBQUE7RUFDQSxZQUFBO0FBR0Q7O0FBRUE7RUFFQTttQkFBQTtFQUVBO29CQUFBO0VBR0ksdUJBQUE7RUFDQSxXQUFBO0VBQ0Esa0JBQUE7RUFDQSxtQkFBQTtBQURKOztBQUlBO0VBRUksaUJBQUE7QUFGSjs7QUFLQTtFQUVJLGtCQUFBO0VBQ0EsWUFBQTtFQUNBLFlBQUE7QUFISjs7QUFNQTs7RUFBQTs7QUFJQTtFQUVJLHNEQUFBO0VBQ0EsbUJBQUE7RUFDQSx5QkFBQTtBQUxKOztBQVFBO0VBRUksV0FBQTtFQUNBLHlCQUFBO0FBTko7O0FBU0E7RUFFSSxtQkFBQTtFQUNBLHNEQUFBO0VBQ0Esc0JBQUE7QUFQSjs7QUFVQTs7RUFBQTs7QUFJQTtFQUVJLG9EQUFBO0VBQ0EsbUJBQUE7RUFDQSx5QkFBQTtBQVRKOztBQVlBO0VBRUksV0FBQTtFQUNBLHlCQUFBO0FBVko7O0FBYUE7RUFFSSxtQkFBQTtFQUNBLG9EQUFBO0VBQ0EseUJBQUE7QUFYSjs7QUFjQTs7RUFBQTs7QUFJQTtFQUVJLHFEQUFBO0VBQ0Esd0JBQUE7QUFiSjs7QUFnQkE7RUFFSSxVQUFBO0VBQ0Esd0JBQUE7QUFkSjs7QUFpQkE7RUFFSSx3QkFBQTtBQWZKIiwiZmlsZSI6ImFib3V0LmNvbXBvbmVudC5zY3NzIiwic291cmNlc0NvbnRlbnQiOlsiI2NvbnRhaW5lcntcblx0cGFkZGluZzo1JTtcblx0YmFja2dyb3VuZC1jb2xvcjogYmxhY2s7XG5cblx0cG9zaXRpb246IHJlbGF0aXZlO1xuXHR3aWR0aDogOTAlO1xufVxuLnNjcm9sbF9zdHlsZTo6LXdlYmtpdC1zY3JvbGxiYXItdGh1bWJcbntcbiAgICBib3JkZXItcmFkaXVzOiAxMHB4ICFpbXBvcnRhbnQ7XG4gICAgLXdlYmtpdC1ib3gtc2hhZG93OiBpbnNldCAwIDAgNnB4IHJnYmEoMCwwLDAsLjMpICFpbXBvcnRhbnQ7XG4gICAgYmFja2dyb3VuZC1jb2xvcjogI0Q2MjkyOSAhaW1wb3J0YW50O1xufVxuI2Fib3V0X3NlY3Rpb257XG5cdC8qd2lkdGg6IDUwJTtcblx0dGV4dC1hbGlnbjogY2VudGVyO1xuXHRtYXJnaW46IDBweDsqL1xuXHRoZWlnaHQ6IDEwMCU7XG5cdG1hcmdpbjogYXV0bztcblx0XHR0ZXh0LWFsaWduOiBjZW50ZXI7XG4gIHdpZHRoOiA4MCU7XG4gIC8qcGFkZGluZzogMTBweDsqL1xuICB0ZXh0LWFsaWduOiBqdXN0aWZ5O1xuXG59XG4jc3BhY2Vye1xuXHR3aWR0aDogMTAwJTtcblx0aGVpZ2h0OjQwJTtcbn1cbnB7XG5cdGNvbG9yOiBsaWdodEdyZXk7XG59XG5oMXtcblx0Y29sb3I6ICNmZmQ3NDA7XG5cdGZvbnQtZmFtaWx5OiBSb2JvdG87XG5cdHZlcnRpY2FsLWFsaWduOiB0b3A7XG5cdGxpbmUtaGVpZ2h0OiA5MCU7XG5cdHBvc2l0aW9uOiByZWxhdGl2ZTtcblxufVxuaDJ7XG5cdGZvbnQtZmFtaWx5OiBSb2JvdG87XG5cdGNvbG9yOiB3aGl0ZTtcbn1cblxuXG5cbi5zY3JvbGxiYXJcbntcbi8qICAgIG1hcmdpbi1sZWZ0OiAzMHB4O1xuICAgIGZsb2F0OiBsZWZ0OyovXG4vKiAgICBoZWlnaHQ6IDMwMHB4O1xuICAgIHdpZHRoOiA1NjVweDsqL1xuICAgXG4gICAgLypiYWNrZ3JvdW5kOiAjRjVGNUY1OyovXG4gICAgaGVpZ2h0OiA4MCU7XG4gICAgb3ZlcmZsb3cteTogc2Nyb2xsO1xuICAgIG1hcmdpbi1ib3R0b206IDI1cHg7XG59XG5cbi5mb3JjZS1vdmVyZmxvd1xue1xuICAgIG1pbi1oZWlnaHQ6IDQ1MHB4O1xufVxuXG4jd3JhcHBlclxue1xuICAgIHRleHQtYWxpZ246IGNlbnRlcjtcbiAgICB3aWR0aDogNTAwcHg7XG4gICAgbWFyZ2luOiBhdXRvO1xufVxuXG4vKlxuICogIFNUWUxFIDFcbiAqL1xuXG4jc3R5bGUtMTo6LXdlYmtpdC1zY3JvbGxiYXItdHJhY2tcbntcbiAgICAtd2Via2l0LWJveC1zaGFkb3c6IGluc2V0IDAgMCA2cHggcmdiYSgyNTUsMCwwLDAuMyk7XG4gICAgYm9yZGVyLXJhZGl1czogMTBweDtcbiAgICBiYWNrZ3JvdW5kLWNvbG9yOiAjRjVGNUY1O1xufVxuXG4jc3R5bGUtMTo6LXdlYmtpdC1zY3JvbGxiYXJcbntcbiAgICB3aWR0aDogMTJweDtcbiAgICBiYWNrZ3JvdW5kLWNvbG9yOiAjRjVGNUY1O1xufVxuXG4jc3R5bGUtMTo6LXdlYmtpdC1zY3JvbGxiYXItdGh1bWJcbntcbiAgICBib3JkZXItcmFkaXVzOiAxMHB4O1xuICAgIC13ZWJraXQtYm94LXNoYWRvdzogaW5zZXQgMCAwIDZweCByZ2JhKDI1NSwwLDAsLjMpO1xuICAgIGJhY2tncm91bmQtY29sb3I6ICM1NTU7XG59XG5cbi8qXG4gKiAgU1RZTEUgMlxuICovXG5cbiNzdHlsZS0yOjotd2Via2l0LXNjcm9sbGJhci10cmFja1xue1xuICAgIC13ZWJraXQtYm94LXNoYWRvdzogaW5zZXQgMCAwIDZweCByZ2JhKDAsMCwwLDAuMyk7XG4gICAgYm9yZGVyLXJhZGl1czogMTBweDtcbiAgICBiYWNrZ3JvdW5kLWNvbG9yOiAjRjVGNUY1O1xufVxuXG4jc3R5bGUtMjo6LXdlYmtpdC1zY3JvbGxiYXJcbntcbiAgICB3aWR0aDogMTJweDtcbiAgICBiYWNrZ3JvdW5kLWNvbG9yOiAjRjVGNUY1O1xufVxuXG4jc3R5bGUtMjo6LXdlYmtpdC1zY3JvbGxiYXItdGh1bWJcbntcbiAgICBib3JkZXItcmFkaXVzOiAxMHB4O1xuICAgIC13ZWJraXQtYm94LXNoYWRvdzogaW5zZXQgMCAwIDZweCByZ2JhKDAsMCwwLC4zKTtcbiAgICBiYWNrZ3JvdW5kLWNvbG9yOiAjRDYyOTI5O1xufVxuXG4vKlxuICogIFNUWUxFIDNcbiAqL1xuXG4jc3R5bGUtMzo6LXdlYmtpdC1zY3JvbGxiYXItdHJhY2tcbntcbiAgICAtd2Via2l0LWJveC1zaGFkb3c6IGluc2V0IDAgMCA2cHggcmdiYSgwLDAsMCwwLjYzKTtcbiAgICBiYWNrZ3JvdW5kLWNvbG9yOiBvcmFuZ2U7XG59XG5cbiNzdHlsZS0zOjotd2Via2l0LXNjcm9sbGJhclxue1xuICAgIHdpZHRoOiA2cHg7XG4gICAgYmFja2dyb3VuZC1jb2xvcjogb3JhbmdlO1xufVxuXG4jc3R5bGUtMzo6LXdlYmtpdC1zY3JvbGxiYXItdGh1bWJcbntcbiAgICBiYWNrZ3JvdW5kLWNvbG9yOiBvcmFuZ2U7XG59Il19 */"] });
+            _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementStart"](22, "p", 9);
+            _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵtext"](23, "Meet the researchers");
+            _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementEnd"]();
+            _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementStart"](24, "a", 13);
+            _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵtext"](25, "Learn More ");
+            _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵnamespaceSVG"]();
+            _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementStart"](26, "svg", 11);
+            _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelement"](27, "path", 12);
+            _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementEnd"]();
+            _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementEnd"]();
+            _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementEnd"]();
+            _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵnamespaceHTML"]();
+            _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementStart"](28, "div", 7);
+            _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementStart"](29, "h2", 8);
+            _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵtext"](30, "Stories");
+            _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementEnd"]();
+            _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementStart"](31, "p", 9);
+            _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵtext"](32, "Find out more about elections in the 18th Century");
+            _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementEnd"]();
+            _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementStart"](33, "a", 14);
+            _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵtext"](34, "Learn More ");
+            _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵnamespaceSVG"]();
+            _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementStart"](35, "svg", 11);
+            _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelement"](36, "path", 12);
+            _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementEnd"]();
+            _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementEnd"]();
+            _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementEnd"]();
+            _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵnamespaceHTML"]();
+            _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementStart"](37, "div", 7);
+            _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementStart"](38, "h2", 8);
+            _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵtext"](39, "Data");
+            _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementEnd"]();
+            _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementStart"](40, "p", 9);
+            _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵtext"](41, "Access the databases through our free webservices");
+            _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementEnd"]();
+            _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementStart"](42, "a", 15);
+            _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵtext"](43, "Learn More ");
+            _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵnamespaceSVG"]();
+            _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementStart"](44, "svg", 11);
+            _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelement"](45, "path", 12);
+            _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementEnd"]();
+            _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementEnd"]();
+            _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementEnd"]();
+            _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementEnd"]();
+            _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementEnd"]();
+            _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementEnd"]();
+        } }, directives: [_angular_router__WEBPACK_IMPORTED_MODULE_1__["RouterLinkWithHref"]], styles: ["p[_ngcontent-%COMP%] {\n  color: white;\n}\n/*# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW9uIjozLCJzb3VyY2VzIjpbIi4uLy4uLy4uL2Fib3V0LmNvbXBvbmVudC5zY3NzIl0sIm5hbWVzIjpbXSwibWFwcGluZ3MiOiJBQUFBO0VBQ0ksWUFBQTtBQUNKIiwiZmlsZSI6ImFib3V0LmNvbXBvbmVudC5zY3NzIiwic291cmNlc0NvbnRlbnQiOlsicCB7XG4gICAgY29sb3I6IHdoaXRlO1xufSJdfQ== */"] });
     return AboutComponent;
 }());
 
@@ -201,6 +536,512 @@ var GetLatLonService = /** @class */ (function () {
     GetLatLonService.ɵfac = function GetLatLonService_Factory(t) { return new (t || GetLatLonService)(_angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵinject"](_angular_common_http__WEBPACK_IMPORTED_MODULE_0__["HttpClient"])); };
     GetLatLonService.ɵprov = _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵdefineInjectable"]({ token: GetLatLonService, factory: GetLatLonService.ɵfac, providedIn: 'root' });
     return GetLatLonService;
+}());
+
+
+
+/***/ }),
+
+/***/ "9Rdk":
+/*!******************************************!*\
+  !*** ./src/app/table/table.component.ts ***!
+  \******************************************/
+/*! exports provided: TableComponent */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "TableComponent", function() { return TableComponent; });
+/* harmony import */ var _datasource_service__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../datasource.service */ "OU0Q");
+/* harmony import */ var _angular_material_table__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! @angular/material/table */ "tmTa");
+/* harmony import */ var _viz_viz_component__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../viz/viz.component */ "w3Bs");
+/* harmony import */ var _angular_material_paginator__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! @angular/material/paginator */ "sCmA");
+/* harmony import */ var _angular_core__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! @angular/core */ "fXoL");
+/* harmony import */ var _angular_slider_ngx_slider__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! @angular-slider/ngx-slider */ "mgaL");
+/* harmony import */ var _angular_common__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! @angular/common */ "ofXK");
+/* harmony import */ var _angular_material_tooltip__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! @angular/material/tooltip */ "gVAx");
+/* harmony import */ var _angular_material_form_field__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! @angular/material/form-field */ "IRfi");
+/* harmony import */ var _angular_material_input__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! @angular/material/input */ "A2Vd");
+/* harmony import */ var _angular_forms__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! @angular/forms */ "3Pt+");
+/* harmony import */ var _angular_material_select__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__(/*! @angular/material/select */ "2+6u");
+/* harmony import */ var _angular_material_core__WEBPACK_IMPORTED_MODULE_12__ = __webpack_require__(/*! @angular/material/core */ "j14s");
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+function TableComponent_table_1_th_2_Template(rf, ctx) { if (rf & 1) {
+    _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵelementStart"](0, "th", 18);
+    _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵelementStart"](1, "span", 19);
+    _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵtext"](2, "Constituency");
+    _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵelementEnd"]();
+    _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵelementStart"](3, "div");
+    _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵelementStart"](4, "mat-form-field");
+    _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵelement"](5, "input", 20);
+    _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵelementEnd"]();
+    _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵelementEnd"]();
+    _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵelementEnd"]();
+} if (rf & 2) {
+    var ctx_r1 = _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵnextContext"](2);
+    _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵadvance"](1);
+    _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵproperty"]("matTooltipPosition", "above");
+    _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵadvance"](4);
+    _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵproperty"]("formControl", ctx_r1.datasourceService.constituencyFilter);
+} }
+function TableComponent_table_1_td_3_Template(rf, ctx) { if (rf & 1) {
+    _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵelementStart"](0, "td", 21);
+    _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵtext"](1);
+    _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵelementEnd"]();
+} if (rf & 2) {
+    var element_r21 = ctx.$implicit;
+    _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵadvance"](1);
+    _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵtextInterpolate1"](" ", element_r21.constituency, " ");
+} }
+function TableComponent_table_1_th_5_Template(rf, ctx) { if (rf & 1) {
+    _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵelementStart"](0, "th", 18);
+    _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵelementStart"](1, "span", 22);
+    _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵtext"](2, "Month ");
+    _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵelementEnd"]();
+    _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵelementStart"](3, "div");
+    _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵelementStart"](4, "mat-form-field");
+    _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵelement"](5, "input", 20);
+    _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵelementEnd"]();
+    _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵelementEnd"]();
+    _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵelementEnd"]();
+} if (rf & 2) {
+    var ctx_r3 = _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵnextContext"](2);
+    _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵadvance"](1);
+    _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵproperty"]("matTooltipPosition", "above");
+    _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵadvance"](4);
+    _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵproperty"]("formControl", ctx_r3.datasourceService.monthFilter);
+} }
+function TableComponent_table_1_td_6_Template(rf, ctx) { if (rf & 1) {
+    _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵelementStart"](0, "td", 21);
+    _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵtext"](1);
+    _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵelementEnd"]();
+} if (rf & 2) {
+    var element_r22 = ctx.$implicit;
+    _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵadvance"](1);
+    _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵtextInterpolate1"](" ", element_r22.election_month, " ");
+} }
+function TableComponent_table_1_th_8_Template(rf, ctx) { if (rf & 1) {
+    _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵelementStart"](0, "th", 18);
+    _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵelementStart"](1, "span", 23);
+    _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵtext"](2, "Year ");
+    _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵelementEnd"]();
+    _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵelementStart"](3, "div");
+    _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵelementStart"](4, "mat-form-field");
+    _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵelement"](5, "input", 20);
+    _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵelementEnd"]();
+    _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵelementEnd"]();
+    _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵelementEnd"]();
+} if (rf & 2) {
+    var ctx_r5 = _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵnextContext"](2);
+    _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵadvance"](1);
+    _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵproperty"]("matTooltipPosition", "above");
+    _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵadvance"](4);
+    _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵproperty"]("formControl", ctx_r5.datasourceService.yearFilter);
+} }
+function TableComponent_table_1_td_9_Template(rf, ctx) { if (rf & 1) {
+    _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵelementStart"](0, "td", 21);
+    _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵtext"](1);
+    _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵelementEnd"]();
+} if (rf & 2) {
+    var element_r23 = ctx.$implicit;
+    _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵadvance"](1);
+    _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵtextInterpolate1"](" ", element_r23.election_year, " ");
+} }
+function TableComponent_table_1_th_11_Template(rf, ctx) { if (rf & 1) {
+    var _r25 = _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵgetCurrentView"]();
+    _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵelementStart"](0, "th", 18);
+    _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵelementStart"](1, "span", 24);
+    _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵtext"](2, "County/Borough/Univ ");
+    _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵelementEnd"]();
+    _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵelementStart"](3, "div");
+    _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵelementStart"](4, "mat-select", 25);
+    _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵlistener"]("valueChange", function TableComponent_table_1_th_11_Template_mat_select_valueChange_4_listener($event) { _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵrestoreView"](_r25); var ctx_r24 = _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵnextContext"](2); return ctx_r24.datasourceService.countyFilter.value = $event; });
+    _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵelementStart"](5, "mat-option", 26);
+    _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵtext"](6, "Any");
+    _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵelementEnd"]();
+    _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵelementStart"](7, "mat-option", 27);
+    _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵtext"](8, "C");
+    _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵelementEnd"]();
+    _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵelementStart"](9, "mat-option", 28);
+    _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵtext"](10, "B");
+    _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵelementEnd"]();
+    _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵelementStart"](11, "mat-option", 29);
+    _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵtext"](12, "U");
+    _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵelementEnd"]();
+    _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵelementEnd"]();
+    _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵelementEnd"]();
+    _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵelementEnd"]();
+} if (rf & 2) {
+    var ctx_r7 = _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵnextContext"](2);
+    _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵadvance"](1);
+    _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵproperty"]("matTooltipPosition", "above");
+    _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵadvance"](3);
+    _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵproperty"]("formControl", ctx_r7.datasourceService.countyFilter)("value", ctx_r7.datasourceService.countyFilter.value);
+} }
+function TableComponent_table_1_td_12_Template(rf, ctx) { if (rf & 1) {
+    _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵelementStart"](0, "td", 21);
+    _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵtext"](1);
+    _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵelementEnd"]();
+} if (rf & 2) {
+    var element_r26 = ctx.$implicit;
+    _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵadvance"](1);
+    _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵtextInterpolate1"](" ", element_r26.countyboroughuniv, " ");
+} }
+function TableComponent_table_1_th_14_Template(rf, ctx) { if (rf & 1) {
+    var _r28 = _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵgetCurrentView"]();
+    _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵelementStart"](0, "th", 18);
+    _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵelementStart"](1, "span", 30);
+    _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵtext"](2, "Contested?");
+    _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵelementEnd"]();
+    _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵelementStart"](3, "div");
+    _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵelementStart"](4, "mat-form-field");
+    _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵelementStart"](5, "mat-select", 25);
+    _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵlistener"]("valueChange", function TableComponent_table_1_th_14_Template_mat_select_valueChange_5_listener($event) { _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵrestoreView"](_r28); var ctx_r27 = _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵnextContext"](2); return ctx_r27.datasourceService.contestedFilter.value = $event; });
+    _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵelementStart"](6, "mat-option", 26);
+    _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵtext"](7, "Any");
+    _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵelementEnd"]();
+    _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵelementStart"](8, "mat-option", 31);
+    _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵtext"](9, "Yes");
+    _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵelementEnd"]();
+    _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵelementStart"](10, "mat-option", 32);
+    _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵtext"](11, "No");
+    _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵelementEnd"]();
+    _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵelementEnd"]();
+    _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵelementEnd"]();
+    _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵelementEnd"]();
+    _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵelementEnd"]();
+} if (rf & 2) {
+    var ctx_r9 = _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵnextContext"](2);
+    _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵadvance"](1);
+    _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵproperty"]("matTooltipPosition", "above");
+    _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵadvance"](4);
+    _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵproperty"]("formControl", ctx_r9.datasourceService.contestedFilter)("value", ctx_r9.datasourceService.contestedFilter.value);
+} }
+function TableComponent_table_1_td_15_Template(rf, ctx) { if (rf & 1) {
+    _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵelementStart"](0, "td", 21);
+    _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵtext"](1);
+    _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵelementEnd"]();
+} if (rf & 2) {
+    var element_r29 = ctx.$implicit;
+    _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵadvance"](1);
+    _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵtextInterpolate1"](" ", element_r29.contested, " ");
+} }
+function TableComponent_table_1_th_17_Template(rf, ctx) { if (rf & 1) {
+    var _r31 = _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵgetCurrentView"]();
+    _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵelementStart"](0, "th", 18);
+    _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵelementStart"](1, "span", 33);
+    _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵtext"](2, "By/General Election ");
+    _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵelementEnd"]();
+    _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵelementStart"](3, "div");
+    _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵelementStart"](4, "mat-form-field");
+    _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵelementStart"](5, "mat-select", 25);
+    _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵlistener"]("valueChange", function TableComponent_table_1_th_17_Template_mat_select_valueChange_5_listener($event) { _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵrestoreView"](_r31); var ctx_r30 = _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵnextContext"](2); return ctx_r30.datasourceService.byElectionGeneralFilter.value = $event; });
+    _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵelementStart"](6, "mat-option", 26);
+    _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵtext"](7, "Any");
+    _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵelementEnd"]();
+    _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵelementStart"](8, "mat-option", 28);
+    _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵtext"](9, "By Election");
+    _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵelementEnd"]();
+    _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵelementStart"](10, "mat-option", 34);
+    _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵtext"](11, "General Election");
+    _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵelementEnd"]();
+    _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵelementEnd"]();
+    _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵelementEnd"]();
+    _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵelementEnd"]();
+    _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵelementEnd"]();
+} if (rf & 2) {
+    var ctx_r11 = _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵnextContext"](2);
+    _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵadvance"](1);
+    _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵproperty"]("matTooltipPosition", "above");
+    _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵadvance"](4);
+    _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵproperty"]("formControl", ctx_r11.datasourceService.byElectionGeneralFilter)("value", ctx_r11.datasourceService.byElectionGeneralFilter.value);
+} }
+function TableComponent_table_1_td_18_Template(rf, ctx) { if (rf & 1) {
+    _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵelementStart"](0, "td", 21);
+    _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵtext"](1);
+    _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵelementEnd"]();
+} if (rf & 2) {
+    var element_r32 = ctx.$implicit;
+    _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵadvance"](1);
+    _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵtextInterpolate1"](" ", element_r32.by_election_general, " ");
+} }
+function TableComponent_table_1_th_20_Template(rf, ctx) { if (rf & 1) {
+    _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵelementStart"](0, "th", 18);
+    _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵelementStart"](1, "span", 33);
+    _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵtext"](2, "By Election Cause ");
+    _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵelementEnd"]();
+    _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵelementStart"](3, "div");
+    _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵelementStart"](4, "mat-form-field");
+    _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵelement"](5, "input", 20);
+    _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵelementEnd"]();
+    _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵelementEnd"]();
+    _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵelementEnd"]();
+} if (rf & 2) {
+    var ctx_r13 = _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵnextContext"](2);
+    _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵadvance"](1);
+    _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵproperty"]("matTooltipPosition", "above");
+    _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵadvance"](4);
+    _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵproperty"]("formControl", ctx_r13.datasourceService.byElectionCauseFilter);
+} }
+function TableComponent_table_1_td_21_Template(rf, ctx) { if (rf & 1) {
+    _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵelementStart"](0, "td", 21);
+    _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵtext"](1);
+    _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵelementEnd"]();
+} if (rf & 2) {
+    var element_r33 = ctx.$implicit;
+    _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵadvance"](1);
+    _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵtextInterpolate1"](" ", element_r33.by_election_cause, " ");
+} }
+function TableComponent_table_1_th_23_Template(rf, ctx) { if (rf & 1) {
+    _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵelementStart"](0, "th", 18);
+    _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵelementStart"](1, "span", 35);
+    _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵtext"](2, "Franchise ");
+    _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵelementEnd"]();
+    _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵelementStart"](3, "div");
+    _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵelementStart"](4, "mat-form-field");
+    _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵelement"](5, "input", 20);
+    _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵelementEnd"]();
+    _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵelementEnd"]();
+    _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵelementEnd"]();
+} if (rf & 2) {
+    var ctx_r15 = _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵnextContext"](2);
+    _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵadvance"](1);
+    _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵproperty"]("matTooltipPosition", "above");
+    _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵadvance"](4);
+    _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵproperty"]("formControl", ctx_r15.datasourceService.franchiseFilter);
+} }
+function TableComponent_table_1_td_24_Template(rf, ctx) { if (rf & 1) {
+    _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵelementStart"](0, "td", 21);
+    _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵtext"](1);
+    _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵelementEnd"]();
+} if (rf & 2) {
+    var element_r34 = ctx.$implicit;
+    _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵadvance"](1);
+    _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵtextInterpolate1"](" ", element_r34.franchise_type, " ");
+} }
+function TableComponent_table_1_th_26_Template(rf, ctx) { if (rf & 1) {
+    var _r36 = _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵgetCurrentView"]();
+    _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵelementStart"](0, "th", 18);
+    _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵelementStart"](1, "span", 36);
+    _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵtext"](2, " Has Poll Books? ");
+    _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵelementEnd"]();
+    _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵelementStart"](3, "div");
+    _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵelementStart"](4, "mat-form-field");
+    _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵelementStart"](5, "mat-select", 25);
+    _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵlistener"]("valueChange", function TableComponent_table_1_th_26_Template_mat_select_valueChange_5_listener($event) { _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵrestoreView"](_r36); var ctx_r35 = _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵnextContext"](2); return ctx_r35.datasourceService.pollBookCodeFilter.value = $event; });
+    _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵelementStart"](6, "mat-option", 26);
+    _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵtext"](7, "Any");
+    _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵelementEnd"]();
+    _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵelementStart"](8, "mat-option", 31);
+    _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵtext"](9, "Yes");
+    _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵelementEnd"]();
+    _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵelementStart"](10, "mat-option", 32);
+    _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵtext"](11, "No");
+    _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵelementEnd"]();
+    _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵelementEnd"]();
+    _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵelementEnd"]();
+    _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵelementEnd"]();
+    _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵelementEnd"]();
+} if (rf & 2) {
+    var ctx_r17 = _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵnextContext"](2);
+    _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵadvance"](1);
+    _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵproperty"]("matTooltipPosition", "above");
+    _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵadvance"](4);
+    _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵproperty"]("formControl", ctx_r17.datasourceService.pollBookCodeFilter)("value", ctx_r17.datasourceService.pollBookCodeFilter.value);
+} }
+function TableComponent_table_1_td_27_Template(rf, ctx) { if (rf & 1) {
+    var _r39 = _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵgetCurrentView"]();
+    _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵelementStart"](0, "td", 37);
+    _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵlistener"]("click", function TableComponent_table_1_td_27_Template_td_click_0_listener($event) { _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵrestoreView"](_r39); var element_r37 = ctx.$implicit; var ctx_r38 = _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵnextContext"](2); return ctx_r38.getBook($event, element_r37); });
+    _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵtext"](1);
+    _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵelementEnd"]();
+} if (rf & 2) {
+    var element_r37 = ctx.$implicit;
+    var ctx_r18 = _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵnextContext"](2);
+    _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵadvance"](1);
+    _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵtextInterpolate1"](" ", ctx_r18.getHasPollBooks(element_r37.pollbook_id), "");
+} }
+function TableComponent_table_1_tr_29_Template(rf, ctx) { if (rf & 1) {
+    _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵelement"](0, "tr", 38);
+} }
+function TableComponent_table_1_tr_30_Template(rf, ctx) { if (rf & 1) {
+    _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵelement"](0, "tr", 39);
+} }
+function TableComponent_table_1_Template(rf, ctx) { if (rf & 1) {
+    _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵelementStart"](0, "table", 3);
+    _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵelementContainerStart"](1, 4);
+    _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵtemplate"](2, TableComponent_table_1_th_2_Template, 6, 2, "th", 5);
+    _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵtemplate"](3, TableComponent_table_1_td_3_Template, 2, 1, "td", 6);
+    _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵelementContainerEnd"]();
+    _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵelementContainerStart"](4, 7);
+    _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵtemplate"](5, TableComponent_table_1_th_5_Template, 6, 2, "th", 5);
+    _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵtemplate"](6, TableComponent_table_1_td_6_Template, 2, 1, "td", 6);
+    _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵelementContainerEnd"]();
+    _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵelementContainerStart"](7, 8);
+    _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵtemplate"](8, TableComponent_table_1_th_8_Template, 6, 2, "th", 5);
+    _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵtemplate"](9, TableComponent_table_1_td_9_Template, 2, 1, "td", 6);
+    _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵelementContainerEnd"]();
+    _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵelementContainerStart"](10, 9);
+    _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵtemplate"](11, TableComponent_table_1_th_11_Template, 13, 3, "th", 5);
+    _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵtemplate"](12, TableComponent_table_1_td_12_Template, 2, 1, "td", 6);
+    _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵelementContainerEnd"]();
+    _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵelementContainerStart"](13, 10);
+    _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵtemplate"](14, TableComponent_table_1_th_14_Template, 12, 3, "th", 5);
+    _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵtemplate"](15, TableComponent_table_1_td_15_Template, 2, 1, "td", 6);
+    _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵelementContainerEnd"]();
+    _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵelementContainerStart"](16, 11);
+    _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵtemplate"](17, TableComponent_table_1_th_17_Template, 12, 3, "th", 5);
+    _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵtemplate"](18, TableComponent_table_1_td_18_Template, 2, 1, "td", 6);
+    _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵelementContainerEnd"]();
+    _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵelementContainerStart"](19, 12);
+    _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵtemplate"](20, TableComponent_table_1_th_20_Template, 6, 2, "th", 5);
+    _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵtemplate"](21, TableComponent_table_1_td_21_Template, 2, 1, "td", 6);
+    _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵelementContainerEnd"]();
+    _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵelementContainerStart"](22, 13);
+    _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵtemplate"](23, TableComponent_table_1_th_23_Template, 6, 2, "th", 5);
+    _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵtemplate"](24, TableComponent_table_1_td_24_Template, 2, 1, "td", 6);
+    _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵelementContainerEnd"]();
+    _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵelementContainerStart"](25, 14);
+    _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵtemplate"](26, TableComponent_table_1_th_26_Template, 12, 3, "th", 5);
+    _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵtemplate"](27, TableComponent_table_1_td_27_Template, 2, 1, "td", 15);
+    _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵelementContainerEnd"]();
+    _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵtext"](28, " --> ");
+    _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵtemplate"](29, TableComponent_table_1_tr_29_Template, 1, 0, "tr", 16);
+    _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵtemplate"](30, TableComponent_table_1_tr_30_Template, 1, 0, "tr", 17);
+    _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵelementEnd"]();
+} if (rf & 2) {
+    var ctx_r0 = _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵnextContext"]();
+    _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵproperty"]("dataSource", ctx_r0.datasourceService.dataSource);
+    _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵadvance"](29);
+    _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵproperty"]("matHeaderRowDef", ctx_r0.displayedColumns);
+    _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵadvance"](1);
+    _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵproperty"]("matRowDefColumns", ctx_r0.displayedColumns);
+} }
+var _c0 = function () { return [5, 10, 20, 50, 100, 500]; };
+var TableComponent = /** @class */ (function () {
+    function TableComponent(datasourceService) {
+        this.datasourceService = datasourceService;
+        this.style = {};
+        this.dataSource = new _angular_material_table__WEBPACK_IMPORTED_MODULE_1__["MatTableDataSource"]();
+        this.ready = false;
+        this.displayedColumns = ['constituency', 'election_year', 'election_month', 'countyboroughuniv', 'by_election_general', 'by_election_cause', 'franchise_type', 'contested', 'pollbook_id'];
+        this.minYear = 1695;
+        this.maxYear = 1835;
+        this.sliderOptions = {
+            floor: 1695,
+            ceil: 1835
+        };
+    }
+    TableComponent.prototype.ngOnInit = function () {
+        var _this = this;
+        // this.datasourceService.init();
+        this.datasourceService.getData();
+        this.datasourceService.ready.subscribe(function () { return _this.gotData(); });
+        // this.datasourceService.onDataSubscriptionChange().subscribe(() => this.dataChange());
+        this.datasourceService.constituencyFilter.valueChanges.subscribe(function () { return _this.dataChange("constituencyFilter"); });
+        this.datasourceService.monthFilter.valueChanges.subscribe(function () { return _this.dataChange("monthFilter"); });
+        this.datasourceService.yearFilter.valueChanges.subscribe(function () { return _this.dataChange("yearFilter"); });
+        this.datasourceService.countyFilter.valueChanges.subscribe(function () { return _this.dataChange("countyFilter"); });
+        this.datasourceService.contestedFilter.valueChanges.subscribe(function () { return _this.dataChange("contestedFilter"); });
+        this.datasourceService.byElectionGeneralFilter.valueChanges.subscribe(function () { return _this.dataChange("byElectionGeneralFilter"); });
+        this.datasourceService.byElectionCauseFilter.valueChanges.subscribe(function () { return _this.dataChange("byElectionCauseFilter"); });
+        this.datasourceService.franchiseFilter.valueChanges.subscribe(function () { return _this.dataChange("franchiseFilter"); });
+        this.datasourceService.pollBookCodeFilter.valueChanges.subscribe(function () { return _this.dataChange("pollBookCodeFilter"); });
+    };
+    TableComponent.prototype.dataChange = function (filterName) {
+        var _this = this;
+        console.log("sub change in table", filterName);
+        //TODO i guess because this fires on the filter change rather than the data change this is why we need a timeout. is a proper fix to wathc the filtered data?
+        setTimeout(function () {
+            var maxMinYears = _this.getMaxMinYears();
+            _this.minYear = maxMinYears.minY;
+            _this.maxYear = maxMinYears.maxY;
+            console.log(maxMinYears, _this.minYear, _this.maxYear);
+        }, 10);
+        //get min and max years
+    };
+    TableComponent.prototype.getMaxMinYears = function () {
+        var minY = 4000;
+        var maxY = 0;
+        this.datasourceService.dataSource.filteredData.forEach(function (element) {
+            var year = parseInt(element.election_year.trim());
+            // console.log("year",year)
+            if (year > maxY) {
+                maxY = year;
+            }
+            if (year < minY) {
+                minY = year;
+            }
+        });
+        return {
+            maxY: maxY,
+            minY: minY
+        };
+    };
+    TableComponent.prototype.gotData = function () {
+        this.ready = true;
+        console.log("ready", this.datasourceService.dataSource.data);
+        this.datasourceService.dataSource.paginator = this.paginator;
+        //this.dataSource = this.datasourceService.dataSource;
+    };
+    TableComponent.prototype.getHasPollBooks = function (pollbook_id) {
+        if (pollbook_id.length > 0)
+            return 'Y (' + pollbook_id.split(";").length + ')';
+        return 'N';
+    };
+    TableComponent.prototype.onResizeEnd = function (event) {
+        this.style = {
+            position: 'fixed',
+            right: "3%",
+            width: event.rectangle.width + "px",
+        };
+    };
+    TableComponent.prototype.onResizeStart = function (event) {
+    };
+    TableComponent.prototype.onValueChange = function (changeContext) {
+    };
+    TableComponent.prototype.sliderChange = function (changeContext) {
+        this.minYear = changeContext.value;
+        this.maxYear = changeContext.highValue;
+        console.log("reset year");
+        this.datasourceService.yearFilter.setValue(changeContext.value.toString() + "-" + changeContext.highValue.toString());
+        this.datasourceService.dataSource.filter = JSON.stringify(this.datasourceService.filteredValues);
+    };
+    TableComponent.ɵfac = function TableComponent_Factory(t) { return new (t || TableComponent)(_angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵdirectiveInject"](_datasource_service__WEBPACK_IMPORTED_MODULE_0__["DatasourceService"])); };
+    TableComponent.ɵcmp = _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵdefineComponent"]({ type: TableComponent, selectors: [["app-table"]], viewQuery: function TableComponent_Query(rf, ctx) { if (rf & 1) {
+            _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵviewQuery"](_angular_material_paginator__WEBPACK_IMPORTED_MODULE_3__["MatPaginator"], 3);
+        } if (rf & 2) {
+            var _t = void 0;
+            _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵqueryRefresh"](_t = _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵloadQuery"]()) && (ctx.paginator = _t.first);
+        } }, decls: 3, vars: 7, consts: [[2, "color", "white !important", "margin-left", "10%", "margin-top", "8%", "margin-bottom", "5%", "width", "80%", "z-index", "20000", 3, "value", "highValue", "options", "valueChange", "highValueChange", "userChangeEnd"], ["mat-table", "", "class", "mat-elevation-z8 mytable style-3 stay_inline", 3, "dataSource", 4, "ngIf"], ["id", "paginator", "showFirstLastButtons", "", 3, "pageSize", "pageSizeOptions"], ["mat-table", "", 1, "mat-elevation-z8", "mytable", "style-3", "stay_inline", 3, "dataSource"], ["matColumnDef", "constituency", 2, "padding-top", "100px"], ["style", "padding-top: 15px;", "mat-header-cell", "", 4, "matHeaderCellDef"], ["mat-cell", "", 4, "matCellDef"], ["matColumnDef", "election_month"], ["matColumnDef", "election_year"], ["matColumnDef", "countyboroughuniv"], ["matColumnDef", "contested"], ["matColumnDef", "by_election_general"], ["matColumnDef", "by_election_cause"], ["matColumnDef", "franchise_type"], ["matColumnDef", "pollbook_id"], ["mat-cell", "", "id", "pollBookCell", 3, "click", 4, "matCellDef"], ["mat-header-row", "", 4, "matHeaderRowDef"], ["mat-row", "", 4, "matRowDef", "matRowDefColumns"], ["mat-header-cell", "", 2, "padding-top", "15px"], ["matTooltip", "click to find out more about consitituencies", 3, "matTooltipPosition"], ["matInput", "", "placeholder", "....", 1, "form-field", 3, "formControl"], ["mat-cell", ""], ["matTooltip", "click to find out more about months", 3, "matTooltipPosition"], ["matTooltip", "click to find out more about years", 3, "matTooltipPosition"], ["matTooltip", "click to find out more about the different kinds of elections", 3, "matTooltipPosition"], [3, "formControl", "value", "valueChange"], ["value", ""], ["value", "C"], ["value", "B"], ["value", "U"], ["matTooltip", "Not all elections were fought. click to find out more", 3, "matTooltipPosition"], ["value", "Y"], ["value", "N"], ["matTooltip", "general elections happened every 4 years. click to find out more about them", 3, "matTooltipPosition"], ["value", "G"], ["matTooltip", "click to find out more about franchiseTypes", 3, "matTooltipPosition"], ["matTooltip", "poll books contain important details of voters. click to find out more", 3, "matTooltipPosition"], ["mat-cell", "", "id", "pollBookCell", 3, "click"], ["mat-header-row", ""], ["mat-row", ""]], template: function TableComponent_Template(rf, ctx) { if (rf & 1) {
+            _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵelementStart"](0, "ngx-slider", 0);
+            _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵlistener"]("valueChange", function TableComponent_Template_ngx_slider_valueChange_0_listener($event) { return ctx.minYear = $event; })("highValueChange", function TableComponent_Template_ngx_slider_highValueChange_0_listener($event) { return ctx.maxYear = $event; })("userChangeEnd", function TableComponent_Template_ngx_slider_userChangeEnd_0_listener($event) { return ctx.sliderChange($event); });
+            _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵelementEnd"]();
+            _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵtemplate"](1, TableComponent_table_1_Template, 31, 3, "table", 1);
+            _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵelement"](2, "mat-paginator", 2);
+        } if (rf & 2) {
+            _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵproperty"]("value", ctx.minYear)("highValue", ctx.maxYear)("options", ctx.sliderOptions);
+            _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵadvance"](1);
+            _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵproperty"]("ngIf", ctx.ready);
+            _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵadvance"](1);
+            _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵproperty"]("pageSize", 10)("pageSizeOptions", _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵpureFunction0"](6, _c0));
+        } }, directives: [_angular_slider_ngx_slider__WEBPACK_IMPORTED_MODULE_5__["ɵa"], _angular_common__WEBPACK_IMPORTED_MODULE_6__["NgIf"], _angular_material_paginator__WEBPACK_IMPORTED_MODULE_3__["MatPaginator"], _angular_material_table__WEBPACK_IMPORTED_MODULE_1__["MatTable"], _angular_material_table__WEBPACK_IMPORTED_MODULE_1__["MatColumnDef"], _angular_material_table__WEBPACK_IMPORTED_MODULE_1__["MatHeaderCellDef"], _angular_material_table__WEBPACK_IMPORTED_MODULE_1__["MatCellDef"], _angular_material_table__WEBPACK_IMPORTED_MODULE_1__["MatHeaderRowDef"], _angular_material_table__WEBPACK_IMPORTED_MODULE_1__["MatRowDef"], _angular_material_table__WEBPACK_IMPORTED_MODULE_1__["MatHeaderCell"], _angular_material_tooltip__WEBPACK_IMPORTED_MODULE_7__["MatTooltip"], _angular_material_form_field__WEBPACK_IMPORTED_MODULE_8__["MatFormField"], _angular_material_input__WEBPACK_IMPORTED_MODULE_9__["MatInput"], _angular_forms__WEBPACK_IMPORTED_MODULE_10__["DefaultValueAccessor"], _angular_forms__WEBPACK_IMPORTED_MODULE_10__["NgControlStatus"], _angular_forms__WEBPACK_IMPORTED_MODULE_10__["FormControlDirective"], _angular_material_table__WEBPACK_IMPORTED_MODULE_1__["MatCell"], _angular_material_select__WEBPACK_IMPORTED_MODULE_11__["MatSelect"], _angular_material_core__WEBPACK_IMPORTED_MODULE_12__["MatOption"], _angular_material_table__WEBPACK_IMPORTED_MODULE_1__["MatHeaderRow"], _angular_material_table__WEBPACK_IMPORTED_MODULE_1__["MatRow"]], styles: ["\n/*# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW9uIjozLCJzb3VyY2VzIjpbXSwibmFtZXMiOltdLCJtYXBwaW5ncyI6IiIsImZpbGUiOiJ0YWJsZS5jb21wb25lbnQuc2NzcyJ9 */"] });
+    return TableComponent;
 }());
 
 
@@ -445,11 +1286,12 @@ var GetPollBooksService = /** @class */ (function () {
         ///dataUrl='http://192.168.0.51:8888/ECCPEC_code/php/getPollBooks.php/?BookCode=';
         // dataUrl='http://localhost:8888/ECCPEC_code/php/getPollBooks.php/?BookCode=';
         //dataUrl='/php/getPollBooks.php/?BookCode=';
-        this.dataUrl = 'https://ecppec.com/php/getPollBooks.php/?BookCode=';
+        this.dataUrl = 'https://ecppec.ncl.ac.uk/php/getPollBooks.php/?BookCode=';
     }
     GetPollBooksService.prototype.getData = function (pollBookCode) {
-        console.log("this.dataUrl+pollBookCode", this.dataUrl + pollBookCode);
-        return this.http.get(this.dataUrl + pollBookCode);
+        var fullURL = this.dataUrl + pollBookCode;
+        console.log(fullURL);
+        return this.http.get(fullURL);
     };
     GetPollBooksService.ɵfac = function GetPollBooksService_Factory(t) { return new (t || GetPollBooksService)(_angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵinject"](_angular_common_http__WEBPACK_IMPORTED_MODULE_0__["HttpClient"])); };
     GetPollBooksService.ɵprov = _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵdefineInjectable"]({ token: GetPollBooksService, factory: GetPollBooksService.ɵfac, providedIn: 'root' });
@@ -1044,6 +1886,355 @@ var DialogueComponent = /** @class */ (function () {
 
 /***/ }),
 
+/***/ "OU0Q":
+/*!***************************************!*\
+  !*** ./src/app/datasource.service.ts ***!
+  \***************************************/
+/*! exports provided: DatasourceService */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "DatasourceService", function() { return DatasourceService; });
+/* harmony import */ var _angular_material_table__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @angular/material/table */ "tmTa");
+/* harmony import */ var _angular_forms__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! @angular/forms */ "3Pt+");
+/* harmony import */ var _viz_viz_component__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./viz/viz.component */ "w3Bs");
+/* harmony import */ var _angular_common_http__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! @angular/common/http */ "tk/3");
+/* harmony import */ var _get_elections_service__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./get-elections.service */ "RFKS");
+/* harmony import */ var rxjs__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! rxjs */ "qCKp");
+/* harmony import */ var _angular_core__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! @angular/core */ "fXoL");
+
+
+
+
+
+
+
+
+
+var DatasourceService = /** @class */ (function () {
+    function DatasourceService(http, getElectionsService) {
+        this.http = http;
+        this.getElectionsService = getElectionsService;
+        this.filteredValues = {
+            election_month: '', constituency: '', election_year: '', countyboroughuniv: '', contested: '', by_election_general: '', by_election_cause: '', franchise_type: '', pollbook_id: ''
+        };
+        this.uniqueElections = [];
+        this.electionsPerYear = [];
+        this.constituencyFilter = new _angular_forms__WEBPACK_IMPORTED_MODULE_1__["FormControl"]();
+        this.monthFilter = new _angular_forms__WEBPACK_IMPORTED_MODULE_1__["FormControl"]();
+        this.yearFilter = new _angular_forms__WEBPACK_IMPORTED_MODULE_1__["FormControl"]();
+        this.countyFilter = new _angular_forms__WEBPACK_IMPORTED_MODULE_1__["FormControl"]();
+        this.contestedFilter = new _angular_forms__WEBPACK_IMPORTED_MODULE_1__["FormControl"]();
+        this.byElectionGeneralFilter = new _angular_forms__WEBPACK_IMPORTED_MODULE_1__["FormControl"]();
+        this.byElectionCauseFilter = new _angular_forms__WEBPACK_IMPORTED_MODULE_1__["FormControl"]();
+        this.franchiseFilter = new _angular_forms__WEBPACK_IMPORTED_MODULE_1__["FormControl"]();
+        this.pollBookCodeFilter = new _angular_forms__WEBPACK_IMPORTED_MODULE_1__["FormControl"]();
+        this.globalFilter = '';
+        this.dataSource = new _angular_material_table__WEBPACK_IMPORTED_MODULE_0__["MatTableDataSource"]();
+        this.ready = new rxjs__WEBPACK_IMPORTED_MODULE_5__["BehaviorSubject"](false);
+    }
+    DatasourceService.prototype.ngOnInit = function () {
+        // 	}
+        //   init(){
+    };
+    DatasourceService.prototype.onDataSubscriptionChange = function () {
+    };
+    //   onDataSubscriptionChange(): Observable<any> {
+    // 	return of({id:1,data:"hello word"});
+    //   }
+    DatasourceService.prototype.customFilterPredicate = function () {
+        var _this = this;
+        this.pollBooks = null;
+        var myFilterPredicate = function (data, filter) {
+            var globalMatch = !_this.globalFilter;
+            if (_this.globalFilter) {
+                globalMatch = data.election_month.toString().trim().toLowerCase().indexOf(_this.globalFilter.toLowerCase()) !== -1
+                    || data.constituency.toString().trim().toLowerCase().indexOf(_this.globalFilter.toLowerCase()) !== -1
+                    || data.countyboroughuniv.toString().trim().toLowerCase().indexOf(_this.globalFilter.toLowerCase()) !== -1
+                    || data.franchise_type.toString().trim().toLowerCase().indexOf(_this.globalFilter.toLowerCase()) !== -1
+                    || data.by_election_general.toString().trim().toLowerCase().indexOf(_this.globalFilter.toLowerCase()) !== -1;
+            }
+            else {
+            }
+            if (!globalMatch) {
+                return;
+            }
+            var searchString = JSON.parse(filter);
+            return _this.hasConstituencies(data, searchString)
+                && _this.hasMonths(data, searchString)
+                && _this.hasYears(data, searchString)
+                && data.countyboroughuniv.toString().trim().toLowerCase().indexOf(searchString.countyboroughuniv.toLowerCase()) !== -1
+                && data.contested.toString().trim().toLowerCase().indexOf(searchString.contested.toLowerCase()) !== -1
+                && data.by_election_general.toString().trim().toLowerCase().indexOf(searchString.by_election_general.toLowerCase()) !== -1
+                && data.by_election_cause.toString().trim().toLowerCase().indexOf(searchString.by_election_cause.toLowerCase()) !== -1
+                && data.contested.toString().trim().toLowerCase().indexOf(searchString.contested.toLowerCase()) !== -1
+                && data.franchise_type.toString().trim().toLowerCase().indexOf(searchString.franchise_type.toLowerCase()) !== -1
+                && _this.getHasPollBooksFilter(data.pollbook_id.toString().trim().toLowerCase(), searchString.pollbook_id.toLowerCase()) !== -1;
+        };
+        return myFilterPredicate;
+    };
+    DatasourceService.prototype.getRandomConstituenciesString = function (numRandomConsituencies) {
+        var filteredConstituencies = [];
+        for (var i = 0; i < this.dataSource.data.length; i++) {
+            if (!filteredConstituencies.includes(this.dataSource.data[i].constituency)) {
+                filteredConstituencies.push(this.dataSource.data[i].constituency);
+            }
+        }
+        var indices = [];
+        var randomConsituencies = "";
+        var isFirst = true;
+        for (var i = 0; i < numRandomConsituencies; i++) {
+            var randomIndex = Math.floor(Math.random() * filteredConstituencies.length - 1);
+            // if(!in_array())
+            if (!indices.includes(randomIndex)) {
+                indices.push(randomIndex);
+                if (isFirst) {
+                    randomConsituencies = filteredConstituencies[randomIndex];
+                    isFirst = false;
+                }
+                else {
+                    randomConsituencies += "," + filteredConstituencies[randomIndex];
+                }
+            }
+        }
+        return randomConsituencies;
+    };
+    DatasourceService.prototype.generateRandomSearch = function () {
+        var spread = Math.floor(Math.random() * 8) + 2;
+        var fullRange = 1832 - (1695 + spread);
+        var start = Math.floor(Math.random() * fullRange) + 1696;
+        var minYear = start;
+        var maxYear = spread + start;
+        // var y = 1777;
+        //TODO add some other filters here like by election cause
+        this.yearFilter.setValue(minYear.toString() + "-" + maxYear.toString());
+        var rands = this.getRandomConstituenciesString(20);
+        this.constituencyFilter.setValue(rands);
+        this.dataSource.filter = JSON.stringify(this.filteredValues);
+    };
+    DatasourceService.prototype.hasConstituencies = function (data, searchString) {
+        if (searchString.constituency.includes(",")) {
+            var constituencyList = searchString.constituency.split(",");
+            for (var i = 0; i < constituencyList.length; i++) {
+                if (constituencyList[i].trim().toLowerCase() === data.constituency.toString().trim().toLowerCase()) {
+                    return 1;
+                }
+            }
+            return 0;
+        }
+        else {
+            return data.constituency.toString().trim().toLowerCase().indexOf(searchString.constituency.toLowerCase()) !== -1;
+        }
+        return 0;
+    };
+    DatasourceService.prototype.hasMonths = function (data, searchString) {
+        if (searchString.election_month.includes(",")) {
+            var monthList = searchString.election_month.split(",");
+            for (var i = 0; i < monthList.length; i++) {
+                if (monthList[i].trim() === data.election_month.toString().trim()) {
+                    return 1;
+                }
+            }
+            return 0;
+        }
+        else {
+            return data.election_month.toString().trim().indexOf(searchString.election_month) !== -1;
+        }
+        return 0;
+    };
+    DatasourceService.prototype.getFilteredConstituencies = function () {
+        var filteredConstituencies = this.dataSource.filteredData.map(function (item) { return item.constituency; }).filter(function (value, index, self) { return self.indexOf(value) === index; });
+        return filteredConstituencies;
+    };
+    DatasourceService.prototype.getElectionsPerYear = function () {
+        this.electionsPerYear.forEach(function (element) {
+            element.numElections = 0;
+            element.numContested = 0;
+        });
+        for (var i = 0; i < this.dataSource.filteredData.length; i++) {
+            var index = parseInt(this.dataSource.filteredData[i]['election_year']) - 1695;
+            if (index >= 0 && index < this.electionsPerYear.length) {
+                this.electionsPerYear[index]['numElections']++;
+                if (this.dataSource.filteredData[i]['contested'] == 'Y') {
+                    this.electionsPerYear[index]['numContested']++;
+                }
+            }
+        }
+        return this.electionsPerYear;
+    };
+    DatasourceService.prototype.hasYears = function (data, searchString) {
+        if (searchString.election_year.includes(",")) {
+            var yearList = searchString.election_year.split(",");
+            for (var i = 0; i < yearList.length; i++) {
+                if (yearList[i].trim() === data.election_year.toString().trim()) {
+                    return 1;
+                }
+            }
+            return 0;
+        }
+        else if (searchString.election_year.includes("-") && searchString.election_year.length == 9) {
+            var yearRange = searchString.election_year.split("-");
+            if (yearRange.length == 2) {
+                var lowRange = parseInt(yearRange[0].trim());
+                var highRange = parseInt(yearRange[1].trim());
+                var thisYear = parseInt(data.election_year.toString().trim());
+                if (thisYear >= lowRange && thisYear <= highRange)
+                    return 1;
+            }
+        }
+        else if (searchString.election_year.length == 4) {
+            return data.election_year.toString().trim().indexOf(searchString.election_year) !== -1;
+        }
+        else if (searchString.election_year.length > 0 && searchString.election_year.length < 4) {
+            return 0;
+        }
+        else if (searchString.election_year.length == 0) {
+            return 1;
+        }
+        return 0;
+    };
+    DatasourceService.prototype.yearInRange = function (data, searchString, year) {
+        //for some reson the search term isn't coming throuhg
+        if (this.yearFilter.value.length == 0)
+            return 0;
+        //if this is a year range separated by a hyphen
+        if (this.yearFilter.value.indexOf("-") != -1) {
+            var yearRange = this.yearFilter.value.split("-");
+            if (yearRange.length == 2) {
+                if (yearRange[0].trim().length == 4 && yearRange[1].trim().length == 4) {
+                    if (year >= parseInt(yearRange[0].trim()) && year <= parseInt(yearRange[1].trim()))
+                        return 0;
+                }
+                else if (yearRange[0].trim().length == 4 && yearRange[1].trim().length != 4) {
+                    if (year == parseInt(yearRange[0].trim()))
+                        return 0;
+                }
+            }
+        }
+        //otherwise assume it's a list
+        else {
+            if (this.yearFilter.value.includes(",")) {
+                var yearList = this.yearFilter.value.split(",");
+                for (var i = 0; i < yearList.length; i++) {
+                    if (yearList[i].trim() === year.trim()) {
+                        return 1;
+                    }
+                }
+                return 0;
+            }
+            else {
+                return this.yearFilter.value.toString().trim().indexOf(year) !== -1;
+            }
+        }
+        return -1;
+    };
+    DatasourceService.prototype.getUniqueElections = function () {
+        this.uniqueElections = this.dataSource.data.filter(function (value, index, self) { return self.map(function (x) { return x.constituency; }).indexOf(value.constituency) == index; });
+    };
+    DatasourceService.prototype.getHasPollBooksFilter = function (pollbook_id, searchTerm) {
+        if (searchTerm == 'y') {
+            if (pollbook_id.length > 1) {
+                return 0;
+            }
+            else {
+                return -1;
+            }
+        }
+        else if (searchTerm == 'n') {
+            if (pollbook_id.length == 0) {
+                return 0;
+            }
+            else {
+                return -1;
+            }
+        }
+        return 0;
+    };
+    DatasourceService.prototype.getData = function () {
+        var _this = this;
+        this.getElectionsService.getData().subscribe(function (data) { return _this.electionsMeta = {
+            num_results: data['num_results'],
+            earliest_year: data['earliest_year'],
+            latest_year: data['latest_year'],
+            elections: data['elections']
+        }; }, function (err) { return console.error(err); }, function () { return _this.gotData(); });
+    };
+    //   obsTest(service: any, object: any, data: any): Observable<any> {
+    // 	return service.obsTest().pipe(
+    // 		map((result)=>{
+    // 			//data.splice(index,1);
+    // 			return data;
+    // 		}))
+    //   }
+    DatasourceService.prototype.gotData = function () {
+        var _this = this;
+        this.dataSource = new _angular_material_table__WEBPACK_IMPORTED_MODULE_0__["MatTableDataSource"](this.electionsMeta.elections);
+        this.getUniqueElections();
+        this.constituencyFilter.valueChanges.pipe();
+        this.constituencyFilter.valueChanges.subscribe(function (constituencyFilterValue) {
+            _this.filteredValues['constituency'] = constituencyFilterValue;
+            _this.dataSource.filter = JSON.stringify(_this.filteredValues);
+            _this.onDataSubscriptionChange();
+        });
+        this.monthFilter.valueChanges.subscribe(function (monthFilterValue) {
+            _this.filteredValues['election_month'] = monthFilterValue;
+            _this.dataSource.filter = JSON.stringify(_this.filteredValues);
+            _this.onDataSubscriptionChange();
+        });
+        this.yearFilter.valueChanges.subscribe(function (yearFilterValue) {
+            var yearRange = yearFilterValue.split(",");
+            _this.filteredValues['election_year'] = yearFilterValue;
+            _this.dataSource.filter = JSON.stringify(_this.filteredValues);
+            _this.onDataSubscriptionChange();
+        });
+        this.countyFilter.valueChanges.subscribe(function (countyFilterValue) {
+            _this.filteredValues['countyboroughuniv'] = countyFilterValue;
+            _this.dataSource.filter = JSON.stringify(_this.filteredValues);
+            _this.onDataSubscriptionChange();
+        });
+        this.contestedFilter.valueChanges.subscribe(function (contestedFilterValue) {
+            _this.filteredValues['contested'] = contestedFilterValue;
+            _this.dataSource.filter = JSON.stringify(_this.filteredValues);
+            _this.onDataSubscriptionChange();
+        });
+        this.byElectionGeneralFilter.valueChanges.subscribe(function (byElectionGeneralFilterValue) {
+            _this.filteredValues['by_election_general'] = byElectionGeneralFilterValue;
+            _this.dataSource.filter = JSON.stringify(_this.filteredValues);
+            _this.onDataSubscriptionChange();
+        });
+        this.byElectionCauseFilter.valueChanges.subscribe(function (byElectionCauseFilterValue) {
+            _this.filteredValues['by_election_cause'] = byElectionCauseFilterValue;
+            _this.dataSource.filter = JSON.stringify(_this.filteredValues);
+            _this.onDataSubscriptionChange();
+        });
+        this.franchiseFilter.valueChanges.subscribe(function (franchiseFilterValue) {
+            _this.filteredValues['franchise_type'] = franchiseFilterValue;
+            _this.dataSource.filter = JSON.stringify(_this.filteredValues);
+            _this.onDataSubscriptionChange();
+        });
+        this.pollBookCodeFilter.valueChanges.subscribe(function (pollBookCodeFilterValue) {
+            _this.filteredValues['pollbook_id'] = pollBookCodeFilterValue;
+            _this.dataSource.filter = JSON.stringify(_this.filteredValues);
+            _this.onDataSubscriptionChange();
+        });
+        this.dataSource.filterPredicate = this.customFilterPredicate();
+        //  this.generateRandomSearch();
+        this.ready.next(true);
+        // setTimeout(() => {
+        // 	console.log("generating random search");
+        // 	this.generateRandomSearch();
+        // }, 5000);
+    };
+    DatasourceService.ɵfac = function DatasourceService_Factory(t) { return new (t || DatasourceService)(_angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵinject"](_angular_common_http__WEBPACK_IMPORTED_MODULE_3__["HttpClient"]), _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵinject"](_get_elections_service__WEBPACK_IMPORTED_MODULE_4__["GetElectionsService"])); };
+    DatasourceService.ɵprov = _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵdefineInjectable"]({ token: DatasourceService, factory: DatasourceService.ɵfac, providedIn: 'root' });
+    return DatasourceService;
+}());
+
+
+
+/***/ }),
+
 /***/ "OWwv":
 /*!**********************************************!*\
   !*** ./src/app/outputs/outputs.component.ts ***!
@@ -1157,14 +2348,8 @@ __webpack_require__.r(__webpack_exports__);
 var GetElectionsService = /** @class */ (function () {
     function GetElectionsService(http) {
         this.http = http;
-        //
-        //dataUrl='http://192.168.0.51:8888/ECCPEC_code/PHP/getElections.php';
-        //dataUrl='http://localhost:9999/ECCPEC_code/PHP/getElections.php';
-        //	dataUrl='/ECPPEC/php/getElections.php';
-        //dataUrl='https://ecppec.ncl.ac.uk/php/getElections.php'
         this.dataUrl = 'https://ecppec.ncl.ac.uk/php/getElections.php';
     }
-    //dataUrl='/php/getElections.php';
     GetElectionsService.prototype.getData = function () {
         return this.http.get(this.dataUrl);
     };
@@ -1189,11 +2374,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "AppComponent", function() { return AppComponent; });
 /* harmony import */ var _angular_core__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @angular/core */ "fXoL");
 /* harmony import */ var _angular_material_dialog__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! @angular/material/dialog */ "LcAk");
-/* harmony import */ var _angular_material_icon__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! @angular/material/icon */ "TY1r");
-/* harmony import */ var _angular_material_sidenav__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! @angular/material/sidenav */ "RzEb");
-/* harmony import */ var _angular_router__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! @angular/router */ "tyNb");
-
-
+/* harmony import */ var _angular_router__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! @angular/router */ "tyNb");
 
 
 
@@ -1246,75 +2427,44 @@ var AppComponent = /** @class */ (function () {
     AppComponent.ɵfac = function AppComponent_Factory(t) { return new (t || AppComponent)(_angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵdirectiveInject"](_angular_material_dialog__WEBPACK_IMPORTED_MODULE_1__["MatDialog"])); };
     AppComponent.ɵcmp = _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵdefineComponent"]({ type: AppComponent, selectors: [["my-app"]], hostBindings: function AppComponent_HostBindings(rf, ctx) { if (rf & 1) {
             _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵlistener"]("resize", function AppComponent_resize_HostBindingHandler($event) { return ctx.onResize($event); }, false, _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵresolveWindow"]);
-        } }, features: [_angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵNgOnChangesFeature"]], decls: 39, vars: 8, consts: [["id", "container", 1, "style-3"], ["id", "nav_toggle"], ["color", "accent", "aria-hidden", "false", "aria-label", "Example home icon", 2, "font-size", "400%", "margin-right", "5%", 3, "click"], ["id", "info"], ["src", "./assets/images/logos/newcastle.png", "alt", "newcastle university logo", 2, "width", "200px", "margin-right", "2%"], ["src", "./assets/images/logos/liverpool.png", "alt", "liverpool university logo", 2, "width", "200px", "margin-right", "2%"], ["src", "./assets/images/logos/ahrc.png", "alt", "arts and humanities research council logo", 2, "width", "200px", "margin-right", "2%"], [1, "gradient", 2, "overflow", "hidden", "background-color", "rgba(0,0,0,0)"], ["fixedInViewport", "true", "mode", "side", 1, "main-menu-sidenav", 2, "overflow", "hidden", "background-color", "rgba(0,0,0,0)", 3, "opened"], ["drawer", ""], ["id", "main_nav_content"], ["id", "spacer", 2, "margin-top", "100%"], ["color", "accent", "aria-hidden", "false", "aria-label", "Example home icon", 1, "link_icon"], ["routerLink", "/viz", "routerLinkActive", "active"], [1, "nav_label"], ["routerLink", "/about", "routerLinkActive", "active"], ["routerLink", "/team", "routerLinkActive", "active"], ["routerLink", "/api", "routerLinkActive", "active"]], template: function AppComponent_Template(rf, ctx) { if (rf & 1) {
-            _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementStart"](0, "div", 0);
+        } }, features: [_angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵNgOnChangesFeature"]], decls: 22, vars: 0, consts: [[1, "text-gray-400", "bg-gray-900", "body-font"], [1, "container", "mx-auto", "flex", "flex-wrap", "p-5", "flex-col", "md:flex-row", "items-center"], [1, "flex", "title-font", "font-medium", "items-center", "text-white", "mb-4", "md:mb-0"], ["xmlns", "http://www.w3.org/2000/svg", "fill", "none", "stroke", "currentColor", "stroke-linecap", "round", "stroke-linejoin", "round", "stroke-width", "2", "viewBox", "0 0 24 24", 1, "w-10", "h-10", "text-white", "p-2", "bg-yellow-500", "rounded-full"], ["d", "M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"], [1, "ml-3", "text-xl", "lg:text-xl", "md:text-3xl"], [1, "md:ml-auto", "md:mr-auto", "flex", "flex-wrap", "items-center", "text-base", "justify-center", "lg:text-xl", "md:text-3xl"], ["routerLink", "/map", 1, "mr-5", "hover:text-white"], ["routerLink", "/about", 1, "mr-5", "hover:text-white"], ["routerLink", "/api", 1, "mr-5", "hover:text-white"], ["routerLink", "/team", 1, "mr-5", "hover:text-white"], [2, "position", "relative"], [2, "z-index", "4000", "position", "fixed", "bottom", "0px"], [1, "flex", "items-center", "justify-between", "p-6", "container", "mx-auto"], ["src", "./assets/images/logos/newcastle.png", "alt", "newcastle university logo", 2, "width", "200px", "margin-right", "2%"], ["src", "./assets/images/logos/liverpool.png", "alt", "liverpool university logo", 2, "width", "200px", "margin-right", "2%"], ["src", "./assets/images/logos/ahrc.png", "alt", "arts and humanities research council logo", 2, "width", "200px", "margin-right", "2%"]], template: function AppComponent_Template(rf, ctx) { if (rf & 1) {
+            _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementStart"](0, "header", 0);
             _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementStart"](1, "div", 1);
-            _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementStart"](2, "mat-icon", 2);
-            _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵlistener"]("click", function AppComponent_Template_mat_icon_click_2_listener() { return ctx.toggleSidenav(); });
-            _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵtext"](3);
+            _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementStart"](2, "a", 2);
+            _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵnamespaceSVG"]();
+            _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementStart"](3, "svg", 3);
+            _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelement"](4, "path", 4);
+            _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementEnd"]();
+            _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵnamespaceHTML"]();
+            _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementStart"](5, "span", 5);
+            _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵtext"](6, "ECPPEC");
             _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementEnd"]();
             _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementEnd"]();
-            _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementStart"](4, "div", 3);
-            _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelement"](5, "img", 4);
-            _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelement"](6, "img", 5);
-            _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelement"](7, "img", 6);
+            _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementStart"](7, "nav", 6);
+            _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementStart"](8, "a", 7);
+            _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵtext"](9, "Map");
             _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementEnd"]();
-            _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementStart"](8, "mat-drawer-container", 7);
-            _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementStart"](9, "mat-drawer", 8, 9);
-            _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelement"](11, "br");
-            _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementStart"](12, "div", 10);
-            _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelement"](13, "div", 11);
-            _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementStart"](14, "mat-icon", 12);
-            _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementStart"](15, "a", 13);
-            _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵtext"](16, "poll");
+            _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementStart"](10, "a", 8);
+            _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵtext"](11, "About");
             _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementEnd"]();
+            _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementStart"](12, "a", 9);
+            _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵtext"](13, "Data");
             _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementEnd"]();
-            _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementStart"](17, "div", 14);
-            _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵtext"](18, "MAPS");
-            _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementEnd"]();
-            _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelement"](19, "br");
-            _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementStart"](20, "mat-icon", 12);
-            _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementStart"](21, "a", 15);
-            _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵtext"](22, "info");
+            _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementStart"](14, "a", 10);
+            _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵtext"](15, "Team");
             _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementEnd"]();
             _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementEnd"]();
-            _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementStart"](23, "div", 14);
-            _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵtext"](24, "ABOUT");
-            _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementEnd"]();
-            _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelement"](25, "br");
-            _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementStart"](26, "mat-icon", 12);
-            _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementStart"](27, "a", 16);
-            _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵtext"](28, "group");
             _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementEnd"]();
             _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementEnd"]();
-            _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementStart"](29, "div", 14);
-            _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵtext"](30, "TEAM");
-            _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementEnd"]();
-            _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelement"](31, "br");
-            _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementStart"](32, "mat-icon", 12);
-            _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementStart"](33, "a", 17);
-            _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵtext"](34, "architecture");
-            _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementEnd"]();
-            _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementEnd"]();
-            _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementStart"](35, "div", 14);
-            _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵtext"](36, "DATA");
-            _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementEnd"]();
-            _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelement"](37, "br");
+            _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelement"](16, "router-outlet", 11);
+            _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementStart"](17, "footer", 12);
+            _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementStart"](18, "div", 13);
+            _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelement"](19, "img", 14);
+            _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelement"](20, "img", 15);
+            _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelement"](21, "img", 16);
             _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementEnd"]();
             _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementEnd"]();
-            _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelement"](38, "router-outlet");
-            _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementEnd"]();
-            _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementEnd"]();
-        } if (rf & 2) {
-            _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵstyleProp"]("height", ctx.myInnerHeight, "px");
-            _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵadvance"](3);
-            _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵtextInterpolate"](ctx.navSwitch);
-            _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵadvance"](5);
-            _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵstyleProp"]("height", ctx.myInnerHeight, "px");
-            _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵadvance"](1);
-            _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵstyleProp"]("height", ctx.myInnerHeight, "px");
-            _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵproperty"]("opened", ctx.isShowing);
-        } }, directives: [_angular_material_icon__WEBPACK_IMPORTED_MODULE_2__["MatIcon"], _angular_material_sidenav__WEBPACK_IMPORTED_MODULE_3__["MatDrawerContainer"], _angular_material_sidenav__WEBPACK_IMPORTED_MODULE_3__["MatDrawer"], _angular_router__WEBPACK_IMPORTED_MODULE_4__["RouterLinkWithHref"], _angular_router__WEBPACK_IMPORTED_MODULE_4__["RouterLinkActive"], _angular_router__WEBPACK_IMPORTED_MODULE_4__["RouterOutlet"]], styles: ["#container[_ngcontent-%COMP%] {\n  width: 100%;\n  position: relative;\n}\n#logos[_ngcontent-%COMP%] {\n  \n}\n#info[_ngcontent-%COMP%] {\n  position: absolute;\n  bottom: 5%;\n  left: 1%;\n  z-index: 5;\n  width: 1200px;\n}\n#nav_toggle[_ngcontent-%COMP%] {\n  position: absolute;\n  top: 5%;\n  left: 1%;\n  z-index: 5000;\n  width: 1200px;\n}\n.nav_label[_ngcontent-%COMP%] {\n  text-align: center;\n  \n  font-family: Catamaran;\n}\n.scroll_style[_ngcontent-%COMP%]::-webkit-scrollbar-thumb {\n  border-radius: 10px !important;\n  -webkit-box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.3) !important;\n  background-color: #D62929 !important;\n}\n.material-icons.orange600[_ngcontent-%COMP%] {\n  color: #FB8C00;\n}\n\n.link_icon[_ngcontent-%COMP%] {\n  font-size: 60pt;\n  width: 60pt;\n  \n}\n.main-menu-sidenav[_ngcontent-%COMP%] {\n  color: white;\n  background-color: rgba(210, 10, 10, 0.1);\n  padding: 20px;\n  min-width: 100px;\n  \n}\n#sidebar_content[_ngcontent-%COMP%] {\n  width: 40%;\n  text-align: justify;\n  overflow: scroll;\n  overflow-x: hidden;\n  padding-right: 10%;\n}\n#main_nav_content[_ngcontent-%COMP%] {\n  padding: 3%;\n  \n}\n.nav_item[_ngcontent-%COMP%] {\n  \n  \n  font-family: Roboto;\n  margin-bottom: 4%;\n  font-size: 180%;\n  padding: 2%;\n}\na[_ngcontent-%COMP%]:link {\n  color: orange;\n}\n\na[_ngcontent-%COMP%]:visited {\n  color: purple;\n}\n\na[_ngcontent-%COMP%]:hover {\n  color: #0db9f0;\n}\n\na[_ngcontent-%COMP%]:active {\n  color: lightGrey;\n}\na[_ngcontent-%COMP%] {\n  text-decoration: none;\n}\n#titles[_ngcontent-%COMP%] {\n  border-color: orange !important;\n  border-left: 10px solid;\n  \n}\n.gradient[_ngcontent-%COMP%] {\n  position: absolute;\n  width: 100%;\n  height: 100%;\n  \n  -webkit-mask-image: linear-gradient(to bottom, black, black, rgba(0, 0, 0, 0));\n}\n#my_sub[_ngcontent-%COMP%] {\n  margin-left: 1%;\n  font-size: 100%;\n  vertical-align: top;\n  font-family: Roboto;\n  font-weight: bold;\n}\n#my_title[_ngcontent-%COMP%] {\n  margin-left: 1%;\n  font-size: 330%;\n  vertical-align: top;\n  font-family: Roboto;\n  font-weight: bold;\n}\nnav[_ngcontent-%COMP%] {\n  float: right;\n  margin-right: 5%;\n}\n.style-3[_ngcontent-%COMP%]::-webkit-scrollbar-track {\n  -webkit-box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.63);\n  background-color: orange;\n}\n.style-3[_ngcontent-%COMP%]::-webkit-scrollbar {\n  width: 6px;\n  background-color: orange;\n}\n.style-3[_ngcontent-%COMP%]::-webkit-scrollbar-thumb {\n  background-color: orange;\n}\n/*# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW9uIjozLCJzb3VyY2VzIjpbIi4uLy4uL2FwcC5jb21wb25lbnQuc2NzcyJdLCJuYW1lcyI6W10sIm1hcHBpbmdzIjoiQUFBQTs7OztFQUFBO0FBUUE7RUFDRSxXQUFBO0VBQ0Esa0JBQUE7QUFGRjtBQU1BO0VBQ0E7O2VBQUE7QUFEQTtBQUtBO0VBQ0Usa0JBQUE7RUFDQSxVQUFBO0VBQ0EsUUFBQTtFQUNBLFVBQUE7RUFDQSxhQUFBO0FBRkY7QUFLQTtFQUNFLGtCQUFBO0VBQ0EsT0FBQTtFQUNBLFFBQUE7RUFDQSxhQUFBO0VBQ0EsYUFBQTtBQUZGO0FBS0E7RUFDRSxrQkFBQTtFQUNBLHFCQUFBO0VBQ0Esc0JBQUE7QUFGRjtBQUlBO0VBRUksOEJBQUE7RUFDQSwrREFBQTtFQUNBLG9DQUFBO0FBRko7QUFJQTtFQUE0QixjQUFBO0FBQTVCO0FBRUE7Ozs7Ozs7Ozs7Ozs7RUFBQTtBQWVBO0VBQ0UsZUFBQTtFQUNBLFdBQUE7RUFFQSxxQkFBQTtBQURGO0FBR0E7RUFDRSxZQUFBO0VBQ0Esd0NBQUE7RUFHQSxhQUFBO0VBQ0EsZ0JBQUE7RUFDQSwrQkFBQTtBQUZGO0FBS0E7RUFDRSxVQUFBO0VBQ0EsbUJBQUE7RUFDQSxnQkFBQTtFQUNBLGtCQUFBO0VBQ0Esa0JBQUE7QUFGRjtBQU1BO0VBQ0UsV0FBQTtFQUVBLGFBQUE7QUFKRjtBQU1BO0VBQ0MsMEJBQUE7RUFDQSxjQUFBO0VBQ0EsbUJBQUE7RUFDQSxpQkFBQTtFQUNBLGVBQUE7RUFDQSxXQUFBO0FBSEQ7QUFLQTtFQUNFLGFBQUE7QUFGRjtBQUtBLGlCQUFBO0FBQ0E7RUFDRSxhQUFBO0FBRkY7QUFLQSxvQkFBQTtBQUNBO0VBQ0UsY0FBQTtBQUZGO0FBS0Esa0JBQUE7QUFDQTtFQUNFLGdCQUFBO0FBRkY7QUFJQTtFQUNFLHFCQUFBO0FBREY7QUFJQTtFQUNFLCtCQUFBO0VBQ0EsdUJBQUE7RUFDQSxrQkFBQTtBQURGO0FBS0E7RUFDRSxrQkFBQTtFQUNBLFdBQUE7RUFDQSxZQUFBO0VBRUEsc0ZBQUE7RUFDQSw4RUFBQTtBQUhGO0FBTUE7RUFDRSxlQUFBO0VBQ0EsZUFBQTtFQUNBLG1CQUFBO0VBQ0EsbUJBQUE7RUFDQSxpQkFBQTtBQUhGO0FBS0E7RUFDRSxlQUFBO0VBQ0EsZUFBQTtFQUNBLG1CQUFBO0VBQ0EsbUJBQUE7RUFDQSxpQkFBQTtBQUZGO0FBSUE7RUFFRSxZQUFBO0VBQ0EsZ0JBQUE7QUFGRjtBQVFBO0VBRUkscURBQUE7RUFDQSx3QkFBQTtBQU5KO0FBU0E7RUFFSSxVQUFBO0VBQ0Esd0JBQUE7QUFQSjtBQVVBO0VBRUksd0JBQUE7QUFSSiIsImZpbGUiOiJhcHAuY29tcG9uZW50LnNjc3MiLCJzb3VyY2VzQ29udGVudCI6WyIvKi5leGFtcGxlLWNvbnRhaW5lciB7XG4gIHdpZHRoOjEwMCU7XG4gIG92ZXJmbG93OiBoaWRkZW47XG4gIFxufSovXG4qIHtcbiAgXG59XG4jY29udGFpbmVye1xuICB3aWR0aDoxMDAlO1xuICBwb3NpdGlvbjogcmVsYXRpdmU7XG59XG5cblxuI2xvZ29ze1xuLyogIHBvc2l0aW9uOiBhYnNvbHV0ZTtcbiAgcmlnaHQ6MSU7XG4gIGJvdHRvbToxJTsqL1xufVxuI2luZm97XG4gIHBvc2l0aW9uOiBhYnNvbHV0ZTtcbiAgYm90dG9tOjUlO1xuICBsZWZ0OjElO1xuICB6LWluZGV4OiA1O1xuICB3aWR0aDoxMjAwcHg7XG4gIFxufVxuI25hdl90b2dnbGV7XG4gIHBvc2l0aW9uOiBhYnNvbHV0ZTtcbiAgdG9wOjUlO1xuICBsZWZ0OjElO1xuICB6LWluZGV4OiA1MDAwO1xuICB3aWR0aDoxMjAwcHg7XG4gIFxufVxuLm5hdl9sYWJlbHtcbiAgdGV4dC1hbGlnbjogY2VudGVyO1xuICAvKmZvbnQtZmFtaWx5OiBMYXRvOyovXG4gIGZvbnQtZmFtaWx5OiBDYXRhbWFyYW47XG59XG4uc2Nyb2xsX3N0eWxlOjotd2Via2l0LXNjcm9sbGJhci10aHVtYlxue1xuICAgIGJvcmRlci1yYWRpdXM6IDEwcHggIWltcG9ydGFudDtcbiAgICAtd2Via2l0LWJveC1zaGFkb3c6IGluc2V0IDAgMCA2cHggcmdiYSgwLDAsMCwuMykgIWltcG9ydGFudDtcbiAgICBiYWNrZ3JvdW5kLWNvbG9yOiAjRDYyOTI5ICFpbXBvcnRhbnQ7XG59XG4ubWF0ZXJpYWwtaWNvbnMub3JhbmdlNjAwIHsgY29sb3I6ICNGQjhDMDA7IH1cblxuLyo6Om5nLWRlZXAgeyBkcmF3ZXIge1xuXG4gb3ZlcmZsb3c6IGhpZGRlbiAhaW1wb3J0YW50O1xufVxuXG59XG5cblxuOjpuZy1kZWVwIHsgbWF0LWRyYXdlci1jb250YWluZXIge1xuXG4gb3ZlcmZsb3c6IGhpZGRlbiAhaW1wb3J0YW50O1xufVxuXG59Ki9cblxuLmxpbmtfaWNvbntcbiAgZm9udC1zaXplOiA2MHB0OyAgXG4gIHdpZHRoOiA2MHB0O1xuXG4gIC8qbWFyZ2luLXJpZ2h0OiAxNSU7Ki9cbn1cbi5tYWluLW1lbnUtc2lkZW5hdiB7XG4gIGNvbG9yOndoaXRlO1xuICBiYWNrZ3JvdW5kLWNvbG9yOiByZ2JhKDIxMCwxMCwxMCwwLjEpO1xuXG4gIFxuICBwYWRkaW5nOiAyMHB4O1xuICBtaW4td2lkdGg6IDEwMHB4O1xuICAvKm92ZXJmbG93OiBoaWRkZW4gIWltcG9ydGFudDsqL1xufSBcblxuI3NpZGViYXJfY29udGVudHtcbiAgd2lkdGg6IDQwJTtcbiAgdGV4dC1hbGlnbjoganVzdGlmeTtcbiAgb3ZlcmZsb3c6IHNjcm9sbDtcbiAgb3ZlcmZsb3cteDogaGlkZGVuO1xuICBwYWRkaW5nLXJpZ2h0OiAxMCU7XG5cbn1cblxuI21haW5fbmF2X2NvbnRlbnR7XG4gIHBhZGRpbmc6IDMlO1xuXG4gIC8qd2lkdGg6MjAlOyovXG59XG4ubmF2X2l0ZW17XG4gLypiYWNrZ3JvdW5kLWNvbG9yOiBncmV5OyovXG4gLyptYXJnaW46IDMlOyovXG4gZm9udC1mYW1pbHk6IFJvYm90bztcbiBtYXJnaW4tYm90dG9tOiA0JTtcbiBmb250LXNpemU6IDE4MCU7XG4gcGFkZGluZzogMiU7XG59XG5hOmxpbmsge1xuICBjb2xvcjogb3JhbmdlO1xufVxuXG4vKiB2aXNpdGVkIGxpbmsgKi9cbmE6dmlzaXRlZCB7XG4gIGNvbG9yOiBwdXJwbGU7XG59XG5cbi8qIG1vdXNlIG92ZXIgbGluayAqL1xuYTpob3ZlciB7XG4gIGNvbG9yOiAjMGRiOWYwO1xufVxuXG4vKiBzZWxlY3RlZCBsaW5rICovXG5hOmFjdGl2ZSB7XG4gIGNvbG9yOiBsaWdodEdyZXk7XG59XG5he1xuICB0ZXh0LWRlY29yYXRpb246IG5vbmU7XG59XG5cbiN0aXRsZXN7XG4gIGJvcmRlci1jb2xvcjpvcmFuZ2UgIWltcG9ydGFudDtcbiAgYm9yZGVyLWxlZnQ6MTBweCBzb2xpZDtcbiAgLyptYXJnaW4tbGVmdDoyJTsqL1xuXG59XG5cbi5ncmFkaWVudHtcbiAgcG9zaXRpb246YWJzb2x1dGU7XG4gIHdpZHRoOjEwMCU7XG4gIGhlaWdodDoxMDAlO1xuXG4gIC8qYmFja2dyb3VuZC1pbWFnZTogbGluZWFyLWdyYWRpZW50KHRvIGJvdHRvbSwgcmdiKDY2LCAxMzQsIDI0NCksIHJnYig1OCwgMjU1LCAyMTkpKTsqL1xuICAtd2Via2l0LW1hc2staW1hZ2U6IGxpbmVhci1ncmFkaWVudCh0byBib3R0b20sIHJnYmEoMCwwLDAsMSksIHJnYmEoMCwwLDAsMSksIHJnYmEoMCwwLDAsMCkpO1xufVxuXG4jbXlfc3Vie1xuICBtYXJnaW4tbGVmdDoxJTtcbiAgZm9udC1zaXplOiAxMDAlO1xuICB2ZXJ0aWNhbC1hbGlnbjogdG9wO1xuICBmb250LWZhbWlseTogUm9ib3RvO1xuICBmb250LXdlaWdodDpib2xkO1xufVxuI215X3RpdGxle1xuICBtYXJnaW4tbGVmdDoxJTtcbiAgZm9udC1zaXplOiAzMzAlO1xuICB2ZXJ0aWNhbC1hbGlnbjogdG9wO1xuICBmb250LWZhbWlseTogUm9ib3RvO1xuICBmb250LXdlaWdodDpib2xkO1xufVxubmF2e1xuXG4gIGZsb2F0OnJpZ2h0O1xuICBtYXJnaW4tcmlnaHQ6NSU7XG59XG5we1xuXG59XG5cbi5zdHlsZS0zOjotd2Via2l0LXNjcm9sbGJhci10cmFja1xue1xuICAgIC13ZWJraXQtYm94LXNoYWRvdzogaW5zZXQgMCAwIDZweCByZ2JhKDAsMCwwLDAuNjMpO1xuICAgIGJhY2tncm91bmQtY29sb3I6IG9yYW5nZTtcbn1cblxuLnN0eWxlLTM6Oi13ZWJraXQtc2Nyb2xsYmFyXG57XG4gICAgd2lkdGg6IDZweDtcbiAgICBiYWNrZ3JvdW5kLWNvbG9yOiBvcmFuZ2U7XG59XG5cbi5zdHlsZS0zOjotd2Via2l0LXNjcm9sbGJhci10aHVtYlxue1xuICAgIGJhY2tncm91bmQtY29sb3I6IG9yYW5nZTtcbn1cblxuIl19 */"] });
+        } }, directives: [_angular_router__WEBPACK_IMPORTED_MODULE_2__["RouterLinkWithHref"], _angular_router__WEBPACK_IMPORTED_MODULE_2__["RouterOutlet"]], styles: ["\n/*# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW9uIjozLCJzb3VyY2VzIjpbXSwibmFtZXMiOltdLCJtYXBwaW5ncyI6IiIsImZpbGUiOiJhcHAuY29tcG9uZW50LnNjc3MifQ== */"] });
     return AppComponent;
 }());
 
@@ -1334,7 +2484,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "AppModule", function() { return AppModule; });
 /* harmony import */ var _angular_platform_browser__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @angular/platform-browser */ "jhN1");
 /* harmony import */ var _angular_forms__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! @angular/forms */ "3Pt+");
-/* harmony import */ var ng5_slider__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ng5-slider */ "EsRS");
+/* harmony import */ var _angular_slider_ngx_slider__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! @angular-slider/ngx-slider */ "mgaL");
 /* harmony import */ var _app_component__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./app.component */ "Sy1n");
 /* harmony import */ var _hello_component__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./hello.component */ "1VHI");
 /* harmony import */ var _angular_common_http__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! @angular/common/http */ "tk/3");
@@ -1350,25 +2500,32 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _angular_material_toolbar__WEBPACK_IMPORTED_MODULE_15__ = __webpack_require__(/*! @angular/material/toolbar */ "J0hL");
 /* harmony import */ var _angular_material_radio__WEBPACK_IMPORTED_MODULE_16__ = __webpack_require__(/*! @angular/material/radio */ "31NI");
 /* harmony import */ var _angular_material_dialog__WEBPACK_IMPORTED_MODULE_17__ = __webpack_require__(/*! @angular/material/dialog */ "LcAk");
-/* harmony import */ var _angular_material_sidenav__WEBPACK_IMPORTED_MODULE_18__ = __webpack_require__(/*! @angular/material/sidenav */ "RzEb");
-/* harmony import */ var _date_pipe_pipe__WEBPACK_IMPORTED_MODULE_19__ = __webpack_require__(/*! ./date-pipe.pipe */ "hdsS");
-/* harmony import */ var _angular_material_select__WEBPACK_IMPORTED_MODULE_20__ = __webpack_require__(/*! @angular/material/select */ "2+6u");
-/* harmony import */ var _angular_material_input__WEBPACK_IMPORTED_MODULE_21__ = __webpack_require__(/*! @angular/material/input */ "A2Vd");
-/* harmony import */ var _about_about_component__WEBPACK_IMPORTED_MODULE_22__ = __webpack_require__(/*! ./about/about.component */ "84zG");
-/* harmony import */ var _app_routing_module__WEBPACK_IMPORTED_MODULE_23__ = __webpack_require__(/*! ./app-routing.module */ "vY5A");
-/* harmony import */ var _viz_viz_component__WEBPACK_IMPORTED_MODULE_24__ = __webpack_require__(/*! ./viz/viz.component */ "w3Bs");
-/* harmony import */ var _team_team_component__WEBPACK_IMPORTED_MODULE_25__ = __webpack_require__(/*! ./team/team.component */ "mGeP");
-/* harmony import */ var _outputs_outputs_component__WEBPACK_IMPORTED_MODULE_26__ = __webpack_require__(/*! ./outputs/outputs.component */ "OWwv");
-/* harmony import */ var _dialogue_dialogue_component__WEBPACK_IMPORTED_MODULE_27__ = __webpack_require__(/*! ./dialogue/dialogue.component */ "Kvm9");
-/* harmony import */ var _api_api_component__WEBPACK_IMPORTED_MODULE_28__ = __webpack_require__(/*! ./api/api.component */ "zHhC");
-/* harmony import */ var _pollbook_dialogue_pollbook_dialogue_component__WEBPACK_IMPORTED_MODULE_29__ = __webpack_require__(/*! ./pollbook-dialogue/pollbook-dialogue.component */ "A6hx");
-/* harmony import */ var _angular_material_tooltip__WEBPACK_IMPORTED_MODULE_30__ = __webpack_require__(/*! @angular/material/tooltip */ "gVAx");
-/* harmony import */ var angular_resizable_element__WEBPACK_IMPORTED_MODULE_31__ = __webpack_require__(/*! angular-resizable-element */ "/qmH");
-/* harmony import */ var ngx_walkthrough__WEBPACK_IMPORTED_MODULE_32__ = __webpack_require__(/*! ngx-walkthrough */ "4zxK");
-/* harmony import */ var _angular_material_button_toggle__WEBPACK_IMPORTED_MODULE_33__ = __webpack_require__(/*! @angular/material/button-toggle */ "rKiy");
-/* harmony import */ var _warning_dialogue_warning_dialogue_component__WEBPACK_IMPORTED_MODULE_34__ = __webpack_require__(/*! ./warning-dialogue/warning-dialogue.component */ "bFnX");
-/* harmony import */ var _angular_google_maps__WEBPACK_IMPORTED_MODULE_35__ = __webpack_require__(/*! @angular/google-maps */ "3sZV");
-/* harmony import */ var _angular_core__WEBPACK_IMPORTED_MODULE_36__ = __webpack_require__(/*! @angular/core */ "fXoL");
+/* harmony import */ var _angular_material_slider__WEBPACK_IMPORTED_MODULE_18__ = __webpack_require__(/*! @angular/material/slider */ "GBlY");
+/* harmony import */ var _angular_material_sidenav__WEBPACK_IMPORTED_MODULE_19__ = __webpack_require__(/*! @angular/material/sidenav */ "RzEb");
+/* harmony import */ var _date_pipe_pipe__WEBPACK_IMPORTED_MODULE_20__ = __webpack_require__(/*! ./date-pipe.pipe */ "hdsS");
+/* harmony import */ var _angular_material_select__WEBPACK_IMPORTED_MODULE_21__ = __webpack_require__(/*! @angular/material/select */ "2+6u");
+/* harmony import */ var _angular_material_input__WEBPACK_IMPORTED_MODULE_22__ = __webpack_require__(/*! @angular/material/input */ "A2Vd");
+/* harmony import */ var _about_about_component__WEBPACK_IMPORTED_MODULE_23__ = __webpack_require__(/*! ./about/about.component */ "84zG");
+/* harmony import */ var _app_routing_module__WEBPACK_IMPORTED_MODULE_24__ = __webpack_require__(/*! ./app-routing.module */ "vY5A");
+/* harmony import */ var _viz_viz_component__WEBPACK_IMPORTED_MODULE_25__ = __webpack_require__(/*! ./viz/viz.component */ "w3Bs");
+/* harmony import */ var _team_team_component__WEBPACK_IMPORTED_MODULE_26__ = __webpack_require__(/*! ./team/team.component */ "mGeP");
+/* harmony import */ var _outputs_outputs_component__WEBPACK_IMPORTED_MODULE_27__ = __webpack_require__(/*! ./outputs/outputs.component */ "OWwv");
+/* harmony import */ var _dialogue_dialogue_component__WEBPACK_IMPORTED_MODULE_28__ = __webpack_require__(/*! ./dialogue/dialogue.component */ "Kvm9");
+/* harmony import */ var _api_api_component__WEBPACK_IMPORTED_MODULE_29__ = __webpack_require__(/*! ./api/api.component */ "zHhC");
+/* harmony import */ var _pollbook_dialogue_pollbook_dialogue_component__WEBPACK_IMPORTED_MODULE_30__ = __webpack_require__(/*! ./pollbook-dialogue/pollbook-dialogue.component */ "A6hx");
+/* harmony import */ var _angular_material_tooltip__WEBPACK_IMPORTED_MODULE_31__ = __webpack_require__(/*! @angular/material/tooltip */ "gVAx");
+/* harmony import */ var angular_resizable_element__WEBPACK_IMPORTED_MODULE_32__ = __webpack_require__(/*! angular-resizable-element */ "/qmH");
+/* harmony import */ var ngx_walkthrough__WEBPACK_IMPORTED_MODULE_33__ = __webpack_require__(/*! ngx-walkthrough */ "4zxK");
+/* harmony import */ var _angular_material_button_toggle__WEBPACK_IMPORTED_MODULE_34__ = __webpack_require__(/*! @angular/material/button-toggle */ "rKiy");
+/* harmony import */ var _warning_dialogue_warning_dialogue_component__WEBPACK_IMPORTED_MODULE_35__ = __webpack_require__(/*! ./warning-dialogue/warning-dialogue.component */ "bFnX");
+/* harmony import */ var _angular_google_maps__WEBPACK_IMPORTED_MODULE_36__ = __webpack_require__(/*! @angular/google-maps */ "3sZV");
+/* harmony import */ var ngx_echarts__WEBPACK_IMPORTED_MODULE_37__ = __webpack_require__(/*! ngx-echarts */ "DKVz");
+/* harmony import */ var _sandpit_sandpit_component__WEBPACK_IMPORTED_MODULE_38__ = __webpack_require__(/*! ./sandpit/sandpit.component */ "/ikp");
+/* harmony import */ var _table_table_component__WEBPACK_IMPORTED_MODULE_39__ = __webpack_require__(/*! ./table/table.component */ "9Rdk");
+/* harmony import */ var _elections_map_elections_map_component__WEBPACK_IMPORTED_MODULE_40__ = __webpack_require__(/*! ./elections-map/elections-map.component */ "lcfZ");
+/* harmony import */ var ngx_mat_range_slider__WEBPACK_IMPORTED_MODULE_41__ = __webpack_require__(/*! ngx-mat-range-slider */ "TtXx");
+/* harmony import */ var _map_map_component__WEBPACK_IMPORTED_MODULE_42__ = __webpack_require__(/*! ./map/map.component */ "cNoH");
+/* harmony import */ var _angular_core__WEBPACK_IMPORTED_MODULE_43__ = __webpack_require__(/*! @angular/core */ "fXoL");
 
 
 
@@ -1391,9 +2548,18 @@ __webpack_require__.r(__webpack_exports__);
 
 
 
+// import { MatSlideToggleModule } from '@angular/material/slide-toggle';
+
 
 
 // import { MatIconModule } from "@angular/material/icon";
+
+
+
+
+
+
+
 
 
 
@@ -1415,81 +2581,95 @@ __webpack_require__.r(__webpack_exports__);
 var AppModule = /** @class */ (function () {
     function AppModule() {
     }
-    AppModule.ɵmod = _angular_core__WEBPACK_IMPORTED_MODULE_36__["ɵɵdefineNgModule"]({ type: AppModule, bootstrap: [_app_component__WEBPACK_IMPORTED_MODULE_3__["AppComponent"]] });
-    AppModule.ɵinj = _angular_core__WEBPACK_IMPORTED_MODULE_36__["ɵɵdefineInjector"]({ factory: function AppModule_Factory(t) { return new (t || AppModule)(); }, providers: [], imports: [[
-                // MatSliderModule,
+    AppModule.ɵfac = function AppModule_Factory(t) { return new (t || AppModule)(); };
+    AppModule.ɵmod = _angular_core__WEBPACK_IMPORTED_MODULE_43__["ɵɵdefineNgModule"]({ type: AppModule, bootstrap: [_app_component__WEBPACK_IMPORTED_MODULE_3__["AppComponent"]] });
+    AppModule.ɵinj = _angular_core__WEBPACK_IMPORTED_MODULE_43__["ɵɵdefineInjector"]({ providers: [], imports: [[
+                ngx_mat_range_slider__WEBPACK_IMPORTED_MODULE_41__["NgxMatRangeSliderModule"],
                 _angular_forms__WEBPACK_IMPORTED_MODULE_1__["FormsModule"],
                 _angular_forms__WEBPACK_IMPORTED_MODULE_1__["ReactiveFormsModule"],
                 _angular_platform_browser__WEBPACK_IMPORTED_MODULE_0__["BrowserModule"],
                 _angular_common_http__WEBPACK_IMPORTED_MODULE_5__["HttpClientModule"],
                 _angular_material_radio__WEBPACK_IMPORTED_MODULE_16__["MatRadioModule"],
-                _angular_material_sidenav__WEBPACK_IMPORTED_MODULE_18__["MatSidenavModule"],
+                _angular_material_sidenav__WEBPACK_IMPORTED_MODULE_19__["MatSidenavModule"],
                 _angular_forms__WEBPACK_IMPORTED_MODULE_1__["FormsModule"],
                 _angular_material_dialog__WEBPACK_IMPORTED_MODULE_17__["MatDialogModule"],
-                _angular_material_tooltip__WEBPACK_IMPORTED_MODULE_30__["MatTooltipModule"],
-                ng5_slider__WEBPACK_IMPORTED_MODULE_2__["Ng5SliderModule"],
+                _angular_material_tooltip__WEBPACK_IMPORTED_MODULE_31__["MatTooltipModule"],
                 _angular_material_paginator__WEBPACK_IMPORTED_MODULE_8__["MatPaginatorModule"],
                 _angular_material_button__WEBPACK_IMPORTED_MODULE_10__["MatButtonModule"],
+                // MatSlideToggleModule,
                 _angular_material_menu__WEBPACK_IMPORTED_MODULE_13__["MatMenuModule"],
                 _angular_material_toolbar__WEBPACK_IMPORTED_MODULE_15__["MatToolbarModule"],
                 _angular_material_autocomplete__WEBPACK_IMPORTED_MODULE_9__["MatAutocompleteModule"],
                 _angular_material_icon__WEBPACK_IMPORTED_MODULE_12__["MatIconModule"],
                 _angular_material_card__WEBPACK_IMPORTED_MODULE_11__["MatCardModule"],
                 _angular_material_table__WEBPACK_IMPORTED_MODULE_14__["MatTableModule"],
-                _angular_material_select__WEBPACK_IMPORTED_MODULE_20__["MatSelectModule"],
-                _angular_material_input__WEBPACK_IMPORTED_MODULE_21__["MatInputModule"],
-                _app_routing_module__WEBPACK_IMPORTED_MODULE_23__["AppRoutingModule"],
+                _angular_material_select__WEBPACK_IMPORTED_MODULE_21__["MatSelectModule"],
+                _angular_material_slider__WEBPACK_IMPORTED_MODULE_18__["MatSliderModule"],
+                _angular_material_input__WEBPACK_IMPORTED_MODULE_22__["MatInputModule"],
+                _app_routing_module__WEBPACK_IMPORTED_MODULE_24__["AppRoutingModule"],
                 ngx_draggable_resize__WEBPACK_IMPORTED_MODULE_6__["AngularDraggableModule"],
-                angular_resizable_element__WEBPACK_IMPORTED_MODULE_31__["ResizableModule"],
-                ngx_walkthrough__WEBPACK_IMPORTED_MODULE_32__["WalkthroughModule"],
-                _angular_material_button_toggle__WEBPACK_IMPORTED_MODULE_33__["MatButtonToggleModule"],
-                _angular_google_maps__WEBPACK_IMPORTED_MODULE_35__["GoogleMapsModule"],
+                angular_resizable_element__WEBPACK_IMPORTED_MODULE_32__["ResizableModule"],
+                ngx_walkthrough__WEBPACK_IMPORTED_MODULE_33__["WalkthroughModule"],
+                _angular_material_button_toggle__WEBPACK_IMPORTED_MODULE_34__["MatButtonToggleModule"],
+                _angular_google_maps__WEBPACK_IMPORTED_MODULE_36__["GoogleMapsModule"],
                 _angular_platform_browser_animations__WEBPACK_IMPORTED_MODULE_7__["BrowserAnimationsModule"],
-                _app_routing_module__WEBPACK_IMPORTED_MODULE_23__["AppRoutingModule"]
+                _app_routing_module__WEBPACK_IMPORTED_MODULE_24__["AppRoutingModule"],
+                _angular_platform_browser__WEBPACK_IMPORTED_MODULE_0__["HammerModule"],
+                _angular_slider_ngx_slider__WEBPACK_IMPORTED_MODULE_2__["NgxSliderModule"],
+                ngx_echarts__WEBPACK_IMPORTED_MODULE_37__["NgxEchartsModule"].forRoot({
+                    /**
+                     * This will import all modules from echarts.
+                     * If you only need custom modules,
+                     * please refer to [Custom Build] section.
+                     */
+                    echarts: function () { return __webpack_require__.e(/*! import() | echarts */ "echarts").then(__webpack_require__.bind(null, /*! echarts */ "MT78")); },
+                })
             ]] });
     return AppModule;
 }());
 
-(function () { (typeof ngJitMode === "undefined" || ngJitMode) && _angular_core__WEBPACK_IMPORTED_MODULE_36__["ɵɵsetNgModuleScope"](AppModule, { declarations: [_app_component__WEBPACK_IMPORTED_MODULE_3__["AppComponent"],
+(function () { (typeof ngJitMode === "undefined" || ngJitMode) && _angular_core__WEBPACK_IMPORTED_MODULE_43__["ɵɵsetNgModuleScope"](AppModule, { declarations: [_app_component__WEBPACK_IMPORTED_MODULE_3__["AppComponent"],
         _hello_component__WEBPACK_IMPORTED_MODULE_4__["HelloComponent"],
-        _date_pipe_pipe__WEBPACK_IMPORTED_MODULE_19__["DatePipePipe"],
-        _about_about_component__WEBPACK_IMPORTED_MODULE_22__["AboutComponent"],
-        _viz_viz_component__WEBPACK_IMPORTED_MODULE_24__["VizComponent"],
-        _team_team_component__WEBPACK_IMPORTED_MODULE_25__["TeamComponent"],
-        _outputs_outputs_component__WEBPACK_IMPORTED_MODULE_26__["OutputsComponent"],
-        _dialogue_dialogue_component__WEBPACK_IMPORTED_MODULE_27__["DialogueComponent"],
-        _api_api_component__WEBPACK_IMPORTED_MODULE_28__["ApiComponent"],
-        _pollbook_dialogue_pollbook_dialogue_component__WEBPACK_IMPORTED_MODULE_29__["PollbookDialogueComponent"],
-        _warning_dialogue_warning_dialogue_component__WEBPACK_IMPORTED_MODULE_34__["WarningDialogueComponent"]], imports: [
-        // MatSliderModule,
+        _date_pipe_pipe__WEBPACK_IMPORTED_MODULE_20__["DatePipePipe"],
+        _about_about_component__WEBPACK_IMPORTED_MODULE_23__["AboutComponent"],
+        _viz_viz_component__WEBPACK_IMPORTED_MODULE_25__["VizComponent"],
+        _team_team_component__WEBPACK_IMPORTED_MODULE_26__["TeamComponent"],
+        _outputs_outputs_component__WEBPACK_IMPORTED_MODULE_27__["OutputsComponent"],
+        _dialogue_dialogue_component__WEBPACK_IMPORTED_MODULE_28__["DialogueComponent"],
+        _api_api_component__WEBPACK_IMPORTED_MODULE_29__["ApiComponent"],
+        _pollbook_dialogue_pollbook_dialogue_component__WEBPACK_IMPORTED_MODULE_30__["PollbookDialogueComponent"],
+        _warning_dialogue_warning_dialogue_component__WEBPACK_IMPORTED_MODULE_35__["WarningDialogueComponent"], _sandpit_sandpit_component__WEBPACK_IMPORTED_MODULE_38__["SandpitComponent"], _table_table_component__WEBPACK_IMPORTED_MODULE_39__["TableComponent"], _elections_map_elections_map_component__WEBPACK_IMPORTED_MODULE_40__["ElectionsMapComponent"], _map_map_component__WEBPACK_IMPORTED_MODULE_42__["MapComponent"]], imports: [ngx_mat_range_slider__WEBPACK_IMPORTED_MODULE_41__["NgxMatRangeSliderModule"],
         _angular_forms__WEBPACK_IMPORTED_MODULE_1__["FormsModule"],
         _angular_forms__WEBPACK_IMPORTED_MODULE_1__["ReactiveFormsModule"],
         _angular_platform_browser__WEBPACK_IMPORTED_MODULE_0__["BrowserModule"],
         _angular_common_http__WEBPACK_IMPORTED_MODULE_5__["HttpClientModule"],
         _angular_material_radio__WEBPACK_IMPORTED_MODULE_16__["MatRadioModule"],
-        _angular_material_sidenav__WEBPACK_IMPORTED_MODULE_18__["MatSidenavModule"],
+        _angular_material_sidenav__WEBPACK_IMPORTED_MODULE_19__["MatSidenavModule"],
         _angular_forms__WEBPACK_IMPORTED_MODULE_1__["FormsModule"],
         _angular_material_dialog__WEBPACK_IMPORTED_MODULE_17__["MatDialogModule"],
-        _angular_material_tooltip__WEBPACK_IMPORTED_MODULE_30__["MatTooltipModule"],
-        ng5_slider__WEBPACK_IMPORTED_MODULE_2__["Ng5SliderModule"],
+        _angular_material_tooltip__WEBPACK_IMPORTED_MODULE_31__["MatTooltipModule"],
         _angular_material_paginator__WEBPACK_IMPORTED_MODULE_8__["MatPaginatorModule"],
         _angular_material_button__WEBPACK_IMPORTED_MODULE_10__["MatButtonModule"],
+        // MatSlideToggleModule,
         _angular_material_menu__WEBPACK_IMPORTED_MODULE_13__["MatMenuModule"],
         _angular_material_toolbar__WEBPACK_IMPORTED_MODULE_15__["MatToolbarModule"],
         _angular_material_autocomplete__WEBPACK_IMPORTED_MODULE_9__["MatAutocompleteModule"],
         _angular_material_icon__WEBPACK_IMPORTED_MODULE_12__["MatIconModule"],
         _angular_material_card__WEBPACK_IMPORTED_MODULE_11__["MatCardModule"],
         _angular_material_table__WEBPACK_IMPORTED_MODULE_14__["MatTableModule"],
-        _angular_material_select__WEBPACK_IMPORTED_MODULE_20__["MatSelectModule"],
-        _angular_material_input__WEBPACK_IMPORTED_MODULE_21__["MatInputModule"],
-        _app_routing_module__WEBPACK_IMPORTED_MODULE_23__["AppRoutingModule"],
+        _angular_material_select__WEBPACK_IMPORTED_MODULE_21__["MatSelectModule"],
+        _angular_material_slider__WEBPACK_IMPORTED_MODULE_18__["MatSliderModule"],
+        _angular_material_input__WEBPACK_IMPORTED_MODULE_22__["MatInputModule"],
+        _app_routing_module__WEBPACK_IMPORTED_MODULE_24__["AppRoutingModule"],
         ngx_draggable_resize__WEBPACK_IMPORTED_MODULE_6__["AngularDraggableModule"],
-        angular_resizable_element__WEBPACK_IMPORTED_MODULE_31__["ResizableModule"],
-        ngx_walkthrough__WEBPACK_IMPORTED_MODULE_32__["WalkthroughModule"],
-        _angular_material_button_toggle__WEBPACK_IMPORTED_MODULE_33__["MatButtonToggleModule"],
-        _angular_google_maps__WEBPACK_IMPORTED_MODULE_35__["GoogleMapsModule"],
+        angular_resizable_element__WEBPACK_IMPORTED_MODULE_32__["ResizableModule"],
+        ngx_walkthrough__WEBPACK_IMPORTED_MODULE_33__["WalkthroughModule"],
+        _angular_material_button_toggle__WEBPACK_IMPORTED_MODULE_34__["MatButtonToggleModule"],
+        _angular_google_maps__WEBPACK_IMPORTED_MODULE_36__["GoogleMapsModule"],
         _angular_platform_browser_animations__WEBPACK_IMPORTED_MODULE_7__["BrowserAnimationsModule"],
-        _app_routing_module__WEBPACK_IMPORTED_MODULE_23__["AppRoutingModule"]] }); })();
+        _app_routing_module__WEBPACK_IMPORTED_MODULE_24__["AppRoutingModule"],
+        _angular_platform_browser__WEBPACK_IMPORTED_MODULE_0__["HammerModule"],
+        _angular_slider_ngx_slider__WEBPACK_IMPORTED_MODULE_2__["NgxSliderModule"], ngx_echarts__WEBPACK_IMPORTED_MODULE_37__["NgxEchartsModule"]] }); })();
 
 
 /***/ }),
@@ -1544,6 +2724,287 @@ var WarningDialogueComponent = /** @class */ (function () {
             _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵtextInterpolate1"]("Your search has returned ", ctx.data.numConstituenciesInSearch, " constituencies. Showing it on the map would be rather slow so we've unlinked the map. You can turn it back on by clicking the 'link map' button.");
         } }, directives: [_angular_material_dialog__WEBPACK_IMPORTED_MODULE_0__["MatDialogActions"], _angular_material_button__WEBPACK_IMPORTED_MODULE_2__["MatButton"], _angular_material_dialog__WEBPACK_IMPORTED_MODULE_0__["MatDialogClose"]], styles: ["\n/*# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW9uIjozLCJzb3VyY2VzIjpbXSwibmFtZXMiOltdLCJtYXBwaW5ncyI6IiIsImZpbGUiOiJ3YXJuaW5nLWRpYWxvZ3VlLmNvbXBvbmVudC5zY3NzIn0= */"] });
     return WarningDialogueComponent;
+}());
+
+
+
+/***/ }),
+
+/***/ "cNoH":
+/*!**************************************!*\
+  !*** ./src/app/map/map.component.ts ***!
+  \**************************************/
+/*! exports provided: MapComponent */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "MapComponent", function() { return MapComponent; });
+/* harmony import */ var _angular_core__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @angular/core */ "fXoL");
+/* harmony import */ var _angular_google_maps__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! @angular/google-maps */ "3sZV");
+/* harmony import */ var _datasource_service__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../datasource.service */ "OU0Q");
+/* harmony import */ var _mapStyles__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../mapStyles */ "vLey");
+/* harmony import */ var _angular_common__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! @angular/common */ "ofXK");
+
+
+
+ // import { FormControl } from '@angular/forms';
+
+
+
+
+var _c0 = function (a0, a1, a2) { return { icon: a0, title: a1, visible: a2 }; };
+function MapComponent_map_marker_1_Template(rf, ctx) { if (rf & 1) {
+    _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelement"](0, "map-marker", 2);
+} if (rf & 2) {
+    var dynamicMarker_r1 = ctx.$implicit;
+    _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵproperty"]("position", dynamicMarker_r1.getPosition())("options", _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵpureFunction3"](2, _c0, dynamicMarker_r1.getIcon(), dynamicMarker_r1.title, dynamicMarker_r1.visible));
+} }
+var _c1 = function (a0) { return { styles: a0 }; };
+var MapComponent = /** @class */ (function () {
+    function MapComponent(datasourceService, appRef) {
+        this.datasourceService = datasourceService;
+        this.appRef = appRef;
+        this.clicked = false;
+        this.zoom = 7;
+        this.mapIsReady = false;
+        this.center = {
+            lat: 52.4862,
+            lng: 1.8904
+        };
+        this.m = _mapStyles__WEBPACK_IMPORTED_MODULE_3__["mapStyles"].styles; //this.mStyles.styles;
+        //console.log(mpStyles);
+        this.dynamicMarkers = [];
+    }
+    MapComponent.prototype.ngOnInit = function () {
+        var _this = this;
+        this.datasourceService.ready.subscribe(function (value) { _this.gotData(value); });
+        // this.datasourceService.ready.subscribe(() => this.gotData() );
+        // this.datasourceService.onDataSubscriptionChange().subscribe(() => this.dataChange());
+        this.datasourceService.constituencyFilter.valueChanges.subscribe(function () { return _this.dataChange("constituencyFilter"); });
+        this.datasourceService.monthFilter.valueChanges.subscribe(function () { return _this.dataChange("monthFilter"); });
+        this.datasourceService.yearFilter.valueChanges.subscribe(function () { return _this.dataChange("yearFilter"); });
+        this.datasourceService.countyFilter.valueChanges.subscribe(function () { return _this.dataChange("countyFilter"); });
+        this.datasourceService.contestedFilter.valueChanges.subscribe(function () { return _this.dataChange("contestedFilter"); });
+        this.datasourceService.byElectionGeneralFilter.valueChanges.subscribe(function () { return _this.dataChange("byElectionGeneralFilter"); });
+        this.datasourceService.byElectionCauseFilter.valueChanges.subscribe(function () { return _this.dataChange("byElectionCauseFilter"); });
+        this.datasourceService.franchiseFilter.valueChanges.subscribe(function () { return _this.dataChange("franchiseFilter"); });
+        this.datasourceService.pollBookCodeFilter.valueChanges.subscribe(function () { return _this.dataChange("pollBookCodeFilter"); });
+    };
+    MapComponent.prototype.dataChange = function (value) {
+        var _this = this;
+        this.datasourceService.electionsPerYear = this.datasourceService.getElectionsPerYear();
+        this.updateIsActive(this.datasourceService.getFilteredConstituencies());
+        this.setMapStyle();
+        this.dynamicMarkers.forEach(function (delement) {
+            var inData = false;
+            var cbu = "";
+            _this.datasourceService.dataSource.filteredData.forEach(function (felement) {
+                if (delement.getTitle().trim() == felement.constituency.trim()) {
+                    inData = true;
+                    cbu = felement.countyboroughuniv;
+                }
+            });
+            if (inData) {
+                var image = {
+                    url: './assets/images/smarker.svg',
+                    size: new google.maps.Size(71, 71),
+                    origin: new google.maps.Point(0, 0),
+                    anchor: new google.maps.Point(17, 34),
+                    scaledSize: new google.maps.Size(25, 25)
+                };
+                var options = {
+                    icon: image,
+                    title: delement.getTitle(),
+                    visible: cbu == "C" ? false : true,
+                    label: { text: delement.getTitle(), color: "white" }
+                };
+                delement.setOptions(options);
+            }
+            else {
+                var image = {
+                    url: './assets/images/dot.svg',
+                    size: new google.maps.Size(20, 20),
+                    origin: new google.maps.Point(0, 0),
+                    anchor: new google.maps.Point(10, 10),
+                    scaledSize: new google.maps.Size(20, 20)
+                };
+                var options = {
+                    icon: image,
+                    title: delement.getTitle(),
+                    visible: cbu == "C" ? false : true,
+                    label: { text: delement.getTitle(), color: "white" }
+                };
+                delement.setOptions(options);
+            }
+        });
+    };
+    MapComponent.prototype.gotData = function (value) {
+        var _this = this;
+        if (value) {
+            console.log("map data ready", this.datasourceService.uniqueElections);
+            // this.datasourceService.getUniqueElections();
+            this.datasourceService.uniqueElections.forEach(function (element) {
+                var thisDynamicMarker = new google.maps.Marker();
+                thisDynamicMarker.setPosition({ lat: +element.lat, lng: +element.lng });
+                var image = {
+                    url: './assets/images/dot.svg',
+                    size: new google.maps.Size(20, 20),
+                    origin: new google.maps.Point(0, 0),
+                    anchor: new google.maps.Point(10, 10),
+                    scaledSize: new google.maps.Size(20, 20)
+                };
+                var options = {
+                    icon: image,
+                    title: element.constituency,
+                    visible: element.countyboroughuniv == "C" ? false : true,
+                    label: { text: element.constituency, color: "white" }
+                };
+                thisDynamicMarker.setOptions(options);
+                _this.dynamicMarkers.push(thisDynamicMarker);
+            });
+        }
+    };
+    MapComponent.prototype.mapReady = function () {
+        var _this = this;
+        this.map.data.loadGeoJson("https://ecppec.ncl.ac.uk/assets/data/england.json");
+        this.map.data.setStyle(function (feature) {
+            var color = "white";
+            return {
+                fillColor: "pink",
+                strokeColor: "white",
+                strokeWeight: 1,
+                zIndex: 0,
+            };
+        });
+        //TODO where's DURHAM?
+        this.map.data.addListener('mouseover', function (event) {
+            _this.setMatchingCountyMarkerVisibility(true, event.feature.getProperty("name"));
+        });
+        this.map.data.addListener('mouseout', function (event) {
+            _this.setMatchingCountyMarkerVisibility(false, event.feature.getProperty("name"));
+        });
+        this.map.data.addListener('click', function (event) {
+            if (!_this.clicked) {
+                _this.clicked = true;
+                if (event.feature.getProperty('isActive')) {
+                    event.feature.setProperty('isActive', false);
+                    var updatedConstituencyFilterValue = _this.datasourceService.filteredValues['constituency'].replace(',' + event.feature.getProperty("name"), '');
+                    _this.datasourceService.constituencyFilter.setValue(updatedConstituencyFilterValue);
+                    _this.datasourceService.filteredValues['constituency'] = updatedConstituencyFilterValue;
+                    _this.datasourceService.dataSource.filter = JSON.stringify(_this.datasourceService.filteredValues);
+                }
+                else {
+                    event.feature.setProperty('isActive', true);
+                    _this.datasourceService.filteredValues['constituency'] = _this.datasourceService.filteredValues['constituency'] + "," + event.feature.getProperty("name");
+                    _this.datasourceService.constituencyFilter.setValue(_this.datasourceService.filteredValues['constituency']);
+                    _this.datasourceService.dataSource.filter = JSON.stringify(_this.datasourceService.filteredValues);
+                }
+                _this.appRef.tick();
+                setTimeout(function () {
+                    _this.clicked = false;
+                }, 500);
+            }
+        });
+        this.setMapStyle();
+    };
+    MapComponent.prototype.setMapStyle = function () {
+        this.map.data.setStyle(function (feature) {
+            var name = feature.getProperty('isActive');
+            var color = "white";
+            var index = 1;
+            if (name) {
+                color = "#0db9f0";
+                index = 2;
+            }
+            else {
+                color = "white";
+                index = 1;
+            }
+            ;
+            return {
+                strokeColor: color,
+                strokeWeight: index,
+                zIndex: index,
+                fillColor: "grey"
+            };
+        });
+    };
+    MapComponent.prototype.setMatchingCountyMarkerVisibility = function (visible, constituency) {
+        this.dynamicMarkers.forEach(function (element) {
+            if (element.getTitle() == constituency) {
+                //	element.setOptions(options);
+                element.setVisible(visible);
+            }
+        });
+        this.appRef.tick();
+    };
+    MapComponent.prototype.mapZoomChanged = function () {
+    };
+    MapComponent.prototype.setallInActive = function () {
+        this.map.data.forEach(function (feature) {
+            feature.setProperty("isActive", false);
+        });
+    };
+    MapComponent.prototype.updateIsActive = function (constituencies) {
+        this.map.data.forEach(function (feature) {
+            var name = feature.getProperty('name');
+            if (constituencies.indexOf(name) > -1) {
+                feature.setProperty("isActive", true);
+            }
+            else {
+                feature.setProperty("isActive", false);
+            }
+        });
+    };
+    MapComponent.prototype.updateMapStyles = function (constituencies) {
+        this.map.data.setStyle(function (feature) {
+            var name = feature.getProperty('name');
+            var color = "white";
+            var index = 1;
+            if (constituencies.indexOf(name) > -1) {
+                color = "#0db9f0";
+                index = 3;
+            }
+            else {
+                color = "white";
+                index = 1;
+            }
+            ;
+            return {
+                strokeColor: color,
+                strokeWeight: index,
+                zIndex: index
+            };
+        });
+    };
+    MapComponent.prototype.mapIdle = function () {
+        var featureCount = 0;
+        this.map.data.forEach(function (feature) {
+            featureCount++;
+        });
+        if (featureCount > 1 && this.mapIsReady == false) {
+            this.setallInActive();
+            this.mapIsReady = true;
+        }
+    };
+    MapComponent.ɵfac = function MapComponent_Factory(t) { return new (t || MapComponent)(_angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵdirectiveInject"](_datasource_service__WEBPACK_IMPORTED_MODULE_2__["DatasourceService"]), _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵdirectiveInject"](_angular_core__WEBPACK_IMPORTED_MODULE_0__["ApplicationRef"])); };
+    MapComponent.ɵcmp = _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵdefineComponent"]({ type: MapComponent, selectors: [["app-map"]], viewQuery: function MapComponent_Query(rf, ctx) { if (rf & 1) {
+            _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵviewQuery"](_angular_google_maps__WEBPACK_IMPORTED_MODULE_1__["GoogleMap"], 1);
+        } if (rf & 2) {
+            var _t = void 0;
+            _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵqueryRefresh"](_t = _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵloadQuery"]()) && (ctx.map = _t.first);
+        } }, decls: 2, vars: 6, consts: [["height", "100vh", "width", "100vw", 3, "options", "zoom", "center", "tilesloaded", "zoomChanged", "idle"], [3, "position", "options", 4, "ngFor", "ngForOf"], [3, "position", "options"]], template: function MapComponent_Template(rf, ctx) { if (rf & 1) {
+            _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementStart"](0, "google-map", 0);
+            _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵlistener"]("tilesloaded", function MapComponent_Template_google_map_tilesloaded_0_listener() { return ctx.mapReady(); })("zoomChanged", function MapComponent_Template_google_map_zoomChanged_0_listener() { return ctx.mapZoomChanged(); })("idle", function MapComponent_Template_google_map_idle_0_listener() { return ctx.mapIdle(); });
+            _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵtemplate"](1, MapComponent_map_marker_1_Template, 1, 6, "map-marker", 1);
+            _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementEnd"]();
+        } if (rf & 2) {
+            _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵproperty"]("options", _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵpureFunction1"](4, _c1, ctx.m))("zoom", ctx.zoom)("center", ctx.center);
+            _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵadvance"](1);
+            _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵproperty"]("ngForOf", ctx.dynamicMarkers);
+        } }, directives: [_angular_google_maps__WEBPACK_IMPORTED_MODULE_1__["GoogleMap"], _angular_common__WEBPACK_IMPORTED_MODULE_4__["NgForOf"], _angular_google_maps__WEBPACK_IMPORTED_MODULE_1__["MapMarker"]], styles: ["\n/*# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW9uIjozLCJzb3VyY2VzIjpbXSwibmFtZXMiOltdLCJtYXBwaW5ncyI6IiIsImZpbGUiOiJtYXAuY29tcG9uZW50LnNjc3MifQ== */"] });
+    return MapComponent;
 }());
 
 
@@ -1786,6 +3247,59 @@ var DatePipePipe = /** @class */ (function () {
 
 /***/ }),
 
+/***/ "lcfZ":
+/*!**********************************************************!*\
+  !*** ./src/app/elections-map/elections-map.component.ts ***!
+  \**********************************************************/
+/*! exports provided: ElectionsMapComponent */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "ElectionsMapComponent", function() { return ElectionsMapComponent; });
+/* harmony import */ var _datasource_service__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../datasource.service */ "OU0Q");
+/* harmony import */ var _angular_core__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! @angular/core */ "fXoL");
+/* harmony import */ var _map_map_component__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../map/map.component */ "cNoH");
+/* harmony import */ var _table_table_component__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../table/table.component */ "9Rdk");
+
+
+
+
+
+var ElectionsMapComponent = /** @class */ (function () {
+    function ElectionsMapComponent(datasourceService) {
+        this.datasourceService = datasourceService;
+    }
+    ElectionsMapComponent.prototype.ngOnInit = function () {
+    };
+    ElectionsMapComponent.prototype.mapReady = function () {
+    };
+    ElectionsMapComponent.prototype.mapZoomChanged = function () {
+    };
+    ElectionsMapComponent.prototype.mapIdle = function () {
+    };
+    ElectionsMapComponent.ɵfac = function ElectionsMapComponent_Factory(t) { return new (t || ElectionsMapComponent)(_angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵdirectiveInject"](_datasource_service__WEBPACK_IMPORTED_MODULE_0__["DatasourceService"])); };
+    ElectionsMapComponent.ɵcmp = _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵdefineComponent"]({ type: ElectionsMapComponent, selectors: [["app-elections-map"]], decls: 7, vars: 0, consts: [[1, "text-gray-400", "bg-gray-900", "h-screen", "body-font", "relative"], [1, "absolute", "inset-0", "bg-gray-900"], [1, "container", "px-5", "lg:py-5", "lg:h-4/5", "md:py-24", "md:h-1/2", "mx-auto", "flex"], [1, "lg:w-1/2", "md:w-full", "bg-gray-900", "shadow-md", "rounded-lg", "p-8", "flex", "flex-col", "md:ml-auto", "w-full", "mt-10", "md:mt-0", "relative", "z-10"], [1, "w-full", "overflow-scroll", "rounded-lg"], [1, "rounded-lg"]], template: function ElectionsMapComponent_Template(rf, ctx) { if (rf & 1) {
+            _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵelementStart"](0, "section", 0);
+            _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵelementStart"](1, "div", 1);
+            _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵelement"](2, "app-map");
+            _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵelementEnd"]();
+            _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵelementStart"](3, "div", 2);
+            _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵelementStart"](4, "div", 3);
+            _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵelementStart"](5, "div", 4);
+            _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵelement"](6, "app-table", 5);
+            _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵelementEnd"]();
+            _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵelementEnd"]();
+            _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵelementEnd"]();
+            _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵelementEnd"]();
+        } }, directives: [_map_map_component__WEBPACK_IMPORTED_MODULE_2__["MapComponent"], _table_table_component__WEBPACK_IMPORTED_MODULE_3__["TableComponent"]], styles: ["\n/*# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW9uIjozLCJzb3VyY2VzIjpbXSwibmFtZXMiOltdLCJtYXBwaW5ncyI6IiIsImZpbGUiOiJlbGVjdGlvbnMtbWFwLmNvbXBvbmVudC5zY3NzIn0= */"] });
+    return ElectionsMapComponent;
+}());
+
+
+
+/***/ }),
+
 /***/ "mGeP":
 /*!****************************************!*\
   !*** ./src/app/team/team.component.ts ***!
@@ -1800,38 +3314,45 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _angular_common__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! @angular/common */ "ofXK");
 
 
-var _c0 = function (a0) { return { "background-image": a0 }; };
-function TeamComponent_div_1_Template(rf, ctx) { if (rf & 1) {
-    _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementStart"](0, "div", 2);
-    _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementStart"](1, "h1", 3);
-    _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵtext"](2);
-    _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementEnd"]();
-    _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelement"](3, "div", 4);
-    _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementStart"](4, "h2", 3);
+function TeamComponent_div_8_Template(rf, ctx) { if (rf & 1) {
+    _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementStart"](0, "div", 7);
+    _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementStart"](1, "div", 8);
+    _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelement"](2, "img", 9);
+    _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementStart"](3, "div", 10);
+    _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementStart"](4, "h2", 11);
     _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵtext"](5);
     _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementEnd"]();
-    _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementStart"](6, "div", 5);
-    _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementStart"](7, "p", 6);
-    _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵtext"](8);
+    _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementStart"](6, "h3", 12);
+    _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵtext"](7);
+    _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementEnd"]();
+    _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementStart"](8, "p", 13);
+    _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵlistener"]("mouseenter", function TeamComponent_div_8_Template_p_mouseenter_8_listener() { var member_r1 = ctx.$implicit; return member_r1.hover = true; })("mouseleave", function TeamComponent_div_8_Template_p_mouseleave_8_listener() { var member_r1 = ctx.$implicit; return member_r1.hover = false; });
+    _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵtext"](9);
+    _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementEnd"]();
+    _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelement"](10, "span", 14);
     _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementEnd"]();
     _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementEnd"]();
     _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementEnd"]();
 } if (rf & 2) {
     var member_r1 = ctx.$implicit;
     var ctx_r0 = _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵnextContext"]();
-    _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵproperty"]("ngStyle", _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵpureFunction1"](4, _c0, ctx_r0.getUrl(member_r1)));
     _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵadvance"](2);
+    _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵpropertyInterpolate"]("src", ctx_r0.getUrl(member_r1), _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵsanitizeUrl"]);
+    _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵadvance"](3);
     _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵtextInterpolate"](member_r1.name);
-    _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵadvance"](3);
+    _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵadvance"](2);
     _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵtextInterpolate"](member_r1.position);
-    _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵadvance"](3);
-    _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵtextInterpolate"](member_r1.about);
+    _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵadvance"](2);
+    _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵtextInterpolate"](ctx_r0.getAbout(member_r1));
 } }
+var _c0 = function () { return { "height": "100vh" }; };
 var TeamComponent = /** @class */ (function () {
     function TeamComponent() {
+        this.hover = false;
+        this.shuffledTeam = [];
     }
     TeamComponent.prototype.ngOnInit = function () {
-        this.myInnerHeight = window.innerHeight;
+        this.myInnerHeight = "600px"; //window.innerHeight;
         //	console.log("innerHeight",this.myInnerHeight);
         this.team = [
             {
@@ -1884,30 +3405,347 @@ var TeamComponent = /** @class */ (function () {
                 image: "dan.jpg"
             }
         ];
+        this.shuffledTeam = this.shuffle(this.team);
     };
+    TeamComponent.prototype.getWindowHeight = function () {
+    };
+    TeamComponent.prototype.shuffle = function (array) {
+        var currentIndex = array.length, temporaryValue, randomIndex;
+        // While there remain elements to shuffle...
+        while (0 !== currentIndex) {
+            // Pick a remaining element...
+            randomIndex = Math.floor(Math.random() * currentIndex);
+            currentIndex -= 1;
+            // And swap it with the current element.
+            temporaryValue = array[currentIndex];
+            array[currentIndex] = array[randomIndex];
+            array[randomIndex] = temporaryValue;
+        }
+        return array;
+    };
+    TeamComponent.prototype.shufflea = function (list) {
+        return list.reduce(function (p, n) {
+            var size = p.length;
+            var index = Math.trunc(Math.random() * (size - 1));
+            p.splice(index, 0, n);
+            return p;
+        }, []);
+    };
+    ;
     TeamComponent.prototype.onResize = function (event) {
         // event.target.innerWidth;
         this.myInnerHeight = event.target.innerHeight;
     };
     TeamComponent.prototype.getUrl = function (member) {
         //console.log("url('./assets/images/team/"+member.image+"')");
-        return "url('./assets/images/team/" + member.image + "')";
+        return "./assets/images/team/" + member.image;
+    };
+    TeamComponent.prototype.getAbout = function (member) {
+        if (member.hover)
+            return member.about;
+        return member.about.substring(0, 150) + "[...]";
     };
     TeamComponent.ɵfac = function TeamComponent_Factory(t) { return new (t || TeamComponent)(); };
     TeamComponent.ɵcmp = _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵdefineComponent"]({ type: TeamComponent, selectors: [["app-team"]], hostBindings: function TeamComponent_HostBindings(rf, ctx) { if (rf & 1) {
             _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵlistener"]("resize", function TeamComponent_resize_HostBindingHandler($event) { return ctx.onResize($event); }, false, _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵresolveWindow"]);
-        } }, decls: 2, vars: 3, consts: [["id", "container"], ["id", "style-3", "style", "background-size: cover; background-repeat: no-repeat;", "class", "team_member", 3, "ngStyle", 4, "ngFor", "ngForOf"], ["id", "style-3", 1, "team_member", 2, "background-size", "cover", "background-repeat", "no-repeat", 3, "ngStyle"], [2, "font-family", "Catamaran"], ["id", "spacer"], [1, "about_section"], [2, "height", "100%", "overflow", "hidden"]], template: function TeamComponent_Template(rf, ctx) { if (rf & 1) {
-            _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementStart"](0, "div", 0);
-            _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵtemplate"](1, TeamComponent_div_1_Template, 9, 6, "div", 1);
+        } }, decls: 9, vars: 3, consts: [[1, "text-gray-400", "bg-gray-900", "body-font", "lg:text-base", "md:text-2xl"], [1, "container", "px-5", "py-24", "mx-auto", 2, "overflow", "scroll", 3, "ngStyle"], [1, "flex", "flex-col", "text-center", "w-full", "mb-20"], [1, "text-2xl", "font-medium", "lg:text-2xl", "sm:text-3xl", "title-font", "mb-4", "text-white", "tracking-widest"], [1, "lg:w-2/3", "mx-auto", "leading-relaxed", "text-base", "lg:text-xl", "sm:text-3xl"], [1, "flex", "flex-wrap", "-m-4"], ["class", "p-4 lg:w-1/2 member ", 4, "ngFor", "ngForOf"], [1, "p-4", "lg:w-1/2", "member"], [1, "h-full", "flex", "sm:flex-row", "flex-col", "items-center", "sm:justify-start", "justify-center", "text-center", "sm:text-left"], ["alt", "team", 1, "flex-shrink-0", "rounded-lg", "w-48", "h-48", "object-cover", "object-center", "sm:mb-0", "mb-4", 3, "src"], [1, "flex-grow", "sm:pl-8"], [1, "title-font", "font-medium", "md:font-large", "text-lg", "text-white"], [1, "text-gray-500", "mb-3"], [1, "mb-4", 3, "mouseenter", "mouseleave"], [1, "inline-flex"]], template: function TeamComponent_Template(rf, ctx) { if (rf & 1) {
+            _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementStart"](0, "section", 0);
+            _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementStart"](1, "div", 1);
+            _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementStart"](2, "div", 2);
+            _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementStart"](3, "h1", 3);
+            _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵtext"](4, "The ECCPEC team");
+            _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementEnd"]();
+            _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementStart"](5, "p", 4);
+            _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵtext"](6, "Our project is an interdisciplinary effort with researchers from History, Design and the Digital humanities");
+            _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementEnd"]();
+            _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementEnd"]();
+            _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementStart"](7, "div", 5);
+            _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵtemplate"](8, TeamComponent_div_8_Template, 11, 4, "div", 6);
+            _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementEnd"]();
+            _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementEnd"]();
             _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementEnd"]();
         } if (rf & 2) {
-            _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵstyleProp"]("height", ctx.myInnerHeight, "px");
             _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵadvance"](1);
-            _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵproperty"]("ngForOf", ctx.team);
-        } }, directives: [_angular_common__WEBPACK_IMPORTED_MODULE_1__["NgForOf"], _angular_common__WEBPACK_IMPORTED_MODULE_1__["NgStyle"]], styles: ["#container[_ngcontent-%COMP%] {\n  padding: 5%;\n  background-color: black;\n  position: relative;\n}\n\n.team_member[_ngcontent-%COMP%] {\n  width: 15% !important;\n  min-width: 250px;\n  height: 40%;\n  \n  margin-bottom: 2% !important;\n  margin-left: 2% !important;\n  margin-right: 2% !important;\n  border-color: black;\n  \n  \n  border-radius: 10px 0px 0px 0px;\n  background-color: lightGrey;\n  padding: 2%;\n  display: inline-block !important;\n  overflow: scroll;\n  overflow-x: hidden;\n  \n}\n\n#spacer[_ngcontent-%COMP%] {\n  width: 100%;\n  height: 40%;\n}\n\np[_ngcontent-%COMP%] {\n  color: white;\n}\n\nh1[_ngcontent-%COMP%] {\n  color: #ffd740;\n  font-family: Roboto;\n  vertical-align: top;\n  line-height: 90%;\n  position: relative;\n  top: -10%;\n}\n\nh2[_ngcontent-%COMP%] {\n  font-family: Roboto;\n  color: lightGrey;\n}\n\n#style-3[_ngcontent-%COMP%]::-webkit-scrollbar-track {\n  -webkit-box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.63);\n  background-color: orange;\n}\n\n#style-3[_ngcontent-%COMP%]::-webkit-scrollbar {\n  width: 6px;\n  background-color: orange;\n}\n\n#style-3[_ngcontent-%COMP%]::-webkit-scrollbar-thumb {\n  background-color: orange;\n}\n/*# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW9uIjozLCJzb3VyY2VzIjpbIi4uLy4uLy4uL3RlYW0uY29tcG9uZW50LnNjc3MiXSwibmFtZXMiOltdLCJtYXBwaW5ncyI6IkFBQUE7RUFDQyxXQUFBO0VBQ0EsdUJBQUE7RUFFQSxrQkFBQTtBQUFEOztBQUdBO0VBQ0MscUJBQUE7RUFDQSxnQkFBQTtFQUNBLFdBQUE7RUFDQSx5QkFBQTtFQUNBLDRCQUFBO0VBQ0EsMEJBQUE7RUFDQSwyQkFBQTtFQUNBLG1CQUFBO0VBQ0EscUJBQUE7RUFDQSxhQUFBO0VBQ0EsK0JBQUE7RUFDQSwyQkFBQTtFQUNBLFdBQUE7RUFDQSxnQ0FBQTtFQUNBLGdCQUFBO0VBQ0Esa0JBQUE7RUFDQTs7cUJBQUE7QUFFRDs7QUFNQTtFQUNDLFdBQUE7RUFDQSxXQUFBO0FBSEQ7O0FBS0E7RUFDQyxZQUFBO0FBRkQ7O0FBSUE7RUFDQyxjQUFBO0VBQ0EsbUJBQUE7RUFDQSxtQkFBQTtFQUNBLGdCQUFBO0VBQ0Esa0JBQUE7RUFDQSxTQUFBO0FBREQ7O0FBR0E7RUFDQyxtQkFBQTtFQUNBLGdCQUFBO0FBQUQ7O0FBR0E7RUFFSSxxREFBQTtFQUNBLHdCQUFBO0FBREo7O0FBSUE7RUFFSSxVQUFBO0VBQ0Esd0JBQUE7QUFGSjs7QUFLQTtFQUVJLHdCQUFBO0FBSEo7O0FBS0EsR0FBQTs7QUFDQTs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7RUFBQSIsImZpbGUiOiJ0ZWFtLmNvbXBvbmVudC5zY3NzIiwic291cmNlc0NvbnRlbnQiOlsiI2NvbnRhaW5lcntcblx0cGFkZGluZzo1JTtcblx0YmFja2dyb3VuZC1jb2xvcjogYmxhY2s7XG5cblx0cG9zaXRpb246IHJlbGF0aXZlO1xufVxuXG4udGVhbV9tZW1iZXJ7XG5cdHdpZHRoOjE1JSAhaW1wb3J0YW50O1xuXHRtaW4td2lkdGg6IDI1MHB4O1xuXHRoZWlnaHQ6IDQwJTtcblx0LypoZWlnaHQ6NDAlICFpbXBvcnRhbnQ7Ki9cblx0bWFyZ2luLWJvdHRvbTogMiUgIWltcG9ydGFudDtcblx0bWFyZ2luLWxlZnQ6IDIlICFpbXBvcnRhbnQ7XG5cdG1hcmdpbi1yaWdodDogMiUgIWltcG9ydGFudDtcblx0Ym9yZGVyLWNvbG9yOiBibGFjaztcblx0Lypib3JkZXI6MTBweCBzb2xpZDsqL1xuXHQvKm1hcmdpbjo1JTsqL1xuXHRib3JkZXItcmFkaXVzOiAxMHB4IDBweCAwcHggMHB4O1xuXHRiYWNrZ3JvdW5kLWNvbG9yOiBsaWdodEdyZXk7XG5cdHBhZGRpbmc6MiU7XG5cdGRpc3BsYXk6IGlubGluZS1ibG9jayAhaW1wb3J0YW50O1xuXHRvdmVyZmxvdzogc2Nyb2xsO1xuXHRvdmVyZmxvdy14OmhpZGRlbjtcblx0Lypcblx0b3ZlcmZsb3cteDpoaWRkZW47XG5cdG92ZXJmbG93LXk6aGlkZGVuOyovXG5cdFxuXHRcbn1cbi5hYm91dF9zZWN0aW9ue1xufVxuI3NwYWNlcntcblx0d2lkdGg6IDEwMCU7XG5cdGhlaWdodDo0MCU7XG59XG5we1xuXHRjb2xvcjogd2hpdGU7XG59XG5oMXtcblx0Y29sb3I6ICNmZmQ3NDA7XG5cdGZvbnQtZmFtaWx5OiBSb2JvdG87XG5cdHZlcnRpY2FsLWFsaWduOiB0b3A7XG5cdGxpbmUtaGVpZ2h0OiA5MCU7XG5cdHBvc2l0aW9uOiByZWxhdGl2ZTtcblx0dG9wOi0xMCU7XG59XG5oMntcblx0Zm9udC1mYW1pbHk6IFJvYm90bztcblx0Y29sb3I6IGxpZ2h0R3JleTtcbn1cblxuI3N0eWxlLTM6Oi13ZWJraXQtc2Nyb2xsYmFyLXRyYWNrXG57XG4gICAgLXdlYmtpdC1ib3gtc2hhZG93OiBpbnNldCAwIDAgNnB4IHJnYmEoMCwwLDAsMC42Myk7XG4gICAgYmFja2dyb3VuZC1jb2xvcjogb3JhbmdlO1xufVxuXG4jc3R5bGUtMzo6LXdlYmtpdC1zY3JvbGxiYXJcbntcbiAgICB3aWR0aDogNnB4O1xuICAgIGJhY2tncm91bmQtY29sb3I6IG9yYW5nZTtcbn1cblxuI3N0eWxlLTM6Oi13ZWJraXQtc2Nyb2xsYmFyLXRodW1iXG57XG4gICAgYmFja2dyb3VuZC1jb2xvcjogb3JhbmdlO1xufVxuLyoqL1xuLyojdGVhbV9tZW1iZXJ7XG5cdHdpZHRoOjMwJTtcblx0bWFyZ2luOjUlO1xuXHRib3JkZXItcmFkaXVzOiAxJTtcblx0YmFja2dyb3VuZC1jb2xvcjogbGlnaHRHcmV5O1xufVxuI3RlYW1fY29udGFpbmVye1xuXG5cdGJhY2tncm91bmQtY29sb3I6IGdyZXk7XG5cdGJvcmRlcjogMjBweCBzb2xpZDtcblxuXHQgcGFkZGluZy1sZWZ0OjMwcHg7XG4gIHBhZGRpbmctcmlnaHQ6MzBweDtcbiAgICAgIHBvc2l0aW9uOiByZWxhdGl2ZTtcbiAgICBoZWlnaHQ6IDEwMCU7XG4gICAgd2lkdGg6IDIwMCU7XG59XG5cblxuaDF7XG4gIHBvc2l0aW9uOiByZWxhdGl2ZTtcbiAgdG9wOjEwcHg7XG4gIHBhZGRpbmc6MiU7XG4gIGJhY2tncm91bmQtY29sb3I6IHJnYmEoMCwwLDAsMC41KTtcbiAgY29sb3I6d2hpdGU7XG4gIHotaW5kZXg6IDEwO1xuICBmb250LWZhbWlseTogJ0NhYmluJywgc2Fucy1zZXJpZjtcbn1cblxuLm1hcC1jb250YWluZXJ7XG4gIHBvc2l0aW9uOiBhYnNvbHV0ZTtcbiAgdG9wOiAwO1xuICBib3R0b206IDA7XG4gIHJpZ2h0OiAwO1xuICBsZWZ0OiAwO1xuICBib3JkZXItY29sb3I6cmVkO1xuICBiYWNrZ3JvdW5kLWNvbG9yOiBibGFjaztcblxufSovIl19 */"] });
+            _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵproperty"]("ngStyle", _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵpureFunction0"](2, _c0));
+            _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵadvance"](7);
+            _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵproperty"]("ngForOf", ctx.shuffledTeam);
+        } }, directives: [_angular_common__WEBPACK_IMPORTED_MODULE_1__["NgStyle"], _angular_common__WEBPACK_IMPORTED_MODULE_1__["NgForOf"]], styles: [".member[_ngcontent-%COMP%] {\n  transition: width 2s, height 4s;\n}\n/*# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW9uIjozLCJzb3VyY2VzIjpbIi4uLy4uLy4uL3RlYW0uY29tcG9uZW50LnNjc3MiXSwibmFtZXMiOltdLCJtYXBwaW5ncyI6IkFBQUE7RUFDSSwrQkFBQTtBQUNKIiwiZmlsZSI6InRlYW0uY29tcG9uZW50LnNjc3MiLCJzb3VyY2VzQ29udGVudCI6WyIubWVtYmVyIHtcbiAgICB0cmFuc2l0aW9uOiB3aWR0aCAycywgaGVpZ2h0IDRzO1xufSJdfQ== */"] });
     return TeamComponent;
 }());
 
+
+
+/***/ }),
+
+/***/ "vLey":
+/*!******************************!*\
+  !*** ./src/app/mapStyles.ts ***!
+  \******************************/
+/*! exports provided: mapStyles */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "mapStyles", function() { return mapStyles; });
+var mapStyles = {
+    styles: [
+        {
+            "elementType": "geometry",
+            "stylers": [
+                {
+                    "color": "#999999"
+                }
+            ]
+        },
+        {
+            "elementType": "labels",
+            "stylers": [
+                {
+                    "visibility": "off"
+                }
+            ]
+        },
+        {
+            "elementType": "labels.text.fill",
+            "stylers": [
+                {
+                    "color": "#757575"
+                }
+            ]
+        },
+        {
+            "elementType": "labels.text.stroke",
+            "stylers": [
+                {
+                    "color": "#212121"
+                }
+            ]
+        },
+        {
+            "featureType": "administrative",
+            "elementType": "geometry",
+            "stylers": [
+                {
+                    "color": "#757575"
+                },
+                {
+                    "visibility": "off"
+                }
+            ]
+        },
+        {
+            "featureType": "administrative.country",
+            "elementType": "labels.text.fill",
+            "stylers": [
+                {
+                    "color": "#9e9e9e"
+                }
+            ]
+        },
+        {
+            "featureType": "administrative.land_parcel",
+            "stylers": [
+                {
+                    "visibility": "off"
+                }
+            ]
+        },
+        {
+            "featureType": "administrative.locality",
+            "elementType": "labels.text.fill",
+            "stylers": [
+                {
+                    "color": "#bdbdbd"
+                }
+            ]
+        },
+        {
+            "featureType": "administrative.neighborhood",
+            "stylers": [
+                {
+                    "visibility": "off"
+                }
+            ]
+        },
+        {
+            "featureType": "poi",
+            "stylers": [
+                {
+                    "visibility": "off"
+                }
+            ]
+        },
+        {
+            "featureType": "poi",
+            "elementType": "labels.text",
+            "stylers": [
+                {
+                    "visibility": "off"
+                }
+            ]
+        },
+        {
+            "featureType": "poi",
+            "elementType": "labels.text.fill",
+            "stylers": [
+                {
+                    "color": "#757575"
+                }
+            ]
+        },
+        {
+            "featureType": "poi.park",
+            "elementType": "geometry",
+            "stylers": [
+                {
+                    "color": "#181818"
+                }
+            ]
+        },
+        {
+            "featureType": "poi.park",
+            "elementType": "labels.text.fill",
+            "stylers": [
+                {
+                    "color": "#616161"
+                }
+            ]
+        },
+        {
+            "featureType": "poi.park",
+            "elementType": "labels.text.stroke",
+            "stylers": [
+                {
+                    "color": "#1b1b1b"
+                }
+            ]
+        },
+        {
+            "featureType": "road",
+            "stylers": [
+                {
+                    "visibility": "off"
+                }
+            ]
+        },
+        {
+            "featureType": "road",
+            "elementType": "geometry.fill",
+            "stylers": [
+                {
+                    "color": "#2c2c2c"
+                }
+            ]
+        },
+        {
+            "featureType": "road",
+            "elementType": "labels",
+            "stylers": [
+                {
+                    "visibility": "off"
+                }
+            ]
+        },
+        {
+            "featureType": "road",
+            "elementType": "labels.icon",
+            "stylers": [
+                {
+                    "visibility": "off"
+                }
+            ]
+        },
+        {
+            "featureType": "road",
+            "elementType": "labels.text.fill",
+            "stylers": [
+                {
+                    "color": "#8a8a8a"
+                }
+            ]
+        },
+        {
+            "featureType": "road.arterial",
+            "elementType": "geometry",
+            "stylers": [
+                {
+                    "color": "#373737"
+                }
+            ]
+        },
+        {
+            "featureType": "road.highway",
+            "elementType": "geometry",
+            "stylers": [
+                {
+                    "color": "#3c3c3c"
+                }
+            ]
+        },
+        {
+            "featureType": "road.highway.controlled_access",
+            "elementType": "geometry",
+            "stylers": [
+                {
+                    "color": "#4e4e4e"
+                }
+            ]
+        },
+        {
+            "featureType": "road.local",
+            "elementType": "labels.text.fill",
+            "stylers": [
+                {
+                    "color": "#616161"
+                }
+            ]
+        },
+        {
+            "featureType": "transit",
+            "stylers": [
+                {
+                    "visibility": "off"
+                }
+            ]
+        },
+        {
+            "featureType": "transit",
+            "elementType": "labels.text.fill",
+            "stylers": [
+                {
+                    "color": "#757575"
+                }
+            ]
+        },
+        {
+            "featureType": "water",
+            "elementType": "geometry",
+            "stylers": [
+                {
+                    "color": "#000000"
+                }
+            ]
+        },
+        {
+            "featureType": "water",
+            "elementType": "labels.text",
+            "stylers": [
+                {
+                    "visibility": "off"
+                }
+            ]
+        },
+        {
+            "featureType": "water",
+            "elementType": "labels.text.fill",
+            "stylers": [
+                {
+                    "color": "#3d3d3d"
+                }
+            ]
+        }
+    ]
+};
 
 
 /***/ }),
@@ -1928,7 +3766,13 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _team_team_component__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./team/team.component */ "mGeP");
 /* harmony import */ var _outputs_outputs_component__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./outputs/outputs.component */ "OWwv");
 /* harmony import */ var _api_api_component__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./api/api.component */ "zHhC");
-/* harmony import */ var _angular_core__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! @angular/core */ "fXoL");
+/* harmony import */ var _sandpit_sandpit_component__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ./sandpit/sandpit.component */ "/ikp");
+/* harmony import */ var _table_table_component__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ./table/table.component */ "9Rdk");
+/* harmony import */ var _elections_map_elections_map_component__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ./elections-map/elections-map.component */ "lcfZ");
+/* harmony import */ var _angular_core__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! @angular/core */ "fXoL");
+
+
+
 
 
 
@@ -1938,22 +3782,26 @@ __webpack_require__.r(__webpack_exports__);
 
 
 var routes = [
-    { path: '', redirectTo: '/viz', pathMatch: 'full' },
+    { path: '', redirectTo: '/about', pathMatch: 'full' },
     { path: 'about', component: _about_about_component__WEBPACK_IMPORTED_MODULE_1__["AboutComponent"] },
     { path: 'viz', component: _viz_viz_component__WEBPACK_IMPORTED_MODULE_2__["VizComponent"] },
     { path: 'team', component: _team_team_component__WEBPACK_IMPORTED_MODULE_3__["TeamComponent"] },
     { path: 'api', component: _api_api_component__WEBPACK_IMPORTED_MODULE_5__["ApiComponent"] },
-    { path: 'outputs', component: _outputs_outputs_component__WEBPACK_IMPORTED_MODULE_4__["OutputsComponent"] }
+    { path: 'sandpit', component: _sandpit_sandpit_component__WEBPACK_IMPORTED_MODULE_6__["SandpitComponent"] },
+    { path: 'table', component: _table_table_component__WEBPACK_IMPORTED_MODULE_7__["TableComponent"] },
+    { path: 'outputs', component: _outputs_outputs_component__WEBPACK_IMPORTED_MODULE_4__["OutputsComponent"] },
+    { path: 'map', component: _elections_map_elections_map_component__WEBPACK_IMPORTED_MODULE_8__["ElectionsMapComponent"] }
 ];
 var AppRoutingModule = /** @class */ (function () {
     function AppRoutingModule() {
     }
-    AppRoutingModule.ɵmod = _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵdefineNgModule"]({ type: AppRoutingModule });
-    AppRoutingModule.ɵinj = _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵdefineInjector"]({ factory: function AppRoutingModule_Factory(t) { return new (t || AppRoutingModule)(); }, imports: [[_angular_router__WEBPACK_IMPORTED_MODULE_0__["RouterModule"].forRoot(routes, { useHash: true, relativeLinkResolution: 'legacy' })], _angular_router__WEBPACK_IMPORTED_MODULE_0__["RouterModule"]] });
+    AppRoutingModule.ɵfac = function AppRoutingModule_Factory(t) { return new (t || AppRoutingModule)(); };
+    AppRoutingModule.ɵmod = _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵdefineNgModule"]({ type: AppRoutingModule });
+    AppRoutingModule.ɵinj = _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵdefineInjector"]({ imports: [[_angular_router__WEBPACK_IMPORTED_MODULE_0__["RouterModule"].forRoot(routes, { useHash: true, relativeLinkResolution: 'legacy' })], _angular_router__WEBPACK_IMPORTED_MODULE_0__["RouterModule"]] });
     return AppRoutingModule;
 }());
 
-(function () { (typeof ngJitMode === "undefined" || ngJitMode) && _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵsetNgModuleScope"](AppRoutingModule, { imports: [_angular_router__WEBPACK_IMPORTED_MODULE_0__["RouterModule"]], exports: [_angular_router__WEBPACK_IMPORTED_MODULE_0__["RouterModule"]] }); })();
+(function () { (typeof ngJitMode === "undefined" || ngJitMode) && _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵsetNgModuleScope"](AppRoutingModule, { imports: [_angular_router__WEBPACK_IMPORTED_MODULE_0__["RouterModule"]], exports: [_angular_router__WEBPACK_IMPORTED_MODULE_0__["RouterModule"]] }); })();
 
 
 /***/ }),
@@ -1979,27 +3827,22 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _download_service__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ../download.service */ "cOn4");
 /* harmony import */ var _download_poll_books_service__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! ../download-poll-books.service */ "+5AN");
 /* harmony import */ var _get_lat_lon_service__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! ../get-lat-lon.service */ "8TUE");
-/* harmony import */ var ng5_slider__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__(/*! ng5-slider */ "EsRS");
-/* harmony import */ var _angular_common_http__WEBPACK_IMPORTED_MODULE_12__ = __webpack_require__(/*! @angular/common/http */ "tk/3");
-/* harmony import */ var rxjs_add_operator_map__WEBPACK_IMPORTED_MODULE_13__ = __webpack_require__(/*! rxjs/add/operator/map */ "4XzM");
-/* harmony import */ var rxjs_add_operator_map__WEBPACK_IMPORTED_MODULE_13___default = /*#__PURE__*/__webpack_require__.n(rxjs_add_operator_map__WEBPACK_IMPORTED_MODULE_13__);
-/* harmony import */ var _angular_material_paginator__WEBPACK_IMPORTED_MODULE_14__ = __webpack_require__(/*! @angular/material/paginator */ "sCmA");
-/* harmony import */ var _angular_material_table__WEBPACK_IMPORTED_MODULE_15__ = __webpack_require__(/*! @angular/material/table */ "tmTa");
-/* harmony import */ var _angular_forms__WEBPACK_IMPORTED_MODULE_16__ = __webpack_require__(/*! @angular/forms */ "3Pt+");
-/* harmony import */ var _angular_material_dialog__WEBPACK_IMPORTED_MODULE_17__ = __webpack_require__(/*! @angular/material/dialog */ "LcAk");
-/* harmony import */ var _pollbook_dialogue_pollbook_dialogue_component__WEBPACK_IMPORTED_MODULE_18__ = __webpack_require__(/*! ../pollbook-dialogue/pollbook-dialogue.component */ "A6hx");
-/* harmony import */ var _dialogue_dialogue_component__WEBPACK_IMPORTED_MODULE_19__ = __webpack_require__(/*! ../dialogue/dialogue.component */ "Kvm9");
-/* harmony import */ var _angular_common__WEBPACK_IMPORTED_MODULE_20__ = __webpack_require__(/*! @angular/common */ "ofXK");
-/* harmony import */ var angular_resizable_element__WEBPACK_IMPORTED_MODULE_21__ = __webpack_require__(/*! angular-resizable-element */ "/qmH");
-/* harmony import */ var _angular_material_button__WEBPACK_IMPORTED_MODULE_22__ = __webpack_require__(/*! @angular/material/button */ "Xlwt");
-/* harmony import */ var _angular_material_icon__WEBPACK_IMPORTED_MODULE_23__ = __webpack_require__(/*! @angular/material/icon */ "TY1r");
-/* harmony import */ var _angular_material_tooltip__WEBPACK_IMPORTED_MODULE_24__ = __webpack_require__(/*! @angular/material/tooltip */ "gVAx");
-/* harmony import */ var _angular_material_form_field__WEBPACK_IMPORTED_MODULE_25__ = __webpack_require__(/*! @angular/material/form-field */ "IRfi");
-/* harmony import */ var _angular_material_input__WEBPACK_IMPORTED_MODULE_26__ = __webpack_require__(/*! @angular/material/input */ "A2Vd");
-/* harmony import */ var _angular_material_select__WEBPACK_IMPORTED_MODULE_27__ = __webpack_require__(/*! @angular/material/select */ "2+6u");
-/* harmony import */ var _angular_material_core__WEBPACK_IMPORTED_MODULE_28__ = __webpack_require__(/*! @angular/material/core */ "j14s");
-
-// import { Subscription } from 'rxjs/Subscription';
+/* harmony import */ var _angular_common_http__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__(/*! @angular/common/http */ "tk/3");
+/* harmony import */ var _angular_material_paginator__WEBPACK_IMPORTED_MODULE_12__ = __webpack_require__(/*! @angular/material/paginator */ "sCmA");
+/* harmony import */ var _angular_material_table__WEBPACK_IMPORTED_MODULE_13__ = __webpack_require__(/*! @angular/material/table */ "tmTa");
+/* harmony import */ var _angular_forms__WEBPACK_IMPORTED_MODULE_14__ = __webpack_require__(/*! @angular/forms */ "3Pt+");
+/* harmony import */ var _angular_material_dialog__WEBPACK_IMPORTED_MODULE_15__ = __webpack_require__(/*! @angular/material/dialog */ "LcAk");
+/* harmony import */ var _pollbook_dialogue_pollbook_dialogue_component__WEBPACK_IMPORTED_MODULE_16__ = __webpack_require__(/*! ../pollbook-dialogue/pollbook-dialogue.component */ "A6hx");
+/* harmony import */ var _dialogue_dialogue_component__WEBPACK_IMPORTED_MODULE_17__ = __webpack_require__(/*! ../dialogue/dialogue.component */ "Kvm9");
+/* harmony import */ var _angular_common__WEBPACK_IMPORTED_MODULE_18__ = __webpack_require__(/*! @angular/common */ "ofXK");
+/* harmony import */ var angular_resizable_element__WEBPACK_IMPORTED_MODULE_19__ = __webpack_require__(/*! angular-resizable-element */ "/qmH");
+/* harmony import */ var _angular_material_button__WEBPACK_IMPORTED_MODULE_20__ = __webpack_require__(/*! @angular/material/button */ "Xlwt");
+/* harmony import */ var _angular_material_icon__WEBPACK_IMPORTED_MODULE_21__ = __webpack_require__(/*! @angular/material/icon */ "TY1r");
+/* harmony import */ var _angular_material_tooltip__WEBPACK_IMPORTED_MODULE_22__ = __webpack_require__(/*! @angular/material/tooltip */ "gVAx");
+/* harmony import */ var _angular_material_form_field__WEBPACK_IMPORTED_MODULE_23__ = __webpack_require__(/*! @angular/material/form-field */ "IRfi");
+/* harmony import */ var _angular_material_input__WEBPACK_IMPORTED_MODULE_24__ = __webpack_require__(/*! @angular/material/input */ "A2Vd");
+/* harmony import */ var _angular_material_select__WEBPACK_IMPORTED_MODULE_25__ = __webpack_require__(/*! @angular/material/select */ "2+6u");
+/* harmony import */ var _angular_material_core__WEBPACK_IMPORTED_MODULE_26__ = __webpack_require__(/*! @angular/material/core */ "j14s");
 
 
 
@@ -2011,8 +3854,7 @@ __webpack_require__.r(__webpack_exports__);
 
 
 
-
-
+//import { Options, ChangeContext, PointerType } from 'ng5-slider';
 
 
 
@@ -2048,18 +3890,18 @@ __webpack_require__.r(__webpack_exports__);
 
 var _c0 = function (a0, a1, a2) { return { icon: a0, title: a1, visible: a2 }; };
 function VizComponent_map_marker_3_Template(rf, ctx) { if (rf & 1) {
-    _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelement"](0, "map-marker", 16);
+    _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelement"](0, "map-marker", 15);
 } if (rf & 2) {
     var dynamicMarker_r7 = ctx.$implicit;
     _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵproperty"]("position", dynamicMarker_r7.getPosition())("options", _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵpureFunction3"](2, _c0, dynamicMarker_r7.getIcon(), dynamicMarker_r7.title, dynamicMarker_r7.visible));
 } }
 function VizComponent_div_5_Template(rf, ctx) { if (rf & 1) {
-    _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementStart"](0, "div", 17);
-    _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementStart"](1, "strong", 18);
+    _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementStart"](0, "div", 16);
+    _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementStart"](1, "strong", 17);
     _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵtext"](2);
     _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementEnd"]();
     _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵtext"](3, " elections of which ");
-    _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementStart"](4, "strong", 19);
+    _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementStart"](4, "strong", 18);
     _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵtext"](5);
     _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementEnd"]();
     _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵtext"](6);
@@ -2074,7 +3916,7 @@ function VizComponent_div_5_Template(rf, ctx) { if (rf & 1) {
     _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵtextInterpolate"](ctx_r1.getPlural(ctx_r1.getNumberOfContested()));
 } }
 function VizComponent_div_9_Template(rf, ctx) { if (rf & 1) {
-    _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelement"](0, "div", 20);
+    _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelement"](0, "div", 19);
 } if (rf & 2) {
     var bar_r8 = ctx.$implicit;
     var ctx_r3 = _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵnextContext"]();
@@ -2083,7 +3925,7 @@ function VizComponent_div_9_Template(rf, ctx) { if (rf & 1) {
     _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵproperty"]("ngStyle", ctx_r3.getBarStyle(bar_r8, _r2.offsetWidth, _r2.offsetHeight, false));
 } }
 function VizComponent_div_10_Template(rf, ctx) { if (rf & 1) {
-    _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelement"](0, "div", 21);
+    _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelement"](0, "div", 20);
 } if (rf & 2) {
     var bar_r9 = ctx.$implicit;
     var ctx_r4 = _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵnextContext"]();
@@ -2091,7 +3933,7 @@ function VizComponent_div_10_Template(rf, ctx) { if (rf & 1) {
     _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵpropertyInterpolate2"]("matTooltip", "", bar_r9.year, ": ", bar_r9.numContested, " contested elections");
     _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵproperty"]("ngStyle", ctx_r4.getBarStyle(bar_r9, _r2.offsetWidth, _r2.offsetHeight, true));
 } }
-function VizComponent_table_21_th_2_Template(rf, ctx) { if (rf & 1) {
+function VizComponent_table_20_th_2_Template(rf, ctx) { if (rf & 1) {
     _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementStart"](0, "th", 36);
     _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementStart"](1, "span", 37);
     _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵtext"](2, "Constituency");
@@ -2109,16 +3951,16 @@ function VizComponent_table_21_th_2_Template(rf, ctx) { if (rf & 1) {
     _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵadvance"](4);
     _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵproperty"]("formControl", ctx_r10.constituencyFilter);
 } }
-function VizComponent_table_21_td_3_Template(rf, ctx) { if (rf & 1) {
+function VizComponent_table_20_td_3_Template(rf, ctx) { if (rf & 1) {
     _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementStart"](0, "td", 39);
     _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵtext"](1);
     _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementEnd"]();
 } if (rf & 2) {
-    var element_r28 = ctx.$implicit;
+    var element_r30 = ctx.$implicit;
     _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵadvance"](1);
-    _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵtextInterpolate1"](" ", element_r28.constituency, " ");
+    _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵtextInterpolate1"](" ", element_r30.constituency, " ");
 } }
-function VizComponent_table_21_th_5_Template(rf, ctx) { if (rf & 1) {
+function VizComponent_table_20_th_5_Template(rf, ctx) { if (rf & 1) {
     _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementStart"](0, "th", 36);
     _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementStart"](1, "span", 40);
     _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵtext"](2, "Month ");
@@ -2136,16 +3978,16 @@ function VizComponent_table_21_th_5_Template(rf, ctx) { if (rf & 1) {
     _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵadvance"](4);
     _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵproperty"]("formControl", ctx_r12.monthFilter);
 } }
-function VizComponent_table_21_td_6_Template(rf, ctx) { if (rf & 1) {
+function VizComponent_table_20_td_6_Template(rf, ctx) { if (rf & 1) {
     _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementStart"](0, "td", 39);
     _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵtext"](1);
     _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementEnd"]();
 } if (rf & 2) {
-    var element_r29 = ctx.$implicit;
+    var element_r31 = ctx.$implicit;
     _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵadvance"](1);
-    _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵtextInterpolate1"](" ", element_r29.election_month, " ");
+    _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵtextInterpolate1"](" ", element_r31.election_month, " ");
 } }
-function VizComponent_table_21_th_8_Template(rf, ctx) { if (rf & 1) {
+function VizComponent_table_20_th_8_Template(rf, ctx) { if (rf & 1) {
     _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementStart"](0, "th", 36);
     _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementStart"](1, "span", 41);
     _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵtext"](2, "Year ");
@@ -2163,24 +4005,24 @@ function VizComponent_table_21_th_8_Template(rf, ctx) { if (rf & 1) {
     _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵadvance"](4);
     _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵproperty"]("formControl", ctx_r14.yearFilter);
 } }
-function VizComponent_table_21_td_9_Template(rf, ctx) { if (rf & 1) {
+function VizComponent_table_20_td_9_Template(rf, ctx) { if (rf & 1) {
     _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementStart"](0, "td", 39);
     _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵtext"](1);
     _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementEnd"]();
 } if (rf & 2) {
-    var element_r30 = ctx.$implicit;
+    var element_r32 = ctx.$implicit;
     _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵadvance"](1);
-    _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵtextInterpolate1"](" ", element_r30.election_year, " ");
+    _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵtextInterpolate1"](" ", element_r32.election_year, " ");
 } }
-function VizComponent_table_21_th_11_Template(rf, ctx) { if (rf & 1) {
-    var _r32 = _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵgetCurrentView"]();
+function VizComponent_table_20_th_11_Template(rf, ctx) { if (rf & 1) {
+    var _r34 = _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵgetCurrentView"]();
     _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementStart"](0, "th", 36);
     _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementStart"](1, "span", 42);
     _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵtext"](2, "County/Borough/Univ ");
     _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementEnd"]();
     _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementStart"](3, "div");
     _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementStart"](4, "mat-select", 43);
-    _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵlistener"]("valueChange", function VizComponent_table_21_th_11_Template_mat_select_valueChange_4_listener($event) { _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵrestoreView"](_r32); var ctx_r31 = _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵnextContext"](2); return ctx_r31.countyFilter.value = $event; });
+    _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵlistener"]("valueChange", function VizComponent_table_20_th_11_Template_mat_select_valueChange_4_listener($event) { _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵrestoreView"](_r34); var ctx_r33 = _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵnextContext"](2); return ctx_r33.countyFilter.value = $event; });
     _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementStart"](5, "mat-option", 44);
     _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵtext"](6, "Any");
     _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementEnd"]();
@@ -2203,17 +4045,17 @@ function VizComponent_table_21_th_11_Template(rf, ctx) { if (rf & 1) {
     _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵadvance"](3);
     _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵproperty"]("formControl", ctx_r16.countyFilter)("value", ctx_r16.countyFilter.value);
 } }
-function VizComponent_table_21_td_12_Template(rf, ctx) { if (rf & 1) {
+function VizComponent_table_20_td_12_Template(rf, ctx) { if (rf & 1) {
     _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementStart"](0, "td", 39);
     _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵtext"](1);
     _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementEnd"]();
 } if (rf & 2) {
-    var element_r33 = ctx.$implicit;
+    var element_r35 = ctx.$implicit;
     _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵadvance"](1);
-    _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵtextInterpolate1"](" ", element_r33.countyboroughuniv, " ");
+    _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵtextInterpolate1"](" ", element_r35.countyboroughuniv, " ");
 } }
-function VizComponent_table_21_th_14_Template(rf, ctx) { if (rf & 1) {
-    var _r35 = _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵgetCurrentView"]();
+function VizComponent_table_20_th_14_Template(rf, ctx) { if (rf & 1) {
+    var _r37 = _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵgetCurrentView"]();
     _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementStart"](0, "th", 36);
     _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementStart"](1, "span", 48);
     _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵtext"](2, "Contested?");
@@ -2221,7 +4063,7 @@ function VizComponent_table_21_th_14_Template(rf, ctx) { if (rf & 1) {
     _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementStart"](3, "div");
     _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementStart"](4, "mat-form-field");
     _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementStart"](5, "mat-select", 43);
-    _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵlistener"]("valueChange", function VizComponent_table_21_th_14_Template_mat_select_valueChange_5_listener($event) { _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵrestoreView"](_r35); var ctx_r34 = _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵnextContext"](2); return ctx_r34.contestedFilter.value = $event; });
+    _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵlistener"]("valueChange", function VizComponent_table_20_th_14_Template_mat_select_valueChange_5_listener($event) { _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵrestoreView"](_r37); var ctx_r36 = _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵnextContext"](2); return ctx_r36.contestedFilter.value = $event; });
     _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementStart"](6, "mat-option", 44);
     _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵtext"](7, "Any");
     _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementEnd"]();
@@ -2242,17 +4084,17 @@ function VizComponent_table_21_th_14_Template(rf, ctx) { if (rf & 1) {
     _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵadvance"](4);
     _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵproperty"]("formControl", ctx_r18.contestedFilter)("value", ctx_r18.contestedFilter.value);
 } }
-function VizComponent_table_21_td_15_Template(rf, ctx) { if (rf & 1) {
+function VizComponent_table_20_td_15_Template(rf, ctx) { if (rf & 1) {
     _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementStart"](0, "td", 39);
     _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵtext"](1);
     _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementEnd"]();
 } if (rf & 2) {
-    var element_r36 = ctx.$implicit;
+    var element_r38 = ctx.$implicit;
     _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵadvance"](1);
-    _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵtextInterpolate1"](" ", element_r36.contested, " ");
+    _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵtextInterpolate1"](" ", element_r38.contested, " ");
 } }
-function VizComponent_table_21_th_17_Template(rf, ctx) { if (rf & 1) {
-    var _r38 = _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵgetCurrentView"]();
+function VizComponent_table_20_th_17_Template(rf, ctx) { if (rf & 1) {
+    var _r40 = _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵgetCurrentView"]();
     _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementStart"](0, "th", 36);
     _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementStart"](1, "span", 51);
     _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵtext"](2, "By/General Election ");
@@ -2260,7 +4102,7 @@ function VizComponent_table_21_th_17_Template(rf, ctx) { if (rf & 1) {
     _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementStart"](3, "div");
     _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementStart"](4, "mat-form-field");
     _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementStart"](5, "mat-select", 43);
-    _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵlistener"]("valueChange", function VizComponent_table_21_th_17_Template_mat_select_valueChange_5_listener($event) { _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵrestoreView"](_r38); var ctx_r37 = _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵnextContext"](2); return ctx_r37.byElectionGeneralFilter.value = $event; });
+    _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵlistener"]("valueChange", function VizComponent_table_20_th_17_Template_mat_select_valueChange_5_listener($event) { _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵrestoreView"](_r40); var ctx_r39 = _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵnextContext"](2); return ctx_r39.byElectionGeneralFilter.value = $event; });
     _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementStart"](6, "mat-option", 44);
     _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵtext"](7, "Any");
     _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementEnd"]();
@@ -2281,19 +4123,19 @@ function VizComponent_table_21_th_17_Template(rf, ctx) { if (rf & 1) {
     _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵadvance"](4);
     _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵproperty"]("formControl", ctx_r20.byElectionGeneralFilter)("value", ctx_r20.byElectionGeneralFilter.value);
 } }
-function VizComponent_table_21_td_18_Template(rf, ctx) { if (rf & 1) {
+function VizComponent_table_20_td_18_Template(rf, ctx) { if (rf & 1) {
     _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementStart"](0, "td", 39);
     _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵtext"](1);
     _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementEnd"]();
 } if (rf & 2) {
-    var element_r39 = ctx.$implicit;
+    var element_r41 = ctx.$implicit;
     _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵadvance"](1);
-    _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵtextInterpolate1"](" ", element_r39.by_election_general, " ");
+    _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵtextInterpolate1"](" ", element_r41.by_election_general, " ");
 } }
-function VizComponent_table_21_th_20_Template(rf, ctx) { if (rf & 1) {
+function VizComponent_table_20_th_20_Template(rf, ctx) { if (rf & 1) {
     _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementStart"](0, "th", 36);
-    _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementStart"](1, "span", 53);
-    _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵtext"](2, "Franchise ");
+    _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementStart"](1, "span", 51);
+    _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵtext"](2, "By Election Cause ");
     _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementEnd"]();
     _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementStart"](3, "div");
     _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementStart"](4, "mat-form-field");
@@ -2306,19 +4148,46 @@ function VizComponent_table_21_th_20_Template(rf, ctx) { if (rf & 1) {
     _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵadvance"](1);
     _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵproperty"]("matTooltipPosition", "above");
     _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵadvance"](4);
-    _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵproperty"]("formControl", ctx_r22.franchiseFilter);
+    _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵproperty"]("formControl", ctx_r22.byElectionCauseFilter);
 } }
-function VizComponent_table_21_td_21_Template(rf, ctx) { if (rf & 1) {
+function VizComponent_table_20_td_21_Template(rf, ctx) { if (rf & 1) {
     _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementStart"](0, "td", 39);
     _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵtext"](1);
     _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementEnd"]();
 } if (rf & 2) {
-    var element_r40 = ctx.$implicit;
+    var element_r42 = ctx.$implicit;
     _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵadvance"](1);
-    _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵtextInterpolate1"](" ", element_r40.franchise_type, " ");
+    _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵtextInterpolate1"](" ", element_r42.by_election_cause, " ");
 } }
-function VizComponent_table_21_th_23_Template(rf, ctx) { if (rf & 1) {
-    var _r42 = _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵgetCurrentView"]();
+function VizComponent_table_20_th_23_Template(rf, ctx) { if (rf & 1) {
+    _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementStart"](0, "th", 36);
+    _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementStart"](1, "span", 53);
+    _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵtext"](2, "Franchise ");
+    _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementEnd"]();
+    _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementStart"](3, "div");
+    _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementStart"](4, "mat-form-field");
+    _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelement"](5, "input", 38);
+    _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementEnd"]();
+    _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementEnd"]();
+    _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementEnd"]();
+} if (rf & 2) {
+    var ctx_r24 = _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵnextContext"](2);
+    _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵadvance"](1);
+    _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵproperty"]("matTooltipPosition", "above");
+    _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵadvance"](4);
+    _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵproperty"]("formControl", ctx_r24.franchiseFilter);
+} }
+function VizComponent_table_20_td_24_Template(rf, ctx) { if (rf & 1) {
+    _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementStart"](0, "td", 39);
+    _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵtext"](1);
+    _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementEnd"]();
+} if (rf & 2) {
+    var element_r43 = ctx.$implicit;
+    _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵadvance"](1);
+    _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵtextInterpolate1"](" ", element_r43.franchise_type, " ");
+} }
+function VizComponent_table_20_th_26_Template(rf, ctx) { if (rf & 1) {
+    var _r45 = _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵgetCurrentView"]();
     _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementStart"](0, "th", 36);
     _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementStart"](1, "span", 54);
     _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵtext"](2, " Has Poll Books? ");
@@ -2326,7 +4195,7 @@ function VizComponent_table_21_th_23_Template(rf, ctx) { if (rf & 1) {
     _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementStart"](3, "div");
     _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementStart"](4, "mat-form-field");
     _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementStart"](5, "mat-select", 43);
-    _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵlistener"]("valueChange", function VizComponent_table_21_th_23_Template_mat_select_valueChange_5_listener($event) { _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵrestoreView"](_r42); var ctx_r41 = _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵnextContext"](2); return ctx_r41.pollBookCodeFilter.value = $event; });
+    _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵlistener"]("valueChange", function VizComponent_table_20_th_26_Template_mat_select_valueChange_5_listener($event) { _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵrestoreView"](_r45); var ctx_r44 = _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵnextContext"](2); return ctx_r44.pollBookCodeFilter.value = $event; });
     _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementStart"](6, "mat-option", 44);
     _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵtext"](7, "Any");
     _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementEnd"]();
@@ -2341,76 +4210,80 @@ function VizComponent_table_21_th_23_Template(rf, ctx) { if (rf & 1) {
     _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementEnd"]();
     _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementEnd"]();
 } if (rf & 2) {
-    var ctx_r24 = _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵnextContext"](2);
+    var ctx_r26 = _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵnextContext"](2);
     _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵadvance"](1);
     _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵproperty"]("matTooltipPosition", "above");
     _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵadvance"](4);
-    _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵproperty"]("formControl", ctx_r24.pollBookCodeFilter)("value", ctx_r24.pollBookCodeFilter.value);
+    _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵproperty"]("formControl", ctx_r26.pollBookCodeFilter)("value", ctx_r26.pollBookCodeFilter.value);
 } }
-function VizComponent_table_21_td_24_Template(rf, ctx) { if (rf & 1) {
-    var _r45 = _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵgetCurrentView"]();
+function VizComponent_table_20_td_27_Template(rf, ctx) { if (rf & 1) {
+    var _r48 = _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵgetCurrentView"]();
     _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementStart"](0, "td", 55);
-    _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵlistener"]("click", function VizComponent_table_21_td_24_Template_td_click_0_listener($event) { _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵrestoreView"](_r45); var element_r43 = ctx.$implicit; var ctx_r44 = _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵnextContext"](2); return ctx_r44.getBook($event, element_r43); });
+    _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵlistener"]("click", function VizComponent_table_20_td_27_Template_td_click_0_listener($event) { _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵrestoreView"](_r48); var element_r46 = ctx.$implicit; var ctx_r47 = _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵnextContext"](2); return ctx_r47.getBook($event, element_r46); });
     _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵtext"](1);
     _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementEnd"]();
 } if (rf & 2) {
-    var element_r43 = ctx.$implicit;
-    var ctx_r25 = _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵnextContext"](2);
+    var element_r46 = ctx.$implicit;
+    var ctx_r27 = _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵnextContext"](2);
     _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵadvance"](1);
-    _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵtextInterpolate1"](" ", ctx_r25.getHasPollBooks(element_r43.pollbook_id), "");
+    _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵtextInterpolate1"](" ", ctx_r27.getHasPollBooks(element_r46.pollbook_id), "");
 } }
-function VizComponent_table_21_tr_25_Template(rf, ctx) { if (rf & 1) {
+function VizComponent_table_20_tr_28_Template(rf, ctx) { if (rf & 1) {
     _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelement"](0, "tr", 56);
 } }
-function VizComponent_table_21_tr_26_Template(rf, ctx) { if (rf & 1) {
+function VizComponent_table_20_tr_29_Template(rf, ctx) { if (rf & 1) {
     _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelement"](0, "tr", 57);
 } }
-function VizComponent_table_21_Template(rf, ctx) { if (rf & 1) {
-    _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementStart"](0, "table", 22);
-    _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementContainerStart"](1, 23);
-    _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵtemplate"](2, VizComponent_table_21_th_2_Template, 6, 2, "th", 24);
-    _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵtemplate"](3, VizComponent_table_21_td_3_Template, 2, 1, "td", 25);
+function VizComponent_table_20_Template(rf, ctx) { if (rf & 1) {
+    _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementStart"](0, "table", 21);
+    _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementContainerStart"](1, 22);
+    _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵtemplate"](2, VizComponent_table_20_th_2_Template, 6, 2, "th", 23);
+    _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵtemplate"](3, VizComponent_table_20_td_3_Template, 2, 1, "td", 24);
     _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementContainerEnd"]();
-    _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementContainerStart"](4, 26);
-    _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵtemplate"](5, VizComponent_table_21_th_5_Template, 6, 2, "th", 24);
-    _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵtemplate"](6, VizComponent_table_21_td_6_Template, 2, 1, "td", 25);
+    _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementContainerStart"](4, 25);
+    _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵtemplate"](5, VizComponent_table_20_th_5_Template, 6, 2, "th", 23);
+    _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵtemplate"](6, VizComponent_table_20_td_6_Template, 2, 1, "td", 24);
     _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementContainerEnd"]();
-    _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementContainerStart"](7, 27);
-    _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵtemplate"](8, VizComponent_table_21_th_8_Template, 6, 2, "th", 24);
-    _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵtemplate"](9, VizComponent_table_21_td_9_Template, 2, 1, "td", 25);
+    _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementContainerStart"](7, 26);
+    _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵtemplate"](8, VizComponent_table_20_th_8_Template, 6, 2, "th", 23);
+    _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵtemplate"](9, VizComponent_table_20_td_9_Template, 2, 1, "td", 24);
     _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementContainerEnd"]();
-    _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementContainerStart"](10, 28);
-    _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵtemplate"](11, VizComponent_table_21_th_11_Template, 13, 3, "th", 24);
-    _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵtemplate"](12, VizComponent_table_21_td_12_Template, 2, 1, "td", 25);
+    _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementContainerStart"](10, 27);
+    _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵtemplate"](11, VizComponent_table_20_th_11_Template, 13, 3, "th", 23);
+    _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵtemplate"](12, VizComponent_table_20_td_12_Template, 2, 1, "td", 24);
     _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementContainerEnd"]();
-    _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementContainerStart"](13, 29);
-    _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵtemplate"](14, VizComponent_table_21_th_14_Template, 12, 3, "th", 24);
-    _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵtemplate"](15, VizComponent_table_21_td_15_Template, 2, 1, "td", 25);
+    _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementContainerStart"](13, 28);
+    _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵtemplate"](14, VizComponent_table_20_th_14_Template, 12, 3, "th", 23);
+    _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵtemplate"](15, VizComponent_table_20_td_15_Template, 2, 1, "td", 24);
     _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementContainerEnd"]();
-    _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementContainerStart"](16, 30);
-    _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵtemplate"](17, VizComponent_table_21_th_17_Template, 12, 3, "th", 24);
-    _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵtemplate"](18, VizComponent_table_21_td_18_Template, 2, 1, "td", 25);
+    _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementContainerStart"](16, 29);
+    _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵtemplate"](17, VizComponent_table_20_th_17_Template, 12, 3, "th", 23);
+    _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵtemplate"](18, VizComponent_table_20_td_18_Template, 2, 1, "td", 24);
     _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementContainerEnd"]();
-    _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementContainerStart"](19, 31);
-    _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵtemplate"](20, VizComponent_table_21_th_20_Template, 6, 2, "th", 24);
-    _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵtemplate"](21, VizComponent_table_21_td_21_Template, 2, 1, "td", 25);
+    _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementContainerStart"](19, 30);
+    _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵtemplate"](20, VizComponent_table_20_th_20_Template, 6, 2, "th", 23);
+    _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵtemplate"](21, VizComponent_table_20_td_21_Template, 2, 1, "td", 24);
     _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementContainerEnd"]();
-    _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementContainerStart"](22, 32);
-    _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵtemplate"](23, VizComponent_table_21_th_23_Template, 12, 3, "th", 24);
-    _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵtemplate"](24, VizComponent_table_21_td_24_Template, 2, 1, "td", 33);
+    _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementContainerStart"](22, 31);
+    _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵtemplate"](23, VizComponent_table_20_th_23_Template, 6, 2, "th", 23);
+    _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵtemplate"](24, VizComponent_table_20_td_24_Template, 2, 1, "td", 24);
     _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementContainerEnd"]();
-    _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵtemplate"](25, VizComponent_table_21_tr_25_Template, 1, 0, "tr", 34);
-    _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵtemplate"](26, VizComponent_table_21_tr_26_Template, 1, 0, "tr", 35);
+    _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementContainerStart"](25, 32);
+    _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵtemplate"](26, VizComponent_table_20_th_26_Template, 12, 3, "th", 23);
+    _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵtemplate"](27, VizComponent_table_20_td_27_Template, 2, 1, "td", 33);
+    _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementContainerEnd"]();
+    _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵtemplate"](28, VizComponent_table_20_tr_28_Template, 1, 0, "tr", 34);
+    _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵtemplate"](29, VizComponent_table_20_tr_29_Template, 1, 0, "tr", 35);
     _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementEnd"]();
 } if (rf & 2) {
     var ctx_r5 = _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵnextContext"]();
     _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵproperty"]("dataSource", ctx_r5.dataSource);
-    _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵadvance"](25);
+    _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵadvance"](28);
     _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵproperty"]("matHeaderRowDef", ctx_r5.displayedColumns);
     _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵadvance"](1);
     _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵproperty"]("matRowDefColumns", ctx_r5.displayedColumns);
 } }
-function VizComponent_div_26_Template(rf, ctx) { if (rf & 1) {
+function VizComponent_div_25_Template(rf, ctx) { if (rf & 1) {
     _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementStart"](0, "div", 58);
     _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵtext"](1);
     _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementEnd"]();
@@ -2419,8 +4292,9 @@ function VizComponent_div_26_Template(rf, ctx) { if (rf & 1) {
     _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵadvance"](1);
     _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵtextInterpolate2"](" ", ctx_r6.HOPtext.date_range, " ", ctx_r6.HOPtext.innerText, " ");
 } }
-var _c1 = function () { return { bottom: false, right: false, top: false, left: true }; };
-var _c2 = function () { return [5, 10, 20, 50, 100, 500]; };
+var _c1 = function (a0) { return { styles: a0 }; };
+var _c2 = function () { return { bottom: false, right: false, top: false, left: true }; };
+var _c3 = function () { return [5, 10, 20, 50, 100, 500]; };
 var VizComponent = /** @class */ (function () {
     function VizComponent(dialog, _differs, appRef, centroidsService, boroughService, http, hOPService, downloadPollBooksService, downloadService, getElectionsService, geojsonServiceService, getPollBooksService, getLatLonService) {
         this.dialog = dialog;
@@ -2436,361 +4310,523 @@ var VizComponent = /** @class */ (function () {
         this.geojsonServiceService = geojsonServiceService;
         this.getPollBooksService = getPollBooksService;
         this.getLatLonService = getLatLonService;
-        //I had to make my own data for cetnroids of the boroughs by hand
-        this.centroids = [];
-        this.counties = [];
         this.uniqueElections = [];
-        //electionsNew: ElectionNew [];
-        this.a = "wiating";
         this.style = {};
         this.gotPollBooks = false;
-        this.clicked = false; //debouncer for the datalayer click
+        //debouncer for the datalayer click
+        this.clicked = false;
         this.zoom = 7;
         this.mapIsReady = false;
-        this.options = {
-            mapTypeId: 'hybrid',
-            // zoomControl: false,
-            // scrollwheel: false,
-            // disableDoubleClickZoom: true,
-            maxZoom: 10,
-            minZoom: 2,
-            styles: [
-                {
-                    "elementType": "geometry",
-                    "stylers": [
-                        {
-                            "color": "#999999"
-                        }
-                    ]
-                },
-                {
-                    "elementType": "labels",
-                    "stylers": [
-                        {
-                            "visibility": "off"
-                        }
-                    ]
-                },
-                {
-                    "elementType": "labels.text.fill",
-                    "stylers": [
-                        {
-                            "color": "#757575"
-                        }
-                    ]
-                },
-                {
-                    "elementType": "labels.text.stroke",
-                    "stylers": [
-                        {
-                            "color": "#212121"
-                        }
-                    ]
-                },
-                {
-                    "featureType": "administrative",
-                    "elementType": "geometry",
-                    "stylers": [
-                        {
-                            "color": "#757575"
-                        },
-                        {
-                            "visibility": "off"
-                        }
-                    ]
-                },
-                {
-                    "featureType": "administrative.country",
-                    "elementType": "labels.text.fill",
-                    "stylers": [
-                        {
-                            "color": "#9e9e9e"
-                        }
-                    ]
-                },
-                {
-                    "featureType": "administrative.land_parcel",
-                    "stylers": [
-                        {
-                            "visibility": "off"
-                        }
-                    ]
-                },
-                {
-                    "featureType": "administrative.locality",
-                    "elementType": "labels.text.fill",
-                    "stylers": [
-                        {
-                            "color": "#bdbdbd"
-                        }
-                    ]
-                },
-                {
-                    "featureType": "administrative.neighborhood",
-                    "stylers": [
-                        {
-                            "visibility": "off"
-                        }
-                    ]
-                },
-                {
-                    "featureType": "poi",
-                    "stylers": [
-                        {
-                            "visibility": "off"
-                        }
-                    ]
-                },
-                {
-                    "featureType": "poi",
-                    "elementType": "labels.text",
-                    "stylers": [
-                        {
-                            "visibility": "off"
-                        }
-                    ]
-                },
-                {
-                    "featureType": "poi",
-                    "elementType": "labels.text.fill",
-                    "stylers": [
-                        {
-                            "color": "#757575"
-                        }
-                    ]
-                },
-                {
-                    "featureType": "poi.park",
-                    "elementType": "geometry",
-                    "stylers": [
-                        {
-                            "color": "#181818"
-                        }
-                    ]
-                },
-                {
-                    "featureType": "poi.park",
-                    "elementType": "labels.text.fill",
-                    "stylers": [
-                        {
-                            "color": "#616161"
-                        }
-                    ]
-                },
-                {
-                    "featureType": "poi.park",
-                    "elementType": "labels.text.stroke",
-                    "stylers": [
-                        {
-                            "color": "#1b1b1b"
-                        }
-                    ]
-                },
-                {
-                    "featureType": "road",
-                    "stylers": [
-                        {
-                            "visibility": "off"
-                        }
-                    ]
-                },
-                {
-                    "featureType": "road",
-                    "elementType": "geometry.fill",
-                    "stylers": [
-                        {
-                            "color": "#2c2c2c"
-                        }
-                    ]
-                },
-                {
-                    "featureType": "road",
-                    "elementType": "labels",
-                    "stylers": [
-                        {
-                            "visibility": "off"
-                        }
-                    ]
-                },
-                {
-                    "featureType": "road",
-                    "elementType": "labels.icon",
-                    "stylers": [
-                        {
-                            "visibility": "off"
-                        }
-                    ]
-                },
-                {
-                    "featureType": "road",
-                    "elementType": "labels.text.fill",
-                    "stylers": [
-                        {
-                            "color": "#8a8a8a"
-                        }
-                    ]
-                },
-                {
-                    "featureType": "road.arterial",
-                    "elementType": "geometry",
-                    "stylers": [
-                        {
-                            "color": "#373737"
-                        }
-                    ]
-                },
-                {
-                    "featureType": "road.highway",
-                    "elementType": "geometry",
-                    "stylers": [
-                        {
-                            "color": "#3c3c3c"
-                        }
-                    ]
-                },
-                {
-                    "featureType": "road.highway.controlled_access",
-                    "elementType": "geometry",
-                    "stylers": [
-                        {
-                            "color": "#4e4e4e"
-                        }
-                    ]
-                },
-                {
-                    "featureType": "road.local",
-                    "elementType": "labels.text.fill",
-                    "stylers": [
-                        {
-                            "color": "#616161"
-                        }
-                    ]
-                },
-                {
-                    "featureType": "transit",
-                    "stylers": [
-                        {
-                            "visibility": "off"
-                        }
-                    ]
-                },
-                {
-                    "featureType": "transit",
-                    "elementType": "labels.text.fill",
-                    "stylers": [
-                        {
-                            "color": "#757575"
-                        }
-                    ]
-                },
-                {
-                    "featureType": "water",
-                    "elementType": "geometry",
-                    "stylers": [
-                        {
-                            "color": "#000000"
-                        }
-                    ]
-                },
-                {
-                    "featureType": "water",
-                    "elementType": "labels.text",
-                    "stylers": [
-                        {
-                            "visibility": "off"
-                        }
-                    ]
-                },
-                {
-                    "featureType": "water",
-                    "elementType": "labels.text.fill",
-                    "stylers": [
-                        {
-                            "color": "#3d3d3d"
-                        }
-                    ]
-                }
-            ]
-        };
+        // options:google.maps.MapOptions= {
+        // 	mapTypeId: 'hybrid',
+        // 	maxZoom: 10,
+        // 	minZoom: 2,
+        // 	styles:[
+        // 		{
+        // 		  "elementType": "geometry",
+        // 		  "stylers": [
+        // 			{
+        // 			  "color": "#f5f5f5"
+        // 			}
+        // 		  ]
+        // 		},
+        // 		{
+        // 		  "elementType": "labels",
+        // 		  "stylers": [
+        // 			{
+        // 			  "visibility": "off"
+        // 			}
+        // 		  ]
+        // 		},
+        // 		{
+        // 		  "elementType": "labels.icon",
+        // 		  "stylers": [
+        // 			{
+        // 			  "visibility": "off"
+        // 			}
+        // 		  ]
+        // 		},
+        // 		{
+        // 		  "elementType": "labels.text.fill",
+        // 		  "stylers": [
+        // 			{
+        // 			  "color": "#616161"
+        // 			}
+        // 		  ]
+        // 		},
+        // 		{
+        // 		  "elementType": "labels.text.stroke",
+        // 		  "stylers": [
+        // 			{
+        // 			  "color": "#f5f5f5"
+        // 			}
+        // 		  ]
+        // 		},
+        // 		{
+        // 		  "featureType": "administrative.land_parcel",
+        // 		  "elementType": "labels.text.fill",
+        // 		  "stylers": [
+        // 			{
+        // 			  "color": "#bdbdbd"
+        // 			}
+        // 		  ]
+        // 		},
+        // 		{
+        // 		  "featureType": "administrative.neighborhood",
+        // 		  "stylers": [
+        // 			{
+        // 			  "visibility": "off"
+        // 			}
+        // 		  ]
+        // 		},
+        // 		{
+        // 		  "featureType": "poi",
+        // 		  "elementType": "geometry",
+        // 		  "stylers": [
+        // 			{
+        // 			  "color": "#eeeeee"
+        // 			}
+        // 		  ]
+        // 		},
+        // 		{
+        // 		  "featureType": "poi",
+        // 		  "elementType": "labels.text",
+        // 		  "stylers": [
+        // 			{
+        // 			  "visibility": "off"
+        // 			}
+        // 		  ]
+        // 		},
+        // 		{
+        // 		  "featureType": "poi",
+        // 		  "elementType": "labels.text.fill",
+        // 		  "stylers": [
+        // 			{
+        // 			  "color": "#757575"
+        // 			}
+        // 		  ]
+        // 		},
+        // 		{
+        // 		  "featureType": "poi.business",
+        // 		  "stylers": [
+        // 			{
+        // 			  "visibility": "off"
+        // 			}
+        // 		  ]
+        // 		},
+        // 		{
+        // 		  "featureType": "poi.park",
+        // 		  "elementType": "geometry",
+        // 		  "stylers": [
+        // 			{
+        // 			  "color": "#e5e5e5"
+        // 			}
+        // 		  ]
+        // 		},
+        // 		{
+        // 		  "featureType": "poi.park",
+        // 		  "elementType": "labels.text.fill",
+        // 		  "stylers": [
+        // 			{
+        // 			  "color": "#9e9e9e"
+        // 			}
+        // 		  ]
+        // 		},
+        // 		{
+        // 		  "featureType": "road",
+        // 		  "stylers": [
+        // 			{
+        // 			  "visibility": "off"
+        // 			}
+        // 		  ]
+        // 		},
+        // 		{
+        // 		  "featureType": "road",
+        // 		  "elementType": "geometry",
+        // 		  "stylers": [
+        // 			{
+        // 			  "color": "#ffffff"
+        // 			}
+        // 		  ]
+        // 		},
+        // 		{
+        // 		  "featureType": "road",
+        // 		  "elementType": "labels.icon",
+        // 		  "stylers": [
+        // 			{
+        // 			  "visibility": "off"
+        // 			}
+        // 		  ]
+        // 		},
+        // 		{
+        // 		  "featureType": "road.arterial",
+        // 		  "elementType": "labels.text.fill",
+        // 		  "stylers": [
+        // 			{
+        // 			  "color": "#757575"
+        // 			}
+        // 		  ]
+        // 		},
+        // 		{
+        // 		  "featureType": "road.highway",
+        // 		  "elementType": "geometry",
+        // 		  "stylers": [
+        // 			{
+        // 			  "color": "#dadada"
+        // 			}
+        // 		  ]
+        // 		},
+        // 		{
+        // 		  "featureType": "road.highway",
+        // 		  "elementType": "labels.text.fill",
+        // 		  "stylers": [
+        // 			{
+        // 			  "color": "#616161"
+        // 			}
+        // 		  ]
+        // 		},
+        // 		{
+        // 		  "featureType": "road.local",
+        // 		  "elementType": "labels.text.fill",
+        // 		  "stylers": [
+        // 			{
+        // 			  "color": "#9e9e9e"
+        // 			}
+        // 		  ]
+        // 		},
+        // 		{
+        // 		  "featureType": "transit",
+        // 		  "stylers": [
+        // 			{
+        // 			  "visibility": "off"
+        // 			}
+        // 		  ]
+        // 		},
+        // 		{
+        // 		  "featureType": "transit.line",
+        // 		  "elementType": "geometry",
+        // 		  "stylers": [
+        // 			{
+        // 			  "color": "#e5e5e5"
+        // 			}
+        // 		  ]
+        // 		},
+        // 		{
+        // 		  "featureType": "transit.station",
+        // 		  "elementType": "geometry",
+        // 		  "stylers": [
+        // 			{
+        // 			  "color": "#eeeeee"
+        // 			}
+        // 		  ]
+        // 		},
+        // 		{
+        // 		  "featureType": "water",
+        // 		  "elementType": "geometry",
+        // 		  "stylers": [
+        // 			{
+        // 			  "color": "#c9c9c9"
+        // 			}
+        // 		  ]
+        // 		},
+        // 		{
+        // 		  "featureType": "water",
+        // 		  "elementType": "labels.text.fill",
+        // 		  "stylers": [
+        // 			{
+        // 			  "color": "#9e9e9e"
+        // 			}
+        // 		  ]
+        // 		}
+        // 	  ]
+        // }
+        this.mystyles = [
+            {
+                "elementType": "geometry",
+                "stylers": [
+                    {
+                        "color": "#999999"
+                    }
+                ]
+            },
+            {
+                "elementType": "labels",
+                "stylers": [
+                    {
+                        "visibility": "off"
+                    }
+                ]
+            },
+            {
+                "elementType": "labels.text.fill",
+                "stylers": [
+                    {
+                        "color": "#757575"
+                    }
+                ]
+            },
+            {
+                "elementType": "labels.text.stroke",
+                "stylers": [
+                    {
+                        "color": "#212121"
+                    }
+                ]
+            },
+            {
+                "featureType": "administrative",
+                "elementType": "geometry",
+                "stylers": [
+                    {
+                        "color": "#757575"
+                    },
+                    {
+                        "visibility": "off"
+                    }
+                ]
+            },
+            {
+                "featureType": "administrative.country",
+                "elementType": "labels.text.fill",
+                "stylers": [
+                    {
+                        "color": "#9e9e9e"
+                    }
+                ]
+            },
+            {
+                "featureType": "administrative.land_parcel",
+                "stylers": [
+                    {
+                        "visibility": "off"
+                    }
+                ]
+            },
+            {
+                "featureType": "administrative.locality",
+                "elementType": "labels.text.fill",
+                "stylers": [
+                    {
+                        "color": "#bdbdbd"
+                    }
+                ]
+            },
+            {
+                "featureType": "administrative.neighborhood",
+                "stylers": [
+                    {
+                        "visibility": "off"
+                    }
+                ]
+            },
+            {
+                "featureType": "poi",
+                "stylers": [
+                    {
+                        "visibility": "off"
+                    }
+                ]
+            },
+            {
+                "featureType": "poi",
+                "elementType": "labels.text",
+                "stylers": [
+                    {
+                        "visibility": "off"
+                    }
+                ]
+            },
+            {
+                "featureType": "poi",
+                "elementType": "labels.text.fill",
+                "stylers": [
+                    {
+                        "color": "#757575"
+                    }
+                ]
+            },
+            {
+                "featureType": "poi.park",
+                "elementType": "geometry",
+                "stylers": [
+                    {
+                        "color": "#181818"
+                    }
+                ]
+            },
+            {
+                "featureType": "poi.park",
+                "elementType": "labels.text.fill",
+                "stylers": [
+                    {
+                        "color": "#616161"
+                    }
+                ]
+            },
+            {
+                "featureType": "poi.park",
+                "elementType": "labels.text.stroke",
+                "stylers": [
+                    {
+                        "color": "#1b1b1b"
+                    }
+                ]
+            },
+            {
+                "featureType": "road",
+                "stylers": [
+                    {
+                        "visibility": "off"
+                    }
+                ]
+            },
+            {
+                "featureType": "road",
+                "elementType": "geometry.fill",
+                "stylers": [
+                    {
+                        "color": "#2c2c2c"
+                    }
+                ]
+            },
+            {
+                "featureType": "road",
+                "elementType": "labels",
+                "stylers": [
+                    {
+                        "visibility": "off"
+                    }
+                ]
+            },
+            {
+                "featureType": "road",
+                "elementType": "labels.icon",
+                "stylers": [
+                    {
+                        "visibility": "off"
+                    }
+                ]
+            },
+            {
+                "featureType": "road",
+                "elementType": "labels.text.fill",
+                "stylers": [
+                    {
+                        "color": "#8a8a8a"
+                    }
+                ]
+            },
+            {
+                "featureType": "road.arterial",
+                "elementType": "geometry",
+                "stylers": [
+                    {
+                        "color": "#373737"
+                    }
+                ]
+            },
+            {
+                "featureType": "road.highway",
+                "elementType": "geometry",
+                "stylers": [
+                    {
+                        "color": "#3c3c3c"
+                    }
+                ]
+            },
+            {
+                "featureType": "road.highway.controlled_access",
+                "elementType": "geometry",
+                "stylers": [
+                    {
+                        "color": "#4e4e4e"
+                    }
+                ]
+            },
+            {
+                "featureType": "road.local",
+                "elementType": "labels.text.fill",
+                "stylers": [
+                    {
+                        "color": "#616161"
+                    }
+                ]
+            },
+            {
+                "featureType": "transit",
+                "stylers": [
+                    {
+                        "visibility": "off"
+                    }
+                ]
+            },
+            {
+                "featureType": "transit",
+                "elementType": "labels.text.fill",
+                "stylers": [
+                    {
+                        "color": "#757575"
+                    }
+                ]
+            },
+            {
+                "featureType": "water",
+                "elementType": "geometry",
+                "stylers": [
+                    {
+                        "color": "#000000"
+                    }
+                ]
+            },
+            {
+                "featureType": "water",
+                "elementType": "labels.text",
+                "stylers": [
+                    {
+                        "visibility": "off"
+                    }
+                ]
+            },
+            {
+                "featureType": "water",
+                "elementType": "labels.text.fill",
+                "stylers": [
+                    {
+                        "color": "#3d3d3d"
+                    }
+                ]
+            }
+        ];
         this.center = {
             lat: 52.4862,
             lng: 1.8904
         };
-        this.mapLinked = true;
         this.HOPtext = "";
         this.animating = false;
         this.constituencyNames = [];
-        this.markers = [];
-        this.mmarkers = [];
         this.dynamicMarkers = [];
-        this.boroughMarkers = []; //google.maps.Marker [] = [		
-        this.image = {
-            url: '/assets/images/dot.svg',
-            size: new google.maps.Size(10, 10),
-            origin: new google.maps.Point(0, 0),
-            anchor: new google.maps.Point(5, 5),
-            scaledSize: new google.maps.Size(10, 10)
-        };
-        this.countyMarkerOption = {
-            icon: this.image,
-            //                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                         title:	element.constituency,
-            visible: true
-            // label:  {text: element.constituency , color: "white"}
-        };
-        this.imageFore = {
-            url: '/assets/images/smarker.svg',
-            size: new google.maps.Size(20, 20),
-            origin: new google.maps.Point(0, 0),
-            anchor: new google.maps.Point(10, 10),
-            scaledSize: new google.maps.Size(20, 20)
-        };
-        this.countyForegroundMarkerOption = {
-            icon: this.imageFore,
-            // animation: google.maps.Animation.DROP,
-            //                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                         title:	element.constituency,
-            visible: true
-            // label:  {text: element.constituency , color: "white"}
-        };
-        this.boroughCentreMarkers = [];
-        this.countyMarkers = [];
-        //	countyMarkerOption: google.maps.MarkerOptions = {draggable: false};
-        this.countyMarkerOptions = [];
-        this.countyMarkerPositions = [];
-        this.boroughMarkerOptions = [];
-        this.boroughMarkerPositions = [];
-        this.myCenter = { lat: 24, lng: 12 };
-        ///the filtered markers currently on display
-        this.displayedMarkers = [];
         this.forceLink = false;
         //the main filters for the table/database
         this.filteredValues = {
-            election_month: '', constituency: '', election_year: '', countyboroughuniv: '', contested: '', by_election_general: '', franchise_type: '', pollbook_id: ''
+            election_month: '', constituency: '', election_year: '', countyboroughuniv: '', contested: '', by_election_general: '', by_election_cause: '', franchise_type: '', pollbook_id: ''
         };
         //for the graph
         this.electionsPerYear = [];
-        this.constituencyFilter = new _angular_forms__WEBPACK_IMPORTED_MODULE_16__["FormControl"]();
-        this.monthFilter = new _angular_forms__WEBPACK_IMPORTED_MODULE_16__["FormControl"]();
-        this.yearFilter = new _angular_forms__WEBPACK_IMPORTED_MODULE_16__["FormControl"]();
-        this.countyFilter = new _angular_forms__WEBPACK_IMPORTED_MODULE_16__["FormControl"]();
-        this.contestedFilter = new _angular_forms__WEBPACK_IMPORTED_MODULE_16__["FormControl"]();
-        this.byElectionGeneralFilter = new _angular_forms__WEBPACK_IMPORTED_MODULE_16__["FormControl"]();
-        this.franchiseFilter = new _angular_forms__WEBPACK_IMPORTED_MODULE_16__["FormControl"]();
-        this.pollBookCodeFilter = new _angular_forms__WEBPACK_IMPORTED_MODULE_16__["FormControl"]();
+        this.constituencyFilter = new _angular_forms__WEBPACK_IMPORTED_MODULE_14__["FormControl"]();
+        this.monthFilter = new _angular_forms__WEBPACK_IMPORTED_MODULE_14__["FormControl"]();
+        this.yearFilter = new _angular_forms__WEBPACK_IMPORTED_MODULE_14__["FormControl"]();
+        this.countyFilter = new _angular_forms__WEBPACK_IMPORTED_MODULE_14__["FormControl"]();
+        this.contestedFilter = new _angular_forms__WEBPACK_IMPORTED_MODULE_14__["FormControl"]();
+        this.byElectionGeneralFilter = new _angular_forms__WEBPACK_IMPORTED_MODULE_14__["FormControl"]();
+        this.byElectionCauseFilter = new _angular_forms__WEBPACK_IMPORTED_MODULE_14__["FormControl"]();
+        this.franchiseFilter = new _angular_forms__WEBPACK_IMPORTED_MODULE_14__["FormControl"]();
+        this.pollBookCodeFilter = new _angular_forms__WEBPACK_IMPORTED_MODULE_14__["FormControl"]();
         this.globalFilter = '';
-        this.highlightedConsituencies = [];
-        this.displayedColumns = ['constituency', 'election_year', 'election_month', 'countyboroughuniv', 'by_election_general', 'franchise_type', 'contested', 'pollbook_id'];
-        this.dataSource = new _angular_material_table__WEBPACK_IMPORTED_MODULE_15__["MatTableDataSource"]();
-        this.updatingMapStyles = false;
+        this.displayedColumns = ['constituency', 'election_year', 'election_month', 'countyboroughuniv', 'by_election_general', 'by_election_cause', 'franchise_type', 'contested', 'pollbook_id'];
+        this.dataSource = new _angular_material_table__WEBPACK_IMPORTED_MODULE_13__["MatTableDataSource"]();
         //for the timelines
         this.minYear = 1695;
         this.maxYear = 1832;
-        this.prevDataSourceSize = 0;
-        // currentMinValue: number = this.minYear;
-        // currentMaxValue: number = this.maxYear;
-        this.sliderOptions = {
-            floor: 1695,
-            ceil: 1832
-        };
         //generic mapping funciton
         this.mapRange = function (num, in_min, in_max, out_min, out_max) {
             return (num - in_min) * (out_max - out_min) / (in_max - in_min) + out_min;
@@ -2799,62 +4835,57 @@ var VizComponent = /** @class */ (function () {
     }
     //this is a big inefficient watcher on the dataSource
     VizComponent.prototype.ngDoCheck = function () {
-        var _this = this;
-        var datObj = {};
-        if (this.dataSource.filter.length > 0) {
-            datObj = JSON.parse(this.dataSource.filter);
-        }
-        var change = this._differ.diff(datObj);
-        if (change) {
-            this.electionsPerYear = this.getElectionsPerYear();
-            this.updateIsActive(this.getFilteredConstituencies());
-            this.setMapStyle();
-            this.makeAllMarkers();
-            this.getUniqueMarkers();
-            //console.log("update ",this.dynamicMarkers);
-            this.dynamicMarkers.forEach(function (delement) {
-                var inData = false;
-                var cbu = "";
-                _this.dataSource.filteredData.forEach(function (felement) {
-                    if (delement.getTitle().trim() == felement.constituency.trim()) {
-                        inData = true;
-                        cbu = felement.countyboroughuniv;
-                    }
-                });
-                if (inData) {
-                    var image = {
-                        url: '/assets/images/smarker.svg',
-                        size: new google.maps.Size(71, 71),
-                        origin: new google.maps.Point(0, 0),
-                        anchor: new google.maps.Point(17, 34),
-                        scaledSize: new google.maps.Size(25, 25)
-                    };
-                    var options = {
-                        icon: image,
-                        title: delement.getTitle(),
-                        visible: cbu == "C" ? false : true,
-                        label: { text: delement.getTitle(), color: "white" }
-                    };
-                    delement.setOptions(options);
-                }
-                else {
-                    var image = {
-                        url: '/assets/images/dot.svg',
-                        size: new google.maps.Size(20, 20),
-                        origin: new google.maps.Point(0, 0),
-                        anchor: new google.maps.Point(10, 10),
-                        scaledSize: new google.maps.Size(20, 20)
-                    };
-                    var options = {
-                        icon: image,
-                        title: delement.getTitle(),
-                        visible: cbu == "C" ? false : true,
-                        label: { text: delement.getTitle(), color: "white" }
-                    };
-                    delement.setOptions(options);
-                }
-            });
-        }
+        // var datObj = {};
+        // if (this.dataSource.filter.length > 0) {
+        // 	datObj = JSON.parse(this.dataSource.filter);
+        // }
+        // const change = this._differ.diff(datObj);
+        // if (change) {
+        // 	this.electionsPerYear = this.getElectionsPerYear();
+        // 	this.updateIsActive(this.getFilteredConstituencies());
+        // 	this.setMapStyle();
+        // 	this.dynamicMarkers.forEach(delement => {
+        // 		var inData =false;
+        // 		var cbu = "";
+        // 	this.dataSource.filteredData.forEach(felement => {
+        // 		if(delement.getTitle().trim()==felement.constituency.trim()){
+        // 			inData = true;
+        // 			cbu = felement.countyboroughuniv;
+        // 		}
+        // 	});
+        // 	if(inData){
+        // 		var image = {
+        // 			url: './assets/images/smarker.svg',
+        // 			size: new google.maps.Size(71, 71),
+        // 			origin: new google.maps.Point(0, 0),
+        // 			anchor: new google.maps.Point(17, 34),
+        // 			scaledSize: new google.maps.Size(25, 25)
+        // 		  };
+        // 		  var options = {
+        // 			icon:image,
+        // 			title:	delement.getTitle(),
+        // 			visible:cbu=="C" ? false : true,
+        // 			label:  {text: delement.getTitle() , color: "white"}
+        // 		}
+        // 	 delement.setOptions(options);
+        // 	}else{
+        // 		var image = {
+        // 			url: './assets/images/dot.svg',
+        // 			size: new google.maps.Size(20, 20),
+        // 			origin: new google.maps.Point(0, 0),
+        // 			anchor: new google.maps.Point(10, 10),
+        // 			scaledSize: new google.maps.Size(20, 20)
+        // 		  };
+        // 		  var options = {
+        // 			icon:image,
+        // 			title:delement.getTitle(),
+        // 			visible:cbu=="C" ? false : true,
+        // 			label:  {text: delement.getTitle() , color: "white"}
+        // 		}
+        // 	 delement.setOptions(options);
+        // 	}
+        // });
+        // }
     };
     VizComponent.prototype.ngOnDestroy = function () {
     };
@@ -2862,7 +4893,7 @@ var VizComponent = /** @class */ (function () {
         this.dynamicMarker = new google.maps.Marker();
         this.dynamicMarker.setPosition({ lat: 51, lng: 0 });
         var image = {
-            url: '/assets/images/bmarker.svg',
+            url: './assets/images/bmarker.svg',
             size: new google.maps.Size(71, 71),
             origin: new google.maps.Point(0, 0),
             anchor: new google.maps.Point(17, 34),
@@ -2875,25 +4906,6 @@ var VizComponent = /** @class */ (function () {
             label: { text: "test", color: "white" }
         };
         this.dynamicMarker.setOptions(options);
-        // 	path: google.maps.SymbolPath.CIRCLE,
-        // 	scale: 8.5,
-        // 	fillColor: "#F00",
-        // 	fillOpacity: 0.4,
-        // 	strokeWeight: 0.4
-        // });
-        //this.dynamicMarker.setMap(this.map);
-        // this.dynamicMarker = {
-        // 	position: {lat: 51,lng:0},
-        // 	sName: "Marker Name",
-        // 	map: this.map,
-        // icon: {
-        // 	path: google.maps.SymbolPath.CIRCLE,
-        // 	scale: 8.5,
-        // 	fillColor: "#F00",
-        // 	fillOpacity: 0.4,
-        // 	strokeWeight: 0.4
-        // },
-        // };
         for (var i = this.minYear; i <= this.maxYear; i++) {
             var obj = {
                 year: i,
@@ -2907,7 +4919,6 @@ var VizComponent = /** @class */ (function () {
         //tedious material stuff to add pagination to the table
         this.dataSource.paginator = this.paginator;
         // when we land, open the initial modal with the search options in it
-        this.mapLinked = true;
         this.hopData = {
             innerText: "",
             yearRange: "",
@@ -2933,9 +4944,6 @@ var VizComponent = /** @class */ (function () {
     };
     //main data grabbign  function called in ngonint 
     VizComponent.prototype.getData = function () {
-        // this.boroughService.getData().subscribe(
-        // 	(data: Boroughs) => this.boroughs = data
-        // 	, err => console.error(err), () => this.makeBoroughMarkers());
         var _this = this;
         this.getElectionsService.getData()
             .subscribe(function (data) { return _this.electionsMeta = {
@@ -2950,17 +4958,13 @@ var VizComponent = /** @class */ (function () {
     ///////////////////////////////////****START RESIZE FUNCTIONS****///////////////////////////////////
     //the database table is draggable
     VizComponent.prototype.onResizeEnd = function (event) {
-        console.log('Element was resized', event);
         this.style = {
             position: 'fixed',
-            // left: `${event.rectangle.left}px`,
             right: "3%",
-            // top: `${event.rectangle.top}px`,
             width: event.rectangle.width + "px",
         };
     };
     VizComponent.prototype.onResizeStart = function (event) {
-        console.log('Element was resized start', event);
     };
     ///////////////////////////////////****END RESIZE FUNCTIONS****///////////////////////////////////
     ///////////////////////////////////****START GRAPH FUNCTIONS****///////////////////////////////////
@@ -2992,8 +4996,8 @@ var VizComponent = /** @class */ (function () {
         var maxMin = this.getMaxMinElectionsPerYear();
         var yearRange = this.maxYear - this.minYear + 1;
         //var barWidth = divWidth / yearRange;
-        var barWidth = divWidth / 137; //this.electionsPerYear.length;
-        var left = bar.year - 1695; //this.d;
+        var barWidth = divWidth / 137;
+        var left = bar.year - 1695;
         left *= barWidth;
         var leftStr = left.toString();
         leftStr += "px";
@@ -3013,54 +5017,12 @@ var VizComponent = /** @class */ (function () {
         };
     };
     VizComponent.prototype.getElectionsPerYear = function () {
-        // var filteredConstituencies = this.getFilteredConstituencies();
         this.electionsPerYear.forEach(function (element) {
             element.numElections = 0;
             element.numContested = 0;
         });
-        // for(var i=this.minYear;i<=this.maxYear;i++){
-        // 	var obj = {
-        // 		year:i,
-        // 		numElections:0,
-        // 		numContested:0
-        // 	}
-        // 	this.electionsPerYear.push(obj);
-        // }
-        // for (var i = this.minYear; i <= this.maxYear; i++) {
-        // 	var obj = {
-        // 		year: i,
-        // 		numElections: 0,
-        // 		numContested: 0
-        // 	};
-        // 	this.electionsPerYear.push(obj);
-        // }
-        // console.log("this.electionsPerYear",this.electionsPerYear);
         for (var i = 0; i < this.dataSource.filteredData.length; i++) {
-            var index = parseInt(this.dataSource.filteredData[i]['election_year']) - 1695; // this.minYear;
-            if (index >= 0 && index < this.electionsPerYear.length) {
-                this.electionsPerYear[index]['numElections']++;
-                if (this.dataSource.filteredData[i]['contested'] == 'Y') {
-                    this.electionsPerYear[index]['numContested']++;
-                }
-            }
-        }
-        //console.log(this.electionsPerYear);
-        return this.electionsPerYear;
-    };
-    VizComponent.prototype.getElectionsPerYearOld = function () {
-        // var filteredConstituencies = this.getFilteredConstituencies();
-        this.electionsPerYear = [];
-        for (var i = this.minYear; i <= this.maxYear; i++) {
-            var obj = {
-                year: i,
-                numElections: 0,
-                numContested: 0
-            };
-            this.electionsPerYear.push(obj);
-        }
-        // console.log("this.electionsPerYear",this.electionsPerYear);
-        for (var i = 0; i < this.dataSource.filteredData.length; i++) {
-            var index = parseInt(this.dataSource.filteredData[i]['election_year']) - this.minYear;
+            var index = parseInt(this.dataSource.filteredData[i]['election_year']) - 1695;
             if (index >= 0 && index < this.electionsPerYear.length) {
                 this.electionsPerYear[index]['numElections']++;
                 if (this.dataSource.filteredData[i]['contested'] == 'Y') {
@@ -3080,18 +5042,15 @@ var VizComponent = /** @class */ (function () {
     ///////////////////////////////////****END GRAPH FUNCTIONS****///////////////////////////////////
     ///////////////////////////////////****START LISTENER FUNCTIONS****///////////////////////////////////
     VizComponent.prototype.ngOnChanges = function (changes) {
-        console.log(changes);
     };
-    VizComponent.prototype.onValueChange = function (changeContext) {
-        console.log(changeContext);
-    };
-    VizComponent.prototype.sliderChange = function (changeContext) {
-        // this.yearFilter.setValue("");
-        this.minYear = changeContext.value;
-        this.maxYear = changeContext.highValue;
-        this.yearFilter.setValue(changeContext.value.toString() + "-" + changeContext.highValue.toString());
-        this.dataSource.filter = JSON.stringify(this.filteredValues);
-    };
+    // onValueChange(changeContext: ChangeContext): void {
+    // }
+    // sliderChange(changeContext: ChangeContext): void {
+    // 	this.minYear = changeContext.value;
+    // 	this.maxYear = changeContext.highValue;
+    // 	this.yearFilter.setValue(changeContext.value.toString() + "-" + changeContext.highValue.toString());
+    // 	this.dataSource.filter = JSON.stringify(this.filteredValues);
+    // }
     ///////////////////////////////////****END LISTENER FUNCTIONS****///////////////////////////////////
     /////////////////////////////////////////*********START MAP UPDATE FUNCTIONS***********/////////////////////////////////////////
     VizComponent.prototype.setUpMapData = function () {
@@ -3108,15 +5067,12 @@ var VizComponent = /** @class */ (function () {
         });
         //TODO where's DURHAM?
         this.map.data.addListener('mouseover', function (event) {
-            //	console.log("mouseover ",event.feature.getProperty("name"));
             _this.setMatchingCountyMarkerVisibility(true, event.feature.getProperty("name"));
         });
         this.map.data.addListener('mouseout', function (event) {
-            //	console.log("mouseover ",event.feature.getProperty("name"));
             _this.setMatchingCountyMarkerVisibility(false, event.feature.getProperty("name"));
         });
         this.map.data.addListener('click', function (event) {
-            console.log("click");
             if (!_this.clicked) {
                 _this.clicked = true;
                 if (event.feature.getProperty('isActive')) {
@@ -3142,13 +5098,8 @@ var VizComponent = /** @class */ (function () {
     };
     VizComponent.prototype.mapReady = function () {
         if (!this.mapIsReady) {
-            console.log("map ready");
             this.setUpMapData();
-            this.makeAllMarkers();
         }
-        //this.setStyles();
-        // this.center.lat = 35;
-        //this.getUniqueMarkers();
     };
     VizComponent.prototype.setMapStyle = function () {
         this.map.data.setStyle(function (feature) {
@@ -3169,13 +5120,11 @@ var VizComponent = /** @class */ (function () {
                 strokeWeight: index,
                 zIndex: index,
                 fillColor: "grey"
-                // z-index:index,
             };
         });
     };
     VizComponent.prototype.setallInActive = function () {
         this.map.data.forEach(function (feature) {
-            //		console.log("setting ",feature.getProperty("name")," in active")
             feature.setProperty("isActive", false);
         });
     };
@@ -3191,8 +5140,6 @@ var VizComponent = /** @class */ (function () {
         });
     };
     VizComponent.prototype.updateMapStyles = function (constituencies) {
-        //console.log(constituencies);
-        // this.map.data.revertStyle();
         this.map.data.setStyle(function (feature) {
             var name = feature.getProperty('name');
             var color = "white";
@@ -3210,21 +5157,13 @@ var VizComponent = /** @class */ (function () {
                 strokeColor: color,
                 strokeWeight: index,
                 zIndex: index
-                // z-index:index,
             };
         });
     };
     VizComponent.prototype.mapZoomChanged = function () {
-        console.log("zoom");
-        // console.log(this.map);
-        // console.log(JSON.stringify(this.map.getCenter()));
-        //this.updateMapStyles(this.getFilteredConstituencies());
     };
     //TODO What is the actual call back for the data
     VizComponent.prototype.mapIdle = function () {
-        // console.log("idle");
-        //  setTimeout(()=> {this.updateMapStyles(this.getFilteredConstituencies());}, 3000);
-        //this is my hacky solution for cheacking the data is actually returned. I can't find a listener function for this
         var featureCount = 0;
         this.map.data.forEach(function (feature) {
             featureCount++;
@@ -3241,344 +5180,46 @@ var VizComponent = /** @class */ (function () {
         var filteredConstituencies = this.getFilteredConstituencies();
     };
     VizComponent.prototype.clearMap = function () {
-        var _this = this;
-        this.displayedMarkers = this.markers.filter(function (marker) { return _this.getFilteredConstituencies().includes("gobbldeygook"); });
+        // this.displayedMarkers = this.markers.filter(marker => this.getFilteredConstituencies().includes("gobbldeygook"));
     };
     /////////////////////////////////////////*********END MAP UPDATE FUNCTIONS***********/////////////////////////////////////////
     /////////////////////////////////////////*********START UTILITY FUNCTIONS***********/////////////////////////////////////////
-    VizComponent.prototype.getOptions = function (marker) {
-        if (marker.type == 'B') {
-            //	console.log("returning background");
-            return this.countyMarkerOption;
-        }
-        else {
-            //	console.log("returning foregeground");
-            return this.countyForegroundMarkerOption;
-        }
-    };
-    VizComponent.prototype.getIcon = function (marker) {
-        //console.log("got marker", marker.type);
-        if (marker.type == 'B') {
-            //	console.log("returning background");
-            return this.countyMarkerOption.icon;
-        }
-        else {
-            //	console.log("returning foregeground");
-            return this.countyForegroundMarkerOption.icon;
-        }
-    };
-    VizComponent.prototype.makeCountyMarker = function (element) {
-        var lat = +element.lat;
-        var lng = +element.lng;
-        var myLatLng = { lat: lat, lng: lng };
-        var image = {
-            url: '/assets/images/bmarker.svg',
-            size: new google.maps.Size(71, 71),
-            origin: new google.maps.Point(0, 0),
-            anchor: new google.maps.Point(17, 34),
-            scaledSize: new google.maps.Size(25, 25)
-        };
-        var options = {
-            icon: image,
-            title: element.constituency,
-            visible: true,
-            label: { text: element.constituency, color: "white" }
-        };
-        //this.countyMarkerOption.title="test";
-        this.countyMarkerPositions.push({ lat: lat, lng: lng });
-        this.countyMarkerOptions.push(options);
-    };
-    VizComponent.prototype.getUniqueCountyMarkers = function () {
-        var _this = this;
-        console.log("getting unique county markers");
-        var markerLocations = [];
-        this.markers = [];
-        this.dataSource.data.forEach(function (element) {
-            //	console.log("Element",element);
-            if (markerLocations.indexOf(element.constituency) == -1) {
-                markerLocations.push(element.constituency); //console.log(element.lat,element.lng)
-                //	if(typeof element.lat == "number" && typeof element.lng == "number"){
-                if (element.countyboroughuniv == "C") {
-                    _this.makeCountyMarker(element);
-                }
-            }
-        });
-    };
     VizComponent.prototype.setMatchingCountyMarkerVisibility = function (visible, constituency) {
-        //	console.log("mouseover",constituency);
-        var image = {
-            url: '/assets/images/dot.svg',
-            size: new google.maps.Size(20, 20),
-            origin: new google.maps.Point(0, 0),
-            anchor: new google.maps.Point(10, 10),
-            scaledSize: new google.maps.Size(20, 20)
-        };
-        var options = {
-            icon: image,
-            title: constituency,
-            visible: visible,
-            label: { text: constituency, color: "white" }
-        };
+        // var image = {
+        // 	url: './assets/images/dot.svg',
+        // 	size: new google.maps.Size(20, 20),
+        // 	origin: new google.maps.Point(0, 0),
+        // 	anchor: new google.maps.Point(10, 10),
+        // 	scaledSize: new google.maps.Size(20, 20)
+        //   };
+        //   var options = {
+        // 	icon:image,
+        // 	title:constituency,
+        // 	visible:visible,
+        // 	label:  {text: constituency , color: "white"}
+        // }
         this.dynamicMarkers.forEach(function (element) {
             if (element.getTitle() == constituency) {
-                //	console.log("setting ",constituency, " to ", visible);
-                element.setOptions(options);
+                //	element.setOptions(options);
+                element.setVisible(visible);
             }
         });
         this.appRef.tick();
-        // this.countyMarkerOptions= [];
-        // this.countyMarkerPositions= [];
-        // var markerLocations = [];
-        // this.dataSource.data.forEach(element => {
-        // 		if(markerLocations.indexOf(element.constituency)==-1 && element.constituency==constituency){
-        // 			markerLocations.push(element.constituency);		
-        // 			if(element.countyboroughuniv=="C"){
-        // 				this.makeCountyMarker(element);
-        // 			}
+    };
+    VizComponent.prototype.getUniqueElections = function () {
+        // 	var constituencies = [];
+        // 	if(this.uniqueElections!=undefined){
+        // 	this.dataSource.data.forEach(element => {
+        // 		if(constituencies.indexOf(element.constituency)==-1){
+        // 		//	console.log("adding ",element)
+        // 		constituencies.push(element.constituency);
+        // 		this.uniqueElections.push(element);
         // 		}
         // 	});
-        // this.appRef.tick() ;
-    };
-    VizComponent.prototype.setBoroughCentreMarkers = function () {
-        var _this = this;
-        this.boroughMarkers = [];
-        var markerLocations = [];
-        //this.markers = [] ;
-        this.dataSource.data.forEach(function (element) {
-            if (markerLocations.indexOf(element.constituency.trim()) == -1) {
-                //	console.log("adding point for ",element.constituency.trim())
-                var lat = +element.lat;
-                var lng = +element.lng;
-                markerLocations.push(element.constituency.trim());
-                if (element.countyboroughuniv == "B") {
-                    var myLatLng = { lat: lat, lng: lng };
-                    var image = {
-                        url: '/assets/images/dot.svg',
-                        size: new google.maps.Size(20, 20),
-                        origin: new google.maps.Point(0, 0),
-                        anchor: new google.maps.Point(10, 10),
-                        scaledSize: new google.maps.Size(20, 20)
-                    };
-                    var options = {
-                        icon: image,
-                        title: element.constituency,
-                        visible: true
-                        // label:  {text: element.constituency , color: "white"}
-                    };
-                    _this.boroughMarkerPositions.push({ lat: lat, lng: lng });
-                    _this.boroughMarkerOptions.push(options);
-                    //	this.boroughMarkers.push(marker);
-                }
-            }
-        });
-    };
-    VizComponent.prototype.makeMarker = function (element, isBackgroundBorough) {
-        var lat = +element.lat;
-        var lng = +element.lng;
-        var myLatLng = { lat: lat, lng: lng };
-        if (element.countyboroughuniv == "B" && isBackgroundBorough) {
-            //console.log("Making background marker for ", element.constituency);
-            var image = {
-                url: '/assets/images/dot.svg',
-                size: new google.maps.Size(20, 20),
-                origin: new google.maps.Point(0, 0),
-                anchor: new google.maps.Point(10, 10),
-                scaledSize: new google.maps.Size(20, 20)
-            };
-            var options = {
-                icon: image,
-                title: element.constituency,
-                visible: true
-                // label:  {text: element.constituency , color: "white"}
-            };
-            var thisMarker = {
-                position: myLatLng,
-                options: options,
-                title: element.constituency,
-                type: "B"
-            };
-            this.mmarkers.push(thisMarker);
-        }
-        else if (element.countyboroughuniv == "B" && !isBackgroundBorough) {
-            //	console.log("Making foreground marker for ", element.constituency);
-            var image = {
-                url: '/assets/images/dot.svg',
-                size: new google.maps.Size(20, 20),
-                origin: new google.maps.Point(0, 0),
-                anchor: new google.maps.Point(10, 10),
-                scaledSize: new google.maps.Size(20, 20)
-            };
-            var options = {
-                icon: image,
-                title: element.constituency,
-                visible: true
-                // label:  {text: element.constituency , color: "white"}
-            };
-            var thisMarker = {
-                position: myLatLng,
-                options: options,
-                title: element.constituency,
-                type: "BB"
-            };
-            this.mmarkers.push(thisMarker);
-        }
-        else if (element.countyboroughuniv == "C" && !isBackgroundBorough) {
-            var image = {
-                url: '/assets/images/dot.svg',
-                size: new google.maps.Size(20, 20),
-                origin: new google.maps.Point(0, 0),
-                anchor: new google.maps.Point(10, 10),
-                scaledSize: new google.maps.Size(20, 20)
-            };
-            var options = {
-                icon: image,
-                title: element.constituency,
-                visible: true
-                // label:  {text: element.constituency , color: "white"}
-            };
-            var thisMarker = {
-                position: myLatLng,
-                options: options,
-                title: element.constituency,
-                type: "C"
-            };
-            this.mmarkers.push(thisMarker);
-        }
-        //	this.boroughMarkers.push(marker);
-    };
-    VizComponent.prototype.updateMarkers = function () {
-        var _this = this;
-        // this.displayedMarkers = this.markers;
-        // this.displayedMarkers = this.markers.filter(marker => this.getFilteredConstituencies().includes(marker.formatted_address));
-        // this.updateMapStyles(this.getFilteredConstituencies());
-        this.dataSource.filteredData.forEach(function (element) {
-            _this.mmarkers.forEach(function (melement) {
-                melement.type = "B";
-                if (element.constituency == melement.title) {
-                    melement.type = "BB";
-                }
-            });
-        });
-    };
-    VizComponent.prototype.getUniqueConstituencies = function () {
-        var _this = this;
-        var constituencies = [];
-        if (this.uniqueElections != undefined) {
-            this.dataSource.data.forEach(function (element) {
-                if (constituencies.indexOf(element.constituency) == -1) {
-                    //	console.log("adding ",element)
-                    constituencies.push(element.constituency);
-                    _this.uniqueElections.push(element);
-                }
-            });
-        }
-        //	return constituencies;
-    };
-    VizComponent.prototype.makeAllMarkers = function () {
-        var _this = this;
-        this.mmarkers = [];
-        var markerLocations = [];
-        var filteredConstituencies = this.getFilteredConstituencies();
-        //first make all the boroughs that sit in the background
-        var flipper = true;
-        //	console.log("making markers");
+        // }
+        this.uniqueElections = this.dataSource.data.filter(function (value, index, self) { return self.map(function (x) { return x.constituency; }).indexOf(value.constituency) == index; });
         //console.log("this.uniqueElections",this.uniqueElections);
-        if (this.uniqueElections != undefined) {
-            this.uniqueElections.forEach(function (element) {
-                //this.dataSource.data.forEach(element => {
-                if (markerLocations.indexOf(element.constituency.trim()) == -1) {
-                    //	console.log("adding point for ",element.constituency.trim())
-                    markerLocations.push(element.constituency.trim());
-                    if (filteredConstituencies.indexOf(element.constituency) != -1) {
-                        _this.makeMarker(element, false);
-                    }
-                    else {
-                        _this.makeMarker(element, true);
-                    }
-                    //flipper=!flipper;
-                }
-            });
-            //	console.log("made markers",this.mmarkers);
-            markerLocations = [];
-            //now add any boroughs currently in the filtered data
-            this.dataSource.filteredData.forEach(function (element) {
-                _this.mmarkers.forEach(function (melement) {
-                    if (element.constituency == melement.title) {
-                        //melement.type="BB";
-                        // 		var lat: number = +element.lat;
-                        // var lng: number = +element.lng;
-                        // 		var myLatLng = { lat: lat, lng: lng };
-                        // 		var image = {
-                        // 			url: '/assets/images/dot.svg',
-                        // 			size: new google.maps.Size(20, 20),
-                        // 			origin: new google.maps.Point(0, 0),
-                        // 			anchor: new google.maps.Point(10, 10),
-                        // 			scaledSize: new google.maps.Size(20, 20)
-                        // 		  };
-                        // 		  var options = {
-                        // 			icon:image,
-                        // 			title:	element.constituency,
-                        // 			visible:true
-                        // 			// label:  {text: element.constituency , color: "white"}
-                        // 		}
-                        // 		var thisMarker: googleMapsMarkerWrapper = {
-                        // 			position:myLatLng,
-                        // 			options:options,
-                        // 			title: element.constituency,
-                        // 			type:"C"
-                        // 		}
-                        // 		melement = thisMarker;
-                    }
-                });
-            });
-            // image: google.maps.Icon  = {
-            // 	url: '/assets/images/dot.svg',
-            // 	size: new google.maps.Size(20, 20),
-            // 	origin: new google.maps.Point(0, 0),
-            // 	anchor: new google.maps.Point(10, 10),
-            // 	scaledSize: new google.maps.Size(20, 20)
-            //   };
-            //   countyMarkerOption: google.maps.MarkerOptions = {
-            // 	icon:this.image,
-            // 	//                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                         title:	element.constituency,
-            // 	visible:true
-            // 	// label:  {text: element.constituency , color: "white"}
-            // }
-        }
-    };
-    VizComponent.prototype.getUniqueMarkers = function () {
-        var _this = this;
-        var markerLocations = [];
-        this.markers = [];
-        this.dataSource.filteredData.forEach(function (element) {
-            if (markerLocations.indexOf(element.constituency) == -1) {
-                var lat = +element.lat;
-                var lng = +element.lng;
-                markerLocations.push(element.constituency);
-                if (element.countyboroughuniv == "B") {
-                    var image = {
-                        url: '/assets/images/smarker.svg',
-                        size: new google.maps.Size(71, 71),
-                        origin: new google.maps.Point(0, 0),
-                        anchor: new google.maps.Point(17, 34),
-                        scaledSize: new google.maps.Size(25, 25)
-                    };
-                    var marker = {
-                        position: { lat: lat, lng: lng },
-                        title: element.constituency,
-                        icon: "/assets/images/smarker.svg",
-                        visible: true,
-                        options: {
-                            opacity: 1,
-                            zIndex: 10,
-                            animation: google.maps.Animation.DROP,
-                            icon: image,
-                        }
-                    };
-                    _this.markers.push(marker);
-                }
-            }
-        });
+        //this.uniqueElections = this.dataSource.filteredData.map(item => item.constituency).filter((value, index, self) => self.indexOf(value) === index);
     };
     VizComponent.prototype.getPosition = function (marker) {
         return { lat: 51.0, lng: 1.8 };
@@ -3596,8 +5237,8 @@ var VizComponent = /** @class */ (function () {
         var start = Math.floor(Math.random() * fullRange) + 1696;
         this.minYear = start;
         this.maxYear = spread + start;
-        console.log("years", this.minYear, this.maxYear);
-        var y = 1777;
+        // var y = 1777;
+        //TODO add some other filters here like by election cause
         this.yearFilter.setValue(this.minYear.toString() + "-" + this.maxYear.toString());
         this.constituencyFilter.setValue(this.getRandomConstituenciesString(20));
         this.dataSource.filter = JSON.stringify(this.filteredValues);
@@ -3631,21 +5272,7 @@ var VizComponent = /** @class */ (function () {
     /////////////////////////////////////////*********END UTILITY FUNCTIONS***********/////////////////////////////////////////
     /////////////////////////////////////////*********START BUTTONS AND SLIDERS FUNCTIONS***********/////////////////////////////////////////
     VizComponent.prototype.animateTimeLine = function () {
-        // var image = {
-        // 	url: '/assets/images/dot.svg',
-        // 	size: new google.maps.Size(71, 71),
-        // 	origin: new google.maps.Point(0, 0),
-        // 	anchor: new google.maps.Point(17, 34),
-        // 	scaledSize: new google.maps.Size(25, 25)
-        //   };
-        //   var options = {
-        // 	icon:image,
-        // 	title:	"test",
-        // 	visible:true,
-        // 	label:  {text: "test" , color: "white"}
-        // }
         var _this = this;
-        // this.dynamicMarker.setOptions(options);
         if (this.animating) {
             if (this.animatingId) {
                 clearInterval(this.animatingId);
@@ -3671,22 +5298,27 @@ var VizComponent = /** @class */ (function () {
     };
     //called when the filter updates I think
     VizComponent.prototype.setDateSlider = function () {
+        console.log(this.yearFilter.value);
         var years = this.yearFilter.value;
-        if (years.split("-").length == 2) {
+        if (years.split("-").length == 2 && years.trim().length == 9) {
+            console.log("year range");
             this.minYear = years.split("-")[0].trim();
             this.maxYear = years.split("-")[1].trim();
         }
         else if (years.split(",").length > 1) {
-            this.minYear = 1695;
-            this.maxYear = 1832;
+            console.log("year list");
+            // this.minYear = years.split(",")[0];
+            // this.maxYear = 1832;
         }
         else if (years.length == 4) {
+            console.log("single year");
             this.minYear = parseInt(years.trim());
             this.maxYear = parseInt(years.trim());
         }
         else {
-            this.minYear = 1695;
-            this.maxYear = 1832;
+            console.log("no match for year format");
+            // this.minYear = 1695;
+            // this.maxYear = 1832;
         }
     };
     /////////////////////////////////////////*********END BUTTONS AND SLIDERS FUNCTIONS***********/////////////////////////////////////////
@@ -3694,21 +5326,15 @@ var VizComponent = /** @class */ (function () {
     //https://timdeschryver.dev/blog/google-maps-as-an-angular-component
     //called at the start I think and sets up all the filter subscriptions
     VizComponent.prototype.setUpFilters = function () {
-        // this.addMarkers();
         var _this = this;
-        //this.electionsMeta
-        //	console.log("data",this.electionsMeta.elections);
-        this.dataSource = new _angular_material_table__WEBPACK_IMPORTED_MODULE_15__["MatTableDataSource"](this.electionsMeta.elections);
+        this.dataSource = new _angular_material_table__WEBPACK_IMPORTED_MODULE_13__["MatTableDataSource"](this.electionsMeta.elections);
         this.dataSource.paginator = this.paginator;
-        this.getUniqueConstituencies();
-        this.getUniqueMarkers();
-        this.setBoroughCentreMarkers();
+        this.getUniqueElections();
         this.uniqueElections.forEach(function (element) {
             var thisDynamicMarker = new google.maps.Marker();
-            //console.log(element.lat,typeof(element.lat))
             thisDynamicMarker.setPosition({ lat: +element.lat, lng: +element.lng });
             var image = {
-                url: '/assets/images/dot.svg',
+                url: './assets/images/dot.svg',
                 size: new google.maps.Size(20, 20),
                 origin: new google.maps.Point(0, 0),
                 anchor: new google.maps.Point(10, 10),
@@ -3723,47 +5349,107 @@ var VizComponent = /** @class */ (function () {
             thisDynamicMarker.setOptions(options);
             _this.dynamicMarkers.push(thisDynamicMarker);
         });
-        var dialogRef = this.dialog.open(_dialogue_dialogue_component__WEBPACK_IMPORTED_MODULE_19__["DialogueComponent"], {
+        var dialogRef = this.dialog.open(_dialogue_dialogue_component__WEBPACK_IMPORTED_MODULE_17__["DialogueComponent"], {
             data: this.uniqueElections,
         });
         dialogRef.afterClosed().subscribe(function (data) { return _this.setSearchFromDialogue(data); });
         this.constituencyFilter.valueChanges.subscribe(function (constituencyFilterValue) {
-            console.log("change in consituencyfilter");
+            //	console.log("change in consituencyfilter");
             _this.filteredValues['constituency'] = constituencyFilterValue;
             _this.dataSource.filter = JSON.stringify(_this.filteredValues);
+            _this.onDataSubscriptionChange();
         });
         this.monthFilter.valueChanges.subscribe(function (monthFilterValue) {
             _this.filteredValues['election_month'] = monthFilterValue;
             _this.dataSource.filter = JSON.stringify(_this.filteredValues);
+            _this.onDataSubscriptionChange();
         });
         this.yearFilter.valueChanges.subscribe(function (yearFilterValue) {
             var yearRange = yearFilterValue.split(",");
             _this.setDateSlider();
             _this.filteredValues['election_year'] = yearFilterValue;
             _this.dataSource.filter = JSON.stringify(_this.filteredValues);
-            // this.updateMarkers();
+            _this.onDataSubscriptionChange();
         });
         this.countyFilter.valueChanges.subscribe(function (countyFilterValue) {
             _this.filteredValues['countyboroughuniv'] = countyFilterValue;
             _this.dataSource.filter = JSON.stringify(_this.filteredValues);
+            _this.onDataSubscriptionChange();
         });
         this.contestedFilter.valueChanges.subscribe(function (contestedFilterValue) {
             _this.filteredValues['contested'] = contestedFilterValue;
             _this.dataSource.filter = JSON.stringify(_this.filteredValues);
+            _this.onDataSubscriptionChange();
         });
         this.byElectionGeneralFilter.valueChanges.subscribe(function (byElectionGeneralFilterValue) {
             _this.filteredValues['by_election_general'] = byElectionGeneralFilterValue;
             _this.dataSource.filter = JSON.stringify(_this.filteredValues);
+            _this.onDataSubscriptionChange();
+        });
+        this.byElectionCauseFilter.valueChanges.subscribe(function (byElectionCauseFilterValue) {
+            _this.filteredValues['by_election_cause'] = byElectionCauseFilterValue;
+            _this.dataSource.filter = JSON.stringify(_this.filteredValues);
+            _this.onDataSubscriptionChange();
         });
         this.franchiseFilter.valueChanges.subscribe(function (franchiseFilterValue) {
             _this.filteredValues['franchise_type'] = franchiseFilterValue;
             _this.dataSource.filter = JSON.stringify(_this.filteredValues);
+            _this.onDataSubscriptionChange();
         });
         this.pollBookCodeFilter.valueChanges.subscribe(function (pollBookCodeFilterValue) {
             _this.filteredValues['pollbook_id'] = pollBookCodeFilterValue;
             _this.dataSource.filter = JSON.stringify(_this.filteredValues);
+            _this.onDataSubscriptionChange();
         });
         this.dataSource.filterPredicate = this.customFilterPredicate();
+    };
+    VizComponent.prototype.onDataSubscriptionChange = function () {
+        var _this = this;
+        this.electionsPerYear = this.getElectionsPerYear();
+        this.updateIsActive(this.getFilteredConstituencies());
+        this.setMapStyle();
+        this.dynamicMarkers.forEach(function (delement) {
+            var inData = false;
+            var cbu = "";
+            _this.dataSource.filteredData.forEach(function (felement) {
+                if (delement.getTitle().trim() == felement.constituency.trim()) {
+                    inData = true;
+                    cbu = felement.countyboroughuniv;
+                }
+            });
+            if (inData) {
+                var image = {
+                    url: './assets/images/smarker.svg',
+                    size: new google.maps.Size(71, 71),
+                    origin: new google.maps.Point(0, 0),
+                    anchor: new google.maps.Point(17, 34),
+                    scaledSize: new google.maps.Size(25, 25)
+                };
+                var options = {
+                    icon: image,
+                    title: delement.getTitle(),
+                    visible: cbu == "C" ? false : true,
+                    label: { text: delement.getTitle(), color: "white" }
+                };
+                delement.setOptions(options);
+            }
+            else {
+                var image = {
+                    url: './assets/images/dot.svg',
+                    size: new google.maps.Size(20, 20),
+                    origin: new google.maps.Point(0, 0),
+                    anchor: new google.maps.Point(10, 10),
+                    scaledSize: new google.maps.Size(20, 20)
+                };
+                var options = {
+                    icon: image,
+                    title: delement.getTitle(),
+                    visible: cbu == "C" ? false : true,
+                    label: { text: delement.getTitle(), color: "white" }
+                };
+                delement.setOptions(options);
+            }
+        });
     };
     //what it sound slike, set all the searches to blank and include all daata
     VizComponent.prototype.clearSearch = function () {
@@ -3772,19 +5458,15 @@ var VizComponent = /** @class */ (function () {
         this.countyFilter.setValue("");
         this.contestedFilter.setValue("");
         this.byElectionGeneralFilter.setValue("");
+        this.byElectionCauseFilter.setValue("");
         this.franchiseFilter.setValue("");
         this.pollBookCodeFilter.setValue("");
         this.constituencyFilter.setValue("");
-        //		 this.constituencyFilter.setValue(this.constituencyFilter.value+",Yorkshire");
         this.dataSource.filter = JSON.stringify(this.filteredValues);
     };
+    //returns a list of unique consituency names
     VizComponent.prototype.getFilteredConstituencies = function () {
-        var filteredConstituencies = [];
-        for (var i = 0; i < this.dataSource.filteredData.length; i++) {
-            if (!filteredConstituencies.includes(this.dataSource.filteredData[i].constituency)) {
-                filteredConstituencies.push(this.dataSource.filteredData[i].constituency);
-            }
-        }
+        var filteredConstituencies = this.dataSource.filteredData.map(function (item) { return item.constituency; }).filter(function (value, index, self) { return self.indexOf(value) === index; });
         return filteredConstituencies;
     };
     VizComponent.prototype.customFilterPredicate = function () {
@@ -3792,9 +5474,7 @@ var VizComponent = /** @class */ (function () {
         this.pollBooks = null;
         var myFilterPredicate = function (data, filter) {
             var globalMatch = !_this.globalFilter;
-            //  console.log('globalMatch',globalMatch);
             if (_this.globalFilter) {
-                // search all text fields
                 globalMatch = data.election_month.toString().trim().toLowerCase().indexOf(_this.globalFilter.toLowerCase()) !== -1
                     || data.constituency.toString().trim().toLowerCase().indexOf(_this.globalFilter.toLowerCase()) !== -1
                     || data.countyboroughuniv.toString().trim().toLowerCase().indexOf(_this.globalFilter.toLowerCase()) !== -1
@@ -3805,18 +5485,15 @@ var VizComponent = /** @class */ (function () {
                 return;
             }
             var searchString = JSON.parse(filter);
-            // return data.constituency.toString().trim().indexOf(searchString.constituency) !== -1  
             return _this.hasConstituencies(data, searchString)
                 && _this.hasMonths(data, searchString)
                 && _this.hasYears(data, searchString)
-                // && data.election_month.toString().trim().toLowerCase().indexOf(searchString.election_month.toLowerCase()) !== -1 
-                // && data.Year.toString().trim().toLowerCase().indexOf(searchString.Year.toLowerCase()) !== -1 
                 && data.countyboroughuniv.toString().trim().toLowerCase().indexOf(searchString.countyboroughuniv.toLowerCase()) !== -1
                 && data.contested.toString().trim().toLowerCase().indexOf(searchString.contested.toLowerCase()) !== -1
                 && data.by_election_general.toString().trim().toLowerCase().indexOf(searchString.by_election_general.toLowerCase()) !== -1
+                && data.by_election_cause.toString().trim().toLowerCase().indexOf(searchString.by_election_cause.toLowerCase()) !== -1
                 && data.contested.toString().trim().toLowerCase().indexOf(searchString.contested.toLowerCase()) !== -1
                 && data.franchise_type.toString().trim().toLowerCase().indexOf(searchString.franchise_type.toLowerCase()) !== -1
-                // && data.pollbook_id.toString().trim().toLowerCase().indexOf(searchString.pollbook_id.toLowerCase()) !== -1 
                 && _this.getHasPollBooksFilter(data.pollbook_id.toString().trim().toLowerCase(), searchString.pollbook_id.toLowerCase()) !== -1;
         };
         return myFilterPredicate;
@@ -3909,7 +5586,6 @@ var VizComponent = /** @class */ (function () {
                 return this.yearFilter.value.toString().trim().indexOf(year) !== -1;
             }
         }
-        //	if(year>=lowYear && year<=this.currentMaxValue) return 0;
         return -1;
     };
     VizComponent.prototype.getHasPollBooksFilter = function (pollbook_id, searchTerm) {
@@ -3934,7 +5610,7 @@ var VizComponent = /** @class */ (function () {
     ///////////////////////////////////****END FILTER FUNCTIONS****///////////////////////////////////
     ///////////////////////////////////****START DIALOGUE FUNCTIONS****///////////////////////////////////
     VizComponent.prototype.openPollBookDialog = function () {
-        var dialogRef = this.dialog.open(_pollbook_dialogue_pollbook_dialogue_component__WEBPACK_IMPORTED_MODULE_18__["PollbookDialogueComponent"], {
+        var dialogRef = this.dialog.open(_pollbook_dialogue_pollbook_dialogue_component__WEBPACK_IMPORTED_MODULE_16__["PollbookDialogueComponent"], {
             data: this.pollBooks,
         });
     };
@@ -3942,7 +5618,7 @@ var VizComponent = /** @class */ (function () {
     VizComponent.prototype.openFormDialogue = function () {
         var _this = this;
         this.clearSearch();
-        var dialogRef = this.dialog.open(_dialogue_dialogue_component__WEBPACK_IMPORTED_MODULE_19__["DialogueComponent"], {
+        var dialogRef = this.dialog.open(_dialogue_dialogue_component__WEBPACK_IMPORTED_MODULE_17__["DialogueComponent"], {
             data: this.uniqueElections,
         });
         dialogRef.afterClosed().subscribe(function (data) { return _this.setSearchFromDialogue(data); });
@@ -4265,15 +5941,15 @@ var VizComponent = /** @class */ (function () {
         ];
         return styles;
     };
-    VizComponent.ɵfac = function VizComponent_Factory(t) { return new (t || VizComponent)(_angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵdirectiveInject"](_angular_material_dialog__WEBPACK_IMPORTED_MODULE_17__["MatDialog"]), _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵdirectiveInject"](_angular_core__WEBPACK_IMPORTED_MODULE_0__["KeyValueDiffers"]), _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵdirectiveInject"](_angular_core__WEBPACK_IMPORTED_MODULE_0__["ApplicationRef"]), _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵdirectiveInject"](_centroids_service__WEBPACK_IMPORTED_MODULE_5__["CentroidsService"]), _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵdirectiveInject"](_borough_service__WEBPACK_IMPORTED_MODULE_4__["BoroughService"]), _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵdirectiveInject"](_angular_common_http__WEBPACK_IMPORTED_MODULE_12__["HttpClient"]), _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵdirectiveInject"](_hop_service__WEBPACK_IMPORTED_MODULE_7__["HOPService"]), _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵdirectiveInject"](_download_poll_books_service__WEBPACK_IMPORTED_MODULE_9__["DownloadPollBooksService"]), _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵdirectiveInject"](_download_service__WEBPACK_IMPORTED_MODULE_8__["DownloadService"]), _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵdirectiveInject"](_get_elections_service__WEBPACK_IMPORTED_MODULE_3__["GetElectionsService"]), _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵdirectiveInject"](_geojson_service_service__WEBPACK_IMPORTED_MODULE_2__["GeojsonServiceService"]), _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵdirectiveInject"](_get_poll_books_service__WEBPACK_IMPORTED_MODULE_6__["GetPollBooksService"]), _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵdirectiveInject"](_get_lat_lon_service__WEBPACK_IMPORTED_MODULE_10__["GetLatLonService"])); };
+    VizComponent.ɵfac = function VizComponent_Factory(t) { return new (t || VizComponent)(_angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵdirectiveInject"](_angular_material_dialog__WEBPACK_IMPORTED_MODULE_15__["MatDialog"]), _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵdirectiveInject"](_angular_core__WEBPACK_IMPORTED_MODULE_0__["KeyValueDiffers"]), _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵdirectiveInject"](_angular_core__WEBPACK_IMPORTED_MODULE_0__["ApplicationRef"]), _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵdirectiveInject"](_centroids_service__WEBPACK_IMPORTED_MODULE_5__["CentroidsService"]), _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵdirectiveInject"](_borough_service__WEBPACK_IMPORTED_MODULE_4__["BoroughService"]), _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵdirectiveInject"](_angular_common_http__WEBPACK_IMPORTED_MODULE_11__["HttpClient"]), _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵdirectiveInject"](_hop_service__WEBPACK_IMPORTED_MODULE_7__["HOPService"]), _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵdirectiveInject"](_download_poll_books_service__WEBPACK_IMPORTED_MODULE_9__["DownloadPollBooksService"]), _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵdirectiveInject"](_download_service__WEBPACK_IMPORTED_MODULE_8__["DownloadService"]), _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵdirectiveInject"](_get_elections_service__WEBPACK_IMPORTED_MODULE_3__["GetElectionsService"]), _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵdirectiveInject"](_geojson_service_service__WEBPACK_IMPORTED_MODULE_2__["GeojsonServiceService"]), _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵdirectiveInject"](_get_poll_books_service__WEBPACK_IMPORTED_MODULE_6__["GetPollBooksService"]), _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵdirectiveInject"](_get_lat_lon_service__WEBPACK_IMPORTED_MODULE_10__["GetLatLonService"])); };
     VizComponent.ɵcmp = _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵdefineComponent"]({ type: VizComponent, selectors: [["ng-component"]], viewQuery: function VizComponent_Query(rf, ctx) { if (rf & 1) {
-            _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵviewQuery"](_angular_material_paginator__WEBPACK_IMPORTED_MODULE_14__["MatPaginator"], 3);
+            _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵviewQuery"](_angular_material_paginator__WEBPACK_IMPORTED_MODULE_12__["MatPaginator"], 3);
             _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵviewQuery"](_angular_google_maps__WEBPACK_IMPORTED_MODULE_1__["GoogleMap"], 1);
         } if (rf & 2) {
             var _t = void 0;
             _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵqueryRefresh"](_t = _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵloadQuery"]()) && (ctx.paginator = _t.first);
             _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵqueryRefresh"](_t = _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵloadQuery"]()) && (ctx.map = _t.first);
-        } }, features: [_angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵNgOnChangesFeature"]], decls: 27, vars: 19, consts: [["id", "container"], [1, "map-container"], ["height", "1000px", "width", "100%", 3, "zoom", "center", "options", "tilesloaded", "zoomChanged", "idle"], [3, "position", "options", 4, "ngFor", "ngForOf"], ["mwlResizable", "", "id", "info_window", 3, "enableGhostResize", "ngStyle", "resizeEdges", "resizeEnd", "resizeStart"], ["style", "color:white; margin-top: 2%", 4, "ngIf"], ["id", "graph_container", 2, "width", "100%", "position", "relative"], ["gcontainer", ""], ["style", "width:100%; background-color: #ffd740;  ", "class", "bar", 3, "matTooltip", "ngStyle", 4, "ngFor", "ngForOf"], ["style", "width:100%;background-color: #0db9f0;   ", "class", "bar", 3, "matTooltip", "ngStyle", 4, "ngFor", "ngForOf"], ["mat-raised-button", "", 1, "button_option", 3, "click"], [2, "z-index", "20000", 3, "value", "highValue", "options", "valueChange", "highValueChange", "userChange"], ["mat-table", "", "class", "mat-elevation-z8 mytable style-3 stay_inline", 3, "dataSource", 4, "ngIf"], ["id", "pagin", "showFirstLastButtons", "", 3, "pageSize", "pageSizeOptions"], ["mat-icon-button", "", "aria-label", "download our data", 3, "click"], ["id", "HOPtext", 4, "ngIf"], [3, "position", "options"], [2, "color", "white", "margin-top", "2%"], [2, "color", "#ffd740"], [2, "color", "#0db9f0"], [1, "bar", 2, "width", "100%", "background-color", "#ffd740", 3, "matTooltip", "ngStyle"], [1, "bar", 2, "width", "100%", "background-color", "#0db9f0", 3, "matTooltip", "ngStyle"], ["mat-table", "", 1, "mat-elevation-z8", "mytable", "style-3", "stay_inline", 3, "dataSource"], ["matColumnDef", "constituency"], ["mat-header-cell", "", 4, "matHeaderCellDef"], ["mat-cell", "", 4, "matCellDef"], ["matColumnDef", "election_month"], ["matColumnDef", "election_year"], ["matColumnDef", "countyboroughuniv"], ["matColumnDef", "contested"], ["matColumnDef", "by_election_general"], ["matColumnDef", "franchise_type"], ["matColumnDef", "pollbook_id"], ["mat-cell", "", "id", "pollBookCell", 3, "click", 4, "matCellDef"], ["mat-header-row", "", 4, "matHeaderRowDef"], ["mat-row", "", 4, "matRowDef", "matRowDefColumns"], ["mat-header-cell", ""], ["matTooltip", "click to find out more about consitituencies", 3, "matTooltipPosition"], ["matInput", "", "placeholder", "....", 1, "form-field", 3, "formControl"], ["mat-cell", ""], ["matTooltip", "click to find out more about months", 3, "matTooltipPosition"], ["matTooltip", "click to find out more about years", 3, "matTooltipPosition"], ["matTooltip", "click to find out more about the different kinds of elections", 3, "matTooltipPosition"], [3, "formControl", "value", "valueChange"], ["value", ""], ["value", "C"], ["value", "B"], ["value", "U"], ["matTooltip", "Not all elections were fought. click to find out more", 3, "matTooltipPosition"], ["value", "Y"], ["value", "N"], ["matTooltip", "general elections happened every 4 years. click to find out more about them", 3, "matTooltipPosition"], ["value", "G"], ["matTooltip", "click to find out more about franchiseTypes", 3, "matTooltipPosition"], ["matTooltip", "poll books contain important details of voters. click to find out more", 3, "matTooltipPosition"], ["mat-cell", "", "id", "pollBookCell", 3, "click"], ["mat-header-row", ""], ["mat-row", ""], ["id", "HOPtext"]], template: function VizComponent_Template(rf, ctx) { if (rf & 1) {
+        } }, features: [_angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵNgOnChangesFeature"]], decls: 26, vars: 18, consts: [["id", "container"], [1, "map-container"], ["height", "1000px", "width", "100%", 3, "options", "zoom", "center", "tilesloaded", "zoomChanged", "idle"], [3, "position", "options", 4, "ngFor", "ngForOf"], ["mwlResizable", "", "id", "info_window", 3, "enableGhostResize", "ngStyle", "resizeEdges", "resizeEnd", "resizeStart"], ["style", "color:white; margin-top: 2%", 4, "ngIf"], ["id", "graph_container", 2, "width", "100%", "position", "relative"], ["gcontainer", ""], ["style", "width:100%; background-color: #ffd740;  ", "class", "bar", 3, "matTooltip", "ngStyle", 4, "ngFor", "ngForOf"], ["style", "width:100%;background-color: #0db9f0;   ", "class", "bar", 3, "matTooltip", "ngStyle", 4, "ngFor", "ngForOf"], ["mat-raised-button", "", 1, "button_option", 3, "click"], ["mat-table", "", "class", "mat-elevation-z8 mytable style-3 stay_inline", 3, "dataSource", 4, "ngIf"], ["id", "pagin", "showFirstLastButtons", "", 3, "pageSize", "pageSizeOptions"], ["mat-icon-button", "", "aria-label", "download our data", 3, "click"], ["id", "HOPtext", 4, "ngIf"], [3, "position", "options"], [2, "color", "white", "margin-top", "2%"], [2, "color", "#ffd740"], [2, "color", "#0db9f0"], [1, "bar", 2, "width", "100%", "background-color", "#ffd740", 3, "matTooltip", "ngStyle"], [1, "bar", 2, "width", "100%", "background-color", "#0db9f0", 3, "matTooltip", "ngStyle"], ["mat-table", "", 1, "mat-elevation-z8", "mytable", "style-3", "stay_inline", 3, "dataSource"], ["matColumnDef", "constituency"], ["mat-header-cell", "", 4, "matHeaderCellDef"], ["mat-cell", "", 4, "matCellDef"], ["matColumnDef", "election_month"], ["matColumnDef", "election_year"], ["matColumnDef", "countyboroughuniv"], ["matColumnDef", "contested"], ["matColumnDef", "by_election_general"], ["matColumnDef", "by_election_cause"], ["matColumnDef", "franchise_type"], ["matColumnDef", "pollbook_id"], ["mat-cell", "", "id", "pollBookCell", 3, "click", 4, "matCellDef"], ["mat-header-row", "", 4, "matHeaderRowDef"], ["mat-row", "", 4, "matRowDef", "matRowDefColumns"], ["mat-header-cell", ""], ["matTooltip", "click to find out more about consitituencies", 3, "matTooltipPosition"], ["matInput", "", "placeholder", "....", 1, "form-field", 3, "formControl"], ["mat-cell", ""], ["matTooltip", "click to find out more about months", 3, "matTooltipPosition"], ["matTooltip", "click to find out more about years", 3, "matTooltipPosition"], ["matTooltip", "click to find out more about the different kinds of elections", 3, "matTooltipPosition"], [3, "formControl", "value", "valueChange"], ["value", ""], ["value", "C"], ["value", "B"], ["value", "U"], ["matTooltip", "Not all elections were fought. click to find out more", 3, "matTooltipPosition"], ["value", "Y"], ["value", "N"], ["matTooltip", "general elections happened every 4 years. click to find out more about them", 3, "matTooltipPosition"], ["value", "G"], ["matTooltip", "click to find out more about franchiseTypes", 3, "matTooltipPosition"], ["matTooltip", "poll books contain important details of voters. click to find out more", 3, "matTooltipPosition"], ["mat-cell", "", "id", "pollBookCell", 3, "click"], ["mat-header-row", ""], ["mat-row", ""], ["id", "HOPtext"]], template: function VizComponent_Template(rf, ctx) { if (rf & 1) {
             _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementStart"](0, "div", 0);
             _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementStart"](1, "div", 1);
             _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementStart"](2, "google-map", 2);
@@ -4304,27 +5980,24 @@ var VizComponent = /** @class */ (function () {
             _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementEnd"]();
             _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelement"](18, "br");
             _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelement"](19, "br");
-            _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementStart"](20, "ng5-slider", 11);
-            _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵlistener"]("valueChange", function VizComponent_Template_ng5_slider_valueChange_20_listener($event) { return ctx.minYear = $event; })("highValueChange", function VizComponent_Template_ng5_slider_highValueChange_20_listener($event) { return ctx.maxYear = $event; })("userChange", function VizComponent_Template_ng5_slider_userChange_20_listener($event) { return ctx.sliderChange($event); });
-            _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementEnd"]();
-            _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵtemplate"](21, VizComponent_table_21_Template, 27, 3, "table", 12);
-            _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelement"](22, "mat-paginator", 13);
-            _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementStart"](23, "button", 14);
-            _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵlistener"]("click", function VizComponent_Template_button_click_23_listener() { return ctx.download(); });
-            _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementStart"](24, "mat-icon");
-            _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵtext"](25, "cloud_download");
+            _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵtemplate"](20, VizComponent_table_20_Template, 30, 3, "table", 11);
+            _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelement"](21, "mat-paginator", 12);
+            _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementStart"](22, "button", 13);
+            _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵlistener"]("click", function VizComponent_Template_button_click_22_listener() { return ctx.download(); });
+            _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementStart"](23, "mat-icon");
+            _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵtext"](24, "cloud_download");
             _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementEnd"]();
             _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementEnd"]();
-            _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵtemplate"](26, VizComponent_div_26_Template, 2, 2, "div", 15);
+            _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵtemplate"](25, VizComponent_div_25_Template, 2, 2, "div", 14);
             _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementEnd"]();
             _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementEnd"]();
         } if (rf & 2) {
             _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵadvance"](2);
-            _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵproperty"]("zoom", ctx.zoom)("center", ctx.center)("options", ctx.options);
+            _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵproperty"]("options", _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵpureFunction1"](14, _c1, ctx.mystyles))("zoom", ctx.zoom)("center", ctx.center);
             _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵadvance"](1);
             _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵproperty"]("ngForOf", ctx.dynamicMarkers);
             _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵadvance"](1);
-            _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵproperty"]("enableGhostResize", true)("ngStyle", ctx.style)("resizeEdges", _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵpureFunction0"](17, _c1));
+            _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵproperty"]("enableGhostResize", true)("ngStyle", ctx.style)("resizeEdges", _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵpureFunction0"](16, _c2));
             _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵadvance"](1);
             _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵproperty"]("ngIf", ctx.dataSource.filteredData);
             _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵadvance"](4);
@@ -4332,14 +6005,12 @@ var VizComponent = /** @class */ (function () {
             _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵadvance"](1);
             _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵproperty"]("ngForOf", ctx.electionsPerYear);
             _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵadvance"](10);
-            _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵproperty"]("value", ctx.minYear)("highValue", ctx.maxYear)("options", ctx.sliderOptions);
-            _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵadvance"](1);
             _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵproperty"]("ngIf", ctx.dataSource);
             _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵadvance"](1);
-            _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵproperty"]("pageSize", 10)("pageSizeOptions", _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵpureFunction0"](18, _c2));
+            _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵproperty"]("pageSize", 10)("pageSizeOptions", _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵpureFunction0"](17, _c3));
             _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵadvance"](4);
             _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵproperty"]("ngIf", ctx.HOPtext);
-        } }, directives: [_angular_google_maps__WEBPACK_IMPORTED_MODULE_1__["GoogleMap"], _angular_common__WEBPACK_IMPORTED_MODULE_20__["NgForOf"], angular_resizable_element__WEBPACK_IMPORTED_MODULE_21__["ResizableDirective"], _angular_common__WEBPACK_IMPORTED_MODULE_20__["NgStyle"], _angular_common__WEBPACK_IMPORTED_MODULE_20__["NgIf"], _angular_material_button__WEBPACK_IMPORTED_MODULE_22__["MatButton"], ng5_slider__WEBPACK_IMPORTED_MODULE_11__["ɵa"], _angular_material_paginator__WEBPACK_IMPORTED_MODULE_14__["MatPaginator"], _angular_material_icon__WEBPACK_IMPORTED_MODULE_23__["MatIcon"], _angular_google_maps__WEBPACK_IMPORTED_MODULE_1__["MapMarker"], _angular_material_tooltip__WEBPACK_IMPORTED_MODULE_24__["MatTooltip"], _angular_material_table__WEBPACK_IMPORTED_MODULE_15__["MatTable"], _angular_material_table__WEBPACK_IMPORTED_MODULE_15__["MatColumnDef"], _angular_material_table__WEBPACK_IMPORTED_MODULE_15__["MatHeaderCellDef"], _angular_material_table__WEBPACK_IMPORTED_MODULE_15__["MatCellDef"], _angular_material_table__WEBPACK_IMPORTED_MODULE_15__["MatHeaderRowDef"], _angular_material_table__WEBPACK_IMPORTED_MODULE_15__["MatRowDef"], _angular_material_table__WEBPACK_IMPORTED_MODULE_15__["MatHeaderCell"], _angular_material_form_field__WEBPACK_IMPORTED_MODULE_25__["MatFormField"], _angular_material_input__WEBPACK_IMPORTED_MODULE_26__["MatInput"], _angular_forms__WEBPACK_IMPORTED_MODULE_16__["DefaultValueAccessor"], _angular_forms__WEBPACK_IMPORTED_MODULE_16__["NgControlStatus"], _angular_forms__WEBPACK_IMPORTED_MODULE_16__["FormControlDirective"], _angular_material_table__WEBPACK_IMPORTED_MODULE_15__["MatCell"], _angular_material_select__WEBPACK_IMPORTED_MODULE_27__["MatSelect"], _angular_material_core__WEBPACK_IMPORTED_MODULE_28__["MatOption"], _angular_material_table__WEBPACK_IMPORTED_MODULE_15__["MatHeaderRow"], _angular_material_table__WEBPACK_IMPORTED_MODULE_15__["MatRow"]], styles: ["@import url(\"https://fonts.googleapis.com/icon?family=Material+Icons\");\nhtml[_ngcontent-%COMP%] {\n  background-color: black;\n}\n*[_ngcontent-%COMP%] {\n  font-family: Lato;\n}\n.material-icons[_ngcontent-%COMP%] {\n  font-family: \"Material Icons\" !important;\n}\nstrong[_ngcontent-%COMP%] {\n  \n}\nmwlResizable[_ngcontent-%COMP%] {\n  box-sizing: border-box;\n}\n#container[_ngcontent-%COMP%] {\n  padding-left: 30px;\n  padding-right: 30px;\n}\nmat-radio-group[_ngcontent-%COMP%] {\n  color: white;\n}\nh1[_ngcontent-%COMP%] {\n  position: relative;\n  top: 10px;\n  padding: 2%;\n  background-color: rgba(0, 0, 0, 0.5);\n  color: white;\n  z-index: 10;\n  font-family: \"Cabin\", sans-serif;\n}\n.button_option[_ngcontent-%COMP%] {\n  margin-right: 10px;\n  margin-top: 10px;\n  font-family: \"Catamaran\";\n}\n.map-container[_ngcontent-%COMP%] {\n  \n  position: absolute;\n  top: 0;\n  bottom: 0;\n  right: 0;\n  left: 0;\n  \n  background-color: black;\n}\n#graph_container[_ngcontent-%COMP%] {\n  \n  height: 60px;\n  \n  margin-bottom: 1%;\n  border-radius: 10px 0px 0px 0px;\n  background-color: rgba(0, 0, 0, 0.3);\n}\n.bar[_ngcontent-%COMP%] {\n  \n  bottom: 0px;\n  position: absolute;\n  border-radius: 10px 0px 0px 0px;\n  transition: height 1s;\n}\nagm-map[_ngcontent-%COMP%] {\n  \n  position: relative;\n  height: 100%;\n  width: 100%;\n}\n#info_window[_ngcontent-%COMP%] {\n  position: fixed;\n  top: 6%;\n  min-width: 200px;\n  width: 40%;\n  height: 80%;\n  padding: 18px;\n  background-color: rgba(255, 255, 255, 0.4);\n  \n  right: 3%;\n  z-index: 1000;\n  border-radius: 10px;\n  overflow-x: hidden;\n  overflow-y: scroll;\n}\n#slider-container[_ngcontent-%COMP%] {\n  border-radius: 10px;\n  \n}\n  .ng5-slider .ng5-slider-bubble {\n  \n  color: white !important;\n}\n.stay_inline[_ngcontent-%COMP%] {\n  margin: 0px, auto;\n  display: inline-block;\n  vertical-align: top;\n}\n#clear_map[_ngcontent-%COMP%] {\n  border-radius: 10px 0px 0px 0px !important;\n  border: 0px;\n  margin-bottom: 1%;\n  padding: 5px;\n  float: right;\n}\ntable[_ngcontent-%COMP%] {\n  border-radius: 10px 0px 0px 0px;\n  width: 100%;\n  padding-top: 10px;\n  margin-bottom: 2%;\n  overflow: scroll;\n  \n  \n}\n#pagin[_ngcontent-%COMP%] {\n  border-radius: 10px 0px 0px 0px;\n}\n.mat-form-field[_ngcontent-%COMP%] {\n  width: 80px;\n}\n.mat-column-Year[_ngcontent-%COMP%] {\n  flex: 0 0 100px;\n}\n.mat-row[_ngcontent-%COMP%] {\n  height: auto;\n}\n#pollBookCell[_ngcontent-%COMP%]:hover {\n  background-color: #c8c8c8;\n}\n.mat-cell[_ngcontent-%COMP%] {\n  padding-right: 10px;\n  padding-bottom: 10px;\n  padding-top: 5px;\n}\n#HOPtext[_ngcontent-%COMP%] {\n  margin-top: 2%;\n  padding: 10px;\n  font-family: Lato;\n  font-size: 14px;\n  color: rgba(0, 0, 0, 0.87);\n  background-color: white;\n  \n  width: 97%;\n  margin-bottom: 2%;\n  \n  border-radius: 10px 0px 0px 0px;\n}\nsection[_ngcontent-%COMP%] {\n  display: table;\n  margin: 8px;\n}\n.style-3[_ngcontent-%COMP%]::-webkit-scrollbar-track {\n  -webkit-box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.63);\n  background-color: orange;\n}\n.style-3[_ngcontent-%COMP%]::-webkit-scrollbar {\n  width: 6px;\n  background-color: orange;\n}\n.style-3[_ngcontent-%COMP%]::-webkit-scrollbar-thumb {\n  background-color: orange;\n}\n.example-label[_ngcontent-%COMP%] {\n  display: table-cell;\n  font-size: 14px;\n  margin-left: 8px;\n  width: 120px;\n}\n.example-button-row[_ngcontent-%COMP%] {\n  display: table-cell;\n}\n.example-button-row[_ngcontent-%COMP%]   button[_ngcontent-%COMP%] {\n  display: table-cell;\n  margin-right: 8px;\n}\n.example-flex-container[_ngcontent-%COMP%] {\n  display: flex;\n  justify-content: space-between;\n  width: 480px;\n}\n.example-button-container[_ngcontent-%COMP%] {\n  display: flex;\n  justify-content: center;\n  width: 120px;\n}\n/*# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW9uIjozLCJzb3VyY2VzIjpbIi4uLy4uLy4uL3Zpei5jb21wb25lbnQuc2NzcyJdLCJuYW1lcyI6W10sIm1hcHBpbmdzIjoiQUFBUSxzRUFBQTtBQUNSO0VBQ0ksdUJBQUE7QUFDSjtBQUVBO0VBQ0ksaUJBQUE7QUFDSjtBQUVBO0VBQ0ksd0NBQUE7QUFDSjtBQUVBO0VBQ0ksNEJBQUE7QUFDSjtBQUVBO0VBQ0ksc0JBQUE7QUFDSjtBQUVBO0VBQ0ksa0JBQUE7RUFDQSxtQkFBQTtBQUNKO0FBRUE7RUFDSSxZQUFBO0FBQ0o7QUFFQTtFQUNJLGtCQUFBO0VBQ0EsU0FBQTtFQUNBLFdBQUE7RUFDQSxvQ0FBQTtFQUNBLFlBQUE7RUFDQSxXQUFBO0VBQ0EsZ0NBQUE7QUFDSjtBQUVBO0VBQ0ksa0JBQUE7RUFDQSxnQkFBQTtFQUNBLHdCQUFBO0FBQ0o7QUFFQTtFQUNJLHFCQUFBO0VBQ0Esa0JBQUE7RUFDQSxNQUFBO0VBQ0EsU0FBQTtFQUNBLFFBQUE7RUFDQSxPQUFBO0VBQ0Esb0JBQUE7RUFDQSx1QkFBQTtBQUNKO0FBRUE7RUFDSSxzQkFBQTtFQUNBLFlBQUE7RUFDQSxrQkFBQTtFQUNBLGlCQUFBO0VBQ0EsK0JBQUE7RUFDQSxvQ0FBQTtBQUNKO0FBRUE7RUFDSSxhQUFBO0VBQ0EsV0FBQTtFQUNBLGtCQUFBO0VBQ0EsK0JBQUE7RUFDQSxxQkFBQTtBQUNKO0FBRUE7RUFDSTs7OztvQkFBQTtFQUtBLGtCQUFBO0VBQ0EsWUFBQTtFQUNBLFdBQUE7QUFDSjtBQUVBO0VBQ0ksZUFBQTtFQUNBLE9BQUE7RUFDQSxnQkFBQTtFQUNBLFVBQUE7RUFDQSxXQUFBO0VBQ0EsYUFBQTtFQUNBLDBDQUFBO0VBQ0EsMEJBQUE7RUFDQSxTQUFBO0VBQ0EsYUFBQTtFQUNBLG1CQUFBO0VBQ0Esa0JBQUE7RUFDQSxrQkFBQTtBQUNKO0FBRUE7RUFDSSxtQkFBQTtFQUNBLHFCQUFBO0FBQ0o7QUFHSTtFQUNJLHFCQUFBO0VBQ0EsdUJBQUE7QUFBUjtBQUlBO0VBQ0ksaUJBQUE7RUFDQSxxQkFBQTtFQUNBLG1CQUFBO0FBREo7QUFJQTtFQUNJLDBDQUFBO0VBQ0EsV0FBQTtFQUNBLGlCQUFBO0VBQ0EsWUFBQTtFQUNBLFlBQUE7QUFESjtBQUlBO0VBQ0ksK0JBQUE7RUFDQSxXQUFBO0VBQ0EsaUJBQUE7RUFDQSxpQkFBQTtFQUNBLGdCQUFBO0VBQ0Esc0JBQUE7RUFDQTs7O3VCQUFBO0FBRUo7QUFJQTtFQUNJLCtCQUFBO0FBREo7QUFJQTtFQUNJLFdBQUE7QUFESjtBQUlBO0VBQ0ksZUFBQTtBQURKO0FBSUE7RUFDSSxZQUFBO0FBREo7QUFJQTtFQUNJLHlCQUFBO0FBREo7QUFJQTtFQUNJLG1CQUFBO0VBQ0Esb0JBQUE7RUFDQSxnQkFBQTtBQURKO0FBSUE7RUFDSSxjQUFBO0VBQ0EsYUFBQTtFQUNBLGlCQUFBO0VBQ0EsZUFBQTtFQUNBLDBCQUFBO0VBQ0EsdUJBQUE7RUFDQSx5Q0FBQTtFQUNBLFVBQUE7RUFDQSxpQkFBQTtFQUNBLG9CQUFBO0VBQ0EsK0JBQUE7QUFESjtBQUlBO0VBQ0ksY0FBQTtFQUNBLFdBQUE7QUFESjtBQUlBO0VBQ0kscURBQUE7RUFDQSx3QkFBQTtBQURKO0FBSUE7RUFDSSxVQUFBO0VBQ0Esd0JBQUE7QUFESjtBQUlBO0VBQ0ksd0JBQUE7QUFESjtBQUlBO0VBQ0ksbUJBQUE7RUFDQSxlQUFBO0VBQ0EsZ0JBQUE7RUFDQSxZQUFBO0FBREo7QUFJQTtFQUNJLG1CQUFBO0FBREo7QUFJQTtFQUNJLG1CQUFBO0VBQ0EsaUJBQUE7QUFESjtBQUlBO0VBQ0ksYUFBQTtFQUNBLDhCQUFBO0VBQ0EsWUFBQTtBQURKO0FBSUE7RUFDSSxhQUFBO0VBQ0EsdUJBQUE7RUFDQSxZQUFBO0FBREoiLCJmaWxlIjoidml6LmNvbXBvbmVudC5zY3NzIiwic291cmNlc0NvbnRlbnQiOlsiQGltcG9ydCB1cmwoXCJodHRwczovL2ZvbnRzLmdvb2dsZWFwaXMuY29tL2ljb24/ZmFtaWx5PU1hdGVyaWFsK0ljb25zXCIpO1xuaHRtbCB7XG4gICAgYmFja2dyb3VuZC1jb2xvcjogYmxhY2s7XG59XG5cbioge1xuICAgIGZvbnQtZmFtaWx5OiBMYXRvO1xufVxuXG4ubWF0ZXJpYWwtaWNvbnMge1xuICAgIGZvbnQtZmFtaWx5OiAnTWF0ZXJpYWwgSWNvbnMnICFpbXBvcnRhbnQ7XG59XG5cbnN0cm9uZyB7XG4gICAgLypjb2xvcjojZmZkNzQwICFpbXBvcnRhbnQ7Ki9cbn1cblxubXdsUmVzaXphYmxlIHtcbiAgICBib3gtc2l6aW5nOiBib3JkZXItYm94OyAvLyByZXF1aXJlZCBmb3IgdGhlIGVuYWJsZUdob3N0UmVzaXplIG9wdGlvbiB0byB3b3JrXG59XG5cbiNjb250YWluZXIge1xuICAgIHBhZGRpbmctbGVmdDogMzBweDtcbiAgICBwYWRkaW5nLXJpZ2h0OiAzMHB4O1xufVxuXG5tYXQtcmFkaW8tZ3JvdXAge1xuICAgIGNvbG9yOiB3aGl0ZTtcbn1cblxuaDEge1xuICAgIHBvc2l0aW9uOiByZWxhdGl2ZTtcbiAgICB0b3A6IDEwcHg7XG4gICAgcGFkZGluZzogMiU7XG4gICAgYmFja2dyb3VuZC1jb2xvcjogcmdiYSgwLCAwLCAwLCAwLjUpO1xuICAgIGNvbG9yOiB3aGl0ZTtcbiAgICB6LWluZGV4OiAxMDtcbiAgICBmb250LWZhbWlseTogJ0NhYmluJywgc2Fucy1zZXJpZjtcbn1cblxuLmJ1dHRvbl9vcHRpb24ge1xuICAgIG1hcmdpbi1yaWdodDogMTBweDtcbiAgICBtYXJnaW4tdG9wOiAxMHB4O1xuICAgIGZvbnQtZmFtaWx5OiAnQ2F0YW1hcmFuJztcbn1cblxuLm1hcC1jb250YWluZXIge1xuICAgIC8qcG9zaXRpb246cmVsYXRpdmU7Ki9cbiAgICBwb3NpdGlvbjogYWJzb2x1dGU7XG4gICAgdG9wOiAwO1xuICAgIGJvdHRvbTogMDtcbiAgICByaWdodDogMDtcbiAgICBsZWZ0OiAwO1xuICAgIC8qYm9yZGVyLWNvbG9yOnJlZDsqL1xuICAgIGJhY2tncm91bmQtY29sb3I6IGJsYWNrO1xufVxuXG4jZ3JhcGhfY29udGFpbmVyIHtcbiAgICAvKnBvc2l0aW9uOiByZWxhdGl2ZTsqL1xuICAgIGhlaWdodDogNjBweDtcbiAgICAvKm1hcmdpbi10b3A6IDElOyovXG4gICAgbWFyZ2luLWJvdHRvbTogMSU7XG4gICAgYm9yZGVyLXJhZGl1czogMTBweCAwcHggMHB4IDBweDtcbiAgICBiYWNrZ3JvdW5kLWNvbG9yOiByZ2JhKDAsIDAsIDAsIDAuMyk7XG59XG5cbi5iYXIge1xuICAgIC8qaGVpZ2h0OjIlOyovXG4gICAgYm90dG9tOiAwcHg7XG4gICAgcG9zaXRpb246IGFic29sdXRlO1xuICAgIGJvcmRlci1yYWRpdXM6IDEwcHggMHB4IDBweCAwcHg7XG4gICAgdHJhbnNpdGlvbjogaGVpZ2h0IDFzO1xufVxuXG5hZ20tbWFwIHtcbiAgICAvKiB3aWR0aDogMTAwJTtcbiAgICBoZWlnaHQ6IDEwMCU7XG4gICAgbWFyZ2luOiAwO1xuICAgIHBhZGRpbmc6IDA7XG4gICAgb3ZlcmZsb3c6IGhpZGRlbjsqL1xuICAgIHBvc2l0aW9uOiByZWxhdGl2ZTtcbiAgICBoZWlnaHQ6IDEwMCU7XG4gICAgd2lkdGg6IDEwMCU7XG59XG5cbiNpbmZvX3dpbmRvdyB7XG4gICAgcG9zaXRpb246IGZpeGVkO1xuICAgIHRvcDogNiU7XG4gICAgbWluLXdpZHRoOiAyMDBweDtcbiAgICB3aWR0aDogNDAlO1xuICAgIGhlaWdodDogODAlO1xuICAgIHBhZGRpbmc6IDE4cHg7XG4gICAgYmFja2dyb3VuZC1jb2xvcjogcmdiYSgyNTUsIDI1NSwgMjU1LCAwLjQpO1xuICAgIC8qYmFja2dyb3VuZC1jb2xvcjogcGluazsqL1xuICAgIHJpZ2h0OiAzJTtcbiAgICB6LWluZGV4OiAxMDAwO1xuICAgIGJvcmRlci1yYWRpdXM6IDEwcHg7XG4gICAgb3ZlcmZsb3cteDogaGlkZGVuO1xuICAgIG92ZXJmbG93LXk6IHNjcm9sbDtcbn1cblxuI3NsaWRlci1jb250YWluZXIge1xuICAgIGJvcmRlci1yYWRpdXM6IDEwcHg7XG4gICAgLyptYXJnaW4tYm90dG9tOiAyJTsqL1xufVxuXG4gOjpuZy1kZWVwIHtcbiAgICAubmc1LXNsaWRlciAubmc1LXNsaWRlci1idWJibGUge1xuICAgICAgICAvKmJhY2tncm91bmQ6IHdoaXRlOyovXG4gICAgICAgIGNvbG9yOiB3aGl0ZSAhaW1wb3J0YW50O1xuICAgIH1cbn1cblxuLnN0YXlfaW5saW5lIHtcbiAgICBtYXJnaW46IDBweCwgYXV0bztcbiAgICBkaXNwbGF5OiBpbmxpbmUtYmxvY2s7XG4gICAgdmVydGljYWwtYWxpZ246IHRvcDtcbn1cblxuI2NsZWFyX21hcCB7XG4gICAgYm9yZGVyLXJhZGl1czogMTBweCAwcHggMHB4IDBweCAhaW1wb3J0YW50O1xuICAgIGJvcmRlcjogMHB4O1xuICAgIG1hcmdpbi1ib3R0b206IDElO1xuICAgIHBhZGRpbmc6IDVweDtcbiAgICBmbG9hdDogcmlnaHQ7XG59XG5cbnRhYmxlIHtcbiAgICBib3JkZXItcmFkaXVzOiAxMHB4IDBweCAwcHggMHB4O1xuICAgIHdpZHRoOiAxMDAlO1xuICAgIHBhZGRpbmctdG9wOiAxMHB4O1xuICAgIG1hcmdpbi1ib3R0b206IDIlO1xuICAgIG92ZXJmbG93OiBzY3JvbGw7XG4gICAgLyp2aXNpYmlsaXR5OiBoaWRkZW47Ki9cbiAgICAvKiAgZGlzcGxheTpibG9jaztcbiAgd2lkdGg6IDQwJTtcbiAgcGFkZGluZzoxJTtcbiAgYm9yZGVyLXJhZGl1czogMTBweDsqL1xufVxuXG4jcGFnaW4ge1xuICAgIGJvcmRlci1yYWRpdXM6IDEwcHggMHB4IDBweCAwcHg7XG59XG5cbi5tYXQtZm9ybS1maWVsZCB7XG4gICAgd2lkdGg6IDgwcHg7XG59XG5cbi5tYXQtY29sdW1uLVllYXIge1xuICAgIGZsZXg6IDAgMCAxMDBweDtcbn1cblxuLm1hdC1yb3cge1xuICAgIGhlaWdodDogYXV0bztcbn1cblxuI3BvbGxCb29rQ2VsbDpob3ZlciB7XG4gICAgYmFja2dyb3VuZC1jb2xvcjogcmdiYSgyMDAsIDIwMCwgMjAwLCAxKTtcbn1cblxuLm1hdC1jZWxsIHtcbiAgICBwYWRkaW5nLXJpZ2h0OiAxMHB4O1xuICAgIHBhZGRpbmctYm90dG9tOiAxMHB4O1xuICAgIHBhZGRpbmctdG9wOiA1cHg7XG59XG5cbiNIT1B0ZXh0IHtcbiAgICBtYXJnaW4tdG9wOiAyJTtcbiAgICBwYWRkaW5nOiAxMHB4O1xuICAgIGZvbnQtZmFtaWx5OiBMYXRvO1xuICAgIGZvbnQtc2l6ZTogMTRweDtcbiAgICBjb2xvcjogcmdiYSgwLCAwLCAwLCAuODcpO1xuICAgIGJhY2tncm91bmQtY29sb3I6IHdoaXRlO1xuICAgIC8qVE9ETyBGSU5EIE91dCB3aHkgdGhpcyB3aWR0aCBpcyB3cm9uZyEqL1xuICAgIHdpZHRoOiA5NyU7XG4gICAgbWFyZ2luLWJvdHRvbTogMiU7XG4gICAgLypvdmVyZmxvdzogc2Nyb2xsOyovXG4gICAgYm9yZGVyLXJhZGl1czogMTBweCAwcHggMHB4IDBweDtcbn1cblxuc2VjdGlvbiB7XG4gICAgZGlzcGxheTogdGFibGU7XG4gICAgbWFyZ2luOiA4cHg7XG59XG5cbi5zdHlsZS0zOjotd2Via2l0LXNjcm9sbGJhci10cmFjayB7XG4gICAgLXdlYmtpdC1ib3gtc2hhZG93OiBpbnNldCAwIDAgNnB4IHJnYmEoMCwgMCwgMCwgMC42Myk7XG4gICAgYmFja2dyb3VuZC1jb2xvcjogb3JhbmdlO1xufVxuXG4uc3R5bGUtMzo6LXdlYmtpdC1zY3JvbGxiYXIge1xuICAgIHdpZHRoOiA2cHg7XG4gICAgYmFja2dyb3VuZC1jb2xvcjogb3JhbmdlO1xufVxuXG4uc3R5bGUtMzo6LXdlYmtpdC1zY3JvbGxiYXItdGh1bWIge1xuICAgIGJhY2tncm91bmQtY29sb3I6IG9yYW5nZTtcbn1cblxuLmV4YW1wbGUtbGFiZWwge1xuICAgIGRpc3BsYXk6IHRhYmxlLWNlbGw7XG4gICAgZm9udC1zaXplOiAxNHB4O1xuICAgIG1hcmdpbi1sZWZ0OiA4cHg7XG4gICAgd2lkdGg6IDEyMHB4O1xufVxuXG4uZXhhbXBsZS1idXR0b24tcm93IHtcbiAgICBkaXNwbGF5OiB0YWJsZS1jZWxsO1xufVxuXG4uZXhhbXBsZS1idXR0b24tcm93IGJ1dHRvbiB7XG4gICAgZGlzcGxheTogdGFibGUtY2VsbDtcbiAgICBtYXJnaW4tcmlnaHQ6IDhweDtcbn1cblxuLmV4YW1wbGUtZmxleC1jb250YWluZXIge1xuICAgIGRpc3BsYXk6IGZsZXg7XG4gICAganVzdGlmeS1jb250ZW50OiBzcGFjZS1iZXR3ZWVuO1xuICAgIHdpZHRoOiA0ODBweDtcbn1cblxuLmV4YW1wbGUtYnV0dG9uLWNvbnRhaW5lciB7XG4gICAgZGlzcGxheTogZmxleDtcbiAgICBqdXN0aWZ5LWNvbnRlbnQ6IGNlbnRlcjtcbiAgICB3aWR0aDogMTIwcHg7XG59Il19 */"] });
+        } }, directives: [_angular_google_maps__WEBPACK_IMPORTED_MODULE_1__["GoogleMap"], _angular_common__WEBPACK_IMPORTED_MODULE_18__["NgForOf"], angular_resizable_element__WEBPACK_IMPORTED_MODULE_19__["ResizableDirective"], _angular_common__WEBPACK_IMPORTED_MODULE_18__["NgStyle"], _angular_common__WEBPACK_IMPORTED_MODULE_18__["NgIf"], _angular_material_button__WEBPACK_IMPORTED_MODULE_20__["MatButton"], _angular_material_paginator__WEBPACK_IMPORTED_MODULE_12__["MatPaginator"], _angular_material_icon__WEBPACK_IMPORTED_MODULE_21__["MatIcon"], _angular_google_maps__WEBPACK_IMPORTED_MODULE_1__["MapMarker"], _angular_material_tooltip__WEBPACK_IMPORTED_MODULE_22__["MatTooltip"], _angular_material_table__WEBPACK_IMPORTED_MODULE_13__["MatTable"], _angular_material_table__WEBPACK_IMPORTED_MODULE_13__["MatColumnDef"], _angular_material_table__WEBPACK_IMPORTED_MODULE_13__["MatHeaderCellDef"], _angular_material_table__WEBPACK_IMPORTED_MODULE_13__["MatCellDef"], _angular_material_table__WEBPACK_IMPORTED_MODULE_13__["MatHeaderRowDef"], _angular_material_table__WEBPACK_IMPORTED_MODULE_13__["MatRowDef"], _angular_material_table__WEBPACK_IMPORTED_MODULE_13__["MatHeaderCell"], _angular_material_form_field__WEBPACK_IMPORTED_MODULE_23__["MatFormField"], _angular_material_input__WEBPACK_IMPORTED_MODULE_24__["MatInput"], _angular_forms__WEBPACK_IMPORTED_MODULE_14__["DefaultValueAccessor"], _angular_forms__WEBPACK_IMPORTED_MODULE_14__["NgControlStatus"], _angular_forms__WEBPACK_IMPORTED_MODULE_14__["FormControlDirective"], _angular_material_table__WEBPACK_IMPORTED_MODULE_13__["MatCell"], _angular_material_select__WEBPACK_IMPORTED_MODULE_25__["MatSelect"], _angular_material_core__WEBPACK_IMPORTED_MODULE_26__["MatOption"], _angular_material_table__WEBPACK_IMPORTED_MODULE_13__["MatHeaderRow"], _angular_material_table__WEBPACK_IMPORTED_MODULE_13__["MatRow"]], styles: ["@import url(\"https://fonts.googleapis.com/icon?family=Material+Icons\");\n\nhtml[_ngcontent-%COMP%] {\n  background-color: black;\n}\n\n*[_ngcontent-%COMP%] {\n  font-family: Lato;\n}\n\n.material-icons[_ngcontent-%COMP%] {\n  font-family: \"Material Icons\" !important;\n}\n\nstrong[_ngcontent-%COMP%] {\n  \n}\n\nmwlResizable[_ngcontent-%COMP%] {\n  box-sizing: border-box;\n}\n\n#container[_ngcontent-%COMP%] {\n  padding-left: 30px;\n  padding-right: 30px;\n}\n\nmat-radio-group[_ngcontent-%COMP%] {\n  color: white;\n}\n\nh1[_ngcontent-%COMP%] {\n  position: relative;\n  top: 10px;\n  padding: 2%;\n  background-color: rgba(0, 0, 0, 0.5);\n  color: white;\n  z-index: 10;\n  font-family: \"Cabin\", sans-serif;\n}\n\n.button_option[_ngcontent-%COMP%] {\n  margin-right: 10px;\n  margin-top: 10px;\n  font-family: \"Catamaran\";\n}\n\n.map-container[_ngcontent-%COMP%] {\n  \n  position: absolute;\n  top: 0;\n  bottom: 0;\n  right: 0;\n  left: 0;\n  \n  background-color: black;\n}\n\n#graph_container[_ngcontent-%COMP%] {\n  \n  height: 60px;\n  \n  margin-bottom: 1%;\n  border-radius: 10px 0px 0px 0px;\n  background-color: rgba(0, 0, 0, 0.3);\n}\n\n.bar[_ngcontent-%COMP%] {\n  \n  bottom: 0px;\n  position: absolute;\n  border-radius: 10px 0px 0px 0px;\n  transition: height 1s;\n}\n\nagm-map[_ngcontent-%COMP%] {\n  \n  position: relative;\n  height: 100%;\n  width: 100%;\n}\n\n#info_window[_ngcontent-%COMP%] {\n  position: fixed;\n  top: 6%;\n  min-width: 200px;\n  width: 40%;\n  height: 80%;\n  padding: 18px;\n  background-color: rgba(255, 255, 255, 0.4);\n  \n  right: 3%;\n  z-index: 1000;\n  border-radius: 10px;\n  overflow-x: hidden;\n  overflow-y: scroll;\n}\n\n#slider-container[_ngcontent-%COMP%] {\n  border-radius: 10px;\n  \n}\n\n  .ng5-slider .ng5-slider-bubble {\n  \n  color: white !important;\n}\n\n.stay_inline[_ngcontent-%COMP%] {\n  margin: 0px, auto;\n  display: inline-block;\n  vertical-align: top;\n}\n\n#clear_map[_ngcontent-%COMP%] {\n  border-radius: 10px 0px 0px 0px !important;\n  border: 0px;\n  margin-bottom: 1%;\n  padding: 5px;\n  float: right;\n}\n\ntable[_ngcontent-%COMP%] {\n  border-radius: 10px 0px 0px 0px;\n  width: 100%;\n  padding-top: 10px;\n  margin-bottom: 2%;\n  overflow: scroll;\n  \n  \n}\n\n#pagin[_ngcontent-%COMP%] {\n  border-radius: 10px 0px 0px 0px;\n}\n\n.mat-form-field[_ngcontent-%COMP%] {\n  width: 80px;\n}\n\n.mat-column-Year[_ngcontent-%COMP%] {\n  flex: 0 0 100px;\n}\n\n.mat-row[_ngcontent-%COMP%] {\n  height: auto;\n}\n\n#pollBookCell[_ngcontent-%COMP%]:hover {\n  background-color: #c8c8c8;\n}\n\n.mat-cell[_ngcontent-%COMP%] {\n  padding-right: 10px;\n  padding-bottom: 10px;\n  padding-top: 5px;\n}\n\n#HOPtext[_ngcontent-%COMP%] {\n  margin-top: 2%;\n  padding: 10px;\n  font-family: Lato;\n  font-size: 14px;\n  color: rgba(0, 0, 0, 0.87);\n  background-color: white;\n  \n  width: 97%;\n  margin-bottom: 2%;\n  \n  border-radius: 10px 0px 0px 0px;\n}\n\nsection[_ngcontent-%COMP%] {\n  display: table;\n  margin: 8px;\n}\n\n.style-3[_ngcontent-%COMP%]::-webkit-scrollbar-track {\n  -webkit-box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.63);\n  background-color: orange;\n}\n\n.style-3[_ngcontent-%COMP%]::-webkit-scrollbar {\n  width: 6px;\n  background-color: orange;\n}\n\n.style-3[_ngcontent-%COMP%]::-webkit-scrollbar-thumb {\n  background-color: orange;\n}\n\n.example-label[_ngcontent-%COMP%] {\n  display: table-cell;\n  font-size: 14px;\n  margin-left: 8px;\n  width: 120px;\n}\n\n.example-button-row[_ngcontent-%COMP%] {\n  display: table-cell;\n}\n\n.example-button-row[_ngcontent-%COMP%]   button[_ngcontent-%COMP%] {\n  display: table-cell;\n  margin-right: 8px;\n}\n\n.example-flex-container[_ngcontent-%COMP%] {\n  display: flex;\n  justify-content: space-between;\n  width: 480px;\n}\n\n.example-button-container[_ngcontent-%COMP%] {\n  display: flex;\n  justify-content: center;\n  width: 120px;\n}\n/*# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW9uIjozLCJzb3VyY2VzIjpbIi4uLy4uLy4uL3Zpei5jb21wb25lbnQuc2NzcyJdLCJuYW1lcyI6W10sIm1hcHBpbmdzIjoiQUFBUSxzRUFBQTs7QUFDUjtFQUNJLHVCQUFBO0FBQ0o7O0FBRUE7RUFDSSxpQkFBQTtBQUNKOztBQUVBO0VBQ0ksd0NBQUE7QUFDSjs7QUFFQTtFQUNJLDRCQUFBO0FBQ0o7O0FBRUE7RUFDSSxzQkFBQTtBQUNKOztBQUVBO0VBQ0ksa0JBQUE7RUFDQSxtQkFBQTtBQUNKOztBQUVBO0VBQ0ksWUFBQTtBQUNKOztBQUVBO0VBQ0ksa0JBQUE7RUFDQSxTQUFBO0VBQ0EsV0FBQTtFQUNBLG9DQUFBO0VBQ0EsWUFBQTtFQUNBLFdBQUE7RUFDQSxnQ0FBQTtBQUNKOztBQUVBO0VBQ0ksa0JBQUE7RUFDQSxnQkFBQTtFQUNBLHdCQUFBO0FBQ0o7O0FBRUE7RUFDSSxxQkFBQTtFQUNBLGtCQUFBO0VBQ0EsTUFBQTtFQUNBLFNBQUE7RUFDQSxRQUFBO0VBQ0EsT0FBQTtFQUNBLG9CQUFBO0VBQ0EsdUJBQUE7QUFDSjs7QUFFQTtFQUNJLHNCQUFBO0VBQ0EsWUFBQTtFQUNBLGtCQUFBO0VBQ0EsaUJBQUE7RUFDQSwrQkFBQTtFQUNBLG9DQUFBO0FBQ0o7O0FBRUE7RUFDSSxhQUFBO0VBQ0EsV0FBQTtFQUNBLGtCQUFBO0VBQ0EsK0JBQUE7RUFDQSxxQkFBQTtBQUNKOztBQUVBO0VBQ0k7Ozs7b0JBQUE7RUFLQSxrQkFBQTtFQUNBLFlBQUE7RUFDQSxXQUFBO0FBQ0o7O0FBRUE7RUFDSSxlQUFBO0VBQ0EsT0FBQTtFQUNBLGdCQUFBO0VBQ0EsVUFBQTtFQUNBLFdBQUE7RUFDQSxhQUFBO0VBQ0EsMENBQUE7RUFDQSwwQkFBQTtFQUNBLFNBQUE7RUFDQSxhQUFBO0VBQ0EsbUJBQUE7RUFDQSxrQkFBQTtFQUNBLGtCQUFBO0FBQ0o7O0FBRUE7RUFDSSxtQkFBQTtFQUNBLHFCQUFBO0FBQ0o7O0FBR0k7RUFDSSxxQkFBQTtFQUNBLHVCQUFBO0FBQVI7O0FBSUE7RUFDSSxpQkFBQTtFQUNBLHFCQUFBO0VBQ0EsbUJBQUE7QUFESjs7QUFJQTtFQUNJLDBDQUFBO0VBQ0EsV0FBQTtFQUNBLGlCQUFBO0VBQ0EsWUFBQTtFQUNBLFlBQUE7QUFESjs7QUFJQTtFQUNJLCtCQUFBO0VBQ0EsV0FBQTtFQUNBLGlCQUFBO0VBQ0EsaUJBQUE7RUFDQSxnQkFBQTtFQUNBLHNCQUFBO0VBQ0E7Ozt1QkFBQTtBQUVKOztBQUlBO0VBQ0ksK0JBQUE7QUFESjs7QUFJQTtFQUNJLFdBQUE7QUFESjs7QUFJQTtFQUNJLGVBQUE7QUFESjs7QUFJQTtFQUNJLFlBQUE7QUFESjs7QUFJQTtFQUNJLHlCQUFBO0FBREo7O0FBSUE7RUFDSSxtQkFBQTtFQUNBLG9CQUFBO0VBQ0EsZ0JBQUE7QUFESjs7QUFJQTtFQUNJLGNBQUE7RUFDQSxhQUFBO0VBQ0EsaUJBQUE7RUFDQSxlQUFBO0VBQ0EsMEJBQUE7RUFDQSx1QkFBQTtFQUNBLHlDQUFBO0VBQ0EsVUFBQTtFQUNBLGlCQUFBO0VBQ0Esb0JBQUE7RUFDQSwrQkFBQTtBQURKOztBQUlBO0VBQ0ksY0FBQTtFQUNBLFdBQUE7QUFESjs7QUFJQTtFQUNJLHFEQUFBO0VBQ0Esd0JBQUE7QUFESjs7QUFJQTtFQUNJLFVBQUE7RUFDQSx3QkFBQTtBQURKOztBQUlBO0VBQ0ksd0JBQUE7QUFESjs7QUFJQTtFQUNJLG1CQUFBO0VBQ0EsZUFBQTtFQUNBLGdCQUFBO0VBQ0EsWUFBQTtBQURKOztBQUlBO0VBQ0ksbUJBQUE7QUFESjs7QUFJQTtFQUNJLG1CQUFBO0VBQ0EsaUJBQUE7QUFESjs7QUFJQTtFQUNJLGFBQUE7RUFDQSw4QkFBQTtFQUNBLFlBQUE7QUFESjs7QUFJQTtFQUNJLGFBQUE7RUFDQSx1QkFBQTtFQUNBLFlBQUE7QUFESiIsImZpbGUiOiJ2aXouY29tcG9uZW50LnNjc3MiLCJzb3VyY2VzQ29udGVudCI6WyJAaW1wb3J0IHVybChcImh0dHBzOi8vZm9udHMuZ29vZ2xlYXBpcy5jb20vaWNvbj9mYW1pbHk9TWF0ZXJpYWwrSWNvbnNcIik7XG5odG1sIHtcbiAgICBiYWNrZ3JvdW5kLWNvbG9yOiBibGFjaztcbn1cblxuKiB7XG4gICAgZm9udC1mYW1pbHk6IExhdG87XG59XG5cbi5tYXRlcmlhbC1pY29ucyB7XG4gICAgZm9udC1mYW1pbHk6ICdNYXRlcmlhbCBJY29ucycgIWltcG9ydGFudDtcbn1cblxuc3Ryb25nIHtcbiAgICAvKmNvbG9yOiNmZmQ3NDAgIWltcG9ydGFudDsqL1xufVxuXG5td2xSZXNpemFibGUge1xuICAgIGJveC1zaXppbmc6IGJvcmRlci1ib3g7IC8vIHJlcXVpcmVkIGZvciB0aGUgZW5hYmxlR2hvc3RSZXNpemUgb3B0aW9uIHRvIHdvcmtcbn1cblxuI2NvbnRhaW5lciB7XG4gICAgcGFkZGluZy1sZWZ0OiAzMHB4O1xuICAgIHBhZGRpbmctcmlnaHQ6IDMwcHg7XG59XG5cbm1hdC1yYWRpby1ncm91cCB7XG4gICAgY29sb3I6IHdoaXRlO1xufVxuXG5oMSB7XG4gICAgcG9zaXRpb246IHJlbGF0aXZlO1xuICAgIHRvcDogMTBweDtcbiAgICBwYWRkaW5nOiAyJTtcbiAgICBiYWNrZ3JvdW5kLWNvbG9yOiByZ2JhKDAsIDAsIDAsIDAuNSk7XG4gICAgY29sb3I6IHdoaXRlO1xuICAgIHotaW5kZXg6IDEwO1xuICAgIGZvbnQtZmFtaWx5OiAnQ2FiaW4nLCBzYW5zLXNlcmlmO1xufVxuXG4uYnV0dG9uX29wdGlvbiB7XG4gICAgbWFyZ2luLXJpZ2h0OiAxMHB4O1xuICAgIG1hcmdpbi10b3A6IDEwcHg7XG4gICAgZm9udC1mYW1pbHk6ICdDYXRhbWFyYW4nO1xufVxuXG4ubWFwLWNvbnRhaW5lciB7XG4gICAgLypwb3NpdGlvbjpyZWxhdGl2ZTsqL1xuICAgIHBvc2l0aW9uOiBhYnNvbHV0ZTtcbiAgICB0b3A6IDA7XG4gICAgYm90dG9tOiAwO1xuICAgIHJpZ2h0OiAwO1xuICAgIGxlZnQ6IDA7XG4gICAgLypib3JkZXItY29sb3I6cmVkOyovXG4gICAgYmFja2dyb3VuZC1jb2xvcjogYmxhY2s7XG59XG5cbiNncmFwaF9jb250YWluZXIge1xuICAgIC8qcG9zaXRpb246IHJlbGF0aXZlOyovXG4gICAgaGVpZ2h0OiA2MHB4O1xuICAgIC8qbWFyZ2luLXRvcDogMSU7Ki9cbiAgICBtYXJnaW4tYm90dG9tOiAxJTtcbiAgICBib3JkZXItcmFkaXVzOiAxMHB4IDBweCAwcHggMHB4O1xuICAgIGJhY2tncm91bmQtY29sb3I6IHJnYmEoMCwgMCwgMCwgMC4zKTtcbn1cblxuLmJhciB7XG4gICAgLypoZWlnaHQ6MiU7Ki9cbiAgICBib3R0b206IDBweDtcbiAgICBwb3NpdGlvbjogYWJzb2x1dGU7XG4gICAgYm9yZGVyLXJhZGl1czogMTBweCAwcHggMHB4IDBweDtcbiAgICB0cmFuc2l0aW9uOiBoZWlnaHQgMXM7XG59XG5cbmFnbS1tYXAge1xuICAgIC8qIHdpZHRoOiAxMDAlO1xuICAgIGhlaWdodDogMTAwJTtcbiAgICBtYXJnaW46IDA7XG4gICAgcGFkZGluZzogMDtcbiAgICBvdmVyZmxvdzogaGlkZGVuOyovXG4gICAgcG9zaXRpb246IHJlbGF0aXZlO1xuICAgIGhlaWdodDogMTAwJTtcbiAgICB3aWR0aDogMTAwJTtcbn1cblxuI2luZm9fd2luZG93IHtcbiAgICBwb3NpdGlvbjogZml4ZWQ7XG4gICAgdG9wOiA2JTtcbiAgICBtaW4td2lkdGg6IDIwMHB4O1xuICAgIHdpZHRoOiA0MCU7XG4gICAgaGVpZ2h0OiA4MCU7XG4gICAgcGFkZGluZzogMThweDtcbiAgICBiYWNrZ3JvdW5kLWNvbG9yOiByZ2JhKDI1NSwgMjU1LCAyNTUsIDAuNCk7XG4gICAgLypiYWNrZ3JvdW5kLWNvbG9yOiBwaW5rOyovXG4gICAgcmlnaHQ6IDMlO1xuICAgIHotaW5kZXg6IDEwMDA7XG4gICAgYm9yZGVyLXJhZGl1czogMTBweDtcbiAgICBvdmVyZmxvdy14OiBoaWRkZW47XG4gICAgb3ZlcmZsb3cteTogc2Nyb2xsO1xufVxuXG4jc2xpZGVyLWNvbnRhaW5lciB7XG4gICAgYm9yZGVyLXJhZGl1czogMTBweDtcbiAgICAvKm1hcmdpbi1ib3R0b206IDIlOyovXG59XG5cbiA6Om5nLWRlZXAge1xuICAgIC5uZzUtc2xpZGVyIC5uZzUtc2xpZGVyLWJ1YmJsZSB7XG4gICAgICAgIC8qYmFja2dyb3VuZDogd2hpdGU7Ki9cbiAgICAgICAgY29sb3I6IHdoaXRlICFpbXBvcnRhbnQ7XG4gICAgfVxufVxuXG4uc3RheV9pbmxpbmUge1xuICAgIG1hcmdpbjogMHB4LCBhdXRvO1xuICAgIGRpc3BsYXk6IGlubGluZS1ibG9jaztcbiAgICB2ZXJ0aWNhbC1hbGlnbjogdG9wO1xufVxuXG4jY2xlYXJfbWFwIHtcbiAgICBib3JkZXItcmFkaXVzOiAxMHB4IDBweCAwcHggMHB4ICFpbXBvcnRhbnQ7XG4gICAgYm9yZGVyOiAwcHg7XG4gICAgbWFyZ2luLWJvdHRvbTogMSU7XG4gICAgcGFkZGluZzogNXB4O1xuICAgIGZsb2F0OiByaWdodDtcbn1cblxudGFibGUge1xuICAgIGJvcmRlci1yYWRpdXM6IDEwcHggMHB4IDBweCAwcHg7XG4gICAgd2lkdGg6IDEwMCU7XG4gICAgcGFkZGluZy10b3A6IDEwcHg7XG4gICAgbWFyZ2luLWJvdHRvbTogMiU7XG4gICAgb3ZlcmZsb3c6IHNjcm9sbDtcbiAgICAvKnZpc2liaWxpdHk6IGhpZGRlbjsqL1xuICAgIC8qICBkaXNwbGF5OmJsb2NrO1xuICB3aWR0aDogNDAlO1xuICBwYWRkaW5nOjElO1xuICBib3JkZXItcmFkaXVzOiAxMHB4OyovXG59XG5cbiNwYWdpbiB7XG4gICAgYm9yZGVyLXJhZGl1czogMTBweCAwcHggMHB4IDBweDtcbn1cblxuLm1hdC1mb3JtLWZpZWxkIHtcbiAgICB3aWR0aDogODBweDtcbn1cblxuLm1hdC1jb2x1bW4tWWVhciB7XG4gICAgZmxleDogMCAwIDEwMHB4O1xufVxuXG4ubWF0LXJvdyB7XG4gICAgaGVpZ2h0OiBhdXRvO1xufVxuXG4jcG9sbEJvb2tDZWxsOmhvdmVyIHtcbiAgICBiYWNrZ3JvdW5kLWNvbG9yOiByZ2JhKDIwMCwgMjAwLCAyMDAsIDEpO1xufVxuXG4ubWF0LWNlbGwge1xuICAgIHBhZGRpbmctcmlnaHQ6IDEwcHg7XG4gICAgcGFkZGluZy1ib3R0b206IDEwcHg7XG4gICAgcGFkZGluZy10b3A6IDVweDtcbn1cblxuI0hPUHRleHQge1xuICAgIG1hcmdpbi10b3A6IDIlO1xuICAgIHBhZGRpbmc6IDEwcHg7XG4gICAgZm9udC1mYW1pbHk6IExhdG87XG4gICAgZm9udC1zaXplOiAxNHB4O1xuICAgIGNvbG9yOiByZ2JhKDAsIDAsIDAsIC44Nyk7XG4gICAgYmFja2dyb3VuZC1jb2xvcjogd2hpdGU7XG4gICAgLypUT0RPIEZJTkQgT3V0IHdoeSB0aGlzIHdpZHRoIGlzIHdyb25nISovXG4gICAgd2lkdGg6IDk3JTtcbiAgICBtYXJnaW4tYm90dG9tOiAyJTtcbiAgICAvKm92ZXJmbG93OiBzY3JvbGw7Ki9cbiAgICBib3JkZXItcmFkaXVzOiAxMHB4IDBweCAwcHggMHB4O1xufVxuXG5zZWN0aW9uIHtcbiAgICBkaXNwbGF5OiB0YWJsZTtcbiAgICBtYXJnaW46IDhweDtcbn1cblxuLnN0eWxlLTM6Oi13ZWJraXQtc2Nyb2xsYmFyLXRyYWNrIHtcbiAgICAtd2Via2l0LWJveC1zaGFkb3c6IGluc2V0IDAgMCA2cHggcmdiYSgwLCAwLCAwLCAwLjYzKTtcbiAgICBiYWNrZ3JvdW5kLWNvbG9yOiBvcmFuZ2U7XG59XG5cbi5zdHlsZS0zOjotd2Via2l0LXNjcm9sbGJhciB7XG4gICAgd2lkdGg6IDZweDtcbiAgICBiYWNrZ3JvdW5kLWNvbG9yOiBvcmFuZ2U7XG59XG5cbi5zdHlsZS0zOjotd2Via2l0LXNjcm9sbGJhci10aHVtYiB7XG4gICAgYmFja2dyb3VuZC1jb2xvcjogb3JhbmdlO1xufVxuXG4uZXhhbXBsZS1sYWJlbCB7XG4gICAgZGlzcGxheTogdGFibGUtY2VsbDtcbiAgICBmb250LXNpemU6IDE0cHg7XG4gICAgbWFyZ2luLWxlZnQ6IDhweDtcbiAgICB3aWR0aDogMTIwcHg7XG59XG5cbi5leGFtcGxlLWJ1dHRvbi1yb3cge1xuICAgIGRpc3BsYXk6IHRhYmxlLWNlbGw7XG59XG5cbi5leGFtcGxlLWJ1dHRvbi1yb3cgYnV0dG9uIHtcbiAgICBkaXNwbGF5OiB0YWJsZS1jZWxsO1xuICAgIG1hcmdpbi1yaWdodDogOHB4O1xufVxuXG4uZXhhbXBsZS1mbGV4LWNvbnRhaW5lciB7XG4gICAgZGlzcGxheTogZmxleDtcbiAgICBqdXN0aWZ5LWNvbnRlbnQ6IHNwYWNlLWJldHdlZW47XG4gICAgd2lkdGg6IDQ4MHB4O1xufVxuXG4uZXhhbXBsZS1idXR0b24tY29udGFpbmVyIHtcbiAgICBkaXNwbGF5OiBmbGV4O1xuICAgIGp1c3RpZnktY29udGVudDogY2VudGVyO1xuICAgIHdpZHRoOiAxMjBweDtcbn0iXX0= */"] });
     return VizComponent;
 }());
 
@@ -4378,8 +6049,14 @@ var ApiComponent = /** @class */ (function () {
         });
     };
     ApiComponent.ɵfac = function ApiComponent_Factory(t) { return new (t || ApiComponent)(); };
-    ApiComponent.ɵcmp = _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵdefineComponent"]({ type: ApiComponent, selectors: [["app-api"]], decls: 1, vars: 0, consts: [["id", "swagger-ui"]], template: function ApiComponent_Template(rf, ctx) { if (rf & 1) {
-            _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵelement"](0, "div", 0);
+    ApiComponent.ɵcmp = _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵdefineComponent"]({ type: ApiComponent, selectors: [["app-api"]], decls: 4, vars: 0, consts: [[1, "text-gray-400", "body-font", "bg-gray-900"], [1, "container", "px-5", "py-24", "mx-auto"], [1, "flex", "flex-col", "text-center", "w-full", "mb-20"], ["id", "swagger-ui", 1, "lg:w-2/3", "mx-auto", "leading-relaxed", "text-base"]], template: function ApiComponent_Template(rf, ctx) { if (rf & 1) {
+            _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵelementStart"](0, "section", 0);
+            _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵelementStart"](1, "div", 1);
+            _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵelementStart"](2, "div", 2);
+            _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵelement"](3, "div", 3);
+            _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵelementEnd"]();
+            _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵelementEnd"]();
+            _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵelementEnd"]();
         } }, styles: ["\n/*# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW9uIjozLCJzb3VyY2VzIjpbXSwibmFtZXMiOltdLCJtYXBwaW5ncyI6IiIsImZpbGUiOiJhcGkuY29tcG9uZW50LnNjc3MifQ== */"] });
     return ApiComponent;
 }());
@@ -4399,11 +6076,14 @@ var ApiComponent = /** @class */ (function () {
 __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _angular_platform_browser__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @angular/platform-browser */ "jhN1");
 /* harmony import */ var _polyfills__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./polyfills */ "hN/g");
-/* harmony import */ var _app_app_module__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./app/app.module */ "ZAI4");
+/* harmony import */ var hammerjs__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! hammerjs */ "yLV6");
+/* harmony import */ var hammerjs__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(hammerjs__WEBPACK_IMPORTED_MODULE_2__);
+/* harmony import */ var _app_app_module__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./app/app.module */ "ZAI4");
 
 
 
-_angular_platform_browser__WEBPACK_IMPORTED_MODULE_0__["platformBrowser"]().bootstrapModule(_app_app_module__WEBPACK_IMPORTED_MODULE_2__["AppModule"]).then(function (ref) {
+
+_angular_platform_browser__WEBPACK_IMPORTED_MODULE_0__["platformBrowser"]().bootstrapModule(_app_app_module__WEBPACK_IMPORTED_MODULE_3__["AppModule"]).then(function (ref) {
     // Ensure Angular destroys itself on hot reloads.
     if (window['ngRef']) {
         window['ngRef'].destroy();

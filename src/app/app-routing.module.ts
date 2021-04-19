@@ -11,7 +11,7 @@ import { TableComponent } from './table/table.component';
 import { ElectionsMapComponent } from './elections-map/elections-map.component';
 
 const routes: Routes = [
-{ path: '', redirectTo: '/viz', pathMatch: 'full' },
+{ path: '', redirectTo: '/about', pathMatch: 'full' },
   { path: 'about', component: AboutComponent },
   { path: 'viz', component: VizComponent },
   { path: 'team', component: TeamComponent },
