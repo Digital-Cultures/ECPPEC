@@ -1,4 +1,4 @@
-import { ElementRef, ApplicationRef, Component, Directive, OnInit, OnDestroy, Output, EventEmitter, OnChanges, ViewChild } from '@angular/core';
+import { ElementRef, ApplicationRef, Component, Directive, Inject, OnInit, OnDestroy, Output, EventEmitter, OnChanges, ViewChild } from '@angular/core';
 import { EChartsOption } from 'echarts';
 import { HttpParams, HttpClient } from '@angular/common/http';
 // import 'rxjs/add/operator/map';
@@ -8,12 +8,10 @@ import { Injectable } from '@angular/core';
 import { DatasourceService } from '../datasource.service';
 import { TableComponent} from '../table/table.component';
 import {mapStyles} from '../mapStyles';// import { FormControl } from '@angular/forms';
-// import * as cloneDeep from 'lodash/cloneDeep';
-// import { DoCheck, KeyValueDiffers, KeyValueChangeRecord } from '@angular/core';
+import {MatDialog, MatDialogRef, MAT_DIALOG_DATA} from '@angular/material/dialog';
 
-// import { FilterObj } from  '../viz/viz.component';
-// import { Elections } from  '../viz/viz.component';
-// import { Election } from  '../viz/viz.component';
+
+import { DialogueComponent } from '../dialogue/dialogue.component';
 
 import { of } from 'rxjs';
 @Component({
@@ -23,18 +21,19 @@ import { of } from 'rxjs';
 })
 export class ElectionsMapComponent implements OnInit {
 
-  constructor(private datasourceService: DatasourceService) { }
+  constructor(private datasourceService: DatasourceService, public dialog: MatDialog) { }
  
 
   ngOnInit(): void {
-  }
-  mapReady(){
+    const dialogRef = this.dialog.open(DialogueComponent);
+  //   const dialogRef = this.dialog.open(DialogueComponent,{
+  //     data: this.datasourceService.getUniqueElections(),
+  //  });
+
+		dialogRef.afterClosed().subscribe(
+			data => this.datasourceService.setSearchFromDialogue(data)
+			);
 
   }
-  mapZoomChanged(){
-
-  }
-  mapIdle(){
-
-  }
+  
 }

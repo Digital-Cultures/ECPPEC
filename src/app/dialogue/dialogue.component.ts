@@ -7,6 +7,7 @@ import {Observable} from 'rxjs';
 import {map, startWith} from 'rxjs/operators';
 import {MAT_DIALOG_DATA} from '@angular/material/dialog';
 // import { EPERM } from 'constants';
+import { DatasourceService } from '../datasource.service';
 
 @Component({
 	selector: 'app-dialogue',
@@ -17,7 +18,7 @@ import {MAT_DIALOG_DATA} from '@angular/material/dialog';
 export class DialogueComponent implements OnInit {
 //	constructor(private downloadPollBooksService: DownloadPollBooksService, @Inject(MAT_DIALOG_DATA) public data: any) { }
 
-	constructor(private dialogRef: MatDialogRef<DialogueComponent>, @Inject(MAT_DIALOG_DATA) public data: any) { }
+	constructor(private datasourceService: DatasourceService, private dialogRef: MatDialogRef<DialogueComponent>, @Inject(MAT_DIALOG_DATA) public data: any) { }
 	filteredValues = {
 		Month: '', Constituency: '',Year: '', CountyBoroughUniv: '', Contested: '',ByElectionGeneral:'',PollBookCode:''
 
@@ -38,9 +39,18 @@ export class DialogueComponent implements OnInit {
 	byElectionGeneralFilter = new FormControl();
 	pollBookCodeFilter = new FormControl();
 	yearChooser: String = "single";
+	ready:boolean = false;
 	ngOnInit() {
-		
-		this.constituencyOptions = this.getConstituencyNames(this.data).sort((a, b) => a > b ? 1 : a === b ? 0 : -1);
+		this.datasourceService.ready.subscribe(value => {this.gotData(value)});
+   
+	
+	}
+	gotData(value){
+		if(value){
+			this.ready  =true;
+		var uniqueElections = this.datasourceService.returnUniqueElections();
+		console.log("uniqueElections",uniqueElections);
+		this.constituencyOptions = this.getConstituencyNames(uniqueElections).sort((a, b) => a > b ? 1 : a === b ? 0 : -1);
 		
 		this.filteredConstituencyOptions = this.constituencyFilter.valueChanges
 		.pipe(
@@ -55,10 +65,11 @@ export class DialogueComponent implements OnInit {
 		  map(value => this._filter(value))
 		);
 			
-			this.constituencyOptions = this.getFilteredConstituencyNames(this.data,countyFilterValue.substring(0,1)).sort((a, b) => a > b ? 1 : a === b ? 0 : -1);
+			this.constituencyOptions = this.getFilteredConstituencyNames(this.datasourceService.returnUniqueElections(),countyFilterValue.substring(0,1)).sort((a, b) => a > b ? 1 : a === b ? 0 : -1);
 			
 
 		});
+	}
 	}
 	consituencyFieldClicked(){
 		// console.log("clicked con");

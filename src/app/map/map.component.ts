@@ -40,11 +40,17 @@ export class MapComponent implements OnInit {
    this.datasourceService.pollBookCodeFilter.valueChanges.subscribe(() => this.dataChange("pollBookCodeFilter"));
 
   }
-  dataChange(value){
-    
-  
+  dataChange(val){
 
+  }
+  dataUpdate(value){
+    
+	// setTimeout(()=>{                           //<<<---using ()=> syntax
+		
+  
+	// console.log("data update in map componenet", this.datasourceService.getFilteredConstituencies());
   this.datasourceService.electionsPerYear = this.datasourceService.getElectionsPerYear();
+  var doubleCheck = this.datasourceService.getFilteredConstituencies();
   this.updateIsActive(this.datasourceService.getFilteredConstituencies());
   this.setMapStyle();
 
@@ -98,13 +104,14 @@ export class MapComponent implements OnInit {
   }
 });
 
-
 }
 
   gotData(value){
     if(value){
-      console.log("map data ready",this.datasourceService.uniqueElections);
-      // this.datasourceService.getUniqueElections();
+		this.datasourceService.dataUpdate.subscribe(() => this.dataUpdate(value)
+		);
+       this.datasourceService.getUniqueElections();
+	   console.log("map data ready",this.datasourceService.uniqueElections);
 this.datasourceService.uniqueElections.forEach(element => {
     var thisDynamicMarker = new google.maps.Marker();
     

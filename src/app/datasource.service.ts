@@ -1,4 +1,6 @@
-import { EventEmitter, Injectable, Output, OnInit } from '@angular/core';
+import { EventEmitter, Injectable, Output, Input, OnChanges, OnInit, ApplicationRef } from '@angular/core';
+import { DoCheck, KeyValueDiffers, KeyValueChangeRecord } from '@angular/core';
+
 import { MatPaginator } from '@angular/material/paginator';
 import { MatTableDataSource } from '@angular/material/table';
 import { MatFormFieldControl } from '@angular/material/form-field';
@@ -10,12 +12,18 @@ import { GetElectionsService } from './get-elections.service';
 import { BehaviorSubject, Observable, of, Subscription } from 'rxjs';
 import { switchMap ,delay, timeout, map} from 'rxjs/operators';
 import express, {Request, Response} from 'express';
+
 @Injectable({
   providedIn: 'root'
 })
-export class DatasourceService {
 
-  constructor(private http: HttpClient, private getElectionsService: GetElectionsService) { }
+export class DatasourceService implements OnChanges {
+	private _differ: any;
+  constructor(private _differs: KeyValueDiffers, private http: HttpClient, private getElectionsService: GetElectionsService, private appRef: ApplicationRef) { 
+	 this._differ = _differs.find({}).create();
+  }
+  private dataChanged: BehaviorSubject<boolean> = new BehaviorSubject(false);
+  
   	filteredValues = {
 		election_month: '', constituency: '', election_year: '', countyboroughuniv: '', contested: '', by_election_general: '', by_election_cause: '' ,franchise_type: '',pollbook_id: ''
 
@@ -24,6 +32,7 @@ export class DatasourceService {
 	electionsPerYear: any[] = [];
 
 	dataReady: Observable<any>;
+	
 	dataReadySubscription: Subscription;
 	pollBooksMeta: PollBookResponse;
 	electionsMeta: Elections;
@@ -39,17 +48,36 @@ export class DatasourceService {
 	franchiseFilter = new FormControl();
 	pollBookCodeFilter = new FormControl();
 	globalFilter = '';
-	dataSource = new MatTableDataSource<Election>();
+	@Input() public dataSource = new MatTableDataSource<Election>();
 	
 	public ready= new BehaviorSubject(false);
+	public dataUpdate = new BehaviorSubject(false);
 	ngOnInit() {
 
 // 	}
 //   init(){
 	
   }
-  onDataSubscriptionChange(){
+  ngDoCheck() {
+	var datObj = {};
+	if (this.dataSource.filter.length > 0) {
 
+		datObj = JSON.parse(this.dataSource.filter);
+	}
+	const change = this._differ.diff(datObj);
+	
+	if (change) {
+		console.log("data change.///////////////////////////////////////////");
+	}
+}
+  ngOnChanges(changes) {
+	
+	
+}
+
+  onDataSubscriptionChange(){
+	//   console.log("getting filtered consitituenceies in datasource",this.getFilteredConstituencies());
+	// 	;
   }
 //   onDataSubscriptionChange(): Observable<any> {
 // 	return of({id:1,data:"hello word"});
@@ -141,6 +169,7 @@ generateRandomSearch() {
 }
 
 hasConstituencies(data, searchString) {
+	
 	if (searchString.constituency.includes(",")) {
 
 		var constituencyList = searchString.constituency.split(",");
@@ -154,6 +183,7 @@ hasConstituencies(data, searchString) {
 
 	}
 	else {
+		// console.log("data, searchString",data.constituency.toString(), searchString.constituency,data.constituency.toString().trim().toLowerCase().indexOf(searchString.constituency.toLowerCase()) !== -1);
 		return data.constituency.toString().trim().toLowerCase().indexOf(searchString.constituency.toLowerCase()) !== -1;
 	}
 	return 0;
@@ -177,8 +207,9 @@ hasMonths(data, searchString) {
 	return 0;
 }
 getFilteredConstituencies() {
-
+	
 	var filteredConstituencies = this.dataSource.filteredData.map(item => item.constituency).filter((value, index, self) => self.indexOf(value) === index);
+	//  console.log("filteredConstituencies",filteredConstituencies);
 	return filteredConstituencies;
 }
 getElectionsPerYear() {
@@ -282,8 +313,12 @@ yearInRange(data, searchString, year) {
 getUniqueElections(){
  
     this.uniqueElections = this.dataSource.data.filter((value, index, self) => self.map(x => x.constituency).indexOf(value.constituency) == index);
-    
     }
+	returnUniqueElections(){
+ 
+		this.uniqueElections = this.dataSource.data.filter((value, index, self) => self.map(x => x.constituency).indexOf(value.constituency) == index);
+		return this.uniqueElections
+		}
 getHasPollBooksFilter(pollbook_id, searchTerm) {
 	if (searchTerm == 'y') {
 		if (pollbook_id.length > 1) {
@@ -323,9 +358,14 @@ getHasPollBooksFilter(pollbook_id, searchTerm) {
 // 			return data;
 // 		}))
 //   }
+  
   gotData(){
-	  	this.dataSource = new MatTableDataSource<Election>(this.electionsMeta.elections);
+	this.dataSource = new MatTableDataSource<Election>(this.electionsMeta.elections);
+	  	this.dataSource.connect().subscribe((value) => {
+			  this.dataUpdate.next(true);
+		  });
 		  this.getUniqueElections();
+		  //this.dataSource.filteredData.
 			this.constituencyFilter.valueChanges.pipe(
 
 			);
@@ -401,11 +441,76 @@ getHasPollBooksFilter(pollbook_id, searchTerm) {
 		this.ready.next(true);
 		
 		// setTimeout(() => {
-		// 	console.log("generating random search");
 		// 	this.generateRandomSearch();
 		// }, 5000);
 
   }
+  setSearchFromDialogue(data) {
 
+		if (data != undefined) {
+			//theres a make a random search button in the modal search dialogu
+			if (data.triggerRandomSearch) {
+				this.generateRandomSearch()
+			}
+			//otherwise lets actuallyupdate all the filters
+			if (data.updateSearch) {
+				if (data.constituency != null) {
+					this.constituencyFilter.setValue(data.constituency);
+				}
+				else {
+					this.constituencyFilter.setValue("");
+				}
+
+				if (data.year != null) {
+					this.yearFilter.setValue(data.year);
+				}
+				else {
+					this.yearFilter.setValue("");
+				}
+
+				if (data.month != null) {
+					this.monthFilter.setValue(data.month);
+				}
+				else {
+					this.monthFilter.setValue("");
+				}
+
+
+				if (data.county != null) {
+					this.countyFilter.setValue(data.county);
+				}
+				else {
+					this.countyFilter.setValue("");
+				}
+
+
+				if (data.contested != null) {
+					this.contestedFilter.setValue(data.contested);
+				}
+				else {
+					this.contestedFilter.setValue("");
+				}
+
+				if (data.byElectionGeneral != null) {
+					this.byElectionGeneralFilter.setValue(data.byElectionGeneral);
+				}
+				else {
+					this.byElectionGeneralFilter.setValue("");
+				}
+
+				if (data.pollBookCode != null) {
+					this.pollBookCodeFilter.setValue(data.pollBookCode);
+				}
+				else {
+					this.pollBookCodeFilter.setValue("");
+				}
+
+
+
+
+				this.dataSource.filter = JSON.stringify(this.filteredValues);
+			}
+		}
+	}
 
 }

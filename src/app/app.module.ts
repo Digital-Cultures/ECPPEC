@@ -26,7 +26,9 @@ import { MatMenuModule } from '@angular/material/menu';
 import { MatTableModule } from '@angular/material/table';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import {MatRadioModule} from '@angular/material/radio';
-import {MatDialogModule} from '@angular/material/dialog';
+// import {MatDialogModule} from '@angular/material/dialog';
+import {MatDialogModule, MatDialog, MatDialogRef, MAT_DIALOG_DATA} from '@angular/material/dialog';
+
 import {MatSliderModule} from '@angular/material/slider';
 // import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 
@@ -60,6 +62,7 @@ import { ElectionsMapComponent } from './elections-map/elections-map.component';
 import { NgxMatRangeSliderModule } from 'ngx-mat-range-slider';
 import { MapComponent } from './map/map.component';
 import { SmoothHeightComponent } from './smooth-height/smooth-height.component';
+import { ContestedStoryComponent } from './contested-story/contested-story.component';
 
 
 // import { DialogElementsExampleDialog } from './app.component';
@@ -122,10 +125,11 @@ import { SmoothHeightComponent } from './smooth-height/smooth-height.component';
 		DialogueComponent, 
 		ApiComponent, 
 		PollbookDialogueComponent, 
-		WarningDialogueComponent, SandpitComponent, TableComponent, ElectionsMapComponent, MapComponent, SmoothHeightComponent
+		WarningDialogueComponent, SandpitComponent, TableComponent, ElectionsMapComponent, MapComponent, SmoothHeightComponent, ContestedStoryComponent
 	],
 	providers: [  
-		
+		{ provide: MAT_DIALOG_DATA, useValue: {} },
+		{ provide: MatDialogRef, useValue: {} }
     ],
 	entryComponents: [
 		AppComponent, 

@@ -46,14 +46,14 @@ export class TableComponent implements OnInit {
 
   }
   dataChange(filterName){
-    console.log("sub change in table", filterName);
+    //console.log("sub change in table", filterName, this.datasourceService.getFilteredConstituencies());
     //TODO i guess because this fires on the filter change rather than the data change this is why we need a timeout. is a proper fix to wathc the filtered data?
     setTimeout(() => {
       var maxMinYears = this.getMaxMinYears();
 
       this.minYear = maxMinYears.minY;
       this.maxYear = maxMinYears.maxY;
-      console.log(maxMinYears,this.minYear,this.maxYear);
+      // console.log(maxMinYears,this.minYear,this.maxYear);
     }, 10);
     //get min and max years
    
@@ -79,7 +79,7 @@ export class TableComponent implements OnInit {
   }
   gotData(){
     this.ready =true;
-    console.log("ready",this.datasourceService.dataSource.data)
+  //  console.log("ready",this.datasourceService.dataSource.data)
     this.datasourceService.dataSource.paginator = this.paginator;
     //this.dataSource = this.datasourceService.dataSource;
   }
