@@ -21,18 +21,11 @@ import { of } from 'rxjs';
 })
 export class ElectionsMapComponent implements OnInit {
 
-  constructor(private datasourceService: DatasourceService, public dialog: MatDialog) { }
+  constructor(private datasourceService: DatasourceService,  public dialog: MatDialog) { }
  
 
   ngOnInit(): void {
-    const dialogRef = this.dialog.open(DialogueComponent);
-  //   const dialogRef = this.dialog.open(DialogueComponent,{
-  //     data: this.datasourceService.getUniqueElections(),
-  //  });
-
-		dialogRef.afterClosed().subscribe(
-			data => this.datasourceService.setSearchFromDialogue(data)
-			);
+    // this.tablecomponent.openDialogue();
 
   }
   

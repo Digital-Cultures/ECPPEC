@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewChild } from '@angular/core';
+import { Component, OnInit, ViewChild, Output, EventEmitter } from '@angular/core';
 import { DatasourceService } from '../datasource.service';
 import { MatTableDataSource } from '@angular/material/table';
 import { FilterObj, Elections, Election , PollBook, PollBookResponse, HOPData} from  '../viz/viz.component';
@@ -7,6 +7,13 @@ import { ResizeEvent } from 'angular-resizable-element';
 import { NgxMatRangeSliderModule } from 'ngx-mat-range-slider';
 import { Options, ChangeContext } from '@angular-slider/ngx-slider';
 import { MAY } from '@angular/material';
+import {MatDialog, MatDialogRef, MAT_DIALOG_DATA} from '@angular/material/dialog';
+import { DownloadService } from '../download.service';
+import { DownloadPollBooksService } from '../download-poll-books.service';
+import { GetPollBooksService } from '../get-poll-books.service';
+import { PollbookDialogueComponent } from '../pollbook-dialogue/pollbook-dialogue.component';
+
+import { DialogueComponent } from '../dialogue/dialogue.component';
 
 @Component({
   selector: 'app-table',
@@ -14,8 +21,8 @@ import { MAY } from '@angular/material';
   styleUrls: ['./table.component.scss']
 })
 export class TableComponent implements OnInit {
-
-  constructor(private datasourceService: DatasourceService) { }
+  @Output() myEvent = new EventEmitter();
+  constructor(private getPollBooksService: GetPollBooksService, private downloadPollBooksService: DownloadPollBooksService, private downloadService: DownloadService, private datasourceService: DatasourceService,  public dialog: MatDialog) { }
   @ViewChild(MatPaginator, { static: true }) paginator: MatPaginator;
   style:any={};
   dataSource = new MatTableDataSource<Election>();
@@ -23,15 +30,32 @@ export class TableComponent implements OnInit {
   displayedColumns: string[] = ['constituency', 'election_year', 'election_month', 'countyboroughuniv', 'by_election_general', 'by_election_cause','franchise_type', 'contested', 'pollbook_id'];
   minYear:number = 1695;
   maxYear: number = 1835;
+  hopData: HOPData;
+  currentBooks: PollBook[];
+  pollBooks: PollBookResponse;
+  gotPollBooks:boolean = false;
+
   sliderOptions: Options = {
     floor: 1695,
     ceil: 1835
   };
+  openDialogue(){
+    const dialogRef = this.dialog.open(DialogueComponent);
+    //   const dialogRef = this.dialog.open(DialogueComponent,{
+    //     data: this.datasourceService.getUniqueElections(),
+    //  });
+  
+      dialogRef.afterClosed().subscribe(
+        data => this.datasourceService.setSearchFromDialogue(data)
+        );
+        this.myEvent.emit(null);
+  }
   ngOnInit(): void {
     // this.datasourceService.init();
     this.datasourceService.getData();
     this.datasourceService.ready.subscribe(() => this.gotData()
     );
+    this.openDialogue();
    
     // this.datasourceService.onDataSubscriptionChange().subscribe(() => this.dataChange());
     this.datasourceService.constituencyFilter.valueChanges.subscribe(() => this.dataChange("constituencyFilter"));
@@ -45,6 +69,37 @@ export class TableComponent implements OnInit {
     this.datasourceService.pollBookCodeFilter.valueChanges.subscribe(() => this.dataChange("pollBookCodeFilter"));
 
   }
+  openPollBookDialogue(){
+		//console.log();
+		let dialogRef = this.dialog.open(PollbookDialogueComponent, {
+			data: this.pollBooks,
+		});
+	}
+  openHopDialogue(){
+		//console.log("hop text" ,this.hopData);
+		let dialogRef = this.dialog.open(PollbookDialogueComponent, {
+			data: this.hopData,
+		});
+	}
+  getBook($event, element){
+
+
+    console.log("element",element);
+		var splitCodes = element.pollbook_id.split(";");
+		var trimmedCodes="";
+		for(var i=0;i<splitCodes.length;i++){
+			trimmedCodes+=splitCodes[i].trim()+";";
+		}
+		trimmedCodes = trimmedCodes.substring(0, trimmedCodes.length - 1);
+
+		this.getPollBooksService.getData(trimmedCodes)
+		.subscribe(
+			(data: PollBookResponse) => this.pollBooks = {
+				num_results:  data['num_results'],
+				poll_books:  data['poll_books'],
+			},err => console.error(err) , () => this.openPollBookDialogue() );
+	} 
+  
   dataChange(filterName){
     //console.log("sub change in table", filterName, this.datasourceService.getFilteredConstituencies());
     //TODO i guess because this fires on the filter change rather than the data change this is why we need a timeout. is a proper fix to wathc the filtered data?
@@ -115,5 +170,13 @@ export class TableComponent implements OnInit {
 		this.datasourceService.dataSource.filter = JSON.stringify(this.datasourceService.filteredValues);
 
 
+	}
+  download(){
+		this.downloadService.downloadFile(this.dataSource.filteredData, 'elections');
+	}
+	//downlaod pollbook data
+	downloadPollBooks(){
+
+		// this.downloadPollBooksService.downloadFile(this.pollBooks.poll_books, 'pollBooks');
 	}
 }
