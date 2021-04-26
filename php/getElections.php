@@ -1,5 +1,6 @@
 <?php
 require_once('config.php');
+require_once('functions.php');
 
 $conn = new mysqli($servername, $username, $password, $dbname);
 
@@ -119,73 +120,7 @@ $response = array(
 print json_encode($response);
 $conn->close();
 
-/**
- * FUNCTIONS
- */
 
-/**
- * @param array $rows from DB call
- * @return array $years with earliest and latest years in result set
- */
-function getYearRange($rows){
-	$earliest_year = 3000;
-	$latest_year = 0;
-	$years = array();
-	
-	foreach ($rows as $value) {
-		$election_id = $value['election_id'];
-		$test_year = (int) $value['election_year'];
-		if($test_year < $earliest_year){
-			$earliest_year = $test_year;
-		}
-		if($test_year > $latest_year) {
-			$latest_year = $test_year;
-		}
-	}
-	
-	$years['earliest'] = $earliest_year;
-	$years['latest'] = $latest_year;
-	return $years;
-}
-
-/**
- * 
- * @param array $array
- * @return same array with keys in all lowercase, as failsafe against user inconsistency
- */
-function optimizer($array) {
-	$optimized = array();
-	foreach($array as $k => $v) {
-		$optimized[strtolower($k)] = $v;
-	}
-	return $optimized;
-}
-
-/**
- * 
- * @param string $election_id
- * @return array of election results (candidate and number of votes)
- */
-function election_results($election_id) {
-	global $conn;
-	$sql = "SELECT 
-	count(*) votes,
-	(
-		SELECT IF(ce.running_as IS NOT NULL, ce.running_as, c.candidate_name) 
-		FROM candidates c 
-		JOIN candidates_elections ce ON ce.candidate_id = c.candidate_id
-		WHERE c.candidate_id = v.candidate_id AND ce.election_id = v.election_id
-	) candidate
-	FROM votes v
-	WHERE v.election_id = ?
-	GROUP BY candidate_id 
-	ORDER BY votes desc";
-	$stmt = $conn->prepare($sql);
-	$stmt->bind_param('s',$election_id);
-	$stmt->execute();
-	$result = $stmt->get_result(); // get the mysqli result
-	return $result->fetch_all(MYSQLI_ASSOC); // fetch the data
-}
 ?>
 
 
