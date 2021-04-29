@@ -63,6 +63,7 @@ import { NgxMatRangeSliderModule } from 'ngx-mat-range-slider';
 import { MapComponent } from './map/map.component';
 import { SmoothHeightComponent } from './smooth-height/smooth-height.component';
 import { ContestedStoryComponent } from './contested-story/contested-story.component';
+import { HeatmapComponent } from './heatmap/heatmap.component';
 
 
 // import { DialogElementsExampleDialog } from './app.component';
@@ -125,7 +126,7 @@ import { ContestedStoryComponent } from './contested-story/contested-story.compo
 		DialogueComponent, 
 		ApiComponent, 
 		PollbookDialogueComponent, 
-		WarningDialogueComponent, SandpitComponent, TableComponent, ElectionsMapComponent, MapComponent, SmoothHeightComponent, ContestedStoryComponent
+		WarningDialogueComponent, SandpitComponent, TableComponent, ElectionsMapComponent, MapComponent, SmoothHeightComponent, ContestedStoryComponent, HeatmapComponent
 	],
 	providers: [  
 		{ provide: MAT_DIALOG_DATA, useValue: {} },
