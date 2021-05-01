@@ -1,0 +1,120 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+model artefacts {
+  id            Int     @id @default(autoincrement())
+  election_id   String? @db.VarChar(75)
+  artefact_name String? @db.VarChar(225)
+  artefact_type String? @db.VarChar(225)
+  artefact_link String? @db.VarChar(225)
+}
+
+model candidates {
+  candidate_id          Int     @id @default(autoincrement())
+  candidate_name        String? @db.VarChar(75)
+  title                 String? @db.VarChar(25)
+  suffix                String? @db.VarChar(25)
+  short_name            String? @db.VarChar(25)
+  born                  Int?
+  died                  Int?
+  candidates_elections  candidates_elections[]
+}
+
+model candidates_elections {
+  election_id  String  @db.VarChar(50)
+  candidate_id Int?
+  running_as   String? @db.VarChar(50)
+  id           Int     @id @default(autoincrement())
+
+  @@unique([election_id, candidate_id], name: "electionID")
+}
+
+model elections {
+  id                  Int     @id @default(autoincrement())
+  election_year       String? @db.VarChar(50)
+  election_month      String? @db.VarChar(50)
+  constituency        String? @db.VarChar(50)
+  countyboroughuniv   String? @db.VarChar(50)
+  franchise_detail    String? @db.VarChar(50)
+  franchise_type      String? @db.VarChar(50)
+  by_election_general String? @db.VarChar(50)
+  by_election_cause   String? @db.VarChar(50)
+  contested           String? @db.VarChar(50)
+  election_id         String? @db.VarChar(50)
+  pollbook_id         String? @db.VarChar(50)
+  notes               String? @db.VarChar(250)
+  latitude            String? @db.VarChar(50)
+  longitude           String? @db.VarChar(50)
+  candidates_elections  candidates_elections[]
+}
+
+model election_dates {
+  election_id   String?   @db.VarChar(25)
+  election_date DateTime? @db.Date
+  date_num      Int?
+  id            Int       @id @default(autoincrement())
+
+  @@index([election_id, election_date], name: "electionCode")
+}
+
+model locations {
+  name_short    String? @db.VarChar(25)
+  name_long     String  @db.VarChar(75)
+  location_type String? @db.VarChar(25)
+  lat           Decimal @db.Decimal(10, 8)
+  lng           Decimal @db.Decimal(11, 8)
+  id            Int     @id @default(autoincrement())
+}
+
+model poll_books {
+  PollBookCode String  @id @db.VarChar(1000)
+  PrintMS      String? @db.VarChar(10)
+  Citation     String? @db.VarChar(1000)
+  Holdings     String? @db.VarChar(1000)
+  Source       String? @db.VarChar(1000)
+  ElectionCode String? @db.VarChar(1000)
+  Notes        String? @db.VarChar(1000)
+
+  @@index([ElectionCode], name: "ElectionCode")
+}
+
+model voters {
+  voter_id   Int       @id @default(autoincrement()) @db.UnsignedInt
+  orig_id    String?   @db.VarChar(75)
+  forename   String?   @db.VarChar(25)
+  surname    String?   @db.VarChar(25)
+  suffix     String?   @db.VarChar(25)
+  title      String?   @db.VarChar(25)
+  class      String?   @db.VarChar(25)
+  occupation String?   @db.VarChar(75)
+  guild      String?   @db.VarChar(75)
+  street     String?   @db.VarChar(75)
+  city       String?   @db.VarChar(50)
+  county     String?   @db.VarChar(75)
+  parish     String?   @db.VarChar(75)
+  abode      String?   @db.VarChar(225)
+  notes      String?   @db.Text
+  created    DateTime  @default(dbgenerated("0000-00-00 00:00:00")) @db.Timestamp(0)
+  modified   DateTime? @default(now()) @db.Timestamp(0)
+}
+
+model votes {
+  voter_id     Int?
+  election_id  String?   @db.VarChar(25)
+  pollbook_id  String?   @db.VarChar(25)
+  page         Int?
+  line         Int?
+  candidate_id Int?
+  poll_date    DateTime? @db.Date
+  created      DateTime  @default(now()) @db.Timestamp(0)
+  vote_id      Int       @id @default(autoincrement())
+
+  @@unique([voter_id, election_id, candidate_id], name: "voterID")
+  @@index([election_id], name: "ElectionID")
+}

@@ -45,3 +45,5 @@ Thumbs.db
 # login details
 config.php
 
+# GraphQL
+/graphql-server/node_modules
