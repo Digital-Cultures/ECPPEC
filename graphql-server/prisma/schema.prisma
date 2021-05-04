@@ -16,23 +16,31 @@ model artefacts {
 }
 
 model candidates {
-  candidate_id          Int     @id @default(autoincrement())
-  candidate_name        String? @db.VarChar(75)
-  title                 String? @db.VarChar(25)
-  suffix                String? @db.VarChar(25)
-  short_name            String? @db.VarChar(25)
-  born                  Int?
-  died                  Int?
-  candidates_elections  candidates_elections[]
+  candidate_id   Int     @id @default(autoincrement())
+  candidate_name String? @db.VarChar(75)
+  title          String? @db.VarChar(25)
+  suffix         String? @db.VarChar(25)
+  short_name     String? @db.VarChar(25)
+  born           Int?
+  died           Int?
 }
 
 model candidates_elections {
-  election_id  String  @db.VarChar(50)
-  candidate_id Int?
-  running_as   String? @db.VarChar(50)
-  id           Int     @id @default(autoincrement())
+  candidates_elections_id Int     @unique @default(autoincrement())
+  election_id             String? @db.VarChar(50)
+  candidate_id            Int?
+  running_as              String? @db.VarChar(50)
 
   @@unique([election_id, candidate_id], name: "electionID")
+}
+
+model election_dates {
+  election_dates_id Int       @unique @default(autoincrement())
+  election_id       String?   @db.VarChar(25)
+  election_date     DateTime? @db.Date
+  date_num          Int?
+
+  @@index([election_id, election_date], name: "electionCode")
 }
 
 model elections {
@@ -51,25 +59,32 @@ model elections {
   notes               String? @db.VarChar(250)
   latitude            String? @db.VarChar(50)
   longitude           String? @db.VarChar(50)
-  candidates_elections  candidates_elections[]
 }
 
-model election_dates {
-  election_id   String?   @db.VarChar(25)
-  election_date DateTime? @db.Date
-  date_num      Int?
-  id            Int       @id @default(autoincrement())
-
-  @@index([election_id, election_date], name: "electionCode")
+model elections_old {
+  Year              String? @db.VarChar(5)
+  Month             String? @db.VarChar(10)
+  Constituency      String? @db.VarChar(30)
+  CountyBoroughUniv String? @db.VarChar(1)
+  Franchise         String? @db.VarChar(100)
+  ByElectionGeneral String? @db.VarChar(5)
+  ByElectionCause   String? @db.VarChar(1000)
+  Contested         String? @db.VarChar(5)
+  ElectionCode      String  @id @db.VarChar(100)
+  PollBookCode      String? @db.VarChar(200)
+  Notes             String? @db.VarChar(1000)
+  Latitude          String? @db.VarChar(10)
+  Longitude         String? @db.VarChar(10)
 }
 
 model locations {
-  name_short    String? @db.VarChar(25)
-  name_long     String  @db.VarChar(75)
-  location_type String? @db.VarChar(25)
-  lat           Decimal @db.Decimal(10, 8)
-  lng           Decimal @db.Decimal(11, 8)
-  id            Int     @id @default(autoincrement())
+  locations_id  Int                   @unique @default(autoincrement())
+  name_short    String?               @db.VarChar(25)
+  name_long     String?               @db.VarChar(75)
+  location_type String?               @db.VarChar(25)
+  lat           Decimal               @db.Decimal(10, 8)
+  lng           Decimal               @db.Decimal(11, 8)
+  location      Unsupported("point")?
 }
 
 model poll_books {
@@ -105,6 +120,7 @@ model voters {
 }
 
 model votes {
+  votes_id     Int       @unique @default(autoincrement())
   voter_id     Int?
   election_id  String?   @db.VarChar(25)
   pollbook_id  String?   @db.VarChar(25)
@@ -113,7 +129,6 @@ model votes {
   candidate_id Int?
   poll_date    DateTime? @db.Date
   created      DateTime  @default(now()) @db.Timestamp(0)
-  vote_id      Int       @id @default(autoincrement())
 
   @@unique([voter_id, election_id, candidate_id], name: "voterID")
   @@index([election_id], name: "ElectionID")

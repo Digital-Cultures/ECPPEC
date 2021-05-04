@@ -47,3 +47,4 @@ config.php
 
 # GraphQL
 /graphql-server/node_modules
+/graphql-server/.env

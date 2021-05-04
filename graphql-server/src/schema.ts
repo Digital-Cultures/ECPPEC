@@ -1,5 +1,5 @@
-import { intArg, makeSchema, nonNull, objectType, stringArg, inputObjectType, arg, list,
-    asNexusMethod, enumType, } from 'nexus'
+import { core, intArg, makeSchema, nonNull, objectType, stringArg, inputObjectType, arg, list,
+    asNexusMethod, enumType,} from 'nexus'
 import { DateTimeResolver } from 'graphql-scalars'
 import { Context } from './context'
 
@@ -8,7 +8,24 @@ export const DateTime = asNexusMethod(DateTimeResolver, 'date')
 const Query = objectType({
   name: 'Query',
   definition(t) {
-    t.nonNull.list.nonNull.field('candidates', {
+
+    t.nonNull.list.nonNull.field('artefact', {
+      type: Artefact,
+      args: {
+        artefact_name: stringArg(),
+        artefact_type: stringArg(),
+      },
+      resolve: (_parent, _args, context: Context) => {
+        return context.prisma.artefacts.findMany({
+          where: { 
+            artefact_name: _args.artefact_name || undefined,
+            artefact_type: _args.artefact_type || undefined 
+          },
+        })
+      },
+    })
+
+    t.nonNull.list.nonNull.field('candidate', {
       type: Candidate,
       args: {
         candidate_id: intArg(),
@@ -40,7 +57,22 @@ const Query = objectType({
       },
     })
 
-    t.nonNull.list.nonNull.field('elections', {
+    t.nonNull.list.nonNull.field('election_dates', {
+      type: ElectionDates,
+      args: {
+        election_year: stringArg(),
+        orderBy: arg({
+          type: 'OrderByDate',
+        }),
+      },
+      resolve: (_parent, args, context: Context) => {
+        return context.prisma.election_dates.findMany({
+          orderBy: args.orderBy || undefined,
+        })
+      },
+    })
+
+    t.nonNull.list.nonNull.field('election', {
       type: Election,
       args: {
         election_year: stringArg(),
@@ -50,18 +82,103 @@ const Query = objectType({
       resolve: (_parent, _args, context: Context) => {
         return context.prisma.elections.findMany({
           where: {  
-            election_year: _args.election_year || undefined ,
+            election_year: _args.election_year || undefined,
             contested: _args.contested || undefined 
           },
           // where: { election_id: _args.election_id || undefined },
         })
       },
     })
+
+    t.nonNull.list.nonNull.field('location', {
+      type: Locations,
+      args: {
+        searchString: stringArg(),
+        location_type: arg({
+          type: 'LocationType',
+        }),
+      },
+      resolve: (_parent, args, context: Context) => {
+        const or = args.searchString
+        ? {
+          OR: [
+            { name_short: { contains: args.searchString } },
+            { name_long: { contains: args.searchString } },
+          ],
+        }
+        : {}
+
+        return context.prisma.locations.findMany({
+          where: {
+            location_type: args.location_type || undefined,
+            ...or,
+          },
+        })
+      },
+    })
+
+    t.nonNull.list.nonNull.field('poll_book', {
+      type: PollBooks,
+      args: {
+        election_year: stringArg(),
+        contested: stringArg(),
+        // election_id:  stringArg(),
+      },
+      resolve: (_parent, _args, context: Context) => {
+        return context.prisma.poll_books.findMany({})
+      },
+    })
+
+    t.nonNull.list.nonNull.field('voter', {
+      type: Voter,
+      args: {
+        forename: stringArg(),
+        surname: stringArg(),
+        occupation: stringArg(),
+        guild: stringArg(),
+        // election_id:  stringArg(),
+      },
+      resolve: (_parent, args, context: Context) => {
+        return context.prisma.voters.findMany({
+          where: {  
+            forename: args.forename || undefined,
+            surname: args.surname || undefined,
+            occupation: args.occupation || undefined,
+            guild: args.guild || undefined
+          },
+        })
+      },
+    })
+
+    t.nonNull.list.nonNull.field('vote', {
+      type: Vote,
+      resolve: (_parent, args, context: Context) => {
+        return context.prisma.voters.findMany({})
+      },
+    })
+    
+  },
+})
+
+const Artefact = objectType({
+  name: 'artefact',
+  definition(t) {
+    t.string('election_id')
+    t.string('artefact_name')
+    t.string('artefact_type')
+    t.string('artefact_link')
+    t.list.field('elections', {
+      type: Election,
+      resolve: (parent, _, context: Context) => {
+        return context.prisma.elections.findMany({
+          where: { election_id: parent.election_id || undefined }})
+        },
+    })
   },
 })
 
 const Candidate = objectType({
-  name: 'Candidate',
+  name: 'candidate',
   definition(t) {
     t.nonNull.int('candidate_id')
     t.string('candidate_name')
@@ -74,28 +191,65 @@ const Candidate = objectType({
           where: { candidate_id: parent.candidate_id || undefined }})
         },
     })
+    t.list.field('votes', {
+      type: Vote,
+      resolve: (parent, _, context: Context) => {
+        return context.prisma.votes.findMany({
+          where: { candidate_id: parent.candidate_id || undefined }})
+        },
+    })
+    t.int('voteCount', {
+      type: 'Int',
+      resolve: (parent, _, context: Context) => {
+        return context.prisma.votes.count({
+          where: { candidate_id: parent.candidate_id || undefined }})
+        },
+    })
   },
 })
 
 const CandidatesElection = objectType({
-  name: 'candidates_elections',
+  name: 'candidatesElection',
   definition(t) {
     t.nonNull.string('election_id')
     t.nonNull.int('candidate_id')
     t.string('running_as')
-    t.list.field('elections', {
+    t.list.field('election', {
       type: Election,
       resolve: (parent, _, context: Context) => {
         return context.prisma.elections.findMany({
           where: { election_id: parent.election_id || undefined }})
         },
     })
+    t.list.field('candidate', {
+      type: Candidate,
+      resolve: (parent, _, context: Context) => {
+        return context.prisma.candidates.findMany({
+          where: { candidate_id: parent.candidate_id || undefined }})
+        },
+    })
+
   },
 })
 
+const ElectionDates = objectType({
+  name: 'electionDates',
+  definition(t) {
+    t.nonNull.string('election_id')
+    t.field('election_date', { type: 'DateTime' })
+    t.list.field('election', {
+      type: Election,
+      resolve: (parent, _, context: Context) => {
+        return context.prisma.elections.findMany({
+          where: { election_id: parent.election_id || undefined }
+        })
+      },
+    })
+  },
+})
 
 const Election = objectType({
-  name: 'elections',
+  name: 'election',
   definition(t) {
     t.string('election_year')
     t.string('election_month')
@@ -109,16 +263,110 @@ const Election = objectType({
     t.string('notes')
     t.string('latitude')
     t.string('longitude')
-    t.nonNull.string('election_id')
-    t.nonNull.string('pollbook_id')  
+    // t.nonNull.string('election_id')
+    // t.nonNull.string('pollbook_id')  
     t.list.field('candidates_elections', {
       type: CandidatesElection,
       resolve: (parent, _, context: Context) => {
         return context.prisma.candidates_elections.findMany({
-          where: { election_id: parent.election_id || undefined }})
+          where: { election_id: parent.election_id || undefined }
+        })
+      },
+    })
+    t.list.field('poll_books', {
+      type: PollBooks,
+      resolve: (parent, _, context: Context) => {
+        return context.prisma.poll_books.findMany({
+          where: { ElectionCode: parent.election_id || undefined }
+        })
+      },
+    })
+  },
+})
+
+const Locations = objectType({
+  name: 'locations',
+  definition(t) {
+    t.string('name_short')
+    t.string('name_long')
+    t.string('location_type')
+    t.float('lat')
+    t.float('lng')
+  },
+})
+
+const PollBooks = objectType({
+  name: 'poll_books',
+  definition(t) {
+    t.string('PollBookCode')
+    t.string('PrintMS')
+    t.string('Citation')
+    t.string('Holdings')
+    t.string('Source')
+    t.string('ElectionCode')
+    t.string('Notes')
+  },
+})
+
+const Voter = objectType({
+  name: 'voter',
+  definition(t) {
+    t.string('forename')
+    t.string('surname')
+    t.string('suffix')
+    t.string('title')
+    t.string('class')
+    t.string('occupation')
+    t.string('guild')
+    t.string('street')
+    t.string('city')
+    t.string('county')
+    t.string('parish')
+    t.string('abode')
+    t.string('notes')
+    t.list.field('vote', {
+      type: Vote,
+      resolve: (parent, _, context: Context) => {
+        return context.prisma.votes.findMany({
+          where: { voter_id: parent.voter_id || undefined }})
         },
     })
   },
+})
+
+const Vote = objectType({
+  name: 'vote',
+  definition(t) {
+    t.string('page')
+    t.string('line')
+    t.list.field('candidate', {
+      type: Candidate,
+      resolve: (parent, _, context: Context) => {
+        return context.prisma.candidates.findMany({
+          where: { candidate_id: parent.candidate_id || undefined }})
+        },
+    })
+    t.list.field('voter', {
+      type: Voter,
+      resolve: (parent, _, context: Context) => {
+        return context.prisma.voters.findMany({
+          where: { voter_id: parent.voter_id || undefined }})
+        },
+    })
+ 
+    // t.list.field('poll_books', {
+    //   type: PollBooks,
+    //   resolve: (parent, _, context: Context) => {
+    //     return context.prisma.poll_books.findMany({
+    //       where: { pollbook_id: parent.PollBookCode || undefined }})
+    //     },
+    // })
+  },
+})
+
+const LocationType = enumType({
+  name: 'LocationType',
+  members: ['borough', 'county'],
 })
 
 const SortOrder = enumType({
@@ -126,13 +374,36 @@ const SortOrder = enumType({
   members: ['asc', 'desc'],
 })
 
+const OrderByDate = inputObjectType({
+  name: 'OrderByDate',
+  definition(t) {
+    t.nonNull.field('election_date', { type: 'SortOrder' })
+  },
+})
+
+// const AggregateVote = objectType({
+//   name: 'AggregateVote',
+//   definition(t) {
+//     t.int()
+//   }
+// })
 
 export const schema = makeSchema({
   types: [
     Query,
+    DateTime,
+    SortOrder,
+    OrderByDate,
+    Artefact,
     Candidate,
     CandidatesElection,
+    ElectionDates,
     Election,
+    Locations,
+    LocationType,
+    PollBooks,
+    Voter,
+    Vote,
   ],
   outputs: {
     schema: __dirname + '/../schema.graphql',

@@ -2,35 +2,70 @@
 ### Do not make changes to this file directly
 
 
-type Candidate {
-  candidate_id: Int!
-  candidate_name: String
-  candidates_elections: [candidates_elections]
-  short_name: String
-  title: String
+"""
+A date-time string at UTC, such as 2007-12-03T10:15:30Z, compliant with the `date-time` format outlined in section 5.6 of the RFC 3339 profile of the ISO 8601 standard for representation of dates and times using the Gregorian calendar.
+"""
+scalar DateTime
+
+enum LocationType {
+  borough
+  county
+}
+
+input OrderByDate {
+  election_date: SortOrder!
 }
 
 type Query {
-  candidates(candidate_id: Int, candidate_name: String): [Candidate!]!
-  candidates_elections(candidate_id: Int, election_id: String): [candidates_elections!]!
-  elections(contested: String, election_year: String): [elections!]!
+  artefact(artefact_name: String, artefact_type: String): [artefact!]!
+  candidate(candidate_id: Int, candidate_name: String): [candidate!]!
+  candidates_elections(candidate_id: Int, election_id: String): [candidatesElection!]!
+  election(contested: String, election_year: String): [election!]!
+  election_dates(election_year: String, orderBy: OrderByDate): [electionDates!]!
+  location(location_type: LocationType, searchString: String): [locations!]!
+  poll_book(contested: String, election_year: String): [poll_books!]!
+  vote: [vote!]!
+  voter(forename: String, guild: String, occupation: String, surname: String): [voter!]!
 }
 
-type candidates_elections {
+enum SortOrder {
+  asc
+  desc
+}
+
+type artefact {
+  artefact_link: String
+  artefact_name: String
+  artefact_type: String
+  election_id: String
+  elections: [election]
+}
+
+type candidate {
   candidate_id: Int!
+  candidate_name: String
+  candidates_elections: [candidatesElection]
+  short_name: String
+  title: String
+  voteCount: Int
+  votes: [vote]
+}
+
+type candidatesElection {
+  candidate: [candidate]
+  candidate_id: Int!
+  election: [election]
   election_id: String!
-  elections: [elections]
   running_as: String
 }
 
-type elections {
+type election {
   by_election_cause: String
   by_election_general: String
-  candidates_elections: [candidates_elections]
+  candidates_elections: [candidatesElection]
   constituency: String
   contested: String
   countyboroughuniv: String
-  election_id: String!
   election_month: String
   election_year: String
   franchise_detail: String
@@ -38,5 +73,53 @@ type elections {
   latitude: String
   longitude: String
   notes: String
-  pollbook_id: String!
+  poll_books: [poll_books]
+}
+
+type electionDates {
+  election: [election]
+  election_date: DateTime
+  election_id: String!
+}
+
+type locations {
+  lat: Float
+  lng: Float
+  location_type: String
+  name_long: String
+  name_short: String
+}
+
+type poll_books {
+  Citation: String
+  ElectionCode: String
+  Holdings: String
+  Notes: String
+  PollBookCode: String
+  PrintMS: String
+  Source: String
+}
+
+type vote {
+  candidate: [candidate]
+  line: String
+  page: String
+  voter: [voter]
+}
+
+type voter {
+  abode: String
+  city: String
+  class: String
+  county: String
+  forename: String
+  guild: String
+  notes: String
+  occupation: String
+  parish: String
+  street: String
+  suffix: String
+  surname: String
+  title: String
+  vote: [vote]
 }

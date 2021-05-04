@@ -5,8 +5,23 @@
 
 
 import { Context } from "./../context"
-
-
+import { core } from "nexus"
+declare global {
+  interface NexusGenCustomInputMethods<TypeName extends string> {
+    /**
+     * A date-time string at UTC, such as 2007-12-03T10:15:30Z, compliant with the `date-time` format outlined in section 5.6 of the RFC 3339 profile of the ISO 8601 standard for representation of dates and times using the Gregorian calendar.
+     */
+    date<FieldName extends string>(fieldName: FieldName, opts?: core.CommonInputFieldConfig<TypeName, FieldName>): void // "DateTime";
+  }
+}
+declare global {
+  interface NexusGenCustomOutputMethods<TypeName extends string> {
+    /**
+     * A date-time string at UTC, such as 2007-12-03T10:15:30Z, compliant with the `date-time` format outlined in section 5.6 of the RFC 3339 profile of the ISO 8601 standard for representation of dates and times using the Gregorian calendar.
+     */
+    date<FieldName extends string>(fieldName: FieldName, ...opts: core.ScalarOutSpread<TypeName, FieldName>): void // "DateTime";
+  }
+}
 
 
 declare global {
@@ -14,9 +29,14 @@ declare global {
 }
 
 export interface NexusGenInputs {
+  OrderByDate: { // input type
+    election_date: NexusGenEnums['SortOrder']; // SortOrder!
+  }
 }
 
 export interface NexusGenEnums {
+  LocationType: "borough" | "county"
+  SortOrder: "asc" | "desc"
 }
 
 export interface NexusGenScalars {
@@ -25,28 +45,34 @@ export interface NexusGenScalars {
   Float: number
   Boolean: boolean
   ID: string
+  DateTime: any
 }
 
 export interface NexusGenObjects {
-  Candidate: { // root type
+  Query: {};
+  artefact: { // root type
+    artefact_link?: string | null; // String
+    artefact_name?: string | null; // String
+    artefact_type?: string | null; // String
+    election_id?: string | null; // String
+  }
+  candidate: { // root type
     candidate_id: number; // Int!
     candidate_name?: string | null; // String
     short_name?: string | null; // String
     title?: string | null; // String
   }
-  Query: {};
-  candidates_elections: { // root type
+  candidatesElection: { // root type
     candidate_id: number; // Int!
     election_id: string; // String!
     running_as?: string | null; // String
   }
-  elections: { // root type
+  election: { // root type
     by_election_cause?: string | null; // String
     by_election_general?: string | null; // String
     constituency?: string | null; // String
     contested?: string | null; // String
     countyboroughuniv?: string | null; // String
-    election_id: string; // String!
     election_month?: string | null; // String
     election_year?: string | null; // String
     franchise_detail?: string | null; // String
@@ -54,7 +80,45 @@ export interface NexusGenObjects {
     latitude?: string | null; // String
     longitude?: string | null; // String
     notes?: string | null; // String
-    pollbook_id: string; // String!
+  }
+  electionDates: { // root type
+    election_date?: NexusGenScalars['DateTime'] | null; // DateTime
+    election_id: string; // String!
+  }
+  locations: { // root type
+    lat?: number | null; // Float
+    lng?: number | null; // Float
+    location_type?: string | null; // String
+    name_long?: string | null; // String
+    name_short?: string | null; // String
+  }
+  poll_books: { // root type
+    Citation?: string | null; // String
+    ElectionCode?: string | null; // String
+    Holdings?: string | null; // String
+    Notes?: string | null; // String
+    PollBookCode?: string | null; // String
+    PrintMS?: string | null; // String
+    Source?: string | null; // String
+  }
+  vote: { // root type
+    line?: string | null; // String
+    page?: string | null; // String
+  }
+  voter: { // root type
+    abode?: string | null; // String
+    city?: string | null; // String
+    class?: string | null; // String
+    county?: string | null; // String
+    forename?: string | null; // String
+    guild?: string | null; // String
+    notes?: string | null; // String
+    occupation?: string | null; // String
+    parish?: string | null; // String
+    street?: string | null; // String
+    suffix?: string | null; // String
+    surname?: string | null; // String
+    title?: string | null; // String
   }
 }
 
@@ -66,35 +130,50 @@ export interface NexusGenUnions {
 
 export type NexusGenRootTypes = NexusGenObjects
 
-export type NexusGenAllTypes = NexusGenRootTypes & NexusGenScalars
+export type NexusGenAllTypes = NexusGenRootTypes & NexusGenScalars & NexusGenEnums
 
 export interface NexusGenFieldTypes {
-  Candidate: { // field return type
+  Query: { // field return type
+    artefact: NexusGenRootTypes['artefact'][]; // [artefact!]!
+    candidate: NexusGenRootTypes['candidate'][]; // [candidate!]!
+    candidates_elections: NexusGenRootTypes['candidatesElection'][]; // [candidatesElection!]!
+    election: NexusGenRootTypes['election'][]; // [election!]!
+    election_dates: NexusGenRootTypes['electionDates'][]; // [electionDates!]!
+    location: NexusGenRootTypes['locations'][]; // [locations!]!
+    poll_book: NexusGenRootTypes['poll_books'][]; // [poll_books!]!
+    vote: NexusGenRootTypes['vote'][]; // [vote!]!
+    voter: NexusGenRootTypes['voter'][]; // [voter!]!
+  }
+  artefact: { // field return type
+    artefact_link: string | null; // String
+    artefact_name: string | null; // String
+    artefact_type: string | null; // String
+    election_id: string | null; // String
+    elections: Array<NexusGenRootTypes['election'] | null> | null; // [election]
+  }
+  candidate: { // field return type
     candidate_id: number; // Int!
     candidate_name: string | null; // String
-    candidates_elections: Array<NexusGenRootTypes['candidates_elections'] | null> | null; // [candidates_elections]
+    candidates_elections: Array<NexusGenRootTypes['candidatesElection'] | null> | null; // [candidatesElection]
     short_name: string | null; // String
     title: string | null; // String
+    voteCount: number | null; // Int
+    votes: Array<NexusGenRootTypes['vote'] | null> | null; // [vote]
   }
-  Query: { // field return type
-    candidates: NexusGenRootTypes['Candidate'][]; // [Candidate!]!
-    candidates_elections: NexusGenRootTypes['candidates_elections'][]; // [candidates_elections!]!
-    elections: NexusGenRootTypes['elections'][]; // [elections!]!
-  }
-  candidates_elections: { // field return type
+  candidatesElection: { // field return type
+    candidate: Array<NexusGenRootTypes['candidate'] | null> | null; // [candidate]
     candidate_id: number; // Int!
+    election: Array<NexusGenRootTypes['election'] | null> | null; // [election]
     election_id: string; // String!
-    elections: Array<NexusGenRootTypes['elections'] | null> | null; // [elections]
     running_as: string | null; // String
   }
-  elections: { // field return type
+  election: { // field return type
     by_election_cause: string | null; // String
     by_election_general: string | null; // String
-    candidates_elections: Array<NexusGenRootTypes['candidates_elections'] | null> | null; // [candidates_elections]
+    candidates_elections: Array<NexusGenRootTypes['candidatesElection'] | null> | null; // [candidatesElection]
     constituency: string | null; // String
     contested: string | null; // String
     countyboroughuniv: string | null; // String
-    election_id: string; // String!
     election_month: string | null; // String
     election_year: string | null; // String
     franchise_detail: string | null; // String
@@ -102,37 +181,95 @@ export interface NexusGenFieldTypes {
     latitude: string | null; // String
     longitude: string | null; // String
     notes: string | null; // String
-    pollbook_id: string; // String!
+    poll_books: Array<NexusGenRootTypes['poll_books'] | null> | null; // [poll_books]
+  }
+  electionDates: { // field return type
+    election: Array<NexusGenRootTypes['election'] | null> | null; // [election]
+    election_date: NexusGenScalars['DateTime'] | null; // DateTime
+    election_id: string; // String!
+  }
+  locations: { // field return type
+    lat: number | null; // Float
+    lng: number | null; // Float
+    location_type: string | null; // String
+    name_long: string | null; // String
+    name_short: string | null; // String
+  }
+  poll_books: { // field return type
+    Citation: string | null; // String
+    ElectionCode: string | null; // String
+    Holdings: string | null; // String
+    Notes: string | null; // String
+    PollBookCode: string | null; // String
+    PrintMS: string | null; // String
+    Source: string | null; // String
+  }
+  vote: { // field return type
+    candidate: Array<NexusGenRootTypes['candidate'] | null> | null; // [candidate]
+    line: string | null; // String
+    page: string | null; // String
+    voter: Array<NexusGenRootTypes['voter'] | null> | null; // [voter]
+  }
+  voter: { // field return type
+    abode: string | null; // String
+    city: string | null; // String
+    class: string | null; // String
+    county: string | null; // String
+    forename: string | null; // String
+    guild: string | null; // String
+    notes: string | null; // String
+    occupation: string | null; // String
+    parish: string | null; // String
+    street: string | null; // String
+    suffix: string | null; // String
+    surname: string | null; // String
+    title: string | null; // String
+    vote: Array<NexusGenRootTypes['vote'] | null> | null; // [vote]
   }
 }
 
 export interface NexusGenFieldTypeNames {
-  Candidate: { // field return type name
+  Query: { // field return type name
+    artefact: 'artefact'
+    candidate: 'candidate'
+    candidates_elections: 'candidatesElection'
+    election: 'election'
+    election_dates: 'electionDates'
+    location: 'locations'
+    poll_book: 'poll_books'
+    vote: 'vote'
+    voter: 'voter'
+  }
+  artefact: { // field return type name
+    artefact_link: 'String'
+    artefact_name: 'String'
+    artefact_type: 'String'
+    election_id: 'String'
+    elections: 'election'
+  }
+  candidate: { // field return type name
     candidate_id: 'Int'
     candidate_name: 'String'
-    candidates_elections: 'candidates_elections'
+    candidates_elections: 'candidatesElection'
     short_name: 'String'
     title: 'String'
+    voteCount: 'Int'
+    votes: 'vote'
   }
-  Query: { // field return type name
-    candidates: 'Candidate'
-    candidates_elections: 'candidates_elections'
-    elections: 'elections'
-  }
-  candidates_elections: { // field return type name
+  candidatesElection: { // field return type name
+    candidate: 'candidate'
     candidate_id: 'Int'
+    election: 'election'
     election_id: 'String'
-    elections: 'elections'
     running_as: 'String'
   }
-  elections: { // field return type name
+  election: { // field return type name
     by_election_cause: 'String'
     by_election_general: 'String'
-    candidates_elections: 'candidates_elections'
+    candidates_elections: 'candidatesElection'
     constituency: 'String'
     contested: 'String'
     countyboroughuniv: 'String'
-    election_id: 'String'
     election_month: 'String'
     election_year: 'String'
     franchise_detail: 'String'
@@ -140,13 +277,60 @@ export interface NexusGenFieldTypeNames {
     latitude: 'String'
     longitude: 'String'
     notes: 'String'
-    pollbook_id: 'String'
+    poll_books: 'poll_books'
+  }
+  electionDates: { // field return type name
+    election: 'election'
+    election_date: 'DateTime'
+    election_id: 'String'
+  }
+  locations: { // field return type name
+    lat: 'Float'
+    lng: 'Float'
+    location_type: 'String'
+    name_long: 'String'
+    name_short: 'String'
+  }
+  poll_books: { // field return type name
+    Citation: 'String'
+    ElectionCode: 'String'
+    Holdings: 'String'
+    Notes: 'String'
+    PollBookCode: 'String'
+    PrintMS: 'String'
+    Source: 'String'
+  }
+  vote: { // field return type name
+    candidate: 'candidate'
+    line: 'String'
+    page: 'String'
+    voter: 'voter'
+  }
+  voter: { // field return type name
+    abode: 'String'
+    city: 'String'
+    class: 'String'
+    county: 'String'
+    forename: 'String'
+    guild: 'String'
+    notes: 'String'
+    occupation: 'String'
+    parish: 'String'
+    street: 'String'
+    suffix: 'String'
+    surname: 'String'
+    title: 'String'
+    vote: 'vote'
   }
 }
 
 export interface NexusGenArgTypes {
   Query: {
-    candidates: { // args
+    artefact: { // args
+      artefact_name?: string | null; // String
+      artefact_type?: string | null; // String
+    }
+    candidate: { // args
       candidate_id?: number | null; // Int
       candidate_name?: string | null; // String
     }
@@ -154,9 +338,27 @@ export interface NexusGenArgTypes {
       candidate_id?: number | null; // Int
       election_id?: string | null; // String
     }
-    elections: { // args
+    election: { // args
       contested?: string | null; // String
       election_year?: string | null; // String
+    }
+    election_dates: { // args
+      election_year?: string | null; // String
+      orderBy?: NexusGenInputs['OrderByDate'] | null; // OrderByDate
+    }
+    location: { // args
+      location_type?: NexusGenEnums['LocationType'] | null; // LocationType
+      searchString?: string | null; // String
+    }
+    poll_book: { // args
+      contested?: string | null; // String
+      election_year?: string | null; // String
+    }
+    voter: { // args
+      forename?: string | null; // String
+      guild?: string | null; // String
+      occupation?: string | null; // String
+      surname?: string | null; // String
     }
   }
 }
@@ -169,9 +371,9 @@ export interface NexusGenTypeInterfaces {
 
 export type NexusGenObjectNames = keyof NexusGenObjects;
 
-export type NexusGenInputNames = never;
+export type NexusGenInputNames = keyof NexusGenInputs;
 
-export type NexusGenEnumNames = never;
+export type NexusGenEnumNames = keyof NexusGenEnums;
 
 export type NexusGenInterfaceNames = never;
 
