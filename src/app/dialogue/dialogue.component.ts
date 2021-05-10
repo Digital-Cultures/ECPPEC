@@ -8,7 +8,9 @@ import {map, startWith} from 'rxjs/operators';
 import {MAT_DIALOG_DATA} from '@angular/material/dialog';
 // import { EPERM } from 'constants';
 import { DatasourceService } from '../datasource.service';
-
+import {ThemePalette} from '@angular/material/core';
+import {ProgressSpinnerMode} from '@angular/material/progress-spinner';
+import { MatSpinner } from '@angular/material';
 @Component({
 	selector: 'app-dialogue',
 	templateUrl: './dialogue.component.html',
@@ -23,6 +25,9 @@ export class DialogueComponent implements OnInit {
 		Month: '', Constituency: '',Year: '', CountyBoroughUniv: '', Contested: '',ByElectionGeneral:'',PollBookCode:''
 
 	};
+	color: ThemePalette = 'primary';
+	mode: ProgressSpinnerMode = 'determinate';
+	value = 50;
 
 	constituencyList : string []= [];
 	constituencyOptions : string []= ["York","Leeds","Devon"];
@@ -49,7 +54,7 @@ export class DialogueComponent implements OnInit {
 		if(value){
 			this.ready  =true;
 		var uniqueElections = this.datasourceService.returnUniqueElections();
-		console.log("uniqueElections",uniqueElections);
+		
 		this.constituencyOptions = this.getConstituencyNames(uniqueElections).sort((a, b) => a > b ? 1 : a === b ? 0 : -1);
 		
 		this.filteredConstituencyOptions = this.constituencyFilter.valueChanges
@@ -65,7 +70,7 @@ export class DialogueComponent implements OnInit {
 		  map(value => this._filter(value))
 		);
 			
-			this.constituencyOptions = this.getFilteredConstituencyNames(this.datasourceService.returnUniqueElections(),countyFilterValue.substring(0,1)).sort((a, b) => a > b ? 1 : a === b ? 0 : -1);
+			this.constituencyOptions = this.getFilteredConstituencyNames(this.datasourceService.returnUniqueElections()	,countyFilterValue.substring(0,1)).sort((a, b) => a > b ? 1 : a === b ? 0 : -1);
 			
 
 		});

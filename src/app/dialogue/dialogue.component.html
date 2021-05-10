@@ -1,6 +1,9 @@
 <mat-dialog-content>
     <div *ngIf="!ready">
-        loading elections data...
+        <!-- not ready -->
+        <!-- <mat-progress-spinner class="example-margin" [color]="color" [mode]="determinate" [value]="value">
+        </mat-progress-spinner> -->
+        <mat-spinner></mat-spinner>
     </div>
     <div *ngIf="ready">
         <div id="dialogue_form_info">
@@ -121,7 +124,7 @@
         </mat-form-field>
     </div>
 </mat-dialog-content>
-<mat-dialog-actions>
+<mat-dialog-actions *ngIf="ready">
     <button matDialogClose style="margin-right: 1%;" class="mat-raised-button" (click)="close()">Dismiss</button>
     <button matDialogClose class="mat-raised-button mat-primary" (click)="save()">Search the database</button>
 </mat-dialog-actions>

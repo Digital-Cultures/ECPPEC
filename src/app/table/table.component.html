@@ -6,7 +6,7 @@
     <button style="margin-bottom: 10px; margin-right:10px" class="mb-4" (click)="download()" mat-raised-button color="basic">Download Data</button>
     <table *ngIf="ready" mat-table [dataSource]="datasourceService.dataSource" class="rounded-lg mat-elevation-z8  style-3 ">
 
-        <ng-container style="padding-top:100px" matColumnDef="constituency">
+        <ng-container style="padding-top:100px; width:50px" matColumnDef="constituency">
             <th style="padding-top: 15px;" mat-header-cell *matHeaderCellDef> <span matTooltip="click to find out more about consitituencies" [matTooltipPosition]="'above'">Constituency</span>
                 <div>
                     <mat-form-field>

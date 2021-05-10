@@ -6,6 +6,7 @@ import * as echarts from 'echarts';
 import { DatasourceService } from '../datasource.service';
 import { TableComponent} from '../table/table.component';
 
+
 @Component({
   selector: 'app-contested-story',
   templateUrl: './contested-story.component.html',
@@ -28,10 +29,12 @@ export class ContestedStoryComponent implements OnInit {
   end: number = 1835;
   years: number[]  =[];
 
-  updateOptions: any;
+  updateContestedOptions: any;
+  newUpdateContestedOptions: any;
   updateElectionOptions: any;
   updateNorthSouthOptions: any;
   updatePieOptions: any;
+  updateStackedOptions: any;
   constructor(private datasourceService: DatasourceService) { }
 
   data: any [] = [
@@ -90,6 +93,54 @@ optioni = {
 
   }]
 };
+newContestedOptions = {
+  visualMap: [{
+    show: false,
+    type: 'continuous',
+    seriesIndex: 0,
+    min: 0,
+    max: 1
+}],
+  grid:{
+    bottom:12,
+    top:12,
+    containLabel: true
+  },
+  title: {
+    text: '% contested elections by year where election held',
+    subtext: '',
+    x: 'center',
+    textStyle: {
+      fontSize: 12,
+      lineHeight: 12,
+    },
+    
+  },
+  tooltip: {
+    trigger: 'axis',
+    axisPointer: {
+      type: 'cross',
+      label: {
+        backgroundColor: '#6a7985'
+      }
+    }
+  },
+  
+  xAxis: {
+  scale:true
+  },
+  yAxis: {
+    scale:true
+  },
+  series: [
+    {
+      data: this.seriesData,
+      showSymbol: false,
+      type: 'line'
+    },
+  ],
+};
+
   contestedOptions = {
     visualMap: [{
       show: false,
@@ -262,12 +313,132 @@ itemStyle: {
       }
     ]
   };
+  stackedOptions = {
+    
+      title: {
+          text: 'by election cause by year'
+      },
+      tooltip: {
+          trigger: 'axis',
+          axisPointer: {
+              type: 'cross',
+              label: {
+                  backgroundColor: '#6a7985'
+              }
+          }
+      },
+      legend: {
+          data: []
+      },
+      toolbox: {
+          feature: {
+              saveAsImage: {}
+          }
+      },
+      grid: {
+          left: '3%',
+          right: '4%',
+          bottom: '3%',
+          containLabel: true
+      },
+      xAxis: [
+          {
+              type: 'category',
+              scale:true
+          }
+      ],
+      yAxis: [
+          {
+              type: 'value',
+              scale:true
+          }
+      ],
+      data: []
+    };
+  
+
   ngOnInit(): void {
    for(var i=1695;i<1835;i++){
      this.years.push(i);
    }
     this.datasourceService.ready.subscribe(value => {this.gotData(value)});
   }
+getByElectionCauses(){
+  var causes = [];
+  this.datasourceService.dataSource.filteredData.forEach(element => {
+    if(causes.indexOf(element.by_election_cause)==-1 &&element.by_election_cause.length>1){
+      causes.push(element.by_election_cause);
+    }
+  });
+  return causes;
+}
+getByElectionCauseByYear(){
+//   {
+//     name: '联盟广告',
+//     type: 'line',
+//     stack: '总量',
+//     areaStyle: {},
+//     emphasis: {
+//         focus: 'series'
+//     },
+//     data: [220, 182, 191, 234, 290, 330, 310]
+// },
+  var causes = this.getByElectionCauses();
+ // console.log("causes",causes);
+  var causesByYear = [];
+  var startYear = parseInt(this.datasourceService.dataSource.filteredData.sort(this.compare)[0].election_year );
+  var endYear = parseInt(this.datasourceService.dataSource.filteredData.sort(this.compare)[this.datasourceService.dataSource.filteredData.length-1].election_year );
+  causes.forEach(element => {
+    var data  = [];
+    for(var i=startYear;i<this.end;i++){
+      data.push(0);
+    }
+    var obj = {
+    name: element,
+    type: 'line',
+    stack: '总量',
+    areaStyle: {},
+    emphasis: {
+        focus: 'series'
+    },
+    data: data
+    }
+    causesByYear.push(obj);
+  });
+  var startYear = parseInt(this.datasourceService.dataSource.filteredData.sort(this.compare)[0].election_year );
+  console.log("causesByYear 1",causesByYear);
+
+  this.datasourceService.dataSource.filteredData.sort(this.compare).forEach(element => {
+    causesByYear.forEach(ielement => {
+      if(ielement.name == element.by_election_cause){
+          var whichYear = parseInt(element.election_year);
+          ielement.data[whichYear-startYear]++;
+      }
+    });
+    
+  });
+  console.log("causesByYear 2",causesByYear);
+  return causesByYear;
+  // this.datasourceService.dataSource.filteredData.forEach(element => {
+  //   causesByYear.forEach(ielement => {
+  //     if(ielement == element.by_election_cause){
+  //     var dataPoint = [element.election_year,element.election_year ];
+  //       ielement.data
+  //     }
+  //   });
+
+  // });
+
+}
+ compare( a, b ) {
+  if ( a.election_year < b.election_year ){
+    return -1;
+  }
+  if ( a.election_year > b.election_year ){
+    return 1;
+  }
+  return 0;
+}
 
 numberMap (val, in_min, in_max, out_min, out_max) {
 return (val - in_min) * (out_max - out_min) / (in_max - in_min) + out_min;
@@ -375,7 +546,13 @@ getNormalisedContestedPerYear(years){
   var nor = [];
   var i=0;
   cpy.forEach(element => {
-    nor.push( element / epy[i] );
+   //console.log(i,element,epy[i]);
+    if(epy[i]==0){
+      nor.push( 0 );
+    }else{
+      nor.push( element / epy[i] );
+    }
+    
     i++;
   });
 
@@ -387,6 +564,70 @@ getNormalisedContestedPerYear(years){
   for(var i=startIndex;i<=endIndex ;i++){
     sp.push(nor[i]*100);
   }
+  // console.log("spliced","length",sp.length,"yearRange", yearRange, "startYear", startYear, "endYear",endYear, "strartIndex",startIndex, "endIndex",endIndex);
+  return sp;
+}
+getNormalisedContestedPerYearWBlanks(years){
+  
+  var startYear = this.datasourceService.electionsMeta.earliest_year;
+  var endYear = this.datasourceService.electionsMeta.latest_year ;
+  var startEndYears = this.getStartEndYears();
+  startYear = startEndYears.startYear;
+  endYear = startEndYears.endYear;
+ 
+
+  var cpy = [];
+  var epy = [];
+  this.years.forEach(element => {
+  cpy.push(0);
+  epy.push(0);
+
+  });
+  for(var i=0;i<this.datasourceService.dataSource.filteredData.length;i++){
+    var index = parseInt(this.datasourceService.dataSource.filteredData[i].election_year)-this.datasourceService.electionsMeta.earliest_year;
+    if(parseInt(this.datasourceService.dataSource.filteredData[i].election_year) ==1700){
+    }
+    if(this.datasourceService.dataSource.filteredData[i].contested.trim()=='Y'){
+      cpy[index]++;
+    }
+    epy[index]++;
+  }
+  
+  var nor = [];
+  var i=0;
+  cpy.forEach(element => {
+   //console.log(i,element,epy[i]);
+    if(epy[i]==0){
+      nor.push( -1 );
+    }else{
+      nor.push( element / epy[i] );
+    }
+    
+    i++;
+  });
+
+  var startIndex = startYear-this.datasourceService.electionsMeta.earliest_year;
+  var yearRange = endYear- startYear;
+  var endIndex = startIndex + yearRange
+  var sp = [];//nor.splice(startIndex, endIndex);
+var index = startYear;
+  for(var i=startIndex;i<=endIndex ;i++){
+    if(nor[i]!=-1){
+  // var startIndex = startYear-this.datasourceService.electionsMeta.earliest_year;
+ // console.log("arr",i,startIndex,startYear,this.datasourceService.electionsMeta.earliest_year, nor[i]*100);
+//  console.log(1,typeof(i),typeof(startYear));
+//  startYear+=1;
+//  startYear-=1;
+//  console.log(2,typeof(i),typeof(startYear));
+
+ var y = index+startYear;
+      var arr = [index,nor[i]*100 ];
+     // console.log("arr",arr);
+      sp.push(arr);
+    }
+index++;
+  }
+
   // console.log("spliced","length",sp.length,"yearRange", yearRange, "startYear", startYear, "endYear",endYear, "strartIndex",startIndex, "endIndex",endIndex);
   return sp;
 }
@@ -423,6 +664,7 @@ getElectionsPerYear(years){
   // console.log("spliced","length",sp.length,"yearRange", yearRange, "startYear", startYear, "endYear",endYear, "strartIndex",startIndex, "endIndex",endIndex);
   return sp;
 }
+
 getMax(arr){
   var max = 0;
   arr.forEach(element => {
@@ -448,7 +690,6 @@ gotData(value) {
       for(var i=this.datasourceService.electionsMeta.earliest_year;i<this.datasourceService.electionsMeta.latest_year;i++){
         //this.years.push(i);
         }
-        console.log("years ", this.years);
         if(this.normalise){
           
         }
@@ -457,14 +698,14 @@ gotData(value) {
         }
         this.seriesData = this.getNormalisedContestedPerYear(this.years);
         this.allElectionsSeriesData = this.getElectionsPerYear(this.years);
-        this.updateOptions = {
+        this.updateContestedOptions = {
           series: [{
             data: this.seriesData
           }]
         }
     }
   }
-  // updateOptions(){
+  // updateContestedOptions(){
 
   // }
   // updatePieOptions(){
@@ -515,12 +756,36 @@ gotData(value) {
     startYear = startEndYears.startYear;
     endYear = startEndYears.endYear;
 
+    var years = [];
+    for(var i =startYear;i<endYear;i++){
+      years.push(i);
+    }
+
+    //console.log("getByElectionCauseByYear",this.getByElectionCauseByYear());
+    var uso = this.getByElectionCauseByYear();
+    console.log("uso",uso);
+    this.updateStackedOptions = {
+      legend: {
+        data: this.getByElectionCauses()
+    },
+      series:uso,
+      xAxis: [
+        {
+            type: 'category',
+            boundaryGap: false,
+            data:years
+        }
+    ],
+    }
+    console.log("this.updateStackedOptions",this.updateStackedOptions);
+   
+  
     var yearRange = [];
     for(var i=startYear;i<=endYear;i++){
       yearRange.push(i);
     }
 
-      this.updateOptions = {
+      this.updateContestedOptions = {
         series: [{
           data: this.getNormalisedContestedPerYear(this.years)
         }],
@@ -529,9 +794,23 @@ gotData(value) {
           data: yearRange,
         }
       }
+
+      this.newUpdateContestedOptions = {
+        series: [{
+          data: this.getNormalisedContestedPerYearWBlanks(this.years)
+        }],
+        xAxis: {
+          type: 'category',
+          scale: true
+        },
+        yAxis: {
+          
+          scale: true
+        }
+      }
     
-   
-      // this.updateOptions = {
+      console.log("this.updateContestedOptions", this.updateContestedOptions);
+      // this.updateContestedOptions = {
       //   series: [{
       //     data: this.getContestedPerYear(this.years)
       //   }]
