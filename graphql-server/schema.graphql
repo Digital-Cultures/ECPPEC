@@ -7,6 +7,12 @@ A date-time string at UTC, such as 2007-12-03T10:15:30Z, compliant with the `dat
 """
 scalar DateTime
 
+enum GroupCategory {
+  contested
+  election_year
+  franchise_type
+}
+
 enum LocationType {
   borough
   county
@@ -22,6 +28,7 @@ type Query {
   candidates_elections(candidate_id: Int, election_id: String): [candidatesElection!]!
   election(contested: String, election_year: String): [election!]!
   election_dates(election_year: String, orderBy: OrderByDate): [electionDates!]!
+  election_groupBy(groupBy: [GroupCategory]): [contested_year!]!
   location(location_type: LocationType, searchString: String): [locations!]!
   poll_book(contested: String, election_year: String): [poll_books!]!
   vote: [vote!]!
@@ -31,6 +38,10 @@ type Query {
 enum SortOrder {
   asc
   desc
+}
+
+type aggregate {
+  count: Int
 }
 
 type artefact {
@@ -57,6 +68,13 @@ type candidatesElection {
   election: [election]
   election_id: String!
   running_as: String
+}
+
+type contested_year {
+  contested: String
+  election_year: Int
+  franchise_type: String
+  value: aggregate
 }
 
 type election {

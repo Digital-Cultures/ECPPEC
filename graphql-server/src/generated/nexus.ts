@@ -35,6 +35,7 @@ export interface NexusGenInputs {
 }
 
 export interface NexusGenEnums {
+  GroupCategory: "contested" | "election_year" | "franchise_type"
   LocationType: "borough" | "county"
   SortOrder: "asc" | "desc"
 }
@@ -50,6 +51,9 @@ export interface NexusGenScalars {
 
 export interface NexusGenObjects {
   Query: {};
+  aggregate: { // root type
+    count?: number | null; // Int
+  }
   artefact: { // root type
     artefact_link?: string | null; // String
     artefact_name?: string | null; // String
@@ -66,6 +70,11 @@ export interface NexusGenObjects {
     candidate_id: number; // Int!
     election_id: string; // String!
     running_as?: string | null; // String
+  }
+  contested_year: { // root type
+    contested?: string | null; // String
+    election_year?: number | null; // Int
+    franchise_type?: string | null; // String
   }
   election: { // root type
     by_election_cause?: string | null; // String
@@ -139,10 +148,14 @@ export interface NexusGenFieldTypes {
     candidates_elections: NexusGenRootTypes['candidatesElection'][]; // [candidatesElection!]!
     election: NexusGenRootTypes['election'][]; // [election!]!
     election_dates: NexusGenRootTypes['electionDates'][]; // [electionDates!]!
+    election_groupBy: NexusGenRootTypes['contested_year'][]; // [contested_year!]!
     location: NexusGenRootTypes['locations'][]; // [locations!]!
     poll_book: NexusGenRootTypes['poll_books'][]; // [poll_books!]!
     vote: NexusGenRootTypes['vote'][]; // [vote!]!
     voter: NexusGenRootTypes['voter'][]; // [voter!]!
+  }
+  aggregate: { // field return type
+    count: number | null; // Int
   }
   artefact: { // field return type
     artefact_link: string | null; // String
@@ -166,6 +179,12 @@ export interface NexusGenFieldTypes {
     election: Array<NexusGenRootTypes['election'] | null> | null; // [election]
     election_id: string; // String!
     running_as: string | null; // String
+  }
+  contested_year: { // field return type
+    contested: string | null; // String
+    election_year: number | null; // Int
+    franchise_type: string | null; // String
+    value: NexusGenRootTypes['aggregate'] | null; // aggregate
   }
   election: { // field return type
     by_election_cause: string | null; // String
@@ -235,10 +254,14 @@ export interface NexusGenFieldTypeNames {
     candidates_elections: 'candidatesElection'
     election: 'election'
     election_dates: 'electionDates'
+    election_groupBy: 'contested_year'
     location: 'locations'
     poll_book: 'poll_books'
     vote: 'vote'
     voter: 'voter'
+  }
+  aggregate: { // field return type name
+    count: 'Int'
   }
   artefact: { // field return type name
     artefact_link: 'String'
@@ -262,6 +285,12 @@ export interface NexusGenFieldTypeNames {
     election: 'election'
     election_id: 'String'
     running_as: 'String'
+  }
+  contested_year: { // field return type name
+    contested: 'String'
+    election_year: 'Int'
+    franchise_type: 'String'
+    value: 'aggregate'
   }
   election: { // field return type name
     by_election_cause: 'String'
@@ -345,6 +374,9 @@ export interface NexusGenArgTypes {
     election_dates: { // args
       election_year?: string | null; // String
       orderBy?: NexusGenInputs['OrderByDate'] | null; // OrderByDate
+    }
+    election_groupBy: { // args
+      groupBy?: Array<NexusGenEnums['GroupCategory'] | null> | null; // [GroupCategory]
     }
     location: { // args
       location_type?: NexusGenEnums['LocationType'] | null; // LocationType

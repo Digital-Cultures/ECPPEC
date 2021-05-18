@@ -2,6 +2,7 @@ import { core, intArg, makeSchema, nonNull, objectType, stringArg, inputObjectTy
     asNexusMethod, enumType,} from 'nexus'
 import { DateTimeResolver } from 'graphql-scalars'
 import { Context } from './context'
+import { Prisma } from '.prisma/client'
 
 export const DateTime = asNexusMethod(DateTimeResolver, 'date')
 
@@ -87,6 +88,27 @@ const Query = objectType({
           },
           // where: { election_id: _args.election_id || undefined },
         })
+      },
+    })
+
+    t.nonNull.list.nonNull.field('election_groupBy', {
+      type: ElectionGroupBy,
+      args: {
+        groupBy: list( GroupCategory),
+      },
+      resolve: (_parent, args, context: Context) => {
+        const election_count = context.prisma.elections.groupBy({
+          by: args.groupBy,
+          count: {
+            election_year: true,
+            contested: true
+          },
+          
+          // orderBy: {
+          //   election_year: 'asc',
+          // },
+        })
+        return election_count;
       },
     })
 
@@ -284,6 +306,30 @@ const Election = objectType({
   },
 })
 
+const ElectionGroupBy = objectType({
+  name: 'contested_year',
+  definition(t) {
+    t.int('election_year')
+    t.string('contested')
+    t.string('franchise_type')
+    t.field('value',{
+      type: Aggregate,
+      resolve: (parent, _, context: Context) => {
+        return {
+          count:parent.count.election_year
+        };
+        },
+    })
+  }
+})
+
+const Aggregate = objectType({
+  name: 'aggregate',
+  definition(t){
+    t.int('count')
+  },
+})
+
 const Locations = objectType({
   name: 'locations',
   definition(t) {
@@ -381,12 +427,10 @@ const OrderByDate = inputObjectType({
   },
 })
 
-// const AggregateVote = objectType({
-//   name: 'AggregateVote',
-//   definition(t) {
-//     t.int()
-//   }
-// })
+const GroupCategory = enumType({
+  name: 'GroupCategory',
+  members: ['election_year', 'contested', 'franchise_type'],
+})
 
 export const schema = makeSchema({
   types: [
@@ -394,6 +438,11 @@ export const schema = makeSchema({
     DateTime,
     SortOrder,
     OrderByDate,
+    // groupings
+    Aggregate,
+    GroupCategory,
+    ElectionGroupBy,
+    // tables
     Artefact,
     Candidate,
     CandidatesElection,
@@ -404,6 +453,7 @@ export const schema = makeSchema({
     PollBooks,
     Voter,
     Vote,
+    
   ],
   outputs: {
     schema: __dirname + '/../schema.graphql',
