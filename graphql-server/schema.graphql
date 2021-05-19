@@ -33,7 +33,7 @@ type Query {
   candidates_elections(candidate_id: Int, election_id: String): [candidatesElection!]!
   election(contested: String, election_end_year: String = "9999", election_start_year: String = "0000"): [election!]!
   election_dates(election_year: String, orderBy: OrderByDate): [electionDates!]!
-  election_groupBy(groupBy: [GroupCategory]): [contested_year!]!
+  election_group_by(groupBy: [GroupCategory]): [election_group_by!]!
   location(location_type: LocationType, searchString: String): [locations!]!
   poll_book(contested: String, election_year: String): [poll_books!]!
   vote: [vote!]!
@@ -75,18 +75,6 @@ type candidatesElection {
   running_as: String
 }
 
-type contested_year {
-  by_election_cause: String
-  by_election_general: String
-  constituency: String
-  contested: String
-  countyboroughuniv: String
-  election_month: String
-  election_year: Int
-  franchise_type: String
-  value: aggregate
-}
-
 type election {
   by_election_cause: String
   by_election_general: String
@@ -111,6 +99,19 @@ type electionDates {
   election_id: String!
 }
 
+type election_group_by {
+  by_election_cause: String
+  by_election_general: String
+  constituency: String
+  contested: String
+  countyboroughuniv: String
+  election_month: String
+  election_year: Int
+  franchise_type: String
+  id: Int
+  value: aggregate
+}
+
 type locations {
   lat: Float
   lng: Float
@@ -133,7 +134,7 @@ type vote {
   candidate: [candidate]
   line: String
   page: String
-  voter: [voter]
+  voter(forename: String, guild: String, occupation: String, surname: String): [voter]
 }
 
 type voter {

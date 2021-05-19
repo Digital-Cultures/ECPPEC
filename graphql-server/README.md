@@ -66,6 +66,7 @@ npx prisma generate
 
 ### Example Queries
 
+Group By:
 ```
  election_groupBy(groupBy:[by_election_general, contested]){
     by_election_general
@@ -73,5 +74,15 @@ npx prisma generate
     value{
       count
     }
+  }
+```
+
+Date filtering:
+```
+  election(election_start_year:"1690", election_end_year:"1701"){
+    constituency
+    election_year
+    election_month
+		election_date
   }
 ```

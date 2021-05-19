@@ -94,7 +94,7 @@ const Query = objectType({
       },
     })
 
-    t.nonNull.list.nonNull.field('election_groupBy', {
+    t.nonNull.list.nonNull.field('election_group_by', {
       type: ElectionGroupBy,
       args: {
         groupBy: list( GroupCategory),
@@ -219,8 +219,9 @@ const Candidate = objectType({
       type: Vote,
       resolve: (parent, _, context: Context) => {
         return context.prisma.votes.findMany({
-          where: { candidate_id: parent.candidate_id || undefined }})
-        },
+          where: { candidate_id: parent.candidate_id || undefined }
+        })
+      },
     })
     t.int('voteCount', {
       type: 'Int',
@@ -252,7 +253,6 @@ const CandidatesElection = objectType({
           where: { candidate_id: parent.candidate_id || undefined }})
         },
     })
-
   },
 })
 
@@ -310,8 +310,9 @@ const Election = objectType({
 })
 
 const ElectionGroupBy = objectType({
-  name: 'contested_year',
+  name: 'election_group_by',
   definition(t) {
+    t.int('id')
     t.int('election_year')
     t.string('election_month')
     t.string('constituency')
@@ -402,19 +403,24 @@ const Vote = objectType({
     })
     t.list.field('voter', {
       type: Voter,
-      resolve: (parent, _, context: Context) => {
+      args: {
+        forename: stringArg(),
+        surname: stringArg(),
+        occupation: stringArg(),
+        guild: stringArg(),
+      },
+      resolve: (parent, args, context: Context) => {
         return context.prisma.voters.findMany({
-          where: { voter_id: parent.voter_id || undefined }})
-        },
+          where: {  
+            forename: args.forename || undefined,
+            surname: args.surname || undefined,
+            occupation: args.occupation || undefined,
+            guild: args.guild || undefined,
+            voter_id: parent.voter_id 
+          }
+        })
+      },
     })
- 
-    // t.list.field('poll_books', {
-    //   type: PollBooks,
-    //   resolve: (parent, _, context: Context) => {
-    //     return context.prisma.poll_books.findMany({
-    //       where: { pollbook_id: parent.PollBookCode || undefined }})
-    //     },
-    // })
   },
 })
 
