@@ -72,7 +72,10 @@ type candidatesElection {
   candidate_id: Int!
   election: [election]
   election_id: String!
+  is_winner: Boolean
+  overturned_by: String
   running_as: String
+  ultimate_winner: Boolean
 }
 
 type election {

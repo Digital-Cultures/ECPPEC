@@ -69,7 +69,10 @@ export interface NexusGenObjects {
   candidatesElection: { // root type
     candidate_id: number; // Int!
     election_id: string; // String!
+    is_winner?: boolean | null; // Boolean
+    overturned_by?: string | null; // String
     running_as?: string | null; // String
+    ultimate_winner?: boolean | null; // Boolean
   }
   election: { // root type
     by_election_cause?: string | null; // String
@@ -185,7 +188,10 @@ export interface NexusGenFieldTypes {
     candidate_id: number; // Int!
     election: Array<NexusGenRootTypes['election'] | null> | null; // [election]
     election_id: string; // String!
+    is_winner: boolean | null; // Boolean
+    overturned_by: string | null; // String
     running_as: string | null; // String
+    ultimate_winner: boolean | null; // Boolean
   }
   election: { // field return type
     by_election_cause: string | null; // String
@@ -298,7 +304,10 @@ export interface NexusGenFieldTypeNames {
     candidate_id: 'Int'
     election: 'election'
     election_id: 'String'
+    is_winner: 'Boolean'
+    overturned_by: 'String'
     running_as: 'String'
+    ultimate_winner: 'Boolean'
   }
   election: { // field return type name
     by_election_cause: 'String'

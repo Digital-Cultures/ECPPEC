@@ -239,6 +239,9 @@ const CandidatesElection = objectType({
     t.nonNull.string('election_id')
     t.nonNull.int('candidate_id')
     t.string('running_as')
+    t.boolean('is_winner')
+    t.string('overturned_by')
+    t.boolean('ultimate_winner')
     t.list.field('election', {
       type: Election,
       resolve: (parent, _, context: Context) => {
