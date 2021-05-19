@@ -8,7 +8,12 @@ A date-time string at UTC, such as 2007-12-03T10:15:30Z, compliant with the `dat
 scalar DateTime
 
 enum GroupCategory {
+  by_election_cause
+  by_election_general
+  constituency
   contested
+  countyboroughuniv
+  election_month
   election_year
   franchise_type
 }
@@ -26,7 +31,7 @@ type Query {
   artefact(artefact_name: String, artefact_type: String): [artefact!]!
   candidate(candidate_id: Int, candidate_name: String): [candidate!]!
   candidates_elections(candidate_id: Int, election_id: String): [candidatesElection!]!
-  election(contested: String, election_year: String): [election!]!
+  election(contested: String, election_end_year: String = "9999", election_start_year: String = "0000"): [election!]!
   election_dates(election_year: String, orderBy: OrderByDate): [electionDates!]!
   election_groupBy(groupBy: [GroupCategory]): [contested_year!]!
   location(location_type: LocationType, searchString: String): [locations!]!
@@ -71,7 +76,12 @@ type candidatesElection {
 }
 
 type contested_year {
+  by_election_cause: String
+  by_election_general: String
+  constituency: String
   contested: String
+  countyboroughuniv: String
+  election_month: String
   election_year: Int
   franchise_type: String
   value: aggregate
@@ -84,6 +94,7 @@ type election {
   constituency: String
   contested: String
   countyboroughuniv: String
+  election_date: DateTime
   election_month: String
   election_year: String
   franchise_detail: String

@@ -62,3 +62,16 @@ The .prisma\client folder contains your generated Prisma client, and is modified
 ```
 npx prisma generate
 ```
+
+
+### Example Queries
+
+```
+ election_groupBy(groupBy:[by_election_general, contested]){
+    by_election_general
+    contested
+    value{
+      count
+    }
+  }
+```

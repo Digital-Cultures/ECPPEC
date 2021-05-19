@@ -76,17 +76,20 @@ const Query = objectType({
     t.nonNull.list.nonNull.field('election', {
       type: Election,
       args: {
-        election_year: stringArg(),
+        election_start_year: stringArg({default:"0000"}),
+        election_end_year: stringArg({default:"9999"}),
         contested: stringArg(),
         // election_id:  stringArg(),
       },
       resolve: (_parent, _args, context: Context) => {
         return context.prisma.elections.findMany({
           where: {  
-            election_year: _args.election_year || undefined,
+            election_date: {
+              gte: new Date(_args.election_start_year+'-01-01T00:00:00'),
+              lte: new Date(_args.election_end_year+'-12-31T00:00:00') 
+             } || undefined,
             contested: _args.contested || undefined 
           },
-          // where: { election_id: _args.election_id || undefined },
         })
       },
     })
@@ -101,7 +104,6 @@ const Query = objectType({
           by: args.groupBy,
           count: {
             election_year: true,
-            contested: true
           },
           
           // orderBy: {
@@ -275,6 +277,7 @@ const Election = objectType({
   definition(t) {
     t.string('election_year')
     t.string('election_month')
+    t.date('election_date')
     t.string('constituency')
     t.string('countyboroughuniv')
     t.string('franchise_detail')
@@ -310,8 +313,13 @@ const ElectionGroupBy = objectType({
   name: 'contested_year',
   definition(t) {
     t.int('election_year')
-    t.string('contested')
+    t.string('election_month')
+    t.string('constituency')
+    t.string('countyboroughuniv')
     t.string('franchise_type')
+    t.string('by_election_general')
+    t.string('by_election_cause')
+    t.string('contested')
     t.field('value',{
       type: Aggregate,
       resolve: (parent, _, context: Context) => {
@@ -429,7 +437,7 @@ const OrderByDate = inputObjectType({
 
 const GroupCategory = enumType({
   name: 'GroupCategory',
-  members: ['election_year', 'contested', 'franchise_type'],
+  members: ['election_year', 'election_month','constituency','countyboroughuniv', 'franchise_type','by_election_general','by_election_cause','contested'],
 })
 
 export const schema = makeSchema({
