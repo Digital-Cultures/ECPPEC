@@ -99,6 +99,9 @@ import {
 	MatToolbarModule,
 	MatTooltipModule,
   } from '@angular/material';
+import { EssaysComponent } from './essays/essays.component';
+import { DataComponent } from './data/data.component';
+import { CreditsComponent } from './credits/credits.component';
 
 
 // import { DialogElementsExampleDialog } from './app.component';
@@ -162,7 +165,7 @@ import {
 		DialogueComponent, 
 		ApiComponent, 
 		PollbookDialogueComponent, 
-		WarningDialogueComponent, SandpitComponent, TableComponent, ElectionsMapComponent, MapComponent, SmoothHeightComponent, ContestedStoryComponent, HeatmapComponent
+		WarningDialogueComponent, SandpitComponent, TableComponent, ElectionsMapComponent, MapComponent, SmoothHeightComponent, ContestedStoryComponent, HeatmapComponent, EssaysComponent, DataComponent, CreditsComponent
 	],
 	providers: [  
 		{ provide: MAT_DIALOG_DATA, useValue: {} },

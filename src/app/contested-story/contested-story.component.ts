@@ -28,13 +28,14 @@ export class ContestedStoryComponent implements OnInit {
   start: number = 1695;
   end: number = 1835;
   years: number[]  =[];
-
+  normaliseByElectionsCause: boolean = true;
   updateContestedOptions: any;
   newUpdateContestedOptions: any;
   updateElectionOptions: any;
   updateNorthSouthOptions: any;
   updatePieOptions: any;
   updateStackedOptions: any;
+  updateStackedBarOptions: any;
   constructor(private datasourceService: DatasourceService) { }
 
   data: any [] = [
@@ -313,11 +314,39 @@ itemStyle: {
       }
     ]
   };
+  stackedBarOptions= {
+
+    legend: {
+        data: []
+    },
+    grid: {
+        left: '3%',
+        right: '4%',
+        bottom: '23%',
+        containLabel: true
+    },
+    xAxis: {
+        type: 'value'
+    },
+    yAxis: {
+        type: 'category',
+        data: []
+    },
+    series: [
+       
+    ]
+};
   stackedOptions = {
     
-      title: {
-          text: 'by election cause by year'
+    title: {
+      text: 'By election cause by year',
+      subtext: '',
+      x: 'center',
+      textStyle: {
+        fontSize: 12,
+        lineHeight: 12,
       },
+    },
       tooltip: {
           trigger: 'axis',
           axisPointer: {
@@ -338,7 +367,7 @@ itemStyle: {
       grid: {
           left: '3%',
           right: '4%',
-          bottom: '3%',
+          bottom: '23%',
           containLabel: true
       },
       xAxis: [
@@ -372,17 +401,80 @@ getByElectionCauses(){
   });
   return causes;
 }
+getAggregatedByElectionCauses(){
+  var causes = this.getByElectionCauses();
+  //console.log("Causes",causes);
+  var abec = {};
+  causes.forEach(element => {
+      abec[element]=0;
+  })
+  
+  this.datasourceService.dataSource.filteredData.forEach(element => {
+    if(element.by_election_cause.length>1 ) abec[element.by_election_cause]++;
+  })
+  // var data = [];
+ var series = []; 
+  for (const key in abec) {
+      // data.push(abec[key]);
+      var arr = [abec[key]];
+      var obj = {
+        name: key,
+        type: 'bar',
+        stack: 'total',
+        label: {
+            show: true
+        },
+        emphasis: {
+            focus: 'series'
+        },
+        data: arr
+    };
+    series.push(obj);
+
+  }
+  
+ // console.log("series:",series);
+  return series;
+
+}
+// getNormalisedAggregatedByElectionCauses(){
+//   var causes = this.getByElectionCauses();
+//   //console.log("Causes",causes);
+//   var abec = {};
+//   causes.forEach(element => {
+//       abec[element]=0;
+//   })
+  
+//   this.datasourceService.dataSource.filteredData.forEach(element => {
+//     if(element.by_election_cause.length>1 ) abec[element.by_election_cause]++;
+//     })
+//       // var data = [];
+//     var series = []; 
+//       for (const key in abec) {
+//           // data.push(abec[key]);
+//           var arr = [abec[key]];
+//           var obj = {
+//             name: key,
+//             type: 'bar',
+//             stack: 'total',
+//             label: {
+//                 show: true
+//             },
+//             emphasis: {
+//                 focus: 'series'
+//             },
+//             data: arr
+//         };
+//         series.push(obj);
+
+//   }
+  
+//  // console.log("series:",series);
+//   return series;
+
+// }
 getByElectionCauseByYear(){
-//   {
-//     name: '联盟广告',
-//     type: 'line',
-//     stack: '总量',
-//     areaStyle: {},
-//     emphasis: {
-//         focus: 'series'
-//     },
-//     data: [220, 182, 191, 234, 290, 330, 310]
-// },
+
   var causes = this.getByElectionCauses();
  // console.log("causes",causes);
   var causesByYear = [];
@@ -406,7 +498,6 @@ getByElectionCauseByYear(){
     causesByYear.push(obj);
   });
   var startYear = parseInt(this.datasourceService.dataSource.filteredData.sort(this.compare)[0].election_year );
-  console.log("causesByYear 1",causesByYear);
 
   this.datasourceService.dataSource.filteredData.sort(this.compare).forEach(element => {
     causesByYear.forEach(ielement => {
@@ -417,17 +508,66 @@ getByElectionCauseByYear(){
     });
     
   });
-  console.log("causesByYear 2",causesByYear);
   return causesByYear;
-  // this.datasourceService.dataSource.filteredData.forEach(element => {
-  //   causesByYear.forEach(ielement => {
-  //     if(ielement == element.by_election_cause){
-  //     var dataPoint = [element.election_year,element.election_year ];
-  //       ielement.data
-  //     }
-  //   });
 
-  // });
+}
+getByNormalisedElectionCauseByYear(){
+
+  var causes = this.getByElectionCauses();
+ // console.log("causes",causes);
+ if(causes.length==0) return 0;
+  var causesByYear = [];
+  var startYear = parseInt(this.datasourceService.dataSource.filteredData.sort(this.compare)[0].election_year );
+  var endYear = parseInt(this.datasourceService.dataSource.filteredData.sort(this.compare)[this.datasourceService.dataSource.filteredData.length-1].election_year );
+  console.log("causes",causes, "startyear",startYear, "endyear",endYear);
+  causes.forEach(element => {
+    var data  = [];
+    for(var i=startYear;i<this.end;i++){
+      data.push(0);
+    }
+    var obj = {
+    name: element,
+    type: 'line',
+    stack: '总量',
+    areaStyle: {},
+    emphasis: {
+        focus: 'series'
+    },
+    data: data
+    }
+    causesByYear.push(obj);
+  });
+  var startYear = parseInt(this.datasourceService.dataSource.filteredData.sort(this.compare)[0].election_year );
+
+  this.datasourceService.dataSource.filteredData.sort(this.compare).forEach(element => {
+    causesByYear.forEach(ielement => {
+      if(ielement.name == element.by_election_cause){
+          var whichYear = parseInt(element.election_year);
+          ielement.data[whichYear-startYear]++;
+      }
+    });
+    
+  });
+  //normalise
+  //they all have the same number of years 
+  console.log("causes by year",causesByYear);
+  var numYears = causesByYear[0].data.length;
+  //for each year
+  for(var i=0; i<numYears;i++){
+    var total =0.0;
+  causesByYear.forEach(element => {
+    total+= element.data[i];
+   
+  });
+  //now go through an dmake them a percentage of the total
+  causesByYear.forEach(element => {
+   element.data[i] =element.data[i] /total;
+   
+  });
+}
+  
+  return causesByYear;
+
 
 }
  compare( a, b ) {
@@ -719,22 +859,20 @@ gotData(value) {
     var franchise_types = [];
     var franchise_data = [];
     this.datasourceService.dataSource.filteredData.forEach(element =>{
-      if(franchise_types.indexOf(element.franchise_type)==-1){
-        franchise_types.push(element.franchise_type);
+      if(franchise_types.indexOf(element.franchise_type.trim())==-1 && element.franchise_type.trim().length>3){
+        franchise_types.push(element.franchise_type.trim());
       }
     }
     )
   }
   getFranchiseData(){
     var franchise_data = {};
-    //  franchise_types.forEach(element =>{
-    //   franchise_data[element]=0;
-    // });
+
     this.datasourceService.dataSource.filteredData.forEach(element =>{
-      if (element.franchise_type in franchise_data){
-        franchise_data[element.franchise_type]++;
+      if (element.franchise_type.trim() in franchise_data){
+        franchise_data[element.franchise_type.trim()]++;
       }else{
-        franchise_data[element.franchise_type]=1;
+        franchise_data[element.franchise_type.trim()]=1;
       }
       
       
@@ -762,11 +900,62 @@ gotData(value) {
     }
 
     //console.log("getByElectionCauseByYear",this.getByElectionCauseByYear());
-    var uso = this.getByElectionCauseByYear();
+
+    var uso ;
+    if(!this.normaliseByElectionsCause){
+      uso = this.getByElectionCauseByYear();
+    }else{
+     uso =  this.getByNormalisedElectionCauseByYear();
+    }
+    var byc = this.getAggregatedByElectionCauses();
     console.log("uso",uso);
+    this.updateStackedBarOptions = {
+    //   tooltip: {
+    //     trigger: 'axis',
+    //     axisPointer: {            // Use axis to trigger tooltip
+    //         type: 'shadow'        // 'shadow' as default; can also be 'line' or 'shadow'
+    //     }
+    // },
+    legend: {
+        data: this.getByElectionCauses(),
+        bottom:20
+    },
+    grid: {
+        left: '3%',
+        right: '4%',
+        bottom: '40%',
+        containLabel: true
+    },
+    xAxis: {
+        type: 'value'
+    },
+    yAxis: {
+        type: 'category',
+        data: ['myBar']
+    },
+    series:byc
+    }
+    console.log("this.updateStackedBarOptions ",this.updateStackedBarOptions );
+    // this.updateStackedBarOptions = {
+    //   legend: {
+    //     data: this.getByElectionCauses()
+    //       },
+    //   series:byc,
+    //   xAxis:{
+    //     type:'value'
+    //   },
+    //   yAxis: [
+    //     {
+    //         type: 'category',
+    //         data: [0]
+           
+    //     }
+    // ],
+    // }
     this.updateStackedOptions = {
       legend: {
-        data: this.getByElectionCauses()
+        data: this.getByElectionCauses(),
+        bottom:20
     },
       series:uso,
       xAxis: [
@@ -777,7 +966,6 @@ gotData(value) {
         }
     ],
     }
-    console.log("this.updateStackedOptions",this.updateStackedOptions);
    
   
     var yearRange = [];

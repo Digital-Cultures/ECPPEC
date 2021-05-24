@@ -34,7 +34,17 @@ export class TableComponent implements OnInit {
   currentBooks: PollBook[];
   pollBooks: PollBookResponse;
   gotPollBooks:boolean = false;
-
+  // filterNames: string [] = ["consituency","election_month","","","","","","","","","","",""];
+  filterNames: any[] = [
+    {value: 'constituency', viewValue: 'Constituency'},
+    {value: 'election_month', viewValue: 'Election Month'},
+    {value: 'countyboroughuniv', viewValue: 'County/Borough/University'},
+    {value: 'by_election_general', viewValue: 'By election/general'},
+    {value: 'by_election_cause', viewValue: 'By election cause'},
+    {value: 'franchise_type', viewValue: 'Franchise Type'},
+    {value: 'contested', viewValue: 'Contested'},
+    {value: 'election_month', viewValue: 'Election Month'}
+  ];
   sliderOptions: Options = {
     floor: 1695,
     ceil: 1835
@@ -172,8 +182,17 @@ export class TableComponent implements OnInit {
 
 	}
   download(){
-		this.downloadService.downloadFile(this.dataSource.filteredData, 'elections');
-	}
+    //console.log(this.datasourceService.dataSource.filteredData);
+		this.downloadService.downloadFile(this.datasourceService.dataSource.filteredData, 'elections');
+		//this.downloadService.downloadElectionsByYearPerColumn(this.datasourceService.dataSource.filteredData, 'electionsbyyear', 'contested');
+
+  }
+  downloadYear(name){
+    //console.log(this.datasourceService.dataSource.filteredData);
+		//this.downloadService.downloadFile(this.datasourceService.dataSource.filteredData, 'elections');
+		this.downloadService.downloadElectionsByYearPerColumn(this.datasourceService.dataSource.filteredData, 'electionsbyyear'+name, name);
+
+  }
 	//downlaod pollbook data
 	downloadPollBooks(){
 
