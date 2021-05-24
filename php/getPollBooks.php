@@ -1,115 +1,71 @@
 <?php
-mysqli_set_charset("utf8");
+//mysqli_set_charset("utf8");
 require_once('config.php');
-//?from_year=1734&to_year=1760
-function safe_json_encode($value){
-    if (version_compare(PHP_VERSION, '5.4.0') >= 0) {
-        $encoded = json_encode($value, JSON_PRETTY_PRINT);
-    } else {
-        $encoded = json_encode($value);
-    }
-    switch (json_last_error()) {
-        case JSON_ERROR_NONE:
-            return $encoded;
-        case JSON_ERROR_DEPTH:
-            return 'Maximum stack depth exceeded'; // or trigger_error() or throw new Exception()
-        case JSON_ERROR_STATE_MISMATCH:
-            return 'Underflow or the modes mismatch'; // or trigger_error() or throw new Exception()
-        case JSON_ERROR_CTRL_CHAR:
-            return 'Unexpected control character found';
-        case JSON_ERROR_SYNTAX:
-            return 'Syntax error, malformed JSON'; // or trigger_error() or throw new Exception()
-        case JSON_ERROR_UTF8:
-            $clean = utf8ize($value);
-            return safe_json_encode($clean);
-        default:
-            return 'Unknown error'; // or trigger_error() or throw new Exception()
-    }
-}
+require_once('functions.php');
 
-
-function utf8ize($mixed) {
-    if (is_array($mixed)) {
-        foreach ($mixed as $key => $value) {
-            $mixed[$key] = utf8ize($value);
-        }
-    } else if (is_string ($mixed)) {
-        return utf8_encode($mixed);
-    }
-    return $mixed;
-}
-// Create connection
 $conn = new mysqli($servername, $username, $password, $dbname);
-// // Check connection
-if ($db->connect_error > 0) {
+if ($conn->connect_error > 0) {
 	echo "no db";
 	die("Connection failed: " . $conn->connect_error);
 }
-//echo 'Connected successfully.';
-
-// $year_range ="";
-
-$sql = "SELECT * FROM POLL_BOOKS";
-
-$is_first_filter = true;
 
 
-if ( isset($_GET["BookCode"])  ){
-//	echo sizeof(explode(";", $_GET["BookCode"] )  );
+//initialize some variables
+$sql = "SELECT p.* FROM poll_books p 
+		LEFT JOIN elections e on e.pollbook_id = p.pollBookCode";
+$optimized = array(); //will enforce lowercase keys for $_GET array
+$options = array(); //for building WHERE clause, derived from optimized $_GET variables
+$big_array = array(); //will contain all user parameters in order, for use in prepared query
 
-	$BookCode ="";
+//lowercase all keys, eliminate inconsistency headaches
+if(is_array($_GET)) {
+	$optimized = optimizer($_GET);
+}
 
-	if(sizeof(explode(";", $_GET["BookCode"] )  )>1){
 
-		if($is_first_filter){
-			$BookCode = " where ( PollBookCode = ";
-			$is_first_filter = false;
-		}
-		else{
-			$BookCode = " and ( PollBookCode = ";
-		}
-		
-		$BookCode.="'".explode(";", $_GET["BookCode"] )[0]."'";
-
-		foreach (explode(";", $_GET["BookCode"] )  as $key => $value) {
-//			echo "looking for:. ".$value."<br>";
-			$BookCode.=" or PollBookCode = '".$value."'";
-
-		}
-		$BookCode.=" ) ";
-	}
-	else{
-
-		if($is_first_filter){
-			$BookCode = " where PollBookCode = '".$_GET["BookCode"]."'";
-			$is_first_filter = false;
-			//echo "individual:";
-		}
-		else{
-			$BookCode = " and PollBookCode = '".$_GET["BookCode"]."'";
-		}
-
-	}
-
+if (isset($optimized["bookcode"])  ){
+	$array = explode(";",$optimized['bookcode']);
+	$big_array = array_merge($big_array,$array);
 	
-	//echo $year_range."<br>";
-	$sql .= $BookCode;
+	$options[] = "p.pollBookCode IN ("
+	.	str_repeat("?,",count($array)-1)
+	.	"?)";
+}
 
+if (isset($optimized["constituency"])) {
+	$array = explode(";",$optimized['constituency']);
+	$big_array = array_merge($big_array,$array);
+	$options[] = "e.constituency IN ("
+	.	str_repeat("?,",count($array)-1)
+	.	"?)";
+}
+
+if(count($options)) {
+	$sql .= " WHERE "
+			.	implode(" AND ",$options);
+}
+
+$stmt  = $conn->prepare($sql); // prepare
+$n = count($big_array);
+if($n) {
+	$types = str_repeat('s', $n); //types
+	$stmt->bind_param($types, ...$big_array); // bind array at once
+}
+$stmt->execute();
+$result = $stmt->get_result(); // get the mysqli result
+$rows = $result->fetch_all(MYSQLI_ASSOC); // fetch the data
+
+//do they want election results?
+if(isset($optimized['include_results']) && in_array($optimized['include_results'],$acceptable_flags)) {
+	foreach($rows as &$row) {
+		$results = election_results($row['ElectionCode']);
+		$row['results'] = count($results) ? $results : "information not available";
+	}
 }
 
 
-$result = $conn->query($sql);
-
-$rows = array();
-while($r = mysqli_fetch_assoc($result)) {
-	// print_r ($r);
-	// echo $r."<br>";
-	$rows[] = $r;
-	   // echo $r;
-}
-// print_r($rows);
 $response = array(
-	"num_results"=>sizeof($rows),
+	"num_results"=>count($rows),
 
 	"poll_books"=>$rows
 );
