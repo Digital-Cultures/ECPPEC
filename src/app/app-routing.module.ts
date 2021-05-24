@@ -11,6 +11,7 @@ import { TableComponent } from './table/table.component';
 import { ElectionsMapComponent } from './elections-map/elections-map.component';
 import { ContestedStoryComponent } from './contested-story/contested-story.component';
 import { HeatmapComponent } from './heatmap/heatmap.component';
+import { GraphQLDemoComponent } from './graph-ql-demo/graph-ql-demo.component';
 
 const routes: Routes = [
 { path: '', redirectTo: '/about', pathMatch: 'full' },
@@ -23,7 +24,8 @@ const routes: Routes = [
   { path: 'table', component: TableComponent },
   { path: 'outputs', component: OutputsComponent },
   { path: 'map', component:ElectionsMapComponent},
-  { path: 'heatmap', component:HeatmapComponent}
+  { path: 'heatmap', component:HeatmapComponent},
+  { path: 'graphQL-demo', component:GraphQLDemoComponent}
 ];
 
 @NgModule({
