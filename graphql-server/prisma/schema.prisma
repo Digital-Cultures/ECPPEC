@@ -50,7 +50,7 @@ model elections {
   id                  Int       @id @default(autoincrement())
   election_year       String?   @db.VarChar(50)
   election_month      String?   @db.VarChar(50)
-  election_date       DateTime? @db.DateTime(0)
+  election_date       DateTime? @db.Date
   constituency        String?   @db.VarChar(50)
   countyboroughuniv   String?   @db.VarChar(50)
   franchise_detail    String?   @db.VarChar(50)
@@ -63,6 +63,9 @@ model elections {
   notes               String?   @db.VarChar(250)
   latitude            String?   @db.VarChar(50)
   longitude           String?   @db.VarChar(50)
+
+  @@index([constituency], name: "constituency")
+  @@index([election_id], name: "electionID")
 }
 
 model elections_old {
@@ -92,15 +95,15 @@ model locations {
 }
 
 model poll_books {
-  PollBookCode String  @id @db.VarChar(1000)
-  PrintMS      String? @db.VarChar(10)
-  Citation     String? @db.VarChar(1000)
-  Holdings     String? @db.VarChar(1000)
-  Source       String? @db.VarChar(1000)
-  ElectionCode String? @db.VarChar(1000)
-  Notes        String? @db.VarChar(1000)
+  pollbook_id String  @id @db.VarChar(50)
+  PrintMS     String? @db.VarChar(10)
+  Citation    String? @db.VarChar(1000)
+  Holdings    String? @db.VarChar(1000)
+  Source      String? @db.VarChar(1000)
+  election_id String? @db.VarChar(50)
+  Notes       String? @db.VarChar(1000)
 
-  @@index([ElectionCode], name: "ElectionCode")
+  @@index([election_id], name: "ElectionCode")
 }
 
 model voters {

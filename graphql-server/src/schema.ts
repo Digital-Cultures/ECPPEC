@@ -469,8 +469,7 @@ export const schema = makeSchema({
     LocationType,
     PollBooks,
     Voter,
-    Vote,
-    
+    Vote,  
   ],
   outputs: {
     schema: __dirname + '/../schema.graphql',
