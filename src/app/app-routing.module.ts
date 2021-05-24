@@ -19,7 +19,7 @@ const routes: Routes = [
   { path: 'team', component: TeamComponent },
   { path: 'api', component: ApiComponent },
   { path: 'sandpit', component: SandpitComponent },
-  { path: 'contested', component: ContestedStoryComponent },
+  { path: 'stories/contested', component: ContestedStoryComponent },
   { path: 'table', component: TableComponent },
   { path: 'outputs', component: OutputsComponent },
   { path: 'map', component:ElectionsMapComponent},
