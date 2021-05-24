@@ -18,7 +18,7 @@ export class WarningDialogueComponent implements OnInit {
 			stopUnlinking: true
 		}
 		this.dialogRef.close(obj);
-
+ 
 	}
 
 }

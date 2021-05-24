@@ -1,16 +1,14 @@
 /* Add application styles & imports to this file! */
 
-
 $default-theme: mat-dark-theme(mat-palette($mat-green, A400), mat-palette($mat-light-blue, A400));
 @include angular-material-theme($default-theme);
-
-html body{
-	height:100%;
-	width:100%;
-	position: relative;
-	background-color: black;
-}
-@import "~igniteui-angular/lib/core/styles/themes/index";
+// html body {
+//     height: 100%;
+//     width: 100%;
+//     position: relative;
+//     background-color: black;
+// } saf
+// @import "~igniteui-angular/lib/core/styles/themes/index";
 // Uncomment the following lines if you want to add a custom palette:
 // $primary: #731963 !default;
 // $secondary: #ce5712 !default;
@@ -20,5 +18,6 @@ html body{
 
 @include igx-core();
 @include igx-theme($default-palette);
-
-
+@import 'tailwindcss/base';
+@import 'tailwindcss/components';
+@import 'tailwindcss/utilities';

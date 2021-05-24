@@ -2,18 +2,28 @@ import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 import { AboutComponent } from './about/about.component';
 import { AppComponent } from './app.component';
-import { VizComponent } from './viz/viz.component';
+// import { VizComponent } from './viz/viz.component';
 import { TeamComponent } from './team/team.component';
 import { OutputsComponent } from './outputs/outputs.component';
 import { ApiComponent } from './api/api.component';
+import { SandpitComponent } from './sandpit/sandpit.component';
+import { TableComponent } from './table/table.component';
+import { ElectionsMapComponent } from './elections-map/elections-map.component';
+import { ContestedStoryComponent } from './contested-story/contested-story.component';
+import { HeatmapComponent } from './heatmap/heatmap.component';
 
 const routes: Routes = [
-{ path: '', redirectTo: '/viz', pathMatch: 'full' },
+{ path: '', redirectTo: '/about', pathMatch: 'full' },
   { path: 'about', component: AboutComponent },
-  { path: 'viz', component: VizComponent },
+  // { path: 'viz', component: VizComponent },
   { path: 'team', component: TeamComponent },
   { path: 'api', component: ApiComponent },
-  { path: 'outputs', component: OutputsComponent }
+  { path: 'sandpit', component: SandpitComponent },
+  { path: 'contested', component: ContestedStoryComponent },
+  { path: 'table', component: TableComponent },
+  { path: 'outputs', component: OutputsComponent },
+  { path: 'map', component:ElectionsMapComponent},
+  { path: 'heatmap', component:HeatmapComponent}
 ];
 
 @NgModule({

@@ -1,0 +1,5 @@
+<google-map height="100vh" width="100vw" [options]="{styles:m}" [zoom]="zoom" [center]="center" (tilesloaded)="mapReady()" (zoomChanged)="mapZoomChanged()" (idle)="mapIdle()">
+
+    <map-marker *ngFor="let dynamicMarker of dynamicMarkers" [position]="dynamicMarker.getPosition()" [options]="{icon:dynamicMarker.getIcon(), title:dynamicMarker.title, visible:dynamicMarker.visible   }"></map-marker>
+
+</google-map>
