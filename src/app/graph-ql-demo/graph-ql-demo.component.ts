@@ -16,6 +16,7 @@ const GET_CANDIDATE = gql`query {
       election{
         election_year
         contested
+        constituency
       }
     }
   }
@@ -23,6 +24,7 @@ const GET_CANDIDATE = gql`query {
 
 export interface CandidateElement {
   candidate_name: string;
+  constituency: string;
   election_year: number;
   contested: number;
   is_winner: boolean;
@@ -39,7 +41,7 @@ const ELEMENT_DATA: CandidateElement[] = [];
 export class GraphQLDemoComponent implements OnInit, AfterViewInit, OnDestroy {
   loading: boolean;
   candidate: any;
-  displayedColumns: string[] = ['candidate_name', 'election_year', 'contested', 'is_winner', 'ultimate_winner', 'overturned_by'];
+  displayedColumns: string[] = ['candidate_name', 'constituency', 'election_year', 'contested', 'is_winner', 'ultimate_winner', 'overturned_by'];
   dataSource = new MatTableDataSource(ELEMENT_DATA);
   
   @ViewChild(MatPaginator) paginator: MatPaginator;
@@ -64,6 +66,7 @@ export class GraphQLDemoComponent implements OnInit, AfterViewInit, OnDestroy {
         element.candidates_elections.forEach(candidates_election => {
           ELEMENT_DATA.push({
             candidate_name: element.candidate_name,
+            constituency: candidates_election.election[0].constituency,
             election_year: candidates_election.election[0].election_year,
             contested: candidates_election.election[0].contested,
             is_winner: candidates_election.is_winner,
