@@ -134,6 +134,7 @@ import { GraphQLDemoComponent } from './graph-ql-demo/graph-ql-demo.component';
 		MatTableModule,
 		MatSelectModule,
 		MatSliderModule,
+		MatSortModule,
 		MatProgressSpinnerModule,
 		MatInputModule,
 		AppRoutingModule,
