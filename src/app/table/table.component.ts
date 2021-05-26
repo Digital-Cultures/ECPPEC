@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewChild, Output, EventEmitter } from '@angular/core';
+import { Component, OnInit, OnDestroy, ViewChild, Output, EventEmitter } from '@angular/core';
 import { DatasourceService } from '../datasource.service';
 import { MatTableDataSource } from '@angular/material/table';
 import { FilterObj, Elections, Election , PollBook, PollBookResponse, HOPData} from  '../viz/viz.component';
@@ -14,13 +14,14 @@ import { GetPollBooksService } from '../get-poll-books.service';
 import { PollbookDialogueComponent } from '../pollbook-dialogue/pollbook-dialogue.component';
 
 import { DialogueComponent } from '../dialogue/dialogue.component';
+import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-table',
   templateUrl: './table.component.html',
   styleUrls: ['./table.component.scss']
 })
-export class TableComponent implements OnInit {
+export class TableComponent implements OnInit, OnDestroy {
   @Output() myEvent = new EventEmitter();
   constructor(private getPollBooksService: GetPollBooksService, private downloadPollBooksService: DownloadPollBooksService, private downloadService: DownloadService, private datasourceService: DatasourceService,  public dialog: MatDialog) { }
   @ViewChild(MatPaginator, { static: true }) paginator: MatPaginator;
@@ -34,6 +35,8 @@ export class TableComponent implements OnInit {
   currentBooks: PollBook[];
   pollBooks: PollBookResponse;
   gotPollBooks:boolean = false;
+  gotDataFlag:boolean = false;
+  myValueSub: Subscription;
   // filterNames: string [] = ["consituency","election_month","","","","","","","","","","",""];
   filterNames: any[] = [
     {value: 'constituency', viewValue: 'Constituency'},
@@ -51,9 +54,7 @@ export class TableComponent implements OnInit {
   };
   openDialogue(){
     const dialogRef = this.dialog.open(DialogueComponent);
-    //   const dialogRef = this.dialog.open(DialogueComponent,{
-    //     data: this.datasourceService.getUniqueElections(),
-    //  });
+   
   
       dialogRef.afterClosed().subscribe(
         data => this.datasourceService.setSearchFromDialogue(data)
@@ -61,9 +62,9 @@ export class TableComponent implements OnInit {
         this.myEvent.emit(null);
   }
   ngOnInit(): void {
-    // this.datasourceService.init();
+   if(!this.gotDataFlag){
     this.datasourceService.getData();
-    this.datasourceService.ready.subscribe(() => this.gotData()
+    this.myValueSub = this.datasourceService.ready.subscribe(() => this.gotData()
     );
     this.openDialogue();
    
@@ -77,7 +78,8 @@ export class TableComponent implements OnInit {
     this.datasourceService.byElectionCauseFilter.valueChanges.subscribe(() => this.dataChange("byElectionCauseFilter"));
     this.datasourceService.franchiseFilter.valueChanges.subscribe(() => this.dataChange("franchiseFilter"));
     this.datasourceService.pollBookCodeFilter.valueChanges.subscribe(() => this.dataChange("pollBookCodeFilter"));
-
+    this.gotDataFlag=true;
+  }
   }
   openPollBookDialogue(){
 		//console.log();
@@ -198,4 +200,9 @@ export class TableComponent implements OnInit {
 
 		// this.downloadPollBooksService.downloadFile(this.pollBooks.poll_books, 'pollBooks');
 	}
+  ngOnDestroy(){
+    if (this.myValueSub) {
+          this.myValueSub.unsubscribe();
+      }
+    }
 }

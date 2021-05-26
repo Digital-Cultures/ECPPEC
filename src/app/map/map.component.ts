@@ -1,16 +1,17 @@
 
-import { Component, OnInit, ViewChild, ApplicationRef} from '@angular/core';
+import { Component, OnInit, OnDestroy,ViewChild, ApplicationRef} from '@angular/core';
 import { GoogleMapsModule,GoogleMap } from '@angular/google-maps'
 import { DatasourceService } from '../datasource.service';
 import { TableComponent} from '../table/table.component';
 import {mapStyles} from '../mapStyles';// import { FormControl } from '@angular/forms';
+import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-map',
   templateUrl: './map.component.html',
   styleUrls: ['./map.component.scss']
 })
-export class MapComponent implements OnInit {
+export class MapComponent implements OnInit, OnDestroy{
 
   constructor(private datasourceService: DatasourceService, private appRef: ApplicationRef) { }
   @ViewChild(GoogleMap, { static: false }) map: GoogleMap;
@@ -23,9 +24,10 @@ export class MapComponent implements OnInit {
 	}
   m: any  = mapStyles.styles ;//this.mStyles.styles;
   //console.log(mpStyles);
+  myValueSub: Subscription;
   dynamicMarkers: google.maps.Marker []=[];
   ngOnInit(): void {
-   this.datasourceService.ready.subscribe(value => {this.gotData(value)});
+    this.myValueSub = this.datasourceService.ready.subscribe(value => {this.gotData(value)});
   // this.datasourceService.ready.subscribe(() => this.gotData() );
   
    // this.datasourceService.onDataSubscriptionChange().subscribe(() => this.dataChange());
@@ -291,6 +293,11 @@ this.datasourceService.uniqueElections.forEach(element => {
 			this.mapIsReady = true;
 			
 		}
+  }
+  ngOnDestroy(){
+	if (this.myValueSub) {
+        this.myValueSub.unsubscribe();
+    }
   }
  
 }

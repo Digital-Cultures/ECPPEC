@@ -5,6 +5,7 @@ import { NgxEchartsModule } from 'ngx-echarts';
 import * as echarts from 'echarts';
 import { DatasourceService } from '../datasource.service';
 import { TableComponent} from '../table/table.component';
+import { Subscription } from 'rxjs';
 
 
 @Component({
@@ -18,6 +19,7 @@ export class ContestedStoryComponent implements OnInit {
   normalise: boolean = true;
   
 
+  myValueSub: Subscription;
 
   electionsPerYear: any[] = [];
   theme:string = "macarons";
@@ -390,7 +392,7 @@ itemStyle: {
    for(var i=1695;i<1835;i++){
      this.years.push(i);
    }
-    this.datasourceService.ready.subscribe(value => {this.gotData(value)});
+   this.myValueSub = this.datasourceService.ready.subscribe(value => {this.gotData(value)});
   }
 getByElectionCauses(){
   var causes = [];
@@ -1124,4 +1126,9 @@ gotData(value) {
     return name + " "+ sp[0] +"% contested";
 
   }
+  ngOnDestroy(){
+    if (this.myValueSub) {
+          this.myValueSub.unsubscribe();
+      }
+    }
 }
