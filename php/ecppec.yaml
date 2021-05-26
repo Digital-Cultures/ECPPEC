@@ -1,6 +1,6 @@
 swagger: "2.0"
 info:
-  description: "ECPPEC Swagger at [http://ecppec.ncl.ac.uk](http://ecppec.ncl.ac.uk).      \nFor this sample, you can use the api key `special-key` to test the authorization     filters."
+  description: "This API provides access to the election data collected as part of the Eighteenth-Century Political Participation and Electoral Culture (ECPPEC) project. The website [http://ecppec.ncl.ac.uk](http://ecppec.ncl.ac.uk) provides a more in depth background to the project and where the data comes from. \n See the project GitHub [https://github.com/Digital-Cultures/ECPPEC](https://github.com/Digital-Cultures/ECPPEC) for Angular code example using this data."
   version: "1.0.0"
   title: "ECPPEC API"
   termsOfService: "http://ecppec.ncl.ac.uk/terms/"

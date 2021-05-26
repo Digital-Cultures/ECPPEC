@@ -11,9 +11,13 @@ import { TableComponent } from './table/table.component';
 import { ElectionsMapComponent } from './elections-map/elections-map.component';
 import { ContestedStoryComponent } from './contested-story/contested-story.component';
 import { HeatmapComponent } from './heatmap/heatmap.component';
+
 import { EssaysComponent } from './essays/essays.component';
 import { DataComponent } from './data/data.component';
 import { CreditsComponent } from './credits/credits.component';
+
+import { GraphQLDemoComponent } from './graph-ql-demo/graph-ql-demo.component';
+origin/graphqlServer
 
 const routes: Routes = [
 { path: '', redirectTo: '/about', pathMatch: 'full' },
@@ -22,13 +26,17 @@ const routes: Routes = [
   { path: 'team', component: TeamComponent },
   { path: 'api', component: ApiComponent },
   { path: 'sandpit', component: SandpitComponent },
+
   { path: 'contested', component: ContestedStoryComponent },
   { path: 'data', component: DataComponent },
+   { path: 'table', component: TableComponent },
   { path: 'outputs', component: OutputsComponent },
   { path: 'map', component:ElectionsMapComponent},
   { path: 'credits', component:CreditsComponent},
   { path: 'heatmap', component:HeatmapComponent},
-  { path: 'essays', component:EssaysComponent}
+  { path: 'essays', component:EssaysComponent},
+   { path: 'graphQL-demo', component:GraphQLDemoComponent}
+
 ];
 
 @NgModule({

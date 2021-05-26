@@ -23,6 +23,7 @@
               "src/assets"
             ],
             "styles": [
+              "node_modules/tailwindcss/tailwind.css",
               "node_modules/swagger-ui-dist/swagger-ui.css",
               "./node_modules/@angular/material/prebuilt-themes/deeppurple-amber.css",
               "node_modules/ngx-draggable-resize/css/resizable.min.css"

@@ -9,6 +9,9 @@ import { HelloComponent } from './hello.component';
 import * as Hammer from 'hammerjs';
 
 import { HttpClientModule } from '@angular/common/http';
+import {APOLLO_OPTIONS} from 'apollo-angular';
+import {HttpLink} from 'apollo-angular/http';
+import {InMemoryCache} from '@apollo/client/core';
 import { ActivatedRoute } from '@angular/router';
 import { AngularDraggableModule } from 'ngx-draggable-resize';
 
@@ -99,9 +102,13 @@ import {
 	MatToolbarModule,
 	MatTooltipModule,
   } from '@angular/material';
+
 import { EssaysComponent } from './essays/essays.component';
 import { DataComponent } from './data/data.component';
 import { CreditsComponent } from './credits/credits.component';
+
+import { GraphQLDemoComponent } from './graph-ql-demo/graph-ql-demo.component';
+
 
 
 // import { DialogElementsExampleDialog } from './app.component';
@@ -133,6 +140,7 @@ import { CreditsComponent } from './credits/credits.component';
 		MatTableModule,
 		MatSelectModule,
 		MatSliderModule,
+		MatSortModule,
 		MatProgressSpinnerModule,
 		MatInputModule,
 		AppRoutingModule,
@@ -165,11 +173,24 @@ import { CreditsComponent } from './credits/credits.component';
 		DialogueComponent, 
 		ApiComponent, 
 		PollbookDialogueComponent, 
-		WarningDialogueComponent, SandpitComponent, TableComponent, ElectionsMapComponent, MapComponent, SmoothHeightComponent, ContestedStoryComponent, HeatmapComponent, EssaysComponent, DataComponent, CreditsComponent
+
+		WarningDialogueComponent, SandpitComponent, TableComponent, ElectionsMapComponent, MapComponent, SmoothHeightComponent, ContestedStoryComponent, HeatmapComponent, GraphQLDemoComponent
+
 	],
 	providers: [  
 		{ provide: MAT_DIALOG_DATA, useValue: {} },
-		{ provide: MatDialogRef, useValue: {} }
+		{ provide: MatDialogRef, useValue: {} },
+		{provide: APOLLO_OPTIONS,
+     	 	useFactory: (httpLink: HttpLink) => {
+				return {
+				cache: new InMemoryCache(),
+				link: httpLink.create({
+					uri: 'http://ecppec.ncl.ac.uk/api',
+				}),
+				};
+			},
+      		deps: [HttpLink],
+		},
     ],
 	entryComponents: [
 		AppComponent, 
