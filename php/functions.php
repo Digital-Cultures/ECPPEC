@@ -58,7 +58,7 @@ function election_results($election_id) {
 	) candidate
 	FROM votes v
 	WHERE v.election_id = ?
-	GROUP BY candidate_id
+	GROUP BY candidate_id, election_id
 	ORDER BY votes desc";
 	$stmt = $conn->prepare($sql);
 	$stmt->bind_param('s',$election_id);

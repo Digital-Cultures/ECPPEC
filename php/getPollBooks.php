@@ -2,17 +2,17 @@
 //mysqli_set_charset("utf8");
 require_once('config.php');
 require_once('functions.php');
-
+error_reporting(E_ALL);
+ini_set('display_errors', 1);
+mysqli_report(MYSQLI_REPORT_ERROR | MYSQLI_REPORT_STRICT);
 $conn = new mysqli($servername, $username, $password, $dbname);
 if ($conn->connect_error > 0) {
 	echo "no db";
 	die("Connection failed: " . $conn->connect_error);
 }
-
-
 //initialize some variables
 $sql = "SELECT p.* FROM poll_books p 
-		LEFT JOIN elections e on e.pollbook_id = p.pollBookCode";
+		LEFT JOIN elections e on e.pollbook_id = p.pollbook_id";
 $optimized = array(); //will enforce lowercase keys for $_GET array
 $options = array(); //for building WHERE clause, derived from optimized $_GET variables
 $big_array = array(); //will contain all user parameters in order, for use in prepared query
@@ -27,7 +27,7 @@ if (isset($optimized["bookcode"])  ){
 	$array = explode(";",$optimized['bookcode']);
 	$big_array = array_merge($big_array,$array);
 	
-	$options[] = "p.pollBookCode IN ("
+	$options[] = "p.pollbook_id IN ("
 	.	str_repeat("?,",count($array)-1)
 	.	"?)";
 }
@@ -58,7 +58,7 @@ $rows = $result->fetch_all(MYSQLI_ASSOC); // fetch the data
 //do they want election results?
 if(isset($optimized['include_results']) && in_array($optimized['include_results'],$acceptable_flags)) {
 	foreach($rows as &$row) {
-		$results = election_results($row['ElectionCode']);
+		$results = election_results($row['election_id']);
 		$row['results'] = count($results) ? $results : "information not available";
 	}
 }
