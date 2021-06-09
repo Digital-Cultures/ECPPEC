@@ -17,7 +17,6 @@ import { DataComponent } from './data/data.component';
 import { CreditsComponent } from './credits/credits.component';
 
 import { GraphQLDemoComponent } from './graph-ql-demo/graph-ql-demo.component';
-origin/graphqlServer
 
 const routes: Routes = [
 { path: '', redirectTo: '/about', pathMatch: 'full' },

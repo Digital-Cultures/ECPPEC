@@ -67,7 +67,12 @@ import { MapComponent } from './map/map.component';
 import { SmoothHeightComponent } from './smooth-height/smooth-height.component';
 import { ContestedStoryComponent } from './contested-story/contested-story.component';
 import { HeatmapComponent } from './heatmap/heatmap.component';
+import { EssaysComponent } from './essays/essays.component';
+import { DataComponent } from './data/data.component';
+import { CreditsComponent } from './credits/credits.component';
 
+import { GraphQLDemoComponent } from './graph-ql-demo/graph-ql-demo.component';
+ 
 import {
 	MatAutocompleteModule,
 	MatButtonModule,
@@ -102,12 +107,13 @@ import {
 	MatToolbarModule,
 	MatTooltipModule,
   } from '@angular/material';
+import { ObschaintestComponent } from './obschaintest/obschaintest.component';
+import { ContestedSparkLineComponent } from './contested-spark-line/contested-spark-line.component';
+import { ContestedRoseComponent } from './contested-rose/contested-rose.component';
+import { ElectionsSparkLineComponent } from './elections-spark-line/elections-spark-line.component';
+import { ContestedScatterplotComponent } from './contested-scatterplot/contested-scatterplot.component';
+import { SafeHtmlPipe } from './safe-html.pipe';
 
-import { EssaysComponent } from './essays/essays.component';
-import { DataComponent } from './data/data.component';
-import { CreditsComponent } from './credits/credits.component';
-
-import { GraphQLDemoComponent } from './graph-ql-demo/graph-ql-demo.component';
 
 
 
@@ -174,7 +180,7 @@ import { GraphQLDemoComponent } from './graph-ql-demo/graph-ql-demo.component';
 		ApiComponent, 
 		PollbookDialogueComponent, 
 
-		WarningDialogueComponent, SandpitComponent, TableComponent, ElectionsMapComponent, MapComponent, SmoothHeightComponent, ContestedStoryComponent, HeatmapComponent, GraphQLDemoComponent
+		WarningDialogueComponent, SandpitComponent, TableComponent, ElectionsMapComponent, TableComponent, CreditsComponent,DataComponent, MapComponent, SmoothHeightComponent, ContestedStoryComponent, HeatmapComponent, GraphQLDemoComponent, ObschaintestComponent, ContestedSparkLineComponent, ContestedRoseComponent, ElectionsSparkLineComponent, ContestedScatterplotComponent, SafeHtmlPipe
 
 	],
 	providers: [  

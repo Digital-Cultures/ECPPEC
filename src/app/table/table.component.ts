@@ -176,7 +176,6 @@ export class TableComponent implements OnInit, OnDestroy {
 
 		this.minYear = changeContext.value;
 		this.maxYear = changeContext.highValue;
-    console.log("reset year");
 
 		this.datasourceService.yearFilter.setValue(changeContext.value.toString() + "-" + changeContext.highValue.toString());
 		this.datasourceService.dataSource.filter = JSON.stringify(this.datasourceService.filteredValues);

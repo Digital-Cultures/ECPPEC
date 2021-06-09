@@ -12,7 +12,8 @@ import { GetElectionsService } from './get-elections.service';
 import { BehaviorSubject, Observable, of, Subscription } from 'rxjs';
 import { switchMap ,delay, timeout, map} from 'rxjs/operators';
 import express, {Request, Response} from 'express';
-
+// import 'rxjs/add/operator/flatMap';
+import { mergeMap } from 'rxjs/operators';
 @Injectable({
   providedIn: 'root'
 })
@@ -314,7 +315,7 @@ getUniqueElections(){
  
     this.uniqueElections = this.dataSource.data.filter((value, index, self) => self.map(x => x.constituency).indexOf(value.constituency) == index);
     }
-	returnUniqueElections(){
+returnUniqueElections(){
  
 		this.uniqueElections = this.dataSource.data.filter((value, index, self) => self.map(x => x.constituency).indexOf(value.constituency) == index);
 		return this.uniqueElections
@@ -361,6 +362,20 @@ getHasPollBooksFilter(pollbook_id, searchTerm) {
   
   gotData(){
 	this.dataSource = new MatTableDataSource<Election>(this.electionsMeta.elections);
+	//this is functional observor mapping!
+	this.dataSource.connect().pipe(
+		map(val => {
+		  return val      //Returning Value
+		})
+	  )
+	  .subscribe(ret=> {
+		//console.log('Recd from map : ' + ret[0].election_year);
+
+		
+	  })
+	   
+
+
 	  	this.dataSource.connect().subscribe((value) => {
 			  this.dataUpdate.next(true);
 		  });
