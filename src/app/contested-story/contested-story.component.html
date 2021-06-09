@@ -1,7 +1,7 @@
 <section class="text-gray-400 bg-gray-900 body-font">
     <!-- {{scrollPos}} -->
     <!-- change to items centre for vertical align -->
-    <div class="container px-5 py-14 mx-auto flex flex-wrap items-top">
+    <div class="container px-5 py-24 mx-auto flex flex-wrap items-top">
         <div class="lg:w-1/5 md:w-1/2 md:pr-16 lg:pr-0 pr-0" style=" overflow: scroll;" [ngStyle]="{'height': '100vh'}" #scrollContent (scroll)="onElementScroll($event)">
             <h1 class="title-font font-medium text-3xl text-white">Contested Elections in the 18th Century </h1>
             <div #div *ngFor="let para of paras; let i = index" class="leading-relaxed mt-4" [style.margin-bottom]="getSpacing(i)">{{para.content}}<br>
@@ -28,17 +28,16 @@
                 <span *ngIf="para.showReadmore">{{para.readmore}}</span>
                 <br>
                 <span class="readmore" style="cursor: pointer; font-weight: bold; color:rgba(251, 191, 36,1)" (click)="para.showReadmore=!para.showReadmore">[read {{!para.showReadmore ? 'more':'less'}}]</span>
-                <span (click)="scrollNext(i)">scroll</span>
             </div>
         </div>
         <div class="lg:w-4/6 md:w-1/2 bg-gray-800 bg-opacity-50 rounded-lg p-8 flex flex-col md:ml-auto w-full mt-10 md:mt-0">
-            <h2 style="color: rgba(251, 191, 36,1);" class="text-lg font-medium title-font mb-5"> [viz# {{visIndex}}] {{filteredNumElections }} elections of which {{filteredNumContested}} were contested ({{filteredPercentageContested}}%)</h2>
-
+            <!-- <h2 class="text-white text-lg font-medium title-font mb-5">Sign Up</h2> -->
+            <!-- {{visIndex}} -->
             <app-elections-spark-line *ngIf="visIndex>=0 && visIndex<6" [@inOutAnimation] class="text-xs mt-3"></app-elections-spark-line>
 
 
             <app-contested-spark-line *ngIf="visIndex>=6 && visIndex<=51" [@inOutAnimation] class="text-xs mt-3"></app-contested-spark-line>
-            <app-contested-rose *ngIf="visIndex>=6 && visIndex<=51" [@inOutAnimation] class="text-xs mt-3"></app-contested-rose>
+
             <p *ngIf="visIndex==13" [@inOutAnimation] class="text-xs mt-3">Apples saying through shrinking from toil and pain. These cases are perfectly simple and easy to distinguish. In a free hour, when our power of choice is untrammelled and when nothing prevents our being able to do what we like best, every
                 pleasure is to be welcomed and every pain avoided. But in certain circumstances and owing to the claims of duty or the obligations of business it will frequently occur that pleasures have to be repudiated and annoyances accepted. The wise
                 man therefore always holds in these mti atque corrupti quos dolores et quas molestias excepturi sint occaecati cupiditate non provident, similique sunt in culpa qui officia deserunt mollitia animi, id est laborum et dolorum fuga. Et harum
