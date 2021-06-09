@@ -89,6 +89,116 @@ getStartEndYears(){
     }
     return { startYear: startYear, endYear: endYear}
   }
+  getContestedElectionsPerNoneEmptyYearCB(cb, neys, data){
+   
+    let epy :number []= [];
+    let cpy: number [] = [];
+    neys.forEach(element => {
+      epy.push(0);
+      cpy.push(0);
+    });
+
+
+    data.forEach(element => {
+      if(neys.indexOf(element.election_year)!=-1 && element.contested=="Y" && element.countyboroughuniv==cb){
+        cpy [neys.indexOf(element.election_year)]++;
+      }
+      if(neys.indexOf(element.election_year)!=-1 && element.countyboroughuniv==cb ){
+        epy [neys.indexOf(element.election_year)]++;
+      }
+      
+    });
+    for(var i=0;i<epy.length;i++){
+      if(epy[i]>0) cpy[i] = (cpy[i]/epy[i]) *100;
+    }
+    
+    return cpy;
+  }
+  getContestedElectionsPerYear(startYear, endYear, data){
+   
+    let epy :number []= [];
+    for(var i=startYear;i<=endYear;i++){
+    
+      epy.push(0);
+    }
+    data.forEach(element => {
+      var index = element.election_year -startYear;
+      if(element.contested=="Y") epy[index]++;
+    });
+    return epy;
+  }
+  getContestedElectionsPerYearCB(startYear, endYear, cb, data){
+   
+    let epy :number []= [];
+    for(var i=startYear;i<=endYear;i++){
+    
+      epy.push(0);
+    }
+    data.forEach(element => {
+      var index = element.election_year -startYear;
+      if(element.contested=="Y" && element.countyboroughuniv   ==cb) epy[index]++;
+    });
+    return epy;
+  }
+  getContestedElectionsPerNoneEmptyYear(neys, data){
+   
+    let epy :number []= [];
+    let cpy: number [] = [];
+    neys.forEach(element => {
+      epy.push(0);
+      cpy.push(0);
+    });
+
+
+    data.forEach(element => {
+      if(neys.indexOf(element.election_year)!=-1 && element.contested=="Y"){
+        cpy [neys.indexOf(element.election_year)]++;
+      }
+      if(neys.indexOf(element.election_year)!=-1 ){
+        epy [neys.indexOf(element.election_year)]++;
+      }
+      
+    });
+    for(var i=0;i<epy.length;i++){
+      if(epy[i]>0) cpy[i] = (cpy[i]/epy[i]) *100;
+    }
+    
+    return cpy;
+  }
+  getElectionsPerNoneEmptyYear(neys, data){
+    //console.log("get per none empty")
+   
+    let epy :number []= [];
+    neys.forEach(element => {
+      epy.push(0);
+     
+      
+    });
+
+
+    data.forEach(element => {
+     
+      if(neys.indexOf(element.election_year)!=-1 ){
+        epy [neys.indexOf(element.election_year)]++;
+      }
+      
+    });
+    //console.log("epy",epy);
+    
+    return epy;
+  }
+  getNonEmptyYears(startYear, endYear, data){
+    let ney :number []= [];
+    // for(var i=startYear;i<=endYear;i++){
+    
+    //   ney.push(0);
+    // }
+    data.forEach(element => {
+   //   var index = element.election_year -startYear;
+      if(element.election_year>=startYear && element.election_year <=endYear && ney.indexOf(element.election_year)==-1) ney.push(element.election_year)
+    });
+    return ney;
+   }
   getEarliestFilteredYear(data){
     if(data.length>0) return  data.sort(this.compareByElectionYear)[0].election_year;
     return 0;

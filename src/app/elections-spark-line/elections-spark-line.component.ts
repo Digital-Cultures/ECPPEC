@@ -111,7 +111,7 @@ export class ElectionsSparkLineComponent implements OnInit, OnDestroy {
 
   }
   update(updateOptions){
-    console.log("updating elections data", this.datasourceService.dataSource.filteredData);
+  //  console.log("updating elections data", this.datasourceService.dataSource.filteredData);
    this.chartInstance.clear();
     if(this.utils!=undefined){
       var start =this.utils.getEarliestFilteredYear(this.datasourceService.dataSource.filteredData);
@@ -124,12 +124,12 @@ export class ElectionsSparkLineComponent implements OnInit, OnDestroy {
        }
       // this.epy = this.getContestedElectionsPerYear(start,end,this.datasourceService.dataSource.filteredData);
  
-       var neys = this.getNonEmptyYears(this.utils.start,this.utils.end,this.datasourceService.dataSource.filteredData);
+       var neys = this.utils.getNonEmptyYears(this.utils.start,this.utils.end,this.datasourceService.dataSource.filteredData);
       // var leastSquares=[];
       // leastSquares = this.findLineByLeastSquares(this.years, this.epy);
       //
       
-      console.log("neys",neys);
+   //   console.log("neys",neys);
       if(updateOptions.type=="visualMap"){
         var colorIndexStart =updateOptions.highLightStart-this.utils.start;
         var colorIndexEnd =updateOptions.highLightEnd-this.utils.start;
@@ -163,7 +163,7 @@ export class ElectionsSparkLineComponent implements OnInit, OnDestroy {
         },
           series: [{
            
-            data: this.getElectionsPerNoneEmptyYear(neys,this.datasourceService.dataSource.filteredData),
+            data: this.utils.getElectionsPerNoneEmptyYear(neys,this.datasourceService.dataSource.filteredData),
             type:'line'
           }],
         
@@ -171,9 +171,18 @@ export class ElectionsSparkLineComponent implements OnInit, OnDestroy {
         }
       }
     else if(updateOptions.type=="stayTall"){
-      console.log("Stay tall");
+     // console.log("Stay tall");
       this.updateOptions = {
-
+        
+      visualMap : {
+        show: false,
+        dimension: 0,
+        pieces: [{
+            gt: 0,
+            lte: 141,
+            color: 'rgba(251, 191, 36,1)'
+        }]
+      },
         
         xAxis: {
           type: 'category',
@@ -186,7 +195,7 @@ export class ElectionsSparkLineComponent implements OnInit, OnDestroy {
       },
         series: [{
          
-          data: this.getElectionsPerNoneEmptyYear(neys,this.datasourceService.dataSource.filteredData),
+          data: this.utils.getElectionsPerNoneEmptyYear(neys,this.datasourceService.dataSource.filteredData),
           type:'line'
         }],
       
@@ -217,7 +226,7 @@ else{
     },
       series: [{
         // lineStyle: {color: '#673ab7'},
-        data: this.getElectionsPerNoneEmptyYear(neys,this.datasourceService.dataSource.filteredData),
+        data: this.utils.getElectionsPerNoneEmptyYear(neys,this.datasourceService.dataSource.filteredData),
         type:'line'
       }],
     
@@ -229,55 +238,55 @@ else{
   }
   this.ref.detectChanges();
   }
-  getElectionsPerNoneEmptyYear(neys, data){
-    //console.log("get per none empty")
+  // getElectionsPerNoneEmptyYear(neys, data){
+  //   //console.log("get per none empty")
    
-    let epy :number []= [];
-    neys.forEach(element => {
-      epy.push(0);
+  //   let epy :number []= [];
+  //   neys.forEach(element => {
+  //     epy.push(0);
      
       
-    });
+  //   });
 
 
-    data.forEach(element => {
+  //   data.forEach(element => {
      
-      if(neys.indexOf(element.election_year)!=-1 ){
-        epy [neys.indexOf(element.election_year)]++;
-      }
+  //     if(neys.indexOf(element.election_year)!=-1 ){
+  //       epy [neys.indexOf(element.election_year)]++;
+  //     }
       
-    });
-    //console.log("epy",epy);
+  //   });
+  //   //console.log("epy",epy);
     
-    return epy;
-  }
-  getNonEmptyYears(startYear, endYear, data){
-    let ney :number []= [];
-    // for(var i=startYear;i<=endYear;i++){
+  //   return epy;
+  // }
+  // getNonEmptyYears(startYear, endYear, data){
+  //   let ney :number []= [];
+  //   // for(var i=startYear;i<=endYear;i++){
     
-    //   ney.push(0);
-    // }
-    data.forEach(element => {
-   //   var index = element.election_year -startYear;
-      if(element.election_year>=startYear && element.election_year <=endYear && ney.indexOf(element.election_year)==-1) ney.push(element.election_year)
-    });
-    return ney;
-   }
+  //   //   ney.push(0);
+  //   // }
+  //   data.forEach(element => {
+  //  //   var index = element.election_year -startYear;
+  //     if(element.election_year>=startYear && element.election_year <=endYear && ney.indexOf(element.election_year)==-1) ney.push(element.election_year)
+  //   });
+  //   return ney;
+  //  }
    
   
-  getElectionsPerYearNew(startYear, endYear, data){
+  // getElectionsPerYearNew(startYear, endYear, data){
    
-    let epy :number []= [];
-    for(var i=startYear;i<=endYear;i++){
+  //   let epy :number []= [];
+  //   for(var i=startYear;i<=endYear;i++){
     
-      epy.push(0);
-    }
-    data.forEach(element => {
-      var index = element.election_year -startYear;
-      epy[index]++;
-    });
-    return epy;
-  }
+  //     epy.push(0);
+  //   }
+  //   data.forEach(element => {
+  //     var index = element.election_year -startYear;
+  //     epy[index]++;
+  //   });
+  //   return epy;
+  // }
   ///https://dracoblue.net/dev/linear-least-squares-in-javascript/
   findLineByLeastSquares(values_x, values_y) {
     var sum_x = 0;

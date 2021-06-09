@@ -17,6 +17,10 @@ html {
     background: #FF0000;
 }
 
+div {
+    scroll-behavior: smooth;
+}
+
 .readmore {
     transition: width 2s, height 4s;
 }
