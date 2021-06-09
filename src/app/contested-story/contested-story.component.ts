@@ -3,6 +3,9 @@ import { FormsModule } from '@angular/forms';
 import { EChartsOption } from 'echarts';
 import { NgxEchartsModule } from 'ngx-echarts';
 import { SafeHtmlPipe } from '../safe-html.pipe';
+import {MatIconModule} from '@angular/material/icon'
+
+
 import * as echarts from 'echarts';
 import { DatasourceService } from '../datasource.service';
 import { TableComponent } from '../table/table.component';
@@ -14,6 +17,7 @@ import { ApplicationRef } from '@angular/core';
 import { DataStoryService } from '../data-story.service';
 import { MAY } from '@angular/material';
 import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
+ import { NgxSmoothScroll } from '@eunsatio/ngx-smooth-scroll';
 //https://itnext.io/4-ways-to-listen-to-page-scrolling-for-dynamic-ui-in-angular-ft-rxjs-5a83f91ee487
 @Component({
   animations: [
@@ -47,7 +51,7 @@ import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dial
 export class ContestedStoryComponent implements OnInit {
 
   normalise: boolean = true;
-
+  smoothScroll:any;
   test: string = "fish";
   myValueSub: Subscription;
   paras: any[] = [];
@@ -59,10 +63,13 @@ export class ContestedStoryComponent implements OnInit {
   filteredPercentageContested: number = 0;
   start: number = 1695;
   end: number = 1835;
+  id:any;
   years: number[] = [];
   triggers: number[] = [200, 200, 200, 200, 200, 200, 3200, 3400, 3700, 3900, 4300];
   listener;
   showImage: boolean = true;
+  buffer: number [] = []
+  bufferIndex:number =0;
   scrollPos: number = 0;
   scrollElementHeight: number = 0;
   visIndex: number = 0;
@@ -82,18 +89,25 @@ export class ContestedStoryComponent implements OnInit {
       var element = this.ps.get(i);
       var nextElement = this.ps.get(i + 1);
       var topBuffer = 200;
-      //  console.log("paras ",firstOffSet,element.nativeElement.offsetTop,this.getYPosition(e));
+      //  
       var thisOffset = (element.nativeElement.offsetTop - firstOffSet) - topBuffer;
-      var nextOffset = nextElement.nativeElement.offsetTop - firstOffSet;
-
-
-      if (this.getYPosition(e) >= thisOffset && this.getYPosition(e) < nextOffset) {
+      var nextOffset = (nextElement.nativeElement.offsetTop - firstOffSet)- topBuffer;
+      this.buffer[this.bufferIndex]=this.getYPosition(e) ;
+      this.bufferIndex++;
+      if(this.bufferIndex>=this.buffer.length) this.bufferIndex=0;
+      var bufferTotal = 0;
+      this.buffer.forEach(element => {
+        bufferTotal+=element;
+      });
+      var smoothedYPos = bufferTotal/this.buffer.length;
+      if (this.getYPosition(e)>= thisOffset && this.getYPosition(e) < nextOffset) {
         // newVisIndex =i; 
         if (!this.debounce) {
           if (i != this.visIndex) {
             this.viewChanged(i);
             this.debounce = true;
             this.visIndex = i;
+            console.log("paras ",thisOffset,nextOffset,this.getYPosition(e),smoothedYPos, this.visIndex);
            // console.log(" visIndex", this.visIndex);
             setTimeout(() => {
               this.debounce = false;
@@ -133,6 +147,19 @@ export class ContestedStoryComponent implements OnInit {
   }
 
   utils: any;
+  scrollNext(i){
+  //   console.log(`scrolling to ${i}`);
+
+    this.smoothScroll.scrollTo({ x: 0, y:  this.ps.get(i+1).nativeElement.offsetTop -200}, {
+      duration: 2800,
+      timingFunction: '.13, 1.07, .51, 1.29'
+  });
+   
+  
+  }
+  ngAfterViewInit() {
+     this.smoothScroll = new NgxSmoothScroll(this.elementView.nativeElement);
+}
 
   viewChanged(index) {
   //  console.log("view changed to number ", index);
@@ -207,7 +234,9 @@ export class ContestedStoryComponent implements OnInit {
   }
 
   ngOnInit(): void {
-
+    for(var i=0;i<100;i++){
+      this.buffer.push(0);
+    }
     this.utils = new ContestedUtils(this.datasourceService);
     this.datasourceService.getData();
 
@@ -252,7 +281,7 @@ export class ContestedStoryComponent implements OnInit {
       index: 1,
       readmore: "However, only a minority of these elections were ever actually contested, which is to say that the election progressed to a formal poll and the taking of votes.  There were, after all, good reasons to avoid contested elections. They could be hugely expensive. They could open up divisions in a community. And of course some constituencies had only a very small number of people entitled to vote, and they might be under the effective control of the landowner. Some pocket boroughs did not experience a single contested election between 1695 and 1832 (see St. Germans, Castle Rising, and Thirsk). Most elections, therefore, were decided without  a poll, with the two sitting MPs simply being returned to Parliament again, or an amical arrangement being made to divide the constituency’s MPs between the two parties.",
       showReadmore: false,
-      showControls: true,
+      showControls: true  ,
       widgets: ["general", "year"],
       content: "However, of these only " + this.filteredNumContested + " were contested. That's " + this.filteredPercentageContested + "%",
       spacing: "150%"
@@ -445,6 +474,9 @@ export class ContestedStoryComponent implements OnInit {
     if (this.myValueSub) {
       this.myValueSub.unsubscribe();
       // this.listener();
+    }
+    if (this.id) {
+      clearInterval(this.id);
     }
   }
 }

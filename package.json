@@ -17,6 +17,7 @@
     "@angular/platform-browser-dynamic": "^11.2.12",
     "@angular/router": "^11.2.12",
     "@apollo/client": "^3.3.19",
+    "@eunsatio/ngx-smooth-scroll": "^1.0.6",
     "@types/hammerjs": "^2.0.36",
     "angular-resizable-element": "^3.3.2",
     "apollo-angular": "^2.5.0",
