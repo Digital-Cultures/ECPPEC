@@ -111,6 +111,7 @@ getStartEndYears(){
     for(var i=0;i<epy.length;i++){
       if(epy[i]>0) cpy[i] = (cpy[i]/epy[i]) *100;
     }
+    console.log("large consisitency data",epy,cpy);
     
     return cpy;
   }
@@ -158,6 +159,32 @@ getStartEndYears(){
         epy [neys.indexOf(element.election_year)]++;
       }
       
+    });
+    for(var i=0;i<epy.length;i++){
+      if(epy[i]>0) cpy[i] = (cpy[i]/epy[i]) *100;
+    }
+    
+    return cpy;
+  }
+  getContestedElectionsPerNoneEmptyYearLargeConstituencies(neys, data){
+    var lCs = ["Bedford", "Beverley", "Bridgnorth", "Bristol", "Canterbury", "Carlisle", "Chester", "Colchester", "Coventry", "Cricklade", "Dover", "Durham City", "Evesham", "Exeter", "Gloucester", "Hereford", "Kingston-Upon-Hull", "Lancaster", "Leicester", "Lincoln", "Liverpool", "London", "Maidstone", "Newark", "Newcastle-upon-Tyne", "Northampton", "Norwich", "Nottingham", "Oxford", "Southwark", "Westminster", "Worcester", "York"];
+    let epy :number []= [];
+    let cpy: number [] = [];
+    neys.forEach(element => {
+      epy.push(0);
+      cpy.push(0);
+    });
+
+
+    data.forEach(element => {
+      if(lCs.indexOf(element.constituency.trim())!=-1){
+      if(neys.indexOf(element.election_year)!=-1 && element.contested=="Y"){
+        cpy [neys.indexOf(element.election_year)]++;
+      }
+      if(neys.indexOf(element.election_year)!=-1 ){
+        epy [neys.indexOf(element.election_year)]++;
+      }
+      }
     });
     for(var i=0;i<epy.length;i++){
       if(epy[i]>0) cpy[i] = (cpy[i]/epy[i]) *100;
@@ -290,7 +317,7 @@ getStartEndYears(){
         var causesByYear = [];
         var startYear = parseInt(this.datasourceService.dataSource.filteredData.sort(this.compareByElectionYear)[0].election_year );
         var endYear = parseInt(this.datasourceService.dataSource.filteredData.sort(this.compareByElectionYear)[this.datasourceService.dataSource.filteredData.length-1].election_year );
-        console.log("causes",causes, "startyear",startYear, "endyear",endYear);
+      //  console.log("causes",causes, "startyear",startYear, "endyear",endYear);
         causes.forEach(element => {
           var data  = [];
           for(var i=startYear;i<this.end;i++){
@@ -415,16 +442,17 @@ getStartEndYears(){
         return series;
       
       }
-      getFranchiseData(){
+      getFranchiseData(data){
         var franchise_data = {};
     
-        this.datasourceService.dataSource.filteredData.forEach(element =>{
+        data.forEach(element =>{
+          if(element.franchise_type.trim().length>0){
           if (element.franchise_type.trim() in franchise_data){
             franchise_data[element.franchise_type.trim()]++;
           }else{
             franchise_data[element.franchise_type.trim()]=1;
           }
-          
+        }
           
         })
         var clean_data = [];
@@ -437,4 +465,132 @@ getStartEndYears(){
         }
         return clean_data;
       }
+      getProportionContestedFranchiseData(data){
+       // var franchise_data = {};
+        var epf = {};
+        var cpf = {};
+        data.forEach(element =>{
+          if(element.franchise_type.trim().length>0){
+
+            //  
+          if (element.franchise_type.trim() in epf){
+            epf[element.franchise_type.trim()]++;
+            if(element.contested=="Y") cpf[element.franchise_type.trim()]++;
+          }else{
+            epf[element.franchise_type.trim()]=1.0;
+            element.contested.trim()=="Y" ? cpf[element.franchise_type.trim()]=1.0 :cpf[element.franchise_type.trim()]=0.0;
+          }
+        }
+          
+        })
+        
+        var clean_data = [];
+        for (var property in cpf) {
+          var proportion = (cpf[property]/epf[property])*100.0;
+
+          var obj = {
+            value:proportion,
+            name:property
+          }
+          clean_data.push(obj);
+        }
+        return clean_data;
+      }
+      getProportionContestedFranchiseDataWODisputed(data){
+        // var franchise_data = {};
+         var epf = {};
+         var cpf = {};
+         data.forEach(element =>{
+           if(element.franchise_type.trim().length>0 && element.franchise_type.trim()!="Disputed"){
+ 
+             //  
+           if (element.franchise_type.trim() in epf){
+             epf[element.franchise_type.trim()]++;
+             if(element.contested=="Y") cpf[element.franchise_type.trim()]++;
+           }else{
+             epf[element.franchise_type.trim()]=1.0;
+             element.contested.trim()=="Y" ? cpf[element.franchise_type.trim()]=1.0 :cpf[element.franchise_type.trim()]=0.0;
+           }
+         }
+           
+         })
+         
+         var clean_data = [];
+         for (var property in cpf) {
+           var proportion = (cpf[property]/epf[property])*100.0;
+ 
+           var obj = {
+             value:proportion,
+             name:property
+           }
+           clean_data.push(obj);
+         }
+        //  console.log("clean_data",clean_data.length,clean_data,epf,cpf);
+         return clean_data;
+       }
+      getNumberElectionsAndContestedFromFranchiseData(data){
+        // var franchise_data = {};
+         var epf = {};
+         var cpf = {};
+         data.forEach(element =>{
+           if(element.franchise_type.trim().length>0){
+ 
+             //  
+           if (element.franchise_type.trim() in epf){
+             epf[element.franchise_type.trim()]++;
+             if(element.contested=="Y") cpf[element.franchise_type.trim()]++;
+           }else{
+             epf[element.franchise_type.trim()]=1.0;
+            
+             element.contested.trim()=="Y" ? cpf[element.franchise_type.trim()]=1.0 :cpf[element.franchise_type.trim()]=0.0;
+           }
+         }
+           
+         })
+         
+         var clean_data = [];
+         for (var property in cpf) {
+            //conteset, num elections, franchise type
+            
+            var proportion = (cpf[property]/epf[property])*100.0;
+           var item = [epf[property],proportion,property];
+         
+           clean_data.push(item);
+         }
+         return clean_data;
+       }
+       
+       getNumberElectionsAndContestedPerConstituency(data){
+        // var franchise_data = {};
+         var epf = {};
+         var cpf = {};
+         var fpf = {};
+         data.forEach(element =>{
+           if(element.constituency.trim().length>0){
+ 
+             //  
+           if (element.constituency.trim() in epf){
+             epf[element.constituency.trim()]++;
+             if(element.contested.trim()=="Y") cpf[element.constituency.trim()]++;
+           }else{
+             epf[element.constituency.trim()]=1.0;
+             element.contested.trim()=="Y" ? cpf[element.constituency.trim()]=1.0 :cpf[element.constituency.trim()]=0.0;
+             fpf[element.constituency.trim()]=element.franchise_type.trim();
+           }
+         }
+           
+         })
+         
+         var clean_data = [];
+         for (var property in cpf) {
+            //conteset, num elections, franchise type
+            
+          var proportion = (cpf[property]/epf[property])*100.0;
+           var item = [epf[property],proportion,property, fpf[property]];
+         
+           clean_data.push(item);
+         }
+        // console.log("clean_data",clean_data.length,clean_data,epf,cpf)
+         return clean_data;
+       }
 }

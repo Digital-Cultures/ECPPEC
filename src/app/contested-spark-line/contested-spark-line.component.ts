@@ -1,4 +1,4 @@
-import { Component, OnInit , OnDestroy, ChangeDetectorRef} from '@angular/core';
+import { Component, OnInit , AfterViewInit,OnDestroy, ChangeDetectorRef} from '@angular/core';
 import { EChartsOption } from 'echarts';
 import { NgxEchartsModule } from 'ngx-echarts';
 
@@ -20,6 +20,7 @@ export class ContestedSparkLineComponent implements OnInit , OnDestroy{
 
   constructor(private datasourceService: DatasourceService,private ref: ChangeDetectorRef,private dataStoryService: DataStoryService) { }
   subscription: Subscription;
+  myValueSub: Subscription;
   utils: ContestedUtils;
   seriesData: any[] = [] ;
   chartInstance: any;
@@ -32,6 +33,7 @@ export class ContestedSparkLineComponent implements OnInit , OnDestroy{
       top:12,
       containLabel: true
     },
+    
     title: {
       text: '% Contested Elections Per Year',
       subtext: '',
@@ -85,9 +87,9 @@ export class ContestedSparkLineComponent implements OnInit , OnDestroy{
  //  console.log("updating graph",this.years,this.getContestedElectionsPerYear(this.utils.start,this.utils.end,this.datasourceService.dataSource.filteredData));
    if(this.chartInstance!=undefined)this.chartInstance.clear(); 
      if(this.updateParams.type == "showCountyBorough" ) {
-      console.log("showing county boroguh",this.chartInstance);
+     
       
-       
+      //  console.log("updatin showCountyBorough")
         this.updateOptions = {
           grid:{
          
@@ -102,6 +104,9 @@ export class ContestedSparkLineComponent implements OnInit , OnDestroy{
             fontSize: 12,
             lineHeight: 12,
           }
+        },
+        tooltip: {
+          trigger: 'axis'
         },
         visualMap : {
           show: false,
@@ -125,19 +130,20 @@ export class ContestedSparkLineComponent implements OnInit , OnDestroy{
         series: [{
           name:"counties",
           lineStyle: {color: '#673ab7'},
-          data: this.getContestedElectionsPerNoneEmptyYearCB("C", neys,this.datasourceService.dataSource.filteredData),
+          data: this.utils.getContestedElectionsPerNoneEmptyYearCB("C", neys,this.datasourceService.dataSource.filteredData),
           type:'line'
         },{
           name:"boroughs",
           lineStyle: {color: "rgba(251, 191, 36,1)"},
-          data: this.getContestedElectionsPerNoneEmptyYearCB("B", neys,this.datasourceService.dataSource.filteredData),
+          data: this.utils.getContestedElectionsPerNoneEmptyYearCB("B", neys,this.datasourceService.dataSource.filteredData),
           type:'line'
         }],
       
       
       }
-     }else {
-      console.log("not showing county boroguh");
+      // console.log(" option ",this.updateOptions);
+     }else if(this.updateParams.type == "showLargeConstituencies"){
+     console.log("showLargeConstituencies");
     //  this.chartInstance.clear();
       this.updateOptions = {
         grid:{
@@ -155,6 +161,9 @@ export class ContestedSparkLineComponent implements OnInit , OnDestroy{
            lineHeight: 12,
          }
        },
+       tooltip: {
+        trigger: 'axis'
+      },
         visualMap : {
           show: false,
           dimension: 0,
@@ -174,13 +183,61 @@ export class ContestedSparkLineComponent implements OnInit , OnDestroy{
       },
         series: [{
           
-          data: this.getContestedElectionsPerNoneEmptyYear(neys,this.datasourceService.dataSource.filteredData),
+          data: this.utils.getContestedElectionsPerNoneEmptyYear(neys,this.datasourceService.dataSource.filteredData),
           type:'line'
         }],
       
       
       }
      }
+     else {
+      //  console.log("not showing county boroguh");
+      //  this.chartInstance.clear();
+        this.updateOptions = {
+          grid:{
+           
+            top:42
+            
+          },
+         title: {
+           text: this.updateParams.title,
+           x: 'left',
+           subtext: '',
+           
+           textStyle: {
+             fontSize: 12,
+             lineHeight: 12,
+           }
+         },
+         tooltip: {
+          trigger: 'axis'
+        },
+          visualMap : {
+            show: false,
+            dimension: 0,
+            pieces: [{
+                gt: 0,
+                lte: 141,
+                color: 'rgba(251, 191, 36,1)'
+            }]
+          },
+         
+          xAxis: {
+            type: 'category',
+            data: neys,
+          },
+          yAxis: {
+            type: 'value'
+        },
+          series: [{
+            
+            data: this.utils.getContestedElectionsPerNoneEmptyYear(neys,this.datasourceService.dataSource.filteredData),
+            type:'line'
+          }],
+        
+        
+        }
+       }
    
      
      
@@ -213,69 +270,69 @@ export class ContestedSparkLineComponent implements OnInit , OnDestroy{
     });
     return epy;
   }
-  getContestedElectionsPerNoneEmptyYear(neys, data){
+  // getContestedElectionsPerNoneEmptyYear(neys, data){
    
-    let epy :number []= [];
-    let cpy: number [] = [];
-    neys.forEach(element => {
-      epy.push(0);
-      cpy.push(0);
-    });
+  //   let epy :number []= [];
+  //   let cpy: number [] = [];
+  //   neys.forEach(element => {
+  //     epy.push(0);
+  //     cpy.push(0);
+  //   });
 
 
-    data.forEach(element => {
-      if(neys.indexOf(element.election_year)!=-1 && element.contested=="Y"){
-        cpy [neys.indexOf(element.election_year)]++;
-      }
-      if(neys.indexOf(element.election_year)!=-1 ){
-        epy [neys.indexOf(element.election_year)]++;
-      }
+  //   data.forEach(element => {
+  //     if(neys.indexOf(element.election_year)!=-1 && element.contested=="Y"){
+  //       cpy [neys.indexOf(element.election_year)]++;
+  //     }
+  //     if(neys.indexOf(element.election_year)!=-1 ){
+  //       epy [neys.indexOf(element.election_year)]++;
+  //     }
       
-    });
-    for(var i=0;i<epy.length;i++){
-      if(epy[i]>0) cpy[i] = (cpy[i]/epy[i]) *100;
-    }
+  //   });
+  //   for(var i=0;i<epy.length;i++){
+  //     if(epy[i]>0) cpy[i] = (cpy[i]/epy[i]) *100;
+  //   }
     
-    return cpy;
-  }
-  getContestedElectionsPerNoneEmptyYearCB(cb, neys, data){
+  //   return cpy;
+  // }
+  // getContestedElectionsPerNoneEmptyYearCB(cb, neys, data){
    
-    let epy :number []= [];
-    let cpy: number [] = [];
-    neys.forEach(element => {
-      epy.push(0);
-      cpy.push(0);
-    });
+  //   let epy :number []= [];
+  //   let cpy: number [] = [];
+  //   neys.forEach(element => {
+  //     epy.push(0);
+  //     cpy.push(0);
+  //   });
 
 
-    data.forEach(element => {
-      if(neys.indexOf(element.election_year)!=-1 && element.contested=="Y" && element.countyboroughuniv==cb){
-        cpy [neys.indexOf(element.election_year)]++;
-      }
-      if(neys.indexOf(element.election_year)!=-1 && element.countyboroughuniv==cb ){
-        epy [neys.indexOf(element.election_year)]++;
-      }
+  //   data.forEach(element => {
+  //     if(neys.indexOf(element.election_year)!=-1 && element.contested=="Y" && element.countyboroughuniv==cb){
+  //       cpy [neys.indexOf(element.election_year)]++;
+  //     }
+  //     if(neys.indexOf(element.election_year)!=-1 && element.countyboroughuniv==cb ){
+  //       epy [neys.indexOf(element.election_year)]++;
+  //     }
       
-    });
-    for(var i=0;i<epy.length;i++){
-      if(epy[i]>0) cpy[i] = (cpy[i]/epy[i]) *100;
-    }
+  //   });
+  //   for(var i=0;i<epy.length;i++){
+  //     if(epy[i]>0) cpy[i] = (cpy[i]/epy[i]) *100;
+  //   }
     
-    return cpy;
-  }
-  getContestedElectionsPerYearCB(startYear, endYear, cb, data){
+  //   return cpy;
+  // }
+  // getContestedElectionsPerYearCB(startYear, endYear, cb, data){
    
-    let epy :number []= [];
-    for(var i=startYear;i<=endYear;i++){
+  //   let epy :number []= [];
+  //   for(var i=startYear;i<=endYear;i++){
     
-      epy.push(0);
-    }
-    data.forEach(element => {
-      var index = element.election_year -startYear;
-      if(element.contested=="Y" && element.countyboroughuniv   ==cb) epy[index]++;
-    });
-    return epy;
-  }
+  //     epy.push(0);
+  //   }
+  //   data.forEach(element => {
+  //     var index = element.election_year -startYear;
+  //     if(element.contested=="Y" && element.countyboroughuniv   ==cb) epy[index]++;
+  //   });
+  //   return epy;
+  // }
   // getContestedElectionsBoroughsPerYear(startYear, endYear, data){
    
   //   let epy :number []= [];
@@ -301,8 +358,10 @@ export class ContestedSparkLineComponent implements OnInit , OnDestroy{
   //     if(element.contested=="Y" && element.cbu=="C") epy[index]++;
   //   });
   //   return epy;
-  // }
+  // }ngAfterViewInit
   ngOnInit(): void {
+  }
+  ngAfterViewInit(): void {
     this.updateParams = {type:"", title:"% Contested  Elections Per Year"};
     this.utils= new ContestedUtils(this.datasourceService);
     this.datasourceService.ready.subscribe(value => {this.gotData(value)});
@@ -311,6 +370,13 @@ export class ContestedSparkLineComponent implements OnInit , OnDestroy{
        if(message.text=="showCountyBorough"){
 
          this.updateParams = {type:"showCountyBorough", title:"% Contested General Elections Per Year"};
+         this.update();
+        }
+        
+        else if(message.text=="showLargeConstituencies"){
+          this.updateParams = {type:"showLargeConstituencies", title:"% Contested Elections Per Year for Large Constituencies"};
+          // this.update();
+          
         }
         else if(message.text=="general"){
           this.updateParams = {type:"", title:"% Contested General Elections Per Year"};
@@ -338,7 +404,13 @@ export class ContestedSparkLineComponent implements OnInit , OnDestroy{
   }
   ngOnDestroy(): void {
     this.subscription.unsubscribe();
-    this.chartInstance.dispose()
+    if (this.myValueSub) {
+      this.myValueSub.unsubscribe();
+    }
+    if(this.chartInstance) { 
+      this.chartInstance.dispose();
+      this.chartInstance = null;
+    }
   }
 
   onChartInit(e: any) {
