@@ -141,7 +141,7 @@ export class ContestedStoryComponent implements OnInit {
   
       this.smoothScroll.scrollTo({ x: 0, y:  0}, {
         duration: 4800,
-        timingFunction: '.13, 1.07, .51, 1.29'
+        timingFunction: 'ease-in-out'
     });
   }
 
@@ -215,7 +215,7 @@ export class ContestedStoryComponent implements OnInit {
       setTimeout(() => {
         this.sendMessage("showLargeConstituencies");
         var lcs = "Bedford, Beverley, Bridgnorth, Bristol, Canterbury, Carlisle, Chester, Colchester, Coventry, Cricklade, Dover, Durham City, Evesham, Exeter, Gloucester, Hereford, Kingston-Upon-Hull, Lancaster, Leicester, Lincoln, Liverpool, London, Maidstone, Newark, Newcastle-upon-Tyne, Northampton, Norwich, Nottingham, Oxford, Southwark, Westminster, Worcester, York";
-        this.setFilters("1695-1845",lcs,"","","");
+        this.setFilters("1695-1845","","G","","");
 
 
       }, 4000);

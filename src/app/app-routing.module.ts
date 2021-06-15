@@ -17,24 +17,27 @@ import { DataComponent } from './data/data.component';
 import { CreditsComponent } from './credits/credits.component';
 
 import { GraphQLDemoComponent } from './graph-ql-demo/graph-ql-demo.component';
+import { GalleryComponent } from './gallery/gallery.component';
 
 const routes: Routes = [
-{ path: '', redirectTo: '/about', pathMatch: 'full' },
+  { path: '', redirectTo: '/about', pathMatch: 'full' },
+  
   { path: 'about', component: AboutComponent },
   // { path: 'viz', component: VizComponent },
   { path: 'team', component: TeamComponent },
   { path: 'api', component: ApiComponent },
-  { path: 'sandpit', component: SandpitComponent },
-
+  // { path: 'sandpit', component:  SandpitComponent},
+  { path: 'gallery', component: GalleryComponent  },
   { path: 'contested', component: ContestedStoryComponent },
   { path: 'data', component: DataComponent },
-   { path: 'table', component: TableComponent },
+  { path: 'table', component: TableComponent },
   { path: 'outputs', component: OutputsComponent },
-  { path: 'map', component:ElectionsMapComponent},
-  { path: 'credits', component:CreditsComponent},
-  { path: 'heatmap', component:HeatmapComponent},
-  { path: 'essays', component:EssaysComponent},
-   { path: 'graphQL-demo', component:GraphQLDemoComponent}
+  { path: 'map', component: ElectionsMapComponent },
+  { path: 'credits', component: CreditsComponent },
+  { path: 'heatmap', component: HeatmapComponent },
+  { path: 'essays', component: EssaysComponent },
+  { path: 'graphQL-demo', component: GraphQLDemoComponent },
+  { path: '**', component: AboutComponent}
 
 ];
 

@@ -185,6 +185,11 @@ export class ContestedSparkLineComponent implements OnInit , OnDestroy{
           
           data: this.utils.getContestedElectionsPerNoneEmptyYear(neys,this.datasourceService.dataSource.filteredData),
           type:'line'
+        },
+        {
+
+          data: this.utils.getContestedElectionsPerNoneEmptyYearLargeConstituencies(neys, this.datasourceService.dataSource.filteredData),
+          type: 'line'
         }],
       
       

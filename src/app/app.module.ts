@@ -113,6 +113,8 @@ import { ContestedRoseComponent } from './contested-rose/contested-rose.componen
 import { ElectionsSparkLineComponent } from './elections-spark-line/elections-spark-line.component';
 import { ContestedScatterplotComponent } from './contested-scatterplot/contested-scatterplot.component';
 import { SafeHtmlPipe } from './safe-html.pipe';
+import { DataStoriesComponent } from './data-stories/data-stories.component';
+import { GalleryComponent } from './gallery/gallery.component';
 
 
 
@@ -180,7 +182,7 @@ import { SafeHtmlPipe } from './safe-html.pipe';
 		ApiComponent, 
 		PollbookDialogueComponent, 
 
-		WarningDialogueComponent, SandpitComponent, TableComponent, ElectionsMapComponent, TableComponent, CreditsComponent,DataComponent, MapComponent, SmoothHeightComponent, ContestedStoryComponent, HeatmapComponent, GraphQLDemoComponent, ObschaintestComponent, ContestedSparkLineComponent, ContestedRoseComponent, ElectionsSparkLineComponent, ContestedScatterplotComponent, SafeHtmlPipe
+		WarningDialogueComponent, SandpitComponent, TableComponent, ElectionsMapComponent, TableComponent, CreditsComponent,DataComponent, MapComponent, SmoothHeightComponent, ContestedStoryComponent, HeatmapComponent, GraphQLDemoComponent, ObschaintestComponent, ContestedSparkLineComponent, ContestedRoseComponent, ElectionsSparkLineComponent, ContestedScatterplotComponent, SafeHtmlPipe, DataStoriesComponent, GalleryComponent
 
 	],
 	providers: [  

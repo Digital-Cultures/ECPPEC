@@ -3,7 +3,7 @@ import { DatasourceService } from '../datasource.service';
 import { MatTableDataSource } from '@angular/material/table';
 import { FilterObj, Elections, Election , PollBook, PollBookResponse, HOPData} from  '../viz/viz.component';
 import { MatPaginator } from '@angular/material/paginator';
-import { ResizeEvent } from 'angular-resizable-element';
+// import { ResizeEvent } from 'angular-resizable-element';
 import { NgxMatRangeSliderModule } from 'ngx-mat-range-slider';
 import { Options, ChangeContext } from '@angular-slider/ngx-slider';
 import { MAY } from '@angular/material';
@@ -155,19 +155,19 @@ export class TableComponent implements OnInit, OnDestroy {
 
 		return 'N';
 	}
-  onResizeEnd(event: ResizeEvent): void {
+  // onResizeEnd(event: ResizeEvent): void {
 		
-		this.style = {
-			position: 'fixed',
-			right: "3%",
-			width: `${event.rectangle.width}px`,
-		};
-	}
+	// 	this.style = {
+	// 		position: 'fixed',
+	// 		right: "3%",
+	// 		width: `${event.rectangle.width}px`,
+	// 	};
+	// }
 
-	onResizeStart(event: ResizeEvent): void {
+	// onResizeStart(event: ResizeEvent): void {
 	
 
-	}
+	// }
   onValueChange(changeContext: ChangeContext): void {
 	
 

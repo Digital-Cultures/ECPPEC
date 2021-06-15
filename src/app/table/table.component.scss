@@ -1,0 +1,18 @@
+.mat-column-constituency {
+    width: 32px !important;
+    background-color: pink;
+}
+
+mat-column {
+    width: 200px;
+    background-color: red !important;
+    word-break: break-all;
+    flex: none;
+    display: block;
+}
+
+table {
+    background-color: blue;
+    overflow: hidden;
+    width: 300px !important;
+}
