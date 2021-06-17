@@ -18,8 +18,8 @@ export class ContestedUtils {
       getByElectionCauses(){
         var causes = [];
         this.datasourceService.dataSource.filteredData.forEach(element => {
-          if(causes.indexOf(element.by_election_cause)==-1 &&element.by_election_cause.length>1){
-            causes.push(element.by_election_cause);
+          if(causes.indexOf(element.by_election_cause.trim())==-1 &&element.by_election_cause.trim().length>1){
+            causes.push(element.by_election_cause.trim());
           }
         });
         return causes;
@@ -48,7 +48,7 @@ export class ContestedUtils {
         return (val - in_min) * (out_max - out_min) / (in_max - in_min) + out_min;
         }
         formatLabel(name,percent){
-            console.log(name,percent);
+            
             var p = percent.toString();
             var sp = p.split(".");
             return name + " "+ sp[0] +"% contested";
@@ -75,12 +75,12 @@ getStartEndYears(){
     var startYear = this.datasourceService.electionsMeta.earliest_year;
     var endYear = this.datasourceService.electionsMeta.latest_year ;
     if(this.datasourceService.yearFilter.value!=null){
-      if(this.datasourceService.yearFilter.value.indexOf("-")==-1) {
-        startYear = parseInt(this.datasourceService.yearFilter.value);
-        endYear = parseInt(this.datasourceService.yearFilter.value);
+      if(this.datasourceService.yearFilter.value.trim().indexOf("-")==-1) {
+        startYear = parseInt(this.datasourceService.yearFilter.value.trim());
+        endYear = parseInt(this.datasourceService.yearFilter.value.trim());
       }
       else{
-        var exploded = this.datasourceService.yearFilter.value.split("-");
+        var exploded = this.datasourceService.yearFilter.value.trim().split("-");
         if (exploded.length == 2){
           startYear = parseInt(exploded[0].trim());
           endYear = parseInt(exploded[1].trim());
@@ -100,10 +100,11 @@ getStartEndYears(){
 
 
     data.forEach(element => {
-      if(neys.indexOf(element.election_year)!=-1 && element.contested=="Y" && element.countyboroughuniv==cb){
+      //var contested = 
+      if(neys.indexOf(element.election_year)!=-1 && (element.contested.trim()=="Y"|| element.contested.trim()=="Y?" ) && element.countyboroughuniv.trim()==cb){
         cpy [neys.indexOf(element.election_year)]++;
       }
-      if(neys.indexOf(element.election_year)!=-1 && element.countyboroughuniv==cb ){
+      if(neys.indexOf(element.election_year)!=-1 && element.countyboroughuniv.trim()==cb ){
         epy [neys.indexOf(element.election_year)]++;
       }
       
@@ -124,7 +125,7 @@ getStartEndYears(){
     }
     data.forEach(element => {
       var index = element.election_year -startYear;
-      if(element.contested=="Y") epy[index]++;
+      if(element.contested.trim()=="Y") epy[index]++;
     });
     return epy;
   }
@@ -137,7 +138,7 @@ getStartEndYears(){
     }
     data.forEach(element => {
       var index = element.election_year -startYear;
-      if(element.contested=="Y" && element.countyboroughuniv   ==cb) epy[index]++;
+      if(element.contested.trim()=="Y" && element.countyboroughuniv.trim()   ==cb) epy[index]++;
     });
     return epy;
   }
@@ -149,10 +150,10 @@ getStartEndYears(){
       epy.push(0);
       cpy.push(0);
     });
-
+    console.log("neys",neys);
 
     data.forEach(element => {
-      if(neys.indexOf(element.election_year)!=-1 && element.contested=="Y"){
+      if(neys.indexOf(element.election_year)!=-1 && element.contested.trim()=="Y"){
         cpy [neys.indexOf(element.election_year)]++;
       }
       if(neys.indexOf(element.election_year)!=-1 ){
@@ -178,7 +179,7 @@ getStartEndYears(){
 
     data.forEach(element => {
       if(lCs.indexOf(element.constituency.trim())!=-1){
-      if(neys.indexOf(element.election_year)!=-1 && element.contested=="Y"){
+      if(neys.indexOf(element.election_year)!=-1 && (element.contested.trim()=="Y"|| element.contested.trim()=="Y?" )){
         cpy [neys.indexOf(element.election_year)]++;
       }
       if(neys.indexOf(element.election_year)!=-1 ){
@@ -201,7 +202,12 @@ getStartEndYears(){
      
       
     });
+    // if(this.datasourceService.contestedFilter.value=="Y"){
+    //   data.forEach(element => {
+    //     if(element.contested!="Y")console.log("blip", element);
 
+    //   });
+    // }
 
     data.forEach(element => {
      
@@ -227,20 +233,20 @@ getStartEndYears(){
     return ney;
    }
   getEarliestFilteredYear(data){
-    if(data.length>0) return  data.sort(this.compareByElectionYear)[0].election_year;
+    if(data.length>0) return  data.sort(this.compareByElectionYear)[0].election_year.trim();
     return 0;
   }
   getLatestFilteredYear(data){
-    if(data.length>0)    return data.sort(this.compareByElectionYear)[data.length-1].election_year;
+    if(data.length>0)    return data.sort(this.compareByElectionYear)[data.length-1].election_year.trim();
     return 0;
   }
   getStartEndYearsFromData(data){
     var startYear =  0;//data.electionsMeta.earliest_year;
     var endYear = 0;//this.datasourceService.electionsMeta.latest_year ;
-    if(this.datasourceService.yearFilter.value!=null){
-      if(this.datasourceService.yearFilter.value.indexOf("-")==-1) {
-        startYear = parseInt(this.datasourceService.yearFilter.value);
-        endYear = parseInt(this.datasourceService.yearFilter.value);
+    if(this.datasourceService.yearFilter.value.trim()!=null){
+      if(this.datasourceService.yearFilter.value.trim().indexOf("-")==-1) {
+        startYear = parseInt(this.datasourceService.yearFilter.value.trim());
+        endYear = parseInt(this.datasourceService.yearFilter.value.trim());
       }
       else{
         var exploded = this.datasourceService.yearFilter.value.split("-");
@@ -278,7 +284,7 @@ getStartEndYears(){
           cpy.push(0);
         });
         for(var i=0;i<this.datasourceService.dataSource.filteredData.length;i++){
-          var index = parseInt(this.datasourceService.dataSource.filteredData[i].election_year)-this.datasourceService.electionsMeta.earliest_year;
+          var index = parseInt(this.datasourceService.dataSource.filteredData[i].election_year.trim())-this.datasourceService.electionsMeta.earliest_year;
           cpy[index]++;
         }
         
@@ -315,8 +321,8 @@ getStartEndYears(){
        // console.log("causes",causes);
        if(causes.length==0) return 0;
         var causesByYear = [];
-        var startYear = parseInt(this.datasourceService.dataSource.filteredData.sort(this.compareByElectionYear)[0].election_year );
-        var endYear = parseInt(this.datasourceService.dataSource.filteredData.sort(this.compareByElectionYear)[this.datasourceService.dataSource.filteredData.length-1].election_year );
+        var startYear = parseInt(this.datasourceService.dataSource.filteredData.sort(this.compareByElectionYear)[0].election_year.trim() );
+        var endYear = parseInt(this.datasourceService.dataSource.filteredData.sort(this.compareByElectionYear)[this.datasourceService.dataSource.filteredData.length-1].election_year.trim() );
       //  console.log("causes",causes, "startyear",startYear, "endyear",endYear);
         causes.forEach(element => {
           var data  = [];
@@ -335,11 +341,11 @@ getStartEndYears(){
           }
           causesByYear.push(obj);
         });
-        var startYear = parseInt(this.datasourceService.dataSource.filteredData.sort(this.compareByElectionYear)[0].election_year );
+        var startYear = parseInt(this.datasourceService.dataSource.filteredData.sort(this.compareByElectionYear)[0].election_year.trim() );
       
         this.datasourceService.dataSource.filteredData.sort(this.compareByElectionYear).forEach(element => {
           causesByYear.forEach(ielement => {
-            if(ielement.name == element.by_election_cause){
+            if(ielement.name.trim() == element.by_election_cause.trim()){
                 var whichYear = parseInt(element.election_year);
                 ielement.data[whichYear-startYear]++;
             }
@@ -373,8 +379,8 @@ getStartEndYears(){
         var causes = this.getByElectionCauses();
        // console.log("causes",causes);
         var causesByYear = [];
-        var startYear = parseInt(this.datasourceService.dataSource.filteredData.sort(this.compareByElectionYear)[0].election_year );
-        var endYear = parseInt(this.datasourceService.dataSource.filteredData.sort(this.compareByElectionYear)[this.datasourceService.dataSource.filteredData.length-1].election_year );
+        var startYear = parseInt(this.datasourceService.dataSource.filteredData.sort(this.compareByElectionYear)[0].election_year.trim() );
+        var endYear = parseInt(this.datasourceService.dataSource.filteredData.sort(this.compareByElectionYear)[this.datasourceService.dataSource.filteredData.length-1].election_year.trim() );
         causes.forEach(element => {
           var data  = [];
           for(var i=startYear;i<this.end;i++){
@@ -392,11 +398,11 @@ getStartEndYears(){
           }
           causesByYear.push(obj);
         });
-        var startYear = parseInt(this.datasourceService.dataSource.filteredData.sort(this.compareByElectionYear)[0].election_year );
+        var startYear = parseInt(this.datasourceService.dataSource.filteredData.sort(this.compareByElectionYear)[0].election_year.trim() );
       
         this.datasourceService.dataSource.filteredData.sort(this.compareByElectionYear).forEach(element => {
           causesByYear.forEach(ielement => {
-            if(ielement.name == element.by_election_cause){
+            if(ielement.name == element.by_election_cause.trim()){
                 var whichYear = parseInt(element.election_year);
                 ielement.data[whichYear-startYear]++;
             }
@@ -415,7 +421,7 @@ getStartEndYears(){
         })
         
         this.datasourceService.dataSource.filteredData.forEach(element => {
-          if(element.by_election_cause.length>1 ) abec[element.by_election_cause]++;
+          if(element.by_election_cause.trim().length>1 ) abec[element.by_election_cause.trim()]++;
         })
         // var data = [];
        var series = []; 
@@ -459,7 +465,7 @@ getStartEndYears(){
         for (var property in franchise_data) {
           var obj = {
             value:franchise_data[property],
-            name:property
+            name:property.trim()
           }
           clean_data.push(obj);
         }
@@ -475,7 +481,7 @@ getStartEndYears(){
             //  
           if (element.franchise_type.trim() in epf){
             epf[element.franchise_type.trim()]++;
-            if(element.contested=="Y") cpf[element.franchise_type.trim()]++;
+            if(element.contested.trim()=="Y") cpf[element.franchise_type.trim()]++;
           }else{
             epf[element.franchise_type.trim()]=1.0;
             element.contested.trim()=="Y" ? cpf[element.franchise_type.trim()]=1.0 :cpf[element.franchise_type.trim()]=0.0;
@@ -506,7 +512,7 @@ getStartEndYears(){
              //  
            if (element.franchise_type.trim() in epf){
              epf[element.franchise_type.trim()]++;
-             if(element.contested=="Y") cpf[element.franchise_type.trim()]++;
+             if(element.contested.trim()=="Y") cpf[element.franchise_type.trim()]++;
            }else{
              epf[element.franchise_type.trim()]=1.0;
              element.contested.trim()=="Y" ? cpf[element.franchise_type.trim()]=1.0 :cpf[element.franchise_type.trim()]=0.0;
@@ -538,7 +544,7 @@ getStartEndYears(){
              //  
            if (element.franchise_type.trim() in epf){
              epf[element.franchise_type.trim()]++;
-             if(element.contested=="Y") cpf[element.franchise_type.trim()]++;
+             if(element.contested.trim()=="Y") cpf[element.franchise_type.trim()]++;
            }else{
              epf[element.franchise_type.trim()]=1.0;
             
@@ -565,14 +571,20 @@ getStartEndYears(){
          var epf = {};
          var cpf = {};
          var fpf = {};
+
+         //for every data point
          data.forEach(element =>{
+           //as long as it has a constituency
            if(element.constituency.trim().length>0){
  
-             //  
+             //  if we already have this in our array then....
            if (element.constituency.trim() in epf){
+             //increment the number of elections in that year 
              epf[element.constituency.trim()]++;
+             //and if the election is contested then incremener the correcponding number of contested elections
              if(element.contested.trim()=="Y") cpf[element.constituency.trim()]++;
            }else{
+             //if we don't already have it
              epf[element.constituency.trim()]=1.0;
              element.contested.trim()=="Y" ? cpf[element.constituency.trim()]=1.0 :cpf[element.constituency.trim()]=0.0;
              fpf[element.constituency.trim()]=element.franchise_type.trim();
@@ -586,7 +598,8 @@ getStartEndYears(){
             //conteset, num elections, franchise type
             
           var proportion = (cpf[property]/epf[property])*100.0;
-           var item = [epf[property],proportion,property, fpf[property]];
+          //fourth prperty is for is highlighted
+           var item = [epf[property],proportion,property, fpf[property], false];
          
            clean_data.push(item);
          }

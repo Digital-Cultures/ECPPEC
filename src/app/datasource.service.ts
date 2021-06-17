@@ -361,7 +361,18 @@ getHasPollBooksFilter(pollbook_id, searchTerm) {
 //   }
   
   gotData(){
+	  //fix corf castle
+	this.electionsMeta.elections.forEach(element => {
+		if(element.contested=="Y?") element.contested="Y";
+		if(element.constituency=="Corfe Castle" && element.election_year==1700){ 
+			element.election_year="1701";
+		}
+	});
+
 	this.dataSource = new MatTableDataSource<Election>(this.electionsMeta.elections);
+
+	
+
 	//this is functional observor mapping!
 	this.dataSource.connect().pipe(
 		map(val => {

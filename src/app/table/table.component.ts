@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy, ViewChild, Output, EventEmitter } from '@angular/core';
+import { Component, OnInit, OnDestroy, ViewChild, Output, EventEmitter, ElementRef } from '@angular/core';
 import { DatasourceService } from '../datasource.service';
 import { MatTableDataSource } from '@angular/material/table';
 import { FilterObj, Elections, Election , PollBook, PollBookResponse, HOPData} from  '../viz/viz.component';
@@ -12,9 +12,13 @@ import { DownloadService } from '../download.service';
 import { DownloadPollBooksService } from '../download-poll-books.service';
 import { GetPollBooksService } from '../get-poll-books.service';
 import { PollbookDialogueComponent } from '../pollbook-dialogue/pollbook-dialogue.component';
+import {Observable} from 'rxjs';
+import { MatAutocomplete } from "@angular/material/autocomplete";
+
 
 import { DialogueComponent } from '../dialogue/dialogue.component';
 import { Subscription } from 'rxjs';
+import { map, startWith } from 'rxjs/operators';
 
 @Component({
   selector: 'app-table',
@@ -25,6 +29,8 @@ export class TableComponent implements OnInit, OnDestroy {
   @Output() myEvent = new EventEmitter();
   constructor(private getPollBooksService: GetPollBooksService, private downloadPollBooksService: DownloadPollBooksService, private downloadService: DownloadService, private datasourceService: DatasourceService,  public dialog: MatDialog) { }
   @ViewChild(MatPaginator, { static: true }) paginator: MatPaginator;
+  @ViewChild('tbl', { read: ElementRef }) tbl: ElementRef;
+
   style:any={};
   dataSource = new MatTableDataSource<Election>();
   ready: boolean = false;
@@ -37,6 +43,9 @@ export class TableComponent implements OnInit, OnDestroy {
   gotPollBooks:boolean = false;
   gotDataFlag:boolean = false;
   myValueSub: Subscription;
+  constituencyOptions : string []= ["York","Leeds","Devon"];
+  filteredConstituencyOptions: Observable<string[]>;
+  constituencyList : string []= [];
   // filterNames: string [] = ["consituency","election_month","","","","","","","","","","",""];
   filterNames: any[] = [
     {value: 'constituency', viewValue: 'Constituency'},
@@ -61,12 +70,32 @@ export class TableComponent implements OnInit, OnDestroy {
         );
         this.myEvent.emit(null);
   }
+  getConstituencyNames(elections){
+		var names= [];
+		
+		elections.forEach(element => {
+			
+			names.push(element.constituency);
+		});
+		return names;
+	}
+  keyDownFunction(event) {
+    if (event.keyCode === 13) {
+      this.constituencyList.push(this.datasourceService.constituencyFilter.value);
+      this.datasourceService.constituencyFilter.setValue("");
+    }
+  }
+  consituencyFieldClicked(){
+  }
   ngOnInit(): void {
    if(!this.gotDataFlag){
     this.datasourceService.getData();
     this.myValueSub = this.datasourceService.ready.subscribe(() => this.gotData()
     );
-    this.openDialogue();
+   // this.openDialogue();
+
+    // var el = this.tbl.nativeElement.querySelector('.mat-form-field-infix');
+    //  el.style.width = '1300px';
    
     // this.datasourceService.onDataSubscriptionChange().subscribe(() => this.dataChange());
     this.datasourceService.constituencyFilter.valueChanges.subscribe(() => this.dataChange("constituencyFilter"));
@@ -148,8 +177,22 @@ export class TableComponent implements OnInit, OnDestroy {
     this.ready =true;
   //  console.log("ready",this.datasourceService.dataSource.data)
     this.datasourceService.dataSource.paginator = this.paginator;
+    var uniqueElections = this.datasourceService.returnUniqueElections();
+
+    this.constituencyOptions = this.getConstituencyNames(uniqueElections).sort((a, b) => a > b ? 1 : a === b ? 0 : -1);
+		
+		this.filteredConstituencyOptions = this.datasourceService.constituencyFilter.valueChanges
+		.pipe(
+		  startWith(''),
+		  map(value => this._filter(value))
+		);
     //this.dataSource = this.datasourceService.dataSource;
   }
+  private _filter(value: string): string[] {
+		const filterValue = value.toLowerCase();
+	
+		return this.constituencyOptions.filter(option => option.toLowerCase().includes(filterValue));
+	  }
   getHasPollBooks(pollbook_id) {
 		if (pollbook_id.length > 0) return 'Y (' + pollbook_id.split(";").length + ')';
 

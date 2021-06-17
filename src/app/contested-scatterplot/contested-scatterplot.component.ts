@@ -33,7 +33,7 @@ updateOptions: any = {};
 ngOnInit(): void {
 }
 ngOnDestroy(){
-  this.subscription.unsubscribe();
+  if(this.subscription) this.subscription.unsubscribe();
   if(this.chartInstance) { 
     this.chartInstance.dispose();
     this.chartInstance = null;
@@ -65,9 +65,9 @@ ngAfterViewInit(): void {
        
         var colorIndexStart = updateOptions.highLightStart - this.utils.start;
         var colorIndexEnd = updateOptions.highLightEnd - this.utils.start;
-        var colorPalette = ['#7fc97f','#673ab7','#fdc086','rgba(251, 191, 36,1)','#386cb0','#f0027f','#bf5b17','black'];
+        var colorPalette = ['#7fc97f','#673ab7','#fdc086','rgba(251, 191, 36,1)','#386cb0','#f0027f','#bf5b17','black','pink'];
         var data = this.utils.getNumberElectionsAndContestedPerConstituency(this.datasourceService.dataSource.filteredData);
-        var franchiseNames = ["Freeman","Freeholder","Burgage","Scot and Lot","Corporation","Householder","Disputed"];
+        var franchiseNames = ["Freeman","Freeholder","Burgage","Scot and Lot","Corporation","Householder","Disputed",""];
        
       //  console.log("franchiseNames",franchiseNames);
         var pieces = [];
@@ -80,32 +80,35 @@ ngAfterViewInit(): void {
         }
      //   console.log("pieces",pieces);
         this.updateOptions = {
-          legend: {
-            type: 'scroll',
-            orient: 'vertical',
-            right: 10,
-            top: 20,
-            bottom: 20,
-            data: pieces
+        //   legend: {
+        //     type: 'scroll',
+        //     orient: 'vertical',
+        //     right: 10,
+        //     top: 20,
+        //     bottom: 20,
+        //     data: pieces
     
            
-        },
-          title: {
-            text: "proportion of contested elections against number of elections contested",
-            x: 'left',
-            subtext: '',
+        // },
+          // title: {
+          //   text: "proportion of contested elections against number of elections contested",
+          //   x: 'left',
+          //   subtext: '',
             
-            textStyle: {
-              fontSize: 12,
-              lineHeight: 12,
-            }
-          },
+          //   textStyle: {
+          //     fontSize: 12,
+          //     lineHeight: 12,
+          //   }
+          // },
     
           tooltip: {
             trigger: "item",
             formatter: function (params) { return params.data[2]+ " ("+params.data[3] +") had "+params.data[0]+" elections<br>of which "+Math.floor(params.data[1])+"% were contested"}
           },
-          xAxis: {},
+          xAxis: {
+            min:30,
+            max:72
+          },
           yAxis: {},
           
           // toolbox: {
@@ -117,7 +120,21 @@ ngAfterViewInit(): void {
           //         saveAsImage: {show: true}
           //     }
           // },
+          // visualMap : {
+          //   show: false,
+          //   dimension: 0,
+          //   pieces: [{
+          //       gt: 49,
+          //       lte: 51,
+          //       color: 'rgba(251, 191, 36,1)'
+          //   }]
+          // },
           series: [
+            {
+              type: 'effectScatter',
+              symbolSize: 20,
+              data: data['York']
+          },
             
             
               {
@@ -125,8 +142,10 @@ ngAfterViewInit(): void {
                   
                   type: 'scatter',
                  
+                 
                   data: data,
                   itemStyle: {
+                    opacity:function(param ){return 0.1},
                     color: function(param) {
                       // Write your logic.
                       // for example: in case your data is structured as an array of arrays, you can paint it red if the first value is lower than 10:

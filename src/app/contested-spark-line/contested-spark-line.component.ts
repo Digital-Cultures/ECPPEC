@@ -182,11 +182,15 @@ export class ContestedSparkLineComponent implements OnInit , OnDestroy{
           type: 'value'
       },
         series: [{
+          name:"all constituencies",
+          lineStyle: {color: '#673ab7'},
           
           data: this.utils.getContestedElectionsPerNoneEmptyYear(neys,this.datasourceService.dataSource.filteredData),
           type:'line'
         },
         {
+          name:"large constituencies",
+          lineStyle: {color: 'rgba(251, 191, 36,1)'},
 
           data: this.utils.getContestedElectionsPerNoneEmptyYearLargeConstituencies(neys, this.datasourceService.dataSource.filteredData),
           type: 'line'
