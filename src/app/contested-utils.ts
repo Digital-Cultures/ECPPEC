@@ -150,7 +150,7 @@ getStartEndYears(){
       epy.push(0);
       cpy.push(0);
     });
-    console.log("neys",neys);
+  //  console.log("neys",neys);
 
     data.forEach(element => {
       if(neys.indexOf(element.election_year)!=-1 && element.contested.trim()=="Y"){

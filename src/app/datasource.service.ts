@@ -471,6 +471,21 @@ getHasPollBooksFilter(pollbook_id, searchTerm) {
 		// }, 5000);
 
   }
+  resetFilters(){
+	this.constituencyFilter.setValue("");
+	this.yearFilter.setValue("");
+	this.monthFilter.setValue("");
+	this.countyFilter.setValue("");
+	this.contestedFilter.setValue("");
+	this.byElectionGeneralFilter.setValue("");
+	this.pollBookCodeFilter.setValue("");
+	this.franchiseFilter.setValue("");
+	this.byElectionCauseFilter.setValue("");
+	this.dataSource.filter = JSON.stringify(this.filteredValues);
+
+
+
+}
   setSearchFromDialogue(data) {
 
 		if (data != undefined) {

@@ -48,7 +48,12 @@ ngAfterViewInit(): void {
     this.datasourceService.getData();
 
     this.datasourceService.ready.subscribe(value => { this.gotData(value) });
-
+    this.subscription = this.dataStoryService.getMessage().subscribe(message => {
+      console.log("got message", message);
+      if (message.text == "scatter") {
+        this.update({});
+      }
+    });
 
   }
   update(updateOptions) {
@@ -62,7 +67,7 @@ ngAfterViewInit(): void {
 
    //   var franchiseData = this.utils.getProportionContestedFranchiseData(this.datasourceService.dataSource.filteredData);
       
-       
+      // console.log("update scatter");
         var colorIndexStart = updateOptions.highLightStart - this.utils.start;
         var colorIndexEnd = updateOptions.highLightEnd - this.utils.start;
         var colorPalette = ['#7fc97f','#673ab7','#fdc086','rgba(251, 191, 36,1)','#386cb0','#f0027f','#bf5b17','black','pink'];

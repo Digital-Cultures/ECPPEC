@@ -65,16 +65,16 @@ ngAfterViewInit(): void {
         
         this.updateOptions = {
          
-          title: {
-            text: "proportion of elections contested by franchise",
-            x: 'left',
-            subtext: '',
+          // title: {
+          //   text: "proportion of elections contested by franchise",
+          //   x: 'left',
+          //   subtext: '',
             
-            textStyle: {
-              fontSize: 12,
-              lineHeight: 12,
-            }
-          },
+          //   textStyle: {
+          //     fontSize: 12,
+          //     lineHeight: 12,
+          //   }
+          // },
           
           // toolbox: {
           //     show: true,

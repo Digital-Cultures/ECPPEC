@@ -7,8 +7,8 @@ export class GetElectionsService {
 
 	constructor(private http: HttpClient) { }
 	
-	//dataUrl='https://ecppec.ncl.ac.uk/php/getElections.php';
-	dataUrl='http://localhost:9999/ECCPEC_code/php/getElections.php';
+	dataUrl='https://ecppec.ncl.ac.uk/php/getElections.php';
+	//dataUrl='http://localhost:9999/ECCPEC_code/php/getElections.php';
 	getData() {
 		return this.http.get(this.dataUrl);
 	}

@@ -26,14 +26,14 @@ export class MapComponent implements OnInit, AfterViewInit, OnDestroy {
 	//console.log(mpStyles);
 	myValueSub: Subscription;
 	dynamicMarkers: google.maps.Marker[] = [];
-	highlightColour:string ="#673ab7";
+	highlightColour: string = "#673ab7";
 	ngOnInit(): void {
 
 
 	}
 	ngAfterViewInit() {
 
-		
+
 	}
 	dataChange(val) {
 
@@ -131,7 +131,7 @@ export class MapComponent implements OnInit, AfterViewInit, OnDestroy {
 
 
 				thisDynamicMarker.setOptions(options);
-				
+
 				this.dynamicMarkers.push(thisDynamicMarker);
 
 			});
@@ -177,14 +177,16 @@ export class MapComponent implements OnInit, AfterViewInit, OnDestroy {
 		});
 
 		this.map.data.addListener('click', (event) => {
-			
+
 			//clicked is a debounce
 			if (!this.clicked) {
 				this.clicked = true;
-				if (event.feature.getProperty('isActive')) {
+				if (this.datasourceService.filteredValues['constituency'].includes(event.feature.getProperty("name"))) {
 
 					event.feature.setProperty('isActive', false);
 					var updatedConstituencyFilterValue = this.datasourceService.filteredValues['constituency'].replace(',' + event.feature.getProperty("name"), '');
+					var updatedConstituencyFilterValue = this.datasourceService.filteredValues['constituency'].replace(event.feature.getProperty("name"), '');
+
 					this.datasourceService.constituencyFilter.setValue(updatedConstituencyFilterValue);
 					this.datasourceService.filteredValues['constituency'] = updatedConstituencyFilterValue;
 					this.datasourceService.dataSource.filter = JSON.stringify(this.datasourceService.filteredValues);
@@ -194,13 +196,13 @@ export class MapComponent implements OnInit, AfterViewInit, OnDestroy {
 					//console.log("click",event,event.feature.getProperty("name"));
 
 					event.feature.setProperty('isActive', true);
-					if(this.datasourceService.filteredValues['constituency'].length>0){
+					if (this.datasourceService.filteredValues['constituency'].length > 0) {
 						this.datasourceService.filteredValues['constituency'] = this.datasourceService.filteredValues['constituency'] + "," + event.feature.getProperty("name");
 					}
-					else{
+					else {
 						this.datasourceService.filteredValues['constituency'] = event.feature.getProperty("name");
 					}
-					
+
 					this.datasourceService.constituencyFilter.setValue(this.datasourceService.filteredValues['constituency']);
 					this.datasourceService.dataSource.filter = JSON.stringify(this.datasourceService.filteredValues);
 
@@ -217,43 +219,60 @@ export class MapComponent implements OnInit, AfterViewInit, OnDestroy {
 
 		this.setMapStyle();
 	}
-	openInfo(marker: google.maps.Marker, content) {
-		console.log("Marker",marker);
-		if(this.datasourceService.filteredValues['constituency'].length>0){
-			this.datasourceService.filteredValues['constituency'] = this.datasourceService.filteredValues['constituency'] + "," + marker.getTitle().trim();
+	markerClicked(marker: google.maps.Marker, content) {
+		console.log("Marker", marker);
+
+		//if the marker name is already in the filter remove it
+		if (this.datasourceService.filteredValues['constituency'].includes(marker.getTitle().trim())) {
+			console.log("name exists",this.datasourceService.filteredValues['constituency']);
+
+			var filterContents = this.datasourceService.filteredValues['constituency'];
+			//console.log("contents",filterContents,filterContents.replace(',' + marker.getTitle().trim(), ''));
+
+			var updatedConstituencyFilterValue = this.datasourceService.filteredValues['constituency'].replace(',' + marker.getTitle().trim(), '');
+			
+			var updatedConstituencyFilterValue = this.datasourceService.filteredValues['constituency'].replace(marker.getTitle().trim(), '');
+
+			this.datasourceService.filteredValues['constituency'] = updatedConstituencyFilterValue;
+			console.log("name existed",this.datasourceService.filteredValues['constituency'],updatedConstituencyFilterValue);
+
+		} else {
+			if (this.datasourceService.filteredValues['constituency'].length > 0) {
+				this.datasourceService.filteredValues['constituency'] = this.datasourceService.filteredValues['constituency'] + "," + marker.getTitle().trim();
+
+			}
+			else {
+				this.datasourceService.filteredValues['constituency'] = marker.getTitle().trim();
+			}
 		}
-		else{
-			this.datasourceService.filteredValues['constituency'] = marker.getTitle().trim();
-		}
-		
 		this.datasourceService.constituencyFilter.setValue(this.datasourceService.filteredValues['constituency']);
 		this.datasourceService.dataSource.filter = JSON.stringify(this.datasourceService.filteredValues);
 	}
 	setMapStyle() {
-		if(this.map){
-		this.map.data.setStyle(function (feature) {
-			var name = feature.getProperty('isActive');
-			var color = "white";
-			var index = 1;
-			if (name) {
-				color = "rgba(251, 191, 36,1)";
-				index = 2;
+		if (this.map) {
+			this.map.data.setStyle(function (feature) {
+				var name = feature.getProperty('isActive');
+				var color = "white";
+				var index = 1;
+				if (name) {
+					color = "rgba(251, 191, 36,1)";
+					index = 2;
 
 
-			}
-			else {
-				color = "white";
-				index = 1;
-			};
-			return {
-				
-				strokeColor: color,
-				strokeWeight: index,
-				zIndex: index,
-				fillColor: "grey"
-			};
-		});
-	}
+				}
+				else {
+					color = "white";
+					index = 1;
+				};
+				return {
+
+					strokeColor: color,
+					strokeWeight: index,
+					zIndex: index,
+					fillColor: "grey"
+				};
+			});
+		}
 	}
 	setMatchingCountyMarkerVisibility(visible, constituency) {
 
@@ -262,7 +281,7 @@ export class MapComponent implements OnInit, AfterViewInit, OnDestroy {
 		this.dynamicMarkers.forEach(element => {
 			if (element.getTitle() == constituency) {
 				//	element.setOptions(options);
-			//	element.setVisible(visible);
+				//	element.setVisible(visible);
 				var image = {
 					url: './assets/images/dot.svg',
 					size: new google.maps.Size(5, 5),
@@ -270,23 +289,23 @@ export class MapComponent implements OnInit, AfterViewInit, OnDestroy {
 					anchor: new google.maps.Point(2, 2),
 					scaledSize: new google.maps.Size(5, 5)
 				};
-		
+
 				var options = {
 					icon: image,
 					title: constituency,
 					visible: visible,
-					zIndex:1001
-					
+					zIndex: 1001
+
 				}
-		
-		
+
+
 				element.setOptions(options);
-				element.setLabel( { text: constituency, color: "white" });
+				element.setLabel({ text: constituency, color: "white" });
 			}
 		});
 		this.appRef.tick();
 
-		
+
 
 
 	}
@@ -299,18 +318,18 @@ export class MapComponent implements OnInit, AfterViewInit, OnDestroy {
 		});
 	}
 	updateIsActive(constituencies: String[]) {
-		if(this.map){
-		this.map.data.forEach(function (feature) {
-			var name = feature.getProperty('name');
-			if (constituencies.indexOf(name) > -1) {
+		if (this.map) {
+			this.map.data.forEach(function (feature) {
+				var name = feature.getProperty('name');
+				if (constituencies.indexOf(name) > -1) {
 
-				feature.setProperty("isActive", true)
+					feature.setProperty("isActive", true)
 
-			}
-			else {
-				feature.setProperty("isActive", false)
-			}
-		});
+				}
+				else {
+					feature.setProperty("isActive", false)
+				}
+			});
 		}
 	}
 	// updateMapStyles(constituencies: String[]) {

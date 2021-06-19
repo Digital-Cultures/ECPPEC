@@ -1,0 +1,49 @@
+<section class="text-gray-400 bg-gray-900 body-font overflow-scroll">
+
+    <div class="container px-5 py-14 mx-auto flex flex-wrap items-top">
+        <section class="lg:w-1/5 md:w-1/2 md:pr-16 lg:pr-0 pr-0" style=" overflow: scroll;" [ngStyle]="{'height': '100vh'}" #scrollContent (scroll)="onElementScroll($event)">
+            <h1 class="title-font font-medium text-3xl text-white">The 1820 Newcastle Election</h1>
+            <div class="" *ngIf="paras.length==0">
+                <br>
+                <mat-spinner style="margin:auto 0px"></mat-spinner><br>loading data story...</div>
+            <div #div *ngFor="let para of paras; let i = index" class="leading-relaxed mt-4" [style.margin-bottom]="getSpacing(i)">{{para.content}}<br>
+
+                <br *ngIf="para.showReadmore">
+                <span *ngIf="para.showReadmore">{{para.readmore}}</span>
+                <br *ngIf="para.showReadmore">
+                <span *ngIf="para.readmore.length>0" class="readmore" style="cursor: pointer; font-weight: bold; color:rgba(251, 191, 36,1)" (click)="para.showReadmore=!para.showReadmore">[read {{!para.showReadmore ? 'more':'less'}}]</span>
+                <br>
+                <a *ngIf="para.index<paras.length-1" style="text-align: center;">
+                    <mat-icon style="cursor: pointer; font-size: xx-large; font-weight: bold; color:rgba(251, 191, 36,1)" aria-hidden="false" role="text" aria-label="scroll to the next section" (click)="scrollNext(i)">arrow_drop_down_circle</mat-icon>
+                </a>
+                <a *ngIf="para.index==paras.length-1" style="text-align: center;">
+                    <mat-icon style="cursor: pointer; font-size: xx-large; font-weight: bold; color:rgba(251, 191, 36,1)" aria-hidden="false" role="text" aria-label="scroll to the next section" (click)="scrollUp()">arrow_drop_up_circle</mat-icon>
+                </a>
+            </div>
+        </section>
+        <section style=" overflow: scroll;" [ngStyle]="{'height': '80vh'}" class="lg:w-4/6 h-full md:w-1/2 bg-gray-800 bg-opacity-50 rounded-lg  p-8 flex flex-col md:ml-auto w-full mt-10 md:mt-0">
+            <!-- <h2 *ngIf="visIndex!=paras.length-2 && paras.length>0" style="color: rgba(251, 191, 36,1);" class="text-lg font-medium title-font mb-5">{{getTitle()}}</h2> -->
+
+            <!-- <app-elections-spark-line role="text" [attr.aria-label]="getAccessibliltyData(visIndex)" *ngIf="visIndex>=0 && visIndex<6" [@inOutAnimation] class="text-xs mt-3"></app-elections-spark-line>
+            <app-contested-spark-line role="text" [attr.aria-label]="getAccessibliltyData(visIndex)" *ngIf="visIndex==6 || visIndex==7|| visIndex==8 || visIndex==10 " [@inOutAnimation] class="text-xs mt-3"></app-contested-spark-line>
+            <app-contested-scatterplot role="text" [attr.aria-label]="getAccessibliltyData(visIndex)" *ngIf="visIndex==11" [@inOutAnimation] class="text-xs mt-3"></app-contested-scatterplot>
+
+            <app-contested-rose role="text" [attr.aria-label]="getAccessibliltyData(visIndex)" *ngIf="visIndex>=9 && visIndex<10" [@inOutAnimation] class="text-xs mt-3"></app-contested-rose> -->
+            <!-- <div *ngFor="let para of paras; let i = index">
+                <img [src]="getCurrentImageSrc()" alt="alt coming soon" *ngIf="para.index==visIndex" [@inOutAnimation] class="mx-auto w-2/3 rounded-lg text-3xl demo-chart bg-gray-100  " />
+            </div> -->
+            <ng-container *ngFor="let para of paras; let i = index" class=" md:p-2 p-1 w-full">
+                <img *ngIf="para.index==visIndex && visIndex!=34" [@inOutAnimation] alt="gallery" class="object-cover w-full object-center block" [src]="getCurrentImageSrc()">
+
+            </ng-container>
+            <ng-container *ngIf="visIndex==34" class="p-14 bg-gray-400 md:p-2 p-1 w-full">
+                <iframe *ngIf="visIndex==34" [@inOutAnimation] class="object-cover bg-gray-400 w-full object-center block" title="Newcastle 1820 election: voter residences" aria-label="map" id="datawrapper-chart-GMZia" src="https://datawrapper.dwcdn.net/GMZia/2/" scrolling="no"
+                    frameborder="0" style="border: none;" width="600" height="828"></iframe>
+            </ng-container>
+            <!-- <span *ngIf="paras.length>0">
+            <span *ngIf="paras[visIndex].showControls">
+               
+                </span></span> -->
+        </section>
+    </div>
+</section>

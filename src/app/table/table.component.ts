@@ -87,6 +87,10 @@ export class TableComponent implements OnInit, OnDestroy {
   }
   consituencyFieldClicked(){
   }
+  clearSearch(){
+    this.datasourceService.resetFilters();
+
+  }
   ngOnInit(): void {
    if(!this.gotDataFlag){
     this.datasourceService.getData();

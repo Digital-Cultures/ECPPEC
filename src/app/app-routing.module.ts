@@ -18,6 +18,8 @@ import { CreditsComponent } from './credits/credits.component';
 
 import { GraphQLDemoComponent } from './graph-ql-demo/graph-ql-demo.component';
 import { GalleryComponent } from './gallery/gallery.component';
+import { NewcastleStoryComponent } from './newcastle-story/newcastle-story.component';
+import { StoriesComponent } from './stories/stories.component';
 
 const routes: Routes = [
   { path: '', redirectTo: '/about', pathMatch: 'full' },
@@ -29,6 +31,9 @@ const routes: Routes = [
   // { path: 'sandpit', component:  SandpitComponent},
   { path: 'gallery', component: GalleryComponent  },
   { path: 'contested', component: ContestedStoryComponent },
+  { path: 'stories', component: StoriesComponent },
+
+  { path: 'newcastle', component: NewcastleStoryComponent },
   { path: 'data', component: DataComponent },
   { path: 'table', component: TableComponent },
   { path: 'outputs', component: OutputsComponent },

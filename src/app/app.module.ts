@@ -115,6 +115,8 @@ import { ContestedScatterplotComponent } from './contested-scatterplot/contested
 import { SafeHtmlPipe } from './safe-html.pipe';
 import { DataStoriesComponent } from './data-stories/data-stories.component';
 import { GalleryComponent } from './gallery/gallery.component';
+import { NewcastleStoryComponent } from './newcastle-story/newcastle-story.component';
+import { StoriesComponent } from './stories/stories.component';
 
 
 
@@ -182,7 +184,7 @@ import { GalleryComponent } from './gallery/gallery.component';
 		ApiComponent, 
 		PollbookDialogueComponent, 
 
-		WarningDialogueComponent, SandpitComponent, TableComponent, ElectionsMapComponent, TableComponent, CreditsComponent,DataComponent, MapComponent, SmoothHeightComponent, ContestedStoryComponent, HeatmapComponent, GraphQLDemoComponent, ObschaintestComponent, ContestedSparkLineComponent, ContestedRoseComponent, ElectionsSparkLineComponent, ContestedScatterplotComponent, SafeHtmlPipe, DataStoriesComponent, GalleryComponent
+		WarningDialogueComponent, SandpitComponent, TableComponent, ElectionsMapComponent, TableComponent, CreditsComponent,DataComponent, MapComponent, SmoothHeightComponent, ContestedStoryComponent, HeatmapComponent, GraphQLDemoComponent, ObschaintestComponent, ContestedSparkLineComponent, ContestedRoseComponent, ElectionsSparkLineComponent, ContestedScatterplotComponent, SafeHtmlPipe, DataStoriesComponent, GalleryComponent, NewcastleStoryComponent, StoriesComponent
 
 	],
 	providers: [  

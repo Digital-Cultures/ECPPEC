@@ -71,7 +71,7 @@ export class ContestedStoryComponent implements OnInit {
   bufferIndex:number =0;
   scrollPos: number = 0;
   scrollElementHeight: number = 0;
-  visIndex: number = 0;
+  visIndex: number =0;
   model: string = "test";
   debounce: boolean = false;
   @ViewChildren('div') ps: QueryList<ElementRef>
@@ -222,6 +222,7 @@ export class ContestedStoryComponent implements OnInit {
 
     }
     else if (index == 11) {
+      this.sendMessage("scatter");
       this.setFilters("1695-1845","","","","");
 
 
@@ -393,7 +394,7 @@ export class ContestedStoryComponent implements OnInit {
       showReadmore: false,
       showControls: true  ,
       widgets: ["general", "year"],
-      content: `It is a relatively modern assumption that every parliamentary election ought to be contested between multiple candidates. In the eighteenth century, the vast majority of elections were uncontested – in other words, the election did not progress to a formal poll and the taking of votes. In some cases, only one candidate would run for a seat; in others, rival candidates would drop out before the polling of votes. Of the 11,672 elections in England between 1695 and 1832, only 3,285 were contested (that’s 28%).`,
+      content: `It is a relatively modern assumption that every parliamentary election ought to be contested between multiple candidates. In the eighteenth century, the vast majority of elections were uncontested – in other words, the election did not progress to a formal poll and the taking of votes. In some cases, only one candidate would run for a seat; in others, rival candidates would drop out before the polling of votes. Of the 11,672 elections in England between 1695 and 1832, only 3,296 were contested (that’s 28%).`,
       spacing: "150%"
     };
     this.paras.push(para);
@@ -426,7 +427,7 @@ export class ContestedStoryComponent implements OnInit {
       title: "Number of elections in England",
       index: 4,
       readmore:`There were multiple reasons for this acceleration of elections. No parliament after 1768 lasted the maximum seven years allowed under the Septennial Act. This was partly due to political instability arising from the American Revolution and Napoleonic Wars, and partly because government ministers became more adept at calling elections early in order to capitalise on periods of good public opinion or catch the opposition off-guard.`,
-      showReadmore: true,
+      showReadmore: false,
       showControls: false,
       widgets: [],
       content: `After 1780, the frequency of general elections gathered pace again. Between 1802 and 1831 there was a general election almost every three years. The eighteenth century was therefore bookended by two periods of frantic electoral activity.`,
@@ -447,7 +448,7 @@ export class ContestedStoryComponent implements OnInit {
     this.paras.push(para);
 
     para = {
-      title: "Number of contested elections in England",
+      title: "Percentage of contested elections in England",
       index: 6,
       readmore:`General elections were far more likely to be contested than by-elections. Of the 7,838 general elections held in English constituencies between 1695 and 1832, one-third were contested (2,647 at a rate of 34%), compared to only 18% of by-elections in the same period. This is perhaps unsurprising: the simultaneous election of two MPs in almost every English constituency, with a degree of forewarning, provided greater opportunities for candidates and constituents to mount an effective campaign. However, these numbers undoubtedly underestimate the degree of electoral activity in eighteenth-century England. It should be emphasised that many constituencies saw a considerable volume of election campaigning, canvassing and other political activity, but never progressed to a formal poll – usually because one or more of the candidates withdrew from the contest, rather than exert huge expense and effort on an election which they believed they could not win. If ‘abandoned’ contests are taken into account, then our figures for contested elections in the early nineteenth would increase by as much as 50–75%.`,
       showReadmore: false,
@@ -464,7 +465,7 @@ export class ContestedStoryComponent implements OnInit {
       readmore:`Historians have been particularly interested in exploring these trends. Many have noted the correlation between the frequency with which general elections were held and the proportion which were contested. Between 1695 and 1715, following the Triennial Act, general elections were held on average every two years, with 40% contested. Similarly, after 1774, general elections were held more frequently, and the rate of contested elections began to rise. Frequent elections helped both to raise and maintain the political temperature, while allowing for a semblance of electoral ‘infrastructure’ to remain in place in the localities between elections, all of which probably encouraged higher proportions of contests. However, if the Septennial Act had a major impact on the number of elections contested, it was not felt for several decades after its passage, with the rates of contested elections remaining high until the 1740s. The high number of contested elections at the beginning and end of the long eighteenth century may also have been because of the development of the party system. Geoffrey Holmes termed the period 1680–1714 as the ‘first Age of Party’ in which a great polarity emerged between the Tories and Whigs, who held competing views on fundamental religious and constitutional issues. In 1705 and 1710, for example, the party political issues of the ‘Church in Danger’ and the Sacheverell Affair, respectively, fuelled bitterly contested elections throughout England. It is generally held that such animosity had cooled considerably by the mid-century, with the proportion of contested elections falling accordingly. From 1784, however, the rival personalities of William Pitt the Younger and Charles James Fox helped to reignite party conflict. Simultaneously, society as a whole was steadily politicised, and the late eighteenth century witnessed the rise of popular reform movements, petitioning campaigns, and political radicalism. The proliferation of the newspaper press helped to inject national political issues back into constituencies and stimulate more contests. Between the ‘rage of party’ at the start of the century and the rise of radicalism at the end, historians such as J. H. Plumb have identified a period of ‘political stability’, which may have suppressed the number of contested elections. Under this interpretation, the passage of the Septennial Act was a crucial moment in the ‘growth of oligarchy’ and the establishment of Whig hegemony as the government led by Sir Robert Walpole tightened its grip over the constituencies. Historians like Lewis Namier have concluded that by the 1750s the English electorate was very largely subservient to the wishes of the main ‘patrons’ (or local landowners). According to Frank O’Gorman, the number of constituencies in which a patron enjoyed complete dominance rose from around 20% to 30% over the course of the eighteenth century, while in a further 25% (rising to one-third) a patron could make recommendations which may or may not have been accepted. At the same time, the escalating cost of contested elections for the candidates and patrons involved encouraged opposing interests to reach electoral compromises and share the representation of constituencies in two-member seats. `,
       showReadmore: false,
       showControls: true,
-      widgets: ["year"],
+      widgets: ["year","general"],
       content: `The proportion of contested elections is clearer if we focus on general elections (when every English constituency held an election simultaneously). The graph shows that the country witnessed a comparatively high proportion of contested elections between 1695 and 1734, before dropping off significantly during the mid-eighteenth century. From 1774 the rate began to recover, but failed to regain the high proportion of contested elections seen during the earlier part of the century.`,
       spacing: "150%"
     };
@@ -496,7 +497,7 @@ export class ContestedStoryComponent implements OnInit {
       title:"Percentage of large English borough constituencies contested during general elections",
       index: 10,
       readmore:`The ‘large’ boroughs – which all had electorates of over 1,000 during the late eighteenth century – were: Bedford, Beverley, Bridgnorth, Bristol, Canterbury, Carlisle, Chester, Colchester, Coventry, Cricklade, Dover, Durham City, Evesham, Exeter, Gloucester, Hereford, Kingston-Upon-Hull, Lancaster, Leicester, Lincoln, Liverpool, London, Maidstone, Newark, Newcastle-upon-Tyne, Northampton, Norwich, Nottingham, Oxford, Southwark, Westminster, Worcester, York. The proportion of contested elections in these boroughs never fell below 39%, and averaged 57% across the whole period. The majority of the electorate were therefore called upon to exercise their franchise far more regularly than an average across all constituencies might suggest. This evidence also encourages us to rethink our chronology of electoral activity – suggesting that the high points of electoral conflict occurred in 1722–1734 and the early nineteenth century, rather than the ‘first Age of Party’.`,
-      showReadmore: true,
+      showReadmore: false,
       showControls: true,
       widgets: ['general'],
       content: `This graph shows the proportion of elections contested in the thirty-three largest English boroughs, which contained a full two-thirds of the total borough electorate.`,
