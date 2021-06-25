@@ -103,6 +103,7 @@ export class ContestedStoryComponent implements OnInit {
         // newVisIndex =i; 
         if (!this.debounce) {
           if (i != this.visIndex) {
+            
             this.viewChanged(i);
             this.debounce = true;
             this.visIndex = i;
@@ -223,6 +224,7 @@ export class ContestedStoryComponent implements OnInit {
     }
     else if (index == 11) {
       this.sendMessage("scatter");
+      this.setFilters("1695-1845","","G","","");
       this.setFilters("1695-1845","","","","");
 
 
@@ -305,7 +307,7 @@ export class ContestedStoryComponent implements OnInit {
 
 
   gotData(value) {
-
+    
     this.myValueSub = this.datasourceService.dataSource.connect().pipe(
       map(val => {
         //    console.log("cont inner");
@@ -339,7 +341,7 @@ export class ContestedStoryComponent implements OnInit {
     return "checK";
   }
   onDataSubscriptionChange() {
-   // console.log("contested story datasub change", this.datasourceService.dataSource);
+    console.log("contested story datasub change", this.datasourceService.dataSource);
     // var startYear = this.datasourceService.electionsMeta.earliest_year;
     // var endYear = this.datasourceService.electionsMeta.latest_year ;
     if (this.datasourceService.dataSource.filteredData != undefined) {

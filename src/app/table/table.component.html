@@ -1,11 +1,11 @@
-<div style="height:80vh; overflow: scroll;" class="example-container mat-elevation-z8 px-14">
+<div style="overflow: scroll;" class="w-100 mat-elevation-z8">
 
     <!-- <ngx-slider [(value)]="minYear" [(highValue)]="maxYear" (userChangeEnd)="sliderChange($event)" style="color:white !important; margin-left:10%;margin-top:8%;margin-bottom:5%;width:50%;z-index:20;" [options]="sliderOptions"></ngx-slider><br> -->
     <button style="margin-bottom: 10px; margin-right:10px" class="mr-4 mb-4" (click)="openDialogue()" mat-raised-button color="basic">Open Search Form</button>
     <button style="margin-bottom: 10px; margin-right:10px" class="mb-4" (click)="download()" mat-raised-button color="basic">Download Data</button>
 
     <button style="margin-bottom: 10px; margin-right:10px" class="mb-4" (click)="clearSearch()" mat-raised-button color="basic">Clear Search</button>
-    <div style=" background-color: white; border-radius: 10px ; overflow: scroll;" class="w-3/4 rounded-md p-1">
+    <div style=" background-color: white; border-radius: 10px ; overflow: scroll;" class="rounded-md p-1">
 
         <table *ngIf="ready" mat-table [dataSource]="datasourceService.dataSource" class="rounded-lg mat-elevation-z8 ">
             <ng-container matColumnDef="constituency" sticky>
@@ -14,7 +14,7 @@
                         <!-- <mat-form-field [style.width.px]="100">
                             <input matInput class="form-field" [formControl]="datasourceService.constituencyFilter" placeholder="....">
                         </mat-form-field> -->
-                        <mat-form-field (keydown)="keyDownFunction($event)" class="dialogue_form">
+                        <mat-form-field (keydown)="keyDownFunction($event)" [style.width.px]="50" class="dialogue_form">
                             <!-- <mat-label>Constituency</mat-label> -->
                             <input (click)="consituencyFieldClicked()" type="text" placeholder="...." aria-label="Constituency" matInput [formControl]="datasourceService.constituencyFilter" [matAutocomplete]="auto">
                             <mat-autocomplete #auto="matAutocomplete">

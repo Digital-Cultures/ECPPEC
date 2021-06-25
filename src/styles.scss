@@ -21,3 +21,23 @@ $default-theme: mat-dark-theme(mat-palette($mat-green, A400), mat-palette($mat-l
 @import 'tailwindcss/base';
 @import 'tailwindcss/components';
 @import 'tailwindcss/utilities';
+html {
+    height: 100%;
+}
+
+* {
+    padding: 0;
+    margin: 0;
+}
+
+html,
+body,
+#fullheight {
+    min-height: 100% !important;
+    height: 100%;
+}
+
+// #fullheight {
+//     width: 250px;
+//     background: blue;
+// }

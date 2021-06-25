@@ -14,9 +14,22 @@ html {
 /* Optional: show position indicator in red */
 
 ::-webkit-scrollbar-thumb {
-    background: #FF0000;
+    background: yellow;
 }
 
 .readmore {
     transition: width 2s, height 3s;
+}
+
+.wrapper {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-top: 20px;
+    margin-bottom: 20px;
+}
+
+.inner {
+    color: white;
+    padding: 12px;
 }

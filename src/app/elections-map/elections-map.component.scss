@@ -1,29 +1,18 @@
-// #table {
-//     position: absolute;
-//     z-index: 3;
-//     width: 500px;
-//     height: 500px;
-//     top: 10px;
+// html {
+//     overflow: scroll;
 // }
-html {
-    overflow: scroll;
-    overflow-x: hidden;
-}
-
-::-webkit-scrollbar {
-    width: 0;
-    /* Remove scrollbar space */
-    background: transparent;
-    /* Optional: just make scrollbar invisible */
-}
-
+// ::-webkit-scrollbar {
+//     width: 0;
+//     /* Remove scrollbar space */
+//     background: transparent;
+//     /* Optional: just make scrollbar invisible */
+// }
 
 /* Optional: show position indicator in red */
 
-::-webkit-scrollbar-thumb {
-    background: #FF0000;
-}
-
-.readmore {
-    transition: width 2s, height 3s;
-}
+// ::-webkit-scrollbar-thumb {
+//     background: black;
+// }
+// .readmore {
+//     transition: width 2s, height 3s;
+// }

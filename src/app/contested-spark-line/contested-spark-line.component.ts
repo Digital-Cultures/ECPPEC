@@ -29,8 +29,8 @@ export class ContestedSparkLineComponent implements OnInit, OnDestroy {
   years: number[] = [];
   options = {
     grid: {
-      bottom: 12,
-      top: 12,
+      bottom: 5,
+      top: 5,
       containLabel: true
     },
 
@@ -83,20 +83,12 @@ export class ContestedSparkLineComponent implements OnInit, OnDestroy {
 
         //  console.log("updatin showCountyBorough")
         this.updateOptions = {
-          grid: {
-
-            top: 42
-
+          
+         grid: {
+            bottom: 5,
+            top: 5,
+            containLabel: true
           },
-          // title: {
-          //   text: this.updateParams.title,
-          //   subtext: '',
-          //   x: 'left',
-          //   textStyle: {
-          //     fontSize: 12,
-          //     lineHeight: 12,
-          //   }
-          // },
           tooltip: {
             trigger: 'axis'
           },
@@ -139,20 +131,10 @@ export class ContestedSparkLineComponent implements OnInit, OnDestroy {
         //  this.chartInstance.clear();
         this.updateOptions = {
           grid: {
-
-            top: 42
-
+            bottom: 5,
+            top: 5,
+            containLabel: true
           },
-          //  title: {
-          //    text: this.updateParams.title,
-          //    x: 'left',
-          //    subtext: '',
-
-          //    textStyle: {
-          //      fontSize: 12,
-          //      lineHeight: 12,
-          //    }
-          //  },
           tooltip: {
             trigger: 'axis'
           },
@@ -200,20 +182,10 @@ export class ContestedSparkLineComponent implements OnInit, OnDestroy {
         //  this.chartInstance.clear();
         this.updateOptions = {
           grid: {
-
-            top: 42
-
+            bottom: 5,
+            top: 5,
+            containLabel: true
           },
-          //  title: {
-          //    text: this.updateParams.title,
-          //    x: 'left',
-          //    subtext: '',
-
-          //    textStyle: {
-          //      fontSize: 12,
-          //      lineHeight: 12,
-          //    }
-          //  },
           tooltip: {
             trigger: 'axis'
           },

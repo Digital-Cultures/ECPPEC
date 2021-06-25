@@ -85,26 +85,11 @@ ngAfterViewInit(): void {
         }
      //   console.log("pieces",pieces);
         this.updateOptions = {
-        //   legend: {
-        //     type: 'scroll',
-        //     orient: 'vertical',
-        //     right: 10,
-        //     top: 20,
-        //     bottom: 20,
-        //     data: pieces
-    
-           
-        // },
-          // title: {
-          //   text: "proportion of contested elections against number of elections contested",
-          //   x: 'left',
-          //   subtext: '',
-            
-          //   textStyle: {
-          //     fontSize: 12,
-          //     lineHeight: 12,
-          //   }
-          // },
+          grid: {
+            bottom: 5,
+            top: 5,
+            containLabel: true
+          },
     
           tooltip: {
             trigger: "item",

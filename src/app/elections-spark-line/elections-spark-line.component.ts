@@ -22,8 +22,8 @@ export class ElectionsSparkLineComponent implements OnInit, OnDestroy {
   years: number[] = [];
   options = {
     grid: {
-      bottom: 12,
-      top: 12,
+      bottom: 5,
+      top: 5,
       containLabel: true
     },
     title: {
@@ -143,7 +143,11 @@ export class ElectionsSparkLineComponent implements OnInit, OnDestroy {
         var colorIndexEnd = updateOptions.highLightEnd - this.utils.start;
         //     console.log("updating visualmap",colorIndexStart,colorIndexEnd);
         this.updateOptions = {
-
+          grid: {
+            bottom: 5,
+            top: 5,
+            containLabel: true
+          },
           visualMap: {
             show: false,
             dimension: 0,
@@ -184,6 +188,11 @@ export class ElectionsSparkLineComponent implements OnInit, OnDestroy {
       else if (updateOptions.type == "stayTall") {
         // console.log("Stay tall");
         this.updateOptions = {
+          grid: {
+            bottom: 5,
+            top: 5,
+            containLabel: true
+          },
 
           visualMap: {
             show: false,
@@ -218,7 +227,11 @@ export class ElectionsSparkLineComponent implements OnInit, OnDestroy {
       }
       else {
         this.updateOptions = {
-
+          grid: {
+            bottom: 5,
+            top: 5,
+            containLabel: true
+          },
           visualMap: {
             show: false,
             dimension: 0,

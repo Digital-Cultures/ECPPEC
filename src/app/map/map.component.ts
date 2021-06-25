@@ -1,10 +1,11 @@
 
-import { Component, OnInit, OnDestroy, ViewChild, ApplicationRef, AfterViewInit } from '@angular/core';
+import { Component, OnInit, OnDestroy, ViewChild, ApplicationRef, AfterViewInit , ElementRef} from '@angular/core';
 import { GoogleMapsModule, GoogleMap } from '@angular/google-maps'
 import { DatasourceService } from '../datasource.service';
 import { TableComponent } from '../table/table.component';
 import { mapStyles } from '../mapStyles';// import { FormControl } from '@angular/forms';
 import { Subscription } from 'rxjs';
+import { windowWhen } from 'rxjs/operators';
 
 @Component({
 	selector: 'app-map',
@@ -15,6 +16,8 @@ export class MapComponent implements OnInit, AfterViewInit, OnDestroy {
 
 	constructor(private datasourceService: DatasourceService, private appRef: ApplicationRef) { }
 	@ViewChild(GoogleMap, { static: false }) map: GoogleMap;
+	@ViewChild('myIdentifier')
+ 	 myIdentifier: ElementRef;
 	clicked: boolean = false;
 	zoom: number = 7;
 	mapIsReady: boolean = false;
@@ -22,17 +25,24 @@ export class MapComponent implements OnInit, AfterViewInit, OnDestroy {
 		lat: 52.4862,
 		lng: -2
 	}
+	w:number = 0;
 	m: any = mapStyles.styles;//this.mStyles.styles;
 	//console.log(mpStyles);
 	myValueSub: Subscription;
 	dynamicMarkers: google.maps.Marker[] = [];
 	highlightColour: string = "#673ab7";
-	ngOnInit(): void {
 
+	ngOnInit(): void {
+		this.w = window.innerWidth;
+		if(window.innerWidth<600) {
+			this.zoom = 6;
+		}
+		//this.map.zoom(this.zoom);
 
 	}
 	ngAfterViewInit() {
-
+		// console.log("got map" ,window.innerWidth);
+		
 
 	}
 	dataChange(val) {
@@ -44,8 +54,8 @@ export class MapComponent implements OnInit, AfterViewInit, OnDestroy {
 
 
 		// console.log("data update in map componenet", this.datasourceService.getFilteredConstituencies());
-		this.datasourceService.electionsPerYear = this.datasourceService.getElectionsPerYear();
-		var doubleCheck = this.datasourceService.getFilteredConstituencies();
+		//this.datasourceService.electionsPerYear = this.datasourceService.getElectionsPerYear();
+		//var doubleCheck = this.datasourceService.getFilteredConstituencies();
 		this.updateIsActive(this.datasourceService.getFilteredConstituencies());
 		this.setMapStyle();
 
@@ -108,7 +118,7 @@ export class MapComponent implements OnInit, AfterViewInit, OnDestroy {
 			this.datasourceService.dataUpdate.subscribe(() => this.dataUpdate(value)
 			);
 			this.datasourceService.getUniqueElections();
-			console.log("this.dynamicMarkers", this.dynamicMarkers);
+		//	console.log("this.dynamicMarkers", this.dynamicMarkers);
 			this.dynamicMarkers = [];
 			this.datasourceService.uniqueElections.forEach(element => {
 				var thisDynamicMarker = new google.maps.Marker();

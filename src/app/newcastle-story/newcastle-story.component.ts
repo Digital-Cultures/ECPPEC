@@ -103,7 +103,7 @@ export class NewcastleStoryComponent implements OnInit {
         // newVisIndex =i; 
         if (!this.debounce) {
           if (i != this.visIndex) {
-            this.viewChanged(i);
+            // this.viewChanged(i);
             this.debounce = true;
             this.visIndex = i;
            
@@ -258,12 +258,15 @@ export class NewcastleStoryComponent implements OnInit {
       this.buffer.push(0);
     }
     this.utils = new ContestedUtils(this.datasourceService);
-    this.datasourceService.getData();
+    if (this.paras.length == 0) this.addParas();
+    // this.ref.detectChanges();
+  
+    // this.datasourceService.getData();
 
-    this.datasourceService.ready.subscribe(value => { this.gotData(value) });
-    for (var i = 1695; i < 1835; i++) {
-      this.years.push(i);
-    }
+    // this.datasourceService.ready.subscribe(value => { this.gotData(value) });
+    // for (var i = 1695; i < 1835; i++) {
+    //   this.years.push(i);
+    // }
 
     //this.datasourceService.ready.subscribe(value => {this.gotData(value)});
   }
@@ -305,17 +308,17 @@ export class NewcastleStoryComponent implements OnInit {
 
   gotData(value) {
 
-    this.myValueSub = this.datasourceService.dataSource.connect().pipe(
-      map(val => {
-        //    console.log("cont inner");
-        return val      //Returning Value
-      })
-    )
-      .subscribe(ret => {
-       // console.log('Recd from map : ' + ret[0].election_year);
-        this.onDataSubscriptionChange();
+    // this.myValueSub = this.datasourceService.dataSource.connect().pipe(
+    //   map(val => {
+    //     //    console.log("cont inner");
+    //     return val      //Returning Value
+    //   })
+    // )
+    //   .subscribe(ret => {
+    //    // console.log('Recd from map : ' + ret[0].election_year);
+    //     this.onDataSubscriptionChange();
 
-      })
+    //   })
   }
 
   onChartInit(e: any) {
