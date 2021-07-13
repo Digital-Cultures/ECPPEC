@@ -1,0 +1,142 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+model artefacts {
+  id            Int     @id @default(autoincrement())
+  election_id   String? @db.VarChar(75)
+  artefact_name String? @db.VarChar(225)
+  artefact_type String? @db.VarChar(225)
+  artefact_link String? @db.VarChar(225)
+}
+
+model candidates {
+  candidate_id   Int     @id @default(autoincrement())
+  candidate_name String? @db.VarChar(75)
+  title          String? @db.VarChar(25)
+  suffix         String? @db.VarChar(25)
+  short_name     String? @db.VarChar(25)
+  born           Int?
+  died           Int?
+}
+
+model candidates_elections {
+  candidates_elections_id Int     @id @default(autoincrement()) @db.UnsignedInt
+  election_id             String? @db.VarChar(50)
+  candidate_id            Int?
+  running_as              String? @db.VarChar(50)
+  is_winner               Int     @default(0) @db.TinyInt
+  overturned_by           String? @db.VarChar(100)
+  ultimate_winner         Int     @default(0) @db.TinyInt
+
+  @@unique([election_id, candidate_id], name: "electionID")
+}
+
+model election_dates {
+  election_dates_id Int       @unique @default(autoincrement())
+  election_id       String?   @db.VarChar(25)
+  election_date     DateTime? @db.Date
+  date_num          Int?
+
+  @@index([election_id, election_date], name: "electionCode")
+}
+
+model elections {
+  id                  Int       @id @default(autoincrement())
+  election_year       String?   @db.VarChar(50)
+  election_month      String?   @db.VarChar(50)
+  election_date       DateTime? @db.Date
+  constituency        String?   @db.VarChar(50)
+  countyboroughuniv   String?   @db.VarChar(50)
+  franchise_detail    String?   @db.VarChar(50)
+  franchise_type      String?   @db.VarChar(50)
+  by_election_general String?   @db.VarChar(50)
+  by_election_cause   String?   @db.VarChar(50)
+  contested           String?   @db.VarChar(50)
+  election_id         String?   @db.VarChar(50)
+  pollbook_id         String?   @db.VarChar(50)
+  notes               String?   @db.VarChar(250)
+  latitude            String?   @db.VarChar(50)
+  longitude           String?   @db.VarChar(50)
+
+  @@index([constituency], name: "constituency")
+  @@index([election_id], name: "electionID")
+}
+
+model elections_old {
+  Year              String? @db.VarChar(5)
+  Month             String? @db.VarChar(10)
+  Constituency      String? @db.VarChar(30)
+  CountyBoroughUniv String? @db.VarChar(1)
+  Franchise         String? @db.VarChar(100)
+  ByElectionGeneral String? @db.VarChar(5)
+  ByElectionCause   String? @db.VarChar(1000)
+  Contested         String? @db.VarChar(5)
+  ElectionCode      String  @id @db.VarChar(100)
+  PollBookCode      String? @db.VarChar(200)
+  Notes             String? @db.VarChar(1000)
+  Latitude          String? @db.VarChar(10)
+  Longitude         String? @db.VarChar(10)
+}
+
+model locations {
+  locations_id  Int                   @unique @default(autoincrement())
+  name_short    String?               @db.VarChar(25)
+  name_long     String?               @db.VarChar(75)
+  location_type String?               @db.VarChar(25)
+  lat           Decimal               @db.Decimal(10, 8)
+  lng           Decimal               @db.Decimal(11, 8)
+  location      Unsupported("point")?
+}
+
+model poll_books {
+  pollbook_id String  @id @db.VarChar(50)
+  PrintMS     String? @db.VarChar(10)
+  Citation    String? @db.VarChar(1000)
+  Holdings    String? @db.VarChar(1000)
+  Source      String? @db.VarChar(1000)
+  election_id String? @db.VarChar(50)
+  Notes       String? @db.VarChar(1000)
+
+  @@index([election_id], name: "ElectionCode")
+}
+
+model voters {
+  voter_id   Int       @id @default(autoincrement()) @db.UnsignedInt
+  orig_id    String?   @db.VarChar(75)
+  forename   String?   @db.VarChar(50)
+  surname    String?   @db.VarChar(50)
+  suffix     String?   @db.VarChar(25)
+  title      String?   @db.VarChar(25)
+  class      String?   @db.VarChar(25)
+  occupation String?   @db.VarChar(75)
+  guild      String?   @db.VarChar(75)
+  street     String?   @db.VarChar(75)
+  city       String?   @db.VarChar(50)
+  county     String?   @db.VarChar(75)
+  parish     String?   @db.VarChar(75)
+  abode      String?   @db.VarChar(225)
+  notes      String?   @db.Text
+  created    DateTime  @db.Timestamp(0)
+  modified   DateTime? @default(now()) @db.Timestamp(0)
+}
+
+model votes {
+  votes_id     Int       @id @default(autoincrement()) @db.UnsignedInt
+  voter_id     Int?
+  election_id  String?   @db.VarChar(25)
+  pollbook_id  String?   @db.VarChar(25)
+  page         Int?
+  line         Int?
+  candidate_id Int?
+  poll_date    DateTime? @db.Date
+  created      DateTime  @default(now()) @db.Timestamp(0)
+
+  @@unique([voter_id, election_id, candidate_id], name: "voterID")
+  @@index([election_id], name: "ElectionID")
+}

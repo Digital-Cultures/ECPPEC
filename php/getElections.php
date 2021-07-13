@@ -1,6 +1,6 @@
 <?php
-
 require_once('config.php');
+require_once('functions.php');
 
 $conn = new mysqli($servername, $username, $password, $dbname);
 
@@ -16,11 +16,24 @@ if(is_array($_GET)) {
 }
 
 //cast all years as integers for safety
-if (isset($optimized["from_year"]) && isset($optimized["to_year"])) {
-	$options[] = "election_year >= "
-	.	(int) $optimized["from_year"]
-	.	" AND election_year <= "
-	.	(int) $optimized["to_year"];
+
+//single year requested?
+if(isset($optimized['year'])) {
+	$options[] = "election_year = '"
+	.	(int) $optimized['year']
+	.	"'";
+} else { //either single year OR a range, can't be both
+	if (isset($optimized["from_year"])) {
+		$options[] = "election_year >= '"
+		.	(int) $optimized["from_year"]
+		.	"'";
+	}
+	
+	if (isset($optimized["to_year"])) {
+		$options[] = "election_year <= '"
+		.	(int) $optimized["to_year"]
+		.	"'";
+	}
 }
 
 //here we begin to set things up for a prepared statement
@@ -79,51 +92,33 @@ if($n) {
 $stmt->execute();
 $result = $stmt->get_result(); // get the mysqli result
 $rows = $result->fetch_all(MYSQLI_ASSOC); // fetch the data
+$years = getYearRange($rows);
 
+//if election results are requested (via 'include_results' flag), get them
+$acceptable_flags = array("1","Y","y","yes","true"); 
+/** 
+ * 	note: we'll accept any of the 'acceptable flags' so as to reduce chances 
+ * 	for users to get frustrated by accidentally putting 'Y' instead of '1' or 
+ * 	whatever; we don't just check if 'include_results' is set 
+ * 	to *anything* because once they know it's a possible option they might set it 
+ * 	to 0 or false or no as a way of trying to exclude results, so we'll allow that
+ */
+
+if(isset($optimized['include_results']) && in_array($optimized['include_results'],$acceptable_flags)) {
+	foreach($rows as &$row) {
+		$results = election_results($row['election_id']);
+		$row['results'] = count($results) ? $results : "information not available"; 
+	}
+}
+ 
 $response = array(
-	"num_results"=>sizeof($rows),
-	"earliest_year"=>getEarliestYear($rows),
-	"latest_year"=>getLatestYear($rows),
+	"num_results"=>count($rows),
+	"earliest_year"=>$years['earliest'],
+	"latest_year"=>$years['latest'],
 	"elections"=>$rows
 );
 print json_encode($response);
 $conn->close();
-
-function getEarliestYear($rows){
-	$earliest_year = 3000;
-	foreach ($rows as $key => $value) {
-		//echo $value['Year']."<br>";
-		if($value['election_year'] < $earliest_year){
-			$earliest_year = $value['election_year'];
-
-		}
-	}
-	return $earliest_year;
-}
-function getLatestYear($rows){
-	$latest_year = 0;
-	foreach ($rows as $key => $value) {
-		//echo $value['Year']."<br>";
-		if($value['election_year'] > $latest_year){
-			$latest_year=$value['election_year'];
-
-		}
-	}
-	return $latest_year;
-}
-
-/**
- * 
- * @param array $array
- * @return same array with keys in all lowercase, as failsafe against user inconsistency
- */
-function optimizer($array) {
-	$optimized = array();
-	foreach($array as $k => $v) {
-		$optimized[strtolower($k)] = $v;
-	}
-	return $optimized;
-}
 
 
 ?>

@@ -1,0 +1,30 @@
+.mat-column-constituency {}
+
+mat-column {
+    word-break: break-all;
+    flex: none;
+    display: block;
+}
+
+html {
+    overflow: scroll;
+    overflow-x: hidden;
+}
+
+::-webkit-scrollbar {
+    width: 0;
+    /* Remove scrollbar space */
+    background: transparent;
+    /* Optional: just make scrollbar invisible */
+}
+
+
+/* Optional: show position indicator in red */
+
+::-webkit-scrollbar-thumb {
+    background: black;
+}
+
+.readmore {
+    transition: width 2s, height 3s;
+}

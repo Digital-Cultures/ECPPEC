@@ -1,14 +1,26 @@
-<div id="container" [style.height.px]="myInnerHeight">
-	
-	<div id="style-3" style="background-size: cover; background-repeat: no-repeat;" [ngStyle]="{'background-image': getUrl(member)}" class="team_member" *ngFor="let member of team">
-		<h1 style="font-family: Catamaran">{{ member.name }}</h1>
-		<div id="spacer"></div>
-		<h2 style="font-family: Catamaran">{{ member.position }}</h2>
-<!-- 		<div class="low_section">
-			
-		</div> -->
-		<div class="about_section">
-			<p style="height:100%; overflow: hidden;">{{ member.about }}</p>
-		</div>
-	</div>
-</div>
+<section class="text-gray-400 bg-gray-900 body-font lg:text-base md:text-2xl">
+    <div class="container px-5 py-24 mx-auto" style=" overflow: scroll;" [ngStyle]="{'height': '100vh'}">
+        <div class="flex flex-col text-center w-full mb-20">
+            <h1 class="text-2xl font-medium lg:text-2xl  sm:text-3xl title-font mb-4 text-white tracking-widest">The ECCPEC team</h1>
+            <p class="lg:w-2/3 mx-auto leading-relaxed text-base lg:text-xl  sm:text-3xl">ECPPEC is an interdisciplinary project, bringing together expertise from history, literature, design and the digital humanities. Members of the core project teams are based at Newcastle and Liverpool universities</p>
+        </div>
+        <div class="flex flex-wrap -m-4 ">
+            <div *ngFor="let member of shuffledTeam" class="p-4 lg:w-1/2 member ">
+                <div class="h-full flex sm:flex-row flex-col items-center sm:justify-start justify-center text-center sm:text-left">
+                    <img alt="team" class="flex-shrink-0 rounded-lg w-48 h-48 object-cover object-center sm:mb-0 mb-4" src="{{getUrl(member)}}">
+                    <div class="flex-grow sm:pl-8">
+                        <h2 class="title-font font-medium md:font-large text-lg text-white">{{ member.name }}</h2>
+                        <h3 class="text-gray-500 mb-3">{{ member.position }}</h3>
+                        <app-smooth-height (mouseenter)="member.hover=true" (mouseleave)="member.hover=false" [trigger]="getAbout(member)">{{getAbout(member)}}</app-smooth-height>
+                        <span class="inline-flex">
+       
+            </span>
+                    </div>
+                </div>
+            </div>
+
+
+        </div>
+        <div style="height:20%"></div>
+    </div>
+</section>

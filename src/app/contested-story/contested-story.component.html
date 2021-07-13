@@ -1,0 +1,104 @@
+<section style="height:100vh" class="text-gray-400 bg-gray-900 body-font">
+    <div class="h-screen py-14 mx-auto flex flex-wrap">
+        <div class="md:w-2/5 w-full md:pr-14 h-full overflow-scroll  container md:pl-6" #scrollContent (scroll)="onElementScroll($event)">
+
+            <section>
+                <h1 class="title-font font-medium md:text-3xl text-xl text-white">Contested Elections in the 18th Century </h1>
+                <div class="wrapper" *ngIf="paras.length==0">
+                    <!-- style=" justify-content: center; align-items: center; text-align: center; border:2px solid; margin:auto 0px"> -->
+
+                    <mat-spinner class="inner"></mat-spinner>
+                </div>
+                <div *ngIf="paras.length==0">loading data story...</div>
+                <div #div *ngFor="let para of paras; let i = index" class="leading-relaxed mt-4" [style.margin-bottom]="getSpacing(i)">{{para.content}}<br>
+
+                    <br *ngIf="para.showReadmore">
+                    <span *ngIf="para.showReadmore">{{para.readmore}}</span>
+                    <br *ngIf="para.showReadmore">
+                    <span *ngIf="para.readmore.length>0" class="readmore" style="cursor: pointer; font-weight: bold; color:rgba(251, 191, 36,1)" (click)="para.showReadmore=!para.showReadmore">[read {{!para.showReadmore ?
+                        'more':'less'}}]</span>
+                    <br>
+                    <a *ngIf="para.index<paras.length-1" style="text-align: center;">
+                        <mat-icon style="cursor: pointer; font-size: xx-large; font-weight: bold; color:rgba(251, 191, 36,1)" aria-hidden="false" role="text" aria-label="scroll to the next section" (click)="scrollNext(i)">
+                            arrow_drop_down_circle</mat-icon>
+                    </a>
+                    <a *ngIf="para.index==paras.length-1" style="text-align: center;">
+                        <mat-icon style="cursor: pointer; font-size: xx-large; font-weight: bold; color:rgba(251, 191, 36,1)" aria-hidden="false" role="text" aria-label="scroll to the next section" (click)="scrollUp()">
+                            arrow_drop_up_circle</mat-icon>
+                    </a>
+                </div>
+            </section>
+        </div>
+
+        <div class="md:w-3/5 w-full md:static bottom-0 fixed md:po md:pr-14 py-4 md:py-8 md:h-full overflow-scroll bg-gray-900 bg-opacity-80 container md:pl-6">
+            <section>
+                <h2 *ngIf="visIndex!=paras.length-2 && paras.length>0" style="color: rgba(251, 191, 36,1);" class="text-m md:text-lg font-medium title-font md:mb-5 mb-1">{{visIndex}} {{getTitle()}}
+                    <br>{{filteredNumElections }} elections of which {{filteredNumContested}} were contested ({{filteredPercentageContested}}%)</h2>
+                <div *ngIf="visIndex>=0 && visIndex<6" [@inOutAnimation] class="w-full md:h-96 h-32">
+                    <app-elections-spark-line role="text" [attr.aria-label]="getAccessibliltyData(visIndex)" class="text-xs mt-3">
+                    </app-elections-spark-line>
+                </div>
+                <div *ngIf="visIndex==6 || visIndex==7|| visIndex==8 || visIndex==10 " [@inOutAnimation] class="w-full md:h-96 h-44">
+                    <app-contested-spark-line role="text" [attr.aria-label]="getAccessibliltyData(visIndex)" class="text-xs mt-3"></app-contested-spark-line>
+                </div>
+                <div *ngIf="visIndex==11" [@inOutAnimation] class="w-full md:h-96 h-44">
+                    <app-contested-scatterplot role="text" [attr.aria-label]="getAccessibliltyData(visIndex)" class="text-xs mt-3"></app-contested-scatterplot>
+                </div>
+                <div *ngIf="visIndex>=9 && visIndex<10" [@inOutAnimation] class="w-full md:h-96 h-44">
+                    <app-contested-rose role="text" [attr.aria-label]="getAccessibliltyData(visIndex)" class="text-xs mt-3"></app-contested-rose>
+                </div>
+                <img src="./assets/images/1987P19 Canvassing For Votes.jpg" alt="an election scene outside a pub. A man with a large beer pot sits at a table with a pen while other carouse" *ngIf="visIndex>=12" class="mx-auto w-2/3 rounded-lg text-3xl demo-chart bg-gray-100  "
+                />
+                <span *ngIf="paras.length>0">
+                    <span [@inOutAnimation] *ngIf="paras[visIndex].showControls">
+                        <mat-form-field style="margin-right: 5%;" *ngIf="paras[visIndex].widgets.indexOf('year')!=-1">
+                            Try entering a year range like this 1695-1800<br>
+                            <input style="background-color: white; padding:5px;border-radius: 10px;margin-top: 10px;"
+                                matInput class="form-field" [formControl]="datasourceService.yearFilter"
+                                placeholder="...">
+                        </mat-form-field>
+                        <mat-form-field style="margin-right: 5%;"
+                            *ngIf="paras[visIndex].widgets.indexOf('constituency')!=-1">
+                            Search for a particular constituency such as York<br>
+                            <input   class="md:bg-gray-100 p-4 mt-10 border-r-2"   style="background-color: white; padding:5px;border-radius: 10px;margin-top: 10px;"
+                                matInput class="form-field" [formControl]="datasourceService.constituencyFilter"
+                                placeholder="...">
+                        </mat-form-field>
+
+                        <mat-form-field *ngIf="paras[visIndex].widgets.indexOf('general')!=-1">
+                            filter for different kinds of election
+                            <mat-select
+                            style="background-color: white; padding:5px;border-radius: 10px;margin-top: 10px;"
+                                [formControl]="datasourceService.byElectionGeneralFilter"
+                                [(value)]="datasourceService.byElectionGeneralFilter.value">
+                                <mat-option value="">Any</mat-option>
+                                <mat-option value="B">By Election</mat-option>
+                                <mat-option value="G">General Election</mat-option>
+                            </mat-select>
+
+                        </mat-form-field>
+
+                        <mat-form-field *ngIf="paras[visIndex].widgets.indexOf('franchise')!=-1">
+                            filter for different kinds of franchise
+                            <mat-select
+                            style="background-color: white; padding:5px;border-radius: 10px;margin-top: 10px;"
+                                [formControl]="datasourceService.franchiseFilter"
+                                [(value)]="datasourceService.franchiseFilter.value">
+                                <mat-option value="">Any</mat-option>
+                                <mat-option value="Freeman">Freeman</mat-option>
+                                <mat-option value="Freeholder">Freeholder</mat-option>
+                                <mat-option value="Burgage">Burgage</mat-option>
+                                <mat-option value="Scot and Lot">Scot and Lot</mat-option>
+                                <mat-option value="Corporation">Corporation</mat-option>
+                                <mat-option value="Householder">Householder</mat-option>
+                                <!-- <mat-option value="">No franchise</mat-option> -->
+                            </mat-select>
+
+                        </mat-form-field>
+
+                    </span></span>
+            </section>
+
+        </div>
+    </div>
+</section>

@@ -1,0 +1,35 @@
+html {
+    overflow: scroll;
+    overflow-x: hidden;
+}
+
+::-webkit-scrollbar {
+    width: 0;
+    /* Remove scrollbar space */
+    background: transparent;
+    /* Optional: just make scrollbar invisible */
+}
+
+
+/* Optional: show position indicator in red */
+
+::-webkit-scrollbar-thumb {
+    background: yellow;
+}
+
+.readmore {
+    transition: width 2s, height 4s;
+}
+
+.wrapper {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-top: 1px;
+    margin-bottom: 10px;
+}
+
+.inner {
+    color: white;
+    padding: 12px;
+}

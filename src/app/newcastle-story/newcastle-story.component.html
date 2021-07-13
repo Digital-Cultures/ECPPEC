@@ -1,0 +1,49 @@
+<section style="height:100vh" class="text-gray-400 bg-gray-900 body-font">
+    <div class="h-screen py-14 mx-auto flex flex-wrap">
+        <div class="md:w-2/5 w-full md:pr-14 h-full overflow-scroll  container md:pl-6" #scrollContent (scroll)="onElementScroll($event)">
+
+            <section>
+                <h1 class="title-font font-medium md:text-3xl text-xl text-white">The 1820 Newcastle Election</h1>
+                <div class="wrapper" *ngIf="paras.length==0">
+                    <!-- style=" justify-content: center; align-items: center; text-align: center; border:2px solid; margin:auto 0px"> -->
+
+                    <mat-spinner class="inner"></mat-spinner>
+                </div>
+                <div *ngIf="paras.length==0">loading data story...</div>
+                <div #div *ngFor="let para of paras; let i = index" class="leading-relaxed mt-4" [style.margin-bottom]="getSpacing(i)">{{para.content}}<br>
+
+                    <br *ngIf="para.showReadmore">
+                    <span *ngIf="para.showReadmore">{{para.readmore}}</span>
+                    <br *ngIf="para.showReadmore">
+                    <span *ngIf="para.readmore.length>0" class="readmore" style="cursor: pointer; font-weight: bold; color:rgba(251, 191, 36,1)" (click)="para.showReadmore=!para.showReadmore">[read {{!para.showReadmore ? 'more':'less'}}]</span>
+                    <br>
+                    <a *ngIf="para.index<paras.length-1" style="text-align: center;">
+                        <mat-icon style="cursor: pointer; font-size: xx-large; font-weight: bold; color:rgba(251, 191, 36,1)" aria-hidden="false" role="text" aria-label="scroll to the next section" (click)="scrollNext(i)">arrow_drop_down_circle</mat-icon>
+                    </a>
+                    <a *ngIf="para.index==paras.length-1" style="text-align: center;">
+                        <mat-icon style="cursor: pointer; font-size: xx-large; font-weight: bold; color:rgba(251, 191, 36,1)" aria-hidden="false" role="text" aria-label="scroll to the next section" (click)="scrollUp()">arrow_drop_up_circle</mat-icon>
+                    </a>
+                </div>
+            </section>
+        </div>
+
+        <div class="md:w-3/5 w-full md:static bottom-0 fixed md:po md:pr-14 py-4 md:py-8 md:h-full overflow-scroll bg-gray-900 bg-opacity-80 container md:pl-6">
+            <section>
+
+                <!-- <div *ngIf="visIndex>=9 && visIndex<10" [@inOutAnimation] class="w-full md:h-96 h-44">
+                    <app-contested-rose role="text" [attr.aria-label]="getAccessibliltyData(visIndex)" class="text-xs mt-3"></app-contested-rose>
+                </div> -->
+                <ng-container *ngFor="let para of paras; let i = index" class="w-full md:h-96 h-44">
+                    <div class="h-full">
+                        <img *ngIf="para.index==visIndex && visIndex!=34" [@inOutAnimation] alt="gallery" class="object-cover w-full object-center block" [src]="getCurrentImageSrc()">
+                    </div>
+                </ng-container>
+                <ng-container *ngIf="visIndex==34" class="w-full md:h-96 h-44">
+                    <iframe *ngIf="visIndex==34" [@inOutAnimation] class="object-cover bg-gray-400 w-full object-center block" title="Newcastle 1820 election: voter residences" aria-label="map" id="datawrapper-chart-GMZia" src="https://datawrapper.dwcdn.net/GMZia/2/" scrolling="no"
+                        frameborder="0" style="border: none;" width="600" height="828"></iframe>
+                </ng-container>
+            </section>
+
+        </div>
+    </div>
+</section>

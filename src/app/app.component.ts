@@ -18,7 +18,6 @@ import {TooltipPosition} from '@angular/material/tooltip';
 
 
 // import { GetLatLonService } from './get-lat-lon.service';
-import { Options, ChangeContext, PointerType } from 'ng5-slider';
 
 import { HttpParams, HttpClient } from '@angular/common/http';
 // import 'rxjs/add/operator/map';

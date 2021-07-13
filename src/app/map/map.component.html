@@ -1,0 +1,5 @@
+<google-map #myIdentifier height="100%" width="100%" [options]="{styles:m}" [zoom]="zoom" [center]="center" (tilesloaded)="mapReady()" (zoomChanged)="mapZoomChanged()" (idle)="mapIdle()">
+
+    <map-marker #markerElem *ngFor="let dynamicMarker of dynamicMarkers" [position]="dynamicMarker.getPosition()" [options]="{icon:dynamicMarker.getIcon(),label:dynamicMarker.label, title:dynamicMarker.title, visible:dynamicMarker.visible   }" (mapClick)="markerClicked(dynamicMarker)"></map-marker>
+
+</google-map>
