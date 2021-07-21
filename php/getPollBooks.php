@@ -22,14 +22,21 @@ if(is_array($_GET)) {
 	$optimized = optimizer($_GET);
 }
 
-
 if (isset($optimized["bookcode"])  ){
 	$array = explode(";",$optimized['bookcode']);
 	$big_array = array_merge($big_array,$array);
-	
+
 	$options[] = "p.pollbook_id IN ("
 	.	str_repeat("?,",count($array)-1)
 	.	"?)";
+}
+
+if(isset($optimized["election_id"])) {
+	$array = explode(";",$optimized['election_id']);
+	$big_array = array_merge($big_array,$array);
+	$options[] = "p.election_id IN ("
+		.	str_repeat("?,",count($array)-1)
+		.	"?)";
 }
 
 if (isset($optimized["constituency"])) {
@@ -60,6 +67,14 @@ if(isset($optimized['include_results']) && in_array($optimized['include_results'
 	foreach($rows as &$row) {
 		$results = election_results($row['election_id']);
 		$row['results'] = count($results) ? $results : "information not available";
+	}
+}
+
+//full vote details?
+if(isset($optimized['include_votes']) && in_array($optimized['include_votes'],$acceptable_flags)) {
+	foreach($rows as &$row) {
+		$votes = get_votes($row['election_id']);
+		$row['votes'] = count($votes) ? $votes : "information not available";
 	}
 }
 

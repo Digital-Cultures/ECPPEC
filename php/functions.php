@@ -67,6 +67,37 @@ function election_results($election_id) {
 	return $result->fetch_all(MYSQLI_ASSOC); // fetch the data
 }
 
+function get_votes($election_id) {
+    global $conn;
+    $sql = "SELECT 
+    vr.surname,
+    vr.forename, 
+    vr.occupation,
+    vr.street,
+    vr.city,
+    vr.county,
+    vr.parish,
+    vr.abode,
+	(SELECT 
+		group_concat(
+		IF(ce.running_as IS NOT NULL, ce.running_as, c.candidate_name) 
+		SEPARATOR ', '
+    	)
+    	FROM candidates c
+    	JOIN candidates_elections ce ON ce.candidate_id = c.candidate_id
+    	WHERE ce.election_id = ?
+    	AND c.candidate_id IN (SELECT candidate_id FROM votes v WHERE v.voter_id = vr.voter_id)
+    ) 'voted for'
+FROM voters vr 
+WHERE voter_id IN (SELECT voter_id FROM votes WHERE election_id = ?)
+ORDER BY vr.surname, vr.forename";
+
+    $stmt = $conn->prepare($sql);
+    $stmt->bind_param('ss',$election_id, $election_id);
+    $stmt->execute();
+    $result = $stmt->get_result(); // get the mysqli result
+    return $result->fetch_all(MYSQLI_ASSOC); // fetch the data
+}
 function safe_json_encode($value){
 	if (version_compare(PHP_VERSION, '5.4.0') >= 0) {
 		$encoded = json_encode($value, JSON_PRETTY_PRINT);
