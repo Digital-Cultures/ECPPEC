@@ -36,7 +36,22 @@ if(isset($optimized['year'])) {
 	}
 }
 
-//here we begin to set things up for a prepared statement
+if(isset($optimized['general_election_id'])) {
+	$array = explode(";",$optimized['general_election_id']);
+	$big_array = array_merge($big_array,$array);
+	$options[] = "general_election_id IN ("
+		.	str_repeat("?,",count($array)-1)
+		.	"?)";
+}
+
+if (isset($optimized["election_id"])) {
+	$array = explode(";",$optimized['election_id']);
+	$big_array = array_merge($big_array,$array);
+	$options[] = "election_id IN ("
+		.	str_repeat("?,",count($array)-1)
+		.	"?)";
+}
+
 
 if (isset($optimized["month"])) {
 	$array = explode(";",$optimized['month']);
@@ -110,7 +125,15 @@ if(isset($optimized['include_results']) && in_array($optimized['include_results'
 		$row['results'] = count($results) ? $results : "information not available"; 
 	}
 }
- 
+
+//full vote details?
+if(isset($optimized['include_votes']) && in_array($optimized['include_votes'],$acceptable_flags)) {
+	foreach($rows as &$row) {
+		$votes = get_votes($row['election_id']);
+		$row['votes'] = count($votes) ? $votes : "information not available";
+	}
+}
+
 $response = array(
 	"num_results"=>count($rows),
 	"earliest_year"=>$years['earliest'],

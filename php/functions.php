@@ -67,6 +67,10 @@ function election_results($election_id) {
 	return $result->fetch_all(MYSQLI_ASSOC); // fetch the data
 }
 
+/**
+ * @param $election_id
+ * @return array of voter details and votes for a given election
+ */
 function get_votes($election_id) {
     global $conn;
     $sql = "SELECT 

@@ -10,9 +10,9 @@ if ($conn->connect_error > 0) {
 	echo "no db";
 	die("Connection failed: " . $conn->connect_error);
 }
+
 //initialize some variables
-$sql = "SELECT p.* FROM poll_books p 
-		LEFT JOIN elections e on e.pollbook_id = p.pollbook_id";
+$sql = "SELECT * FROM elections ";
 $optimized = array(); //will enforce lowercase keys for $_GET array
 $options = array(); //for building WHERE clause, derived from optimized $_GET variables
 $big_array = array(); //will contain all user parameters in order, for use in prepared query
@@ -22,19 +22,10 @@ if(is_array($_GET)) {
 	$optimized = optimizer($_GET);
 }
 
-if (isset($optimized["bookcode"])  ){
-	$array = explode(";",$optimized['bookcode']);
-	$big_array = array_merge($big_array,$array);
-
-	$options[] = "p.pollbook_id IN ("
-	.	str_repeat("?,",count($array)-1)
-	.	"?)";
-}
-
 if(isset($optimized["election_id"])) {
 	$array = explode(";",$optimized['election_id']);
 	$big_array = array_merge($big_array,$array);
-	$options[] = "p.election_id IN ("
+	$options[] = "election_id IN ("
 		.	str_repeat("?,",count($array)-1)
 		.	"?)";
 }
@@ -42,27 +33,25 @@ if(isset($optimized["election_id"])) {
 if (isset($optimized["constituency"])) {
 	$array = explode(";",$optimized['constituency']);
 	$big_array = array_merge($big_array,$array);
-	$options[] = "e.constituency IN ("
+	$options[] = "constituency IN ("
 	.	str_repeat("?,",count($array)-1)
 	.	"?)";
 }
 
-//cast all years as integers for safety
-
 //single year requested?
 if(isset($optimized['year'])) {
-	$options[] = "e.election_year = '"
+	$options[] = "election_year = '"
 		.	(int) $optimized['year']
 		.	"'";
 } else { //either single year OR a range, can't be both
 	if (isset($optimized["from_year"])) {
-		$options[] = "e.election_year >= '"
+		$options[] = "election_year >= '"
 			.	(int) $optimized["from_year"]
 			.	"'";
 	}
 
 	if (isset($optimized["to_year"])) {
-		$options[] = "e.election_year <= '"
+		$options[] = "election_year <= '"
 			.	(int) $optimized["to_year"]
 			.	"'";
 	}
@@ -71,39 +60,7 @@ if(isset($optimized['year'])) {
 if(isset($optimized['general_election_id'])) {
 	$array = explode(";",$optimized['general_election_id']);
 	$big_array = array_merge($big_array,$array);
-	$options[] = "e.general_election_id IN ("
-		.	str_repeat("?,",count($array)-1)
-		.	"?)";
-}
-
-if (isset($optimized["month"])) {
-	$array = explode(";",$optimized['month']);
-	$big_array = array_merge($big_array,$array);
-	$options[] = "e.election_month IN ("
-		.	str_repeat("?,",count($array)-1)
-		.	"?)";
-}
-
-if (isset($optimized["countyboroughuniv"])) {
-	$array = explode(";",$optimized['countyboroughuniv']);
-	$big_array = array_merge($big_array,$array);
-	$options[] = "e.countyboroughuniv IN ("
-		.	str_repeat("?,",count($array)-1)
-		.	"?)";
-}
-
-if (isset($optimized["byelectiongeneral"])) {
-	$array = explode(";",$optimized['byelectiongeneral']);
-	$big_array = array_merge($big_array,$array);
-	$options[] = "e.by_election_general IN ("
-		.	str_repeat("?,",count($array)-1)
-		.	"?)";
-}
-
-if (isset($optimized["contested"])) {
-	$array = explode(";",$optimized['contested']);
-	$big_array = array_merge($big_array,$array);
-	$options[] = "e.contested IN ("
+	$options[] = "general_election_id IN ("
 		.	str_repeat("?,",count($array)-1)
 		.	"?)";
 }
@@ -122,30 +79,25 @@ if($n) {
 $stmt->execute();
 $result = $stmt->get_result(); // get the mysqli result
 $rows = $result->fetch_all(MYSQLI_ASSOC); // fetch the data
+$years = getYearRange($rows);
 
-//do they want election results?
-if(isset($optimized['include_results']) && in_array($optimized['include_results'],$acceptable_flags)) {
-	foreach($rows as &$row) {
-		$results = election_results($row['election_id']);
-		$row['results'] = count($results) ? $results : "information not available";
-	}
-}
-
-//full vote details?
-if(isset($optimized['include_votes']) && in_array($optimized['include_votes'],$acceptable_flags)) {
-	foreach($rows as &$row) {
-		$votes = get_votes($row['election_id']);
-		$row['votes'] = count($votes) ? $votes : "information not available";
-	}
+foreach($rows as &$row) {
+	$votes = get_votes($row['election_id']);
+	$row['votes'] = count($votes) ? $votes : "information not available";
 }
 
 
 $response = array(
 	"num_results"=>count($rows),
-
-	"poll_books"=>$rows
+	"earliest_year"=>$years['earliest'],
+	"latest_year"=>$years['latest'],
+	"elections"=>$rows
 );
-//print_r($rows);
+/*
+print "<pre>";
+print_r($response);
+print "</pre>";
+*/
 //$safe_rows = json_decode();
 print safe_json_encode( $response );//json_encode($);
 $conn->close();
