@@ -5,7 +5,11 @@ require_once('functions.php');
 $conn = new mysqli($servername, $username, $password, $dbname);
 
 //initialize some variables
-$sql = "SELECT * FROM elections ";
+$sql = 	"SELECT e.*, c.lat, c.lng
+	 	FROM elections e 
+	 	JOIN constituencies c 
+		ON c.constituency_id = e.constituency_id ";
+
 $optimized = array(); //will enforce lowercase keys for $_GET array
 $options = array(); //for building WHERE clause, derived from optimized $_GET variables
 $big_array = array(); //will contain all user parameters in order, for use in prepared query
@@ -19,18 +23,18 @@ if(is_array($_GET)) {
 
 //single year requested?
 if(isset($optimized['year'])) {
-	$options[] = "election_year = '"
+	$options[] = "e.election_year = '"
 	.	(int) $optimized['year']
 	.	"'";
 } else { //either single year OR a range, can't be both
 	if (isset($optimized["from_year"])) {
-		$options[] = "election_year >= '"
+		$options[] = "e.election_year >= '"
 		.	(int) $optimized["from_year"]
 		.	"'";
 	}
 	
 	if (isset($optimized["to_year"])) {
-		$options[] = "election_year <= '"
+		$options[] = "e.election_year <= '"
 		.	(int) $optimized["to_year"]
 		.	"'";
 	}
@@ -39,7 +43,7 @@ if(isset($optimized['year'])) {
 if(isset($optimized['general_election_id'])) {
 	$array = explode(";",$optimized['general_election_id']);
 	$big_array = array_merge($big_array,$array);
-	$options[] = "general_election_id IN ("
+	$options[] = "e.general_election_id IN ("
 		.	str_repeat("?,",count($array)-1)
 		.	"?)";
 }
@@ -47,7 +51,7 @@ if(isset($optimized['general_election_id'])) {
 if (isset($optimized["election_id"])) {
 	$array = explode(";",$optimized['election_id']);
 	$big_array = array_merge($big_array,$array);
-	$options[] = "election_id IN ("
+	$options[] = "e.election_id IN ("
 		.	str_repeat("?,",count($array)-1)
 		.	"?)";
 }
@@ -56,7 +60,7 @@ if (isset($optimized["election_id"])) {
 if (isset($optimized["month"])) {
 	$array = explode(";",$optimized['month']);
 	$big_array = array_merge($big_array,$array);
-	$options[] = "election_month IN ("
+	$options[] = "e.election_month IN ("
 	.	str_repeat("?,",count($array)-1)
 	.	"?)";
 }
@@ -64,7 +68,7 @@ if (isset($optimized["month"])) {
 if (isset($optimized["constituency"])) {
 	$array = explode(";",$optimized['constituency']);
 	$big_array = array_merge($big_array,$array);
-	$options[] = "constituency IN ("
+	$options[] = "e.constituency IN ("
 	.	str_repeat("?,",count($array)-1)
 	.	"?)";
 }
@@ -72,7 +76,7 @@ if (isset($optimized["constituency"])) {
 if (isset($optimized["countyboroughuniv"])) {
 	$array = explode(";",$optimized['countyboroughuniv']);
 	$big_array = array_merge($big_array,$array);
-	$options[] = "countyboroughuniv IN ("
+	$options[] = "e.countyboroughuniv IN ("
 	.	str_repeat("?,",count($array)-1)
 	.	"?)";
 }
@@ -80,7 +84,7 @@ if (isset($optimized["countyboroughuniv"])) {
 if (isset($optimized["byelectiongeneral"])) {
 	$array = explode(";",$optimized['byelectiongeneral']);
 	$big_array = array_merge($big_array,$array);
-	$options[] = "by_election_general IN ("
+	$options[] = "e.by_election_general IN ("
 	.	str_repeat("?,",count($array)-1)
 	.	"?)";
 }
@@ -88,13 +92,13 @@ if (isset($optimized["byelectiongeneral"])) {
 if (isset($optimized["contested"])) {
 	$array = explode(";",$optimized['contested']);
 	$big_array = array_merge($big_array,$array);
-	$options[] = "contested IN ("
+	$options[] = "e.contested IN ("
 	.	str_repeat("?,",count($array)-1)
 	.	"?)";
 	}
 
 if(count($options)) {
-	$sql .= "WHERE "
+	$sql .= "WHERE e.office = 'parliament' AND "
 	.	implode(" AND ",$options);
 }
 
@@ -108,16 +112,6 @@ $stmt->execute();
 $result = $stmt->get_result(); // get the mysqli result
 $rows = $result->fetch_all(MYSQLI_ASSOC); // fetch the data
 $years = getYearRange($rows);
-
-//if election results are requested (via 'include_results' flag), get them
-$acceptable_flags = array("1","Y","y","yes","true"); 
-/** 
- * 	note: we'll accept any of the 'acceptable flags' so as to reduce chances 
- * 	for users to get frustrated by accidentally putting 'Y' instead of '1' or 
- * 	whatever; we don't just check if 'include_results' is set 
- * 	to *anything* because once they know it's a possible option they might set it 
- * 	to 0 or false or no as a way of trying to exclude results, so we'll allow that
- */
 
 if(isset($optimized['include_results']) && in_array($optimized['include_results'],$acceptable_flags)) {
 	foreach($rows as &$row) {

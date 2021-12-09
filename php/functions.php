@@ -139,6 +139,11 @@ function utf8ize($mixed) {
 	return $mixed;
 }
 
+function debug($thingy) {
+    print "<pre>";
+    print_r($thingy);
+    print "</pre>";
+}
 //if election results are requested (via 'include_results' flag), get them
 $acceptable_flags = array("1","Y","y","yes","true");
 /**
