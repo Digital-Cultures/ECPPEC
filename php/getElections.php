@@ -4,7 +4,7 @@ require_once('functions.php');
 
 $conn = new mysqli($servername, $username, $password, $dbname);
 
-//initialize some variables
+//initialize some variables, add geo
 $sql = 	"SELECT e.*, c.lat, c.lng
 	 	FROM elections e 
 	 	JOIN constituencies c 
@@ -128,6 +128,11 @@ if(isset($optimized['include_votes']) && in_array($optimized['include_votes'],$a
 	}
 }
 
+//always include number of distinct voters
+foreach($rows as &$row) {
+	$voter_count = voter_count($row['election_id']);
+	$row['num_voters'] = $voter_count;
+}
 $response = array(
 	"num_results"=>count($rows),
 	"earliest_year"=>$years['earliest'],

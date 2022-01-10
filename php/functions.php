@@ -42,6 +42,22 @@ function optimizer($array) {
 }
 
 /**
+ * @param $election_id single election id
+ * @return integer, distinct voters
+ */
+function voter_count($election_id) {
+    global $conn;
+    $sql = "SELECT count(distinct voter_id) n FROM votes WHERE election_id = ?";
+    $stmt = $conn->prepare($sql);
+    $stmt->bind_param('s',$election_id);
+    $stmt->execute();
+    $result = $stmt->get_result(); // get the mysqli result
+    $n = $result->fetch_all(MYSQLI_ASSOC); // fetch the data
+    return $n[0]['n'];
+}
+
+
+/**
  *
  * @param string $election_id
  * @return array of election results (candidate and number of votes)
