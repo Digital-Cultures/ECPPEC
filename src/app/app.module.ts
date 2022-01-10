@@ -22,7 +22,7 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 // import {MatFormFieldModule} from '@angular/material/form-field';
 // import {MatTableDataSource} from '@angular/material/table';
 //import { MatAutocompleteModule } from '@angular/material/autocomplete';
-////import { MatButtonModule } from '@angular/material/button';
+//import { MatButtonModule } from '@angular/material/button';
 //import { MatCardModule } from '@angular/material/card';
 //import { MatIconModule } from '@angular/material/icon';
 //import { MatMenuModule } from '@angular/material/menu';/
@@ -72,7 +72,8 @@ import { DataComponent } from './data/data.component';
 import { CreditsComponent } from './credits/credits.component';
 
 import { GraphQLDemoComponent } from './graph-ql-demo/graph-ql-demo.component';
- 
+// import { BackButtonDisableModule } from 'angular-disable-browser-back-button';
+
 import {
 	MatAutocompleteModule,
 	MatButtonModule,
@@ -117,6 +118,8 @@ import { DataStoriesComponent } from './data-stories/data-stories.component';
 import { GalleryComponent } from './gallery/gallery.component';
 import { NewcastleStoryComponent } from './newcastle-story/newcastle-story.component';
 import { StoriesComponent } from './stories/stories.component';
+import { WhoCanVoteStoryComponent } from './who-can-vote-story/who-can-vote-story.component';
+import { BasicMapComponent } from './basic-map/basic-map.component';
 
 
 
@@ -171,6 +174,10 @@ import { StoriesComponent } from './stories/stories.component';
 			 */
 			echarts: () => import('echarts'), // or import('./path-to-my-custom-echarts')
 		  })
+		//   ,
+		//   BackButtonDisableModule.forRoot({
+		// 	preserveScrollPosition: true
+		//   })
 	],
 	declarations: [
 		AppComponent, 
@@ -184,7 +191,7 @@ import { StoriesComponent } from './stories/stories.component';
 		ApiComponent, 
 		PollbookDialogueComponent, 
 
-		WarningDialogueComponent, SandpitComponent, TableComponent, ElectionsMapComponent, TableComponent, CreditsComponent,DataComponent, MapComponent, SmoothHeightComponent, ContestedStoryComponent, HeatmapComponent, GraphQLDemoComponent, ObschaintestComponent, ContestedSparkLineComponent, ContestedRoseComponent, ElectionsSparkLineComponent, ContestedScatterplotComponent, SafeHtmlPipe, DataStoriesComponent, GalleryComponent, NewcastleStoryComponent, StoriesComponent
+		WarningDialogueComponent, SandpitComponent, TableComponent, ElectionsMapComponent, TableComponent, CreditsComponent,DataComponent, MapComponent, SmoothHeightComponent, ContestedStoryComponent, HeatmapComponent, GraphQLDemoComponent, ObschaintestComponent, ContestedSparkLineComponent, ContestedRoseComponent, ElectionsSparkLineComponent, ContestedScatterplotComponent, SafeHtmlPipe, DataStoriesComponent, GalleryComponent, NewcastleStoryComponent, StoriesComponent, WhoCanVoteStoryComponent, BasicMapComponent
 
 	],
 	providers: [  

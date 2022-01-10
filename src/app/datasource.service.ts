@@ -1,5 +1,6 @@
 import { EventEmitter, Injectable, Output, Input, OnChanges, OnInit, ApplicationRef } from '@angular/core';
 import { DoCheck, KeyValueDiffers, KeyValueChangeRecord } from '@angular/core';
+import { BoroughService } from './borough.service';
 
 import { MatPaginator } from '@angular/material/paginator';
 import { MatTableDataSource } from '@angular/material/table';
@@ -20,7 +21,7 @@ import { mergeMap } from 'rxjs/operators';
 
 export class DatasourceService implements OnChanges {
 	private _differ: any;
-  constructor(private _differs: KeyValueDiffers, private http: HttpClient, private getElectionsService: GetElectionsService, private appRef: ApplicationRef) { 
+  constructor(private _differs: KeyValueDiffers, private http: HttpClient, private getElectionsService: GetElectionsService, private appRef: ApplicationRef, private boroughService: BoroughService) { 
 	 this._differ = _differs.find({}).create();
   }
   private dataChanged: BehaviorSubject<boolean> = new BehaviorSubject(false);
@@ -190,6 +191,8 @@ hasConstituencies(data, searchString) {
 	return 0;
 }
 hasMonths(data, searchString) {
+	if(data.election_month==null) return 0;
+
 	if (searchString.election_month.includes(",")) {
 
 		var monthList = searchString.election_month.split(",");
@@ -359,8 +362,22 @@ getHasPollBooksFilter(pollbook_id, searchTerm) {
 // 			return data;
 // 		}))
 //   }
-  
+gotBoroughData(value){
+	for (let index = 0; index < this.dataSource.data.length; index++) {
+		const element = this.dataSource.data[index];
+		if(value[element.constituency]){
+			element.lat = value[element.constituency].lat;
+			element.lng = value[element.constituency].lng;
+			}else{
+				//console.log("no lat lng for ",element.constituency);
+			}
+	}
+	
+	
+//	console.log("this.dataSource.data data", this.dataSource.data);
+}
   gotData(){
+	
 	  //fix corf castle
 	this.electionsMeta.elections.forEach(element => {
 		if(element.contested=="Y?") element.contested="Y";
@@ -371,7 +388,7 @@ getHasPollBooksFilter(pollbook_id, searchTerm) {
 
 	this.dataSource = new MatTableDataSource<Election>(this.electionsMeta.elections);
 
-	
+	this.boroughService.getData().subscribe(value => { this.gotBoroughData(value) });
 
 	//this is functional observor mapping!
 	this.dataSource.connect().pipe(

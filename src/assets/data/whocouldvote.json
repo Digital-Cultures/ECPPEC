@@ -1,0 +1,427 @@
+[{
+        "index": 0,
+        "prev_route": 0,
+        "question": "Are you over 21?",
+        "explanation": "EXAMPLE explanation. ",
+        "answers": {
+            "no": {
+                "text": "no",
+                "consequence": "You don’t have a vote. ‘Minors’, under the age of 21, were not allowed to vote. (Occasionally, MPs were under 21 though!)",
+                "route": 0,
+                "link": "children-data-story"
+            },
+            "yes": {
+                "text": "yes",
+                "consequence": "next question",
+                "route": 1,
+                "link": false
+            }
+        }
+    },
+    {
+        "index": 1,
+        "prev_route": 0,
+        "question": "Are you male?",
+        "explanation": "",
+        "answers": {
+            "no": {
+                "text": "no",
+                "consequence": "You won’t be able to vote (except maybe in some very rare cases). Strictly speaking there is no rule preventing women from voting. If you meet all the other criteria (such as holding the right amount of property) then, technically you could be qualified to vote. And historians have found evidence of a few women attempting to case polls. But in reality, by custom, women were not allowed to vote. (It’s worth noting that it was only the Reform Act of 1832 that definitively specified ‘male’ as a qualification for the franchise.)",
+                "route": 0,
+                "link": "women-data-story"
+            },
+            "yes": {
+                "text": "yes",
+                "consequence": "next question",
+                "route": 2,
+                "link": false
+            }
+        }
+    },
+    {
+        "index": 2,
+        "prev_route": 1,
+        "question": "Are you a bishop or a peer of the realm?",
+        "explanation": "",
+        "answers": {
+            "no": {
+                "text": "no",
+                "consequence": "next question",
+                "route": 3,
+                "link": false
+            },
+            "yes": {
+                "text": "yes",
+                "consequence": "You won’t be able to vote. ‘Peers’ (meaning Lords and bishops) were specifically prohibited from voting for MPs in 1699",
+                "route": 3,
+                "link": false
+            }
+        }
+    }, {
+        "index": 3,
+        "prev_route": 2,
+        "question": "Do others think you are insane?",
+        "explanation": "",
+        "answers": {
+            "no": {
+                "text": "no",
+                "consequence": "next question",
+                "route": 4,
+                "link": false
+            },
+            "yes": {
+                "text": "yes",
+                "consequence": "You won’t usually be allowed to vote. Case law in the eighteenth century exists that prevented people who were then called ‘idiots’ and ‘lunatics’ from voting",
+                "route": 4,
+                "link": false
+            }
+        }
+    }, {
+        "index": 4,
+        "prev_route": 3,
+        "question": "Are you an ‘alien’?",
+        "explanation": "",
+        "answers": {
+            "no": {
+                "text": "no",
+                "consequence": "next question",
+                "route": 5,
+                "link": false
+            },
+            "yes": {
+                "text": "yes",
+                "consequence": "You don’t officially have a vote, but might get away with it. ‘Alien’ means born outside the country. If you were, the 1901 Act of Settlement could be invoked to prohibit you from voting. But in practice, some men born outside Britain were able to vote",
+                "route": 5,
+                "link": false
+            }
+        }
+    }, {
+        "index": 5,
+        "prev_route": 4,
+        "question": "Are you a member of the ‘Established Church’, meaning (in England and Wales) the Church of England?",
+        "explanation": "",
+        "answers": {
+            "no": {
+                "text": "no",
+                "consequence": "Actually, this doesn’t matter. So long as you meet the other qualifications, and so long as you are prepared to swear an oath of allegiance to the crown, you can be a Protestant, Catholic, Dissenter, Jew, atheist or any other religion, and still vote. (You can’t be an MP though, at least until 1829 when Catholics were allowed into the House of Commons). ",
+                "route": 6,
+                "link": false
+            },
+            "yes": {
+                "text": "yes",
+                "consequence": "next question",
+                "route": 6,
+                "link": false
+            }
+        }
+    }, {
+        "index": 6,
+        "prev_route": 5,
+        "question": "Are you seeking to vote in England?",
+        "explanation": "",
+        "answers": {
+            "no": {
+                "text": "no",
+                "consequence": "Wales and Scotland had different systems from England. In Scotland, the number of people who could vote was even smaller than in England: in the towns (‘Royal Burghs’) the franchise was vested in burgh councils, which were self-perpetuating oligarchies. In the country (‘counties’), only landowners could vote, many of whom had little connection with the land itself. In Wales, the franchise was similar to England, and electorates were often a little larger (but each returned only one MP to Westminster, not two as in England). Oddly, Monmouthshire was considered part of England. ",
+                "route": 7,
+                "link": false
+            },
+            "yes": {
+                "text": "yes",
+                "consequence": "next question",
+                "route": 7,
+                "link": false
+            }
+        }
+    }, {
+        "index": 7,
+        "prev_route": 6,
+        "question": "In England, there were three types of constituency: counties, boroughs, and universities. Choose one.",
+        "explanation": "",
+        "answers": {
+            "counties": {
+                "text": "counties",
+                "consequence": "Wales and Scotland had different systems from England. In Scotland, the number of people who could vote was even smaller than in England: in the towns (‘Royal Burghs’) the franchise was vested in burgh councils, which were self-perpetuating oligarchies. In the country (‘counties’), only landowners could vote, many of whom had little connection with the land itself. In Wales, the franchise was similar to England, and electorates were often a little larger (but each returned only one MP to Westminster, not two as in England). Oddly, Monmouthshire was considered part of England. ",
+                "route": 8,
+                "link": false
+            },
+            "boroughs": {
+                "text": "boroughs",
+                "consequence": "next question",
+                "route": 9,
+                "link": false
+            },
+            "universities": {
+                "text": "universities",
+                "consequence": "next question",
+                "route": 10,
+                "link": false
+            }
+        }
+    },
+    {
+        "index": 8,
+        "prev_route": 6,
+        "question": "Counties. England was divided into 40 county constituencies. The county, or ‘shire’, constituencies represented England’s rural population, but also those who lived in towns (and even cities) that didn’t have separate borough status. If you live in a country constituency, the question is do you own a property that’s worth 40 shillings a year in rent, or are you a tenant of land worth 40 shillings a year?",
+        "explanation": "",
+        "answers": {
+            "no": {
+                "text": "no",
+                "consequence": "You don’t have a vote. ",
+                "route": 19,
+                "link": false
+            },
+            "yes": {
+                "text": "yes",
+                "consequence": "Congratulations, you can vote (so long as you fulfil all the other criteria, like being male, over 21 and so on). It doesn’t matter if you live in the county or not; you just have to own or rent the property there.  In fact, you can cast your ‘poll’ (vote) for two candidates (since each county sends two MPs to the House of Commons), though you can vote for only one if you prefer (or not vote at all). Of course you might be put under a certain amount of pressure to vote for particular candidates by your landlord or an influential local figure maybe, but that’s a different matter....",
+                "route": 19,
+                "link": false
+            }
+        }
+    }, {
+        "index": 9,
+        "prev_route": 6,
+        "question": "Boroughs. There were 203 borough constituencies in England, returning 405 MPs to the House of Commons. The qualifications to vote were different from one English borough to another.  Choose one of the options below to see what the main kinds of borough franchises were.",
+        "explanation": "",
+        "answers": {
+            "Freeman": {
+                "text": "Freeman",
+                "consequence": "",
+                "route": 11,
+                "link": false
+            },
+            "Burgage": {
+                "text": "Burgage",
+                "consequence": "",
+                "route": 12,
+                "link": false
+            },
+            "Freeholder": {
+                "text": "Freeholder",
+                "consequence": "",
+                "route": 13,
+                "link": false
+            },
+            "Scotandlot": {
+                "text": "Scot and lot",
+                "consequence": "",
+                "route": 14,
+                "link": false
+            },
+            "Householder": {
+                "text": "Householder",
+                "consequence": "",
+                "route": 15,
+                "link": false
+            },
+            "Corporation": {
+                "text": "Corporation",
+                "consequence": "",
+                "route": 16,
+                "link": false
+            }
+
+        }
+    },
+    {
+        "index": 10,
+        "prev_route": 6,
+        "question": "Universities. Are you a member of the either Oxford or Cambridge Universities, or Trinity College Dublin?",
+        "explanation": "",
+        "answers": {
+            "no": {
+                "text": "no",
+                "consequence": "You don’t have a vote. ",
+                "route": 19,
+                "link": false
+            },
+            "yes": {
+                "text": "yes",
+                "consequence": "Congratulations, you may be able to vote. From 1603, Oxford and Cambridge had each been able to send two MPs to the House of Commons. They were voted for by members of each university’s governing body: the Senate at Oxford, and Convocation at Cambridge. To secure a vote you had to have obtained a Batchelor degree, paid to ‘upgrade’ to a Master’s degree, and then to have kept up with payments of a small annual fee to your college. Of course you had to satisfy the other usual criteria too (be male, over 21, not a bishop or peer). And you had to be a member of the Church of England, since until 1871 that was requisite for joining Senate. You had to cast your poll in person too, which in reality meant that most voters were residents. From 1801, Trinity College Dublin sent one MP to Westminster too: the qualifications for voting were similar. It is worth noting that voting at the universities was done by secret ballot, unlike every other constituency, where the voter had to declare his choices.",
+                "route": 19,
+                "link": false
+            }
+        }
+    }, {
+        "index": 11,
+        "prev_route": 6,
+        "question": "Freeman boroughs. Are you a ‘freeman’ of the borough? (Examples: London, Newcastle upon Tyne and Liverpool.)",
+        "explanation": "",
+        "answers": {
+            "no": {
+                "text": "no",
+                "consequence": "You don’t have a vote. ",
+                "route": 19,
+                "link": false
+            },
+            "yes": {
+                "text": "yes",
+                "consequence": "Congratulations, you can vote (so long as you meet all the other criteria, like being a man, and over 21). A ‘freeman’ was a citizen with a certain social status. That status could be inherited or it could be earned by completing an apprenticeship. In some boroughs it could be purchased or bestowed on you as a gift. While most freemen were resident in the borough, it wasn’t a stipulation. Some freeman boroughs were big, such as the City of London. But in other boroughs, the freeman qualification could be restricted so that the electorate numbered as few as twenty.",
+                "route": 19,
+                "link": false
+            }
+        }
+    },
+    {
+        "index": 12,
+        "prev_route": 6,
+        "question": "Burgage boroughs. Do you own property in a burgage borough? (Examples: Pontefract, until 1983)",
+        "explanation": "",
+        "answers": {
+            "no": {
+                "text": "no",
+                "consequence": "You don’t have a vote. ",
+                "route": 19,
+                "link": false
+            },
+            "yes": {
+                "text": "yes",
+                "consequence": "Congratulations, you may have the vote. A ‘burgage’ was land or property which you or your ancestors had paid money to acquire. Exactly what counted as a burgage was up to individual constituencies to decide. If you held the right kind of property in one of these boroughs, you could vote (so long as you meet all the other criteria, like being a man, and over 21), regardless of whether you lived there or not. (Sometimes though it was a requirement to be resident for a set number of days before the election.) This franchise could lead to a fairly large electorate, as in Pontefract with about 320 voters, but more usually the electorate was smaller and results were easily controlled by local landowners. Most famously, there were only 11 burgages in Old Sarum just before it was abolished in 1832, and all of these were held by the same two brothers (who returned themselves as the two MPs).",
+                "route": 19,
+                "link": "./women-in-elections"
+            }
+        }
+    },
+    {
+        "index": 13,
+        "prev_route": 6,
+        "question": "Freeholder boroughs. text to come",
+        "explanation": "",
+        "answers": {
+            "no": {
+                "text": "no",
+                "consequence": "You don’t have a vote. ",
+                "route": 19,
+                "link": false
+            },
+            "yes": {
+                "text": "yes",
+                "consequence": "Congratulations, you may have the vote. A freedholder was  text to come",
+                "route": 19
+            }
+        }
+    },
+    {
+        "index": 14,
+        "prev_route": 6,
+        "question": "Scot and Lot. Do you pay rates in a Scot and Lot borough? (Examples: Westminster, Grampound)",
+        "explanation": "",
+        "answers": {
+            "no": {
+                "text": "no",
+                "consequence": "You don’t have a vote. ",
+                "route": 19,
+                "link": false
+            },
+            "yes": {
+                "text": "yes",
+                "consequence": "Congratulations, you can vote! ‘Scot and lot’ refers to poor and church rates (i.e. local taxes). If you pay these, you can vote (so long as you meet all the other usual criteria). This could result in large electorates, such as Westminster with about 19,000 voters in the early nineteenth century. Others were much smaller, and open to the control of local magnates or to voters selling their votes, as in Grampound, Cornwall, which had around 50 voters in the early eighteenth century.",
+                "route": 19
+            }
+        }
+    },
+    {
+        "index": 15,
+        "prev_route": 6,
+        "question": "Householder. Do you live in the borough? (Examples: Bedford; Minehead.)",
+        "explanation": "",
+        "answers": {
+            "no": {
+                "text": "no",
+                "consequence": "You don’t have a vote. ",
+                "route": 19,
+                "link": false
+            },
+            "yes": {
+                "text": "yes",
+                "consequence": "Congratulations, you can vote. These were the most open of the boroughs, giving the vote to almost all adult males living in the constituency at the time of the election. That doesn’t necessarily mean that electorate were big: a borough might be a very small place, like Minehead which never had more than about 300 voters. Nor does it mean that elections were free of patronage and corruption",
+                "route": 19
+            }
+        }
+    },
+    {
+        "index": 16,
+        "prev_route": 6,
+        "question": "Corporation. Are you a member of the borough’s municipal corporation (its legal governing body)? (Example: Bath.)",
+        "explanation": "",
+        "answers": {
+            "no": {
+                "text": "no",
+                "consequence": "You don’t have a vote. ",
+                "route": 19,
+                "link": false
+            },
+            "yes": {
+                "text": "yes",
+                "consequence": "Congratulations, you can vote! In these constituencies the borough corporation had kept the right to select MPs to itself. Corporations usually numbered around 30 men (and never more than 60), who could themselves be voted into office, but were more usually drawn from a small section of the borough, generally the commercial and professional classes. If the men who comprised the corporation were economically dependent on a large landowner or government influence, their votes could easily be controlled. But some corporation boroughs were more independent, as at Bath.",
+                "route": 19
+
+            }
+        }
+    },
+    {
+        "index": 17,
+        "prev_route": 6,
+        "question": "Do you live in a borough which is entirely controlled by a great landowner or a single major employer? (Examples: Malton, Yorkshire and Harwich, Suffolk)",
+        "explanation": "",
+        "answers": {
+
+            "yes": {
+                "text": "yes",
+                "consequence": "You don’t have a vote. Or, more precisely, you might be qualified to vote, but there won’t be any elections contests for you to take part in. Pocket boroughs, sometimes called Nomination boroughs, were entirely controlled by a large landowning family, often an aristocrat of national standing, or by a department of the Government like the Treasury or Admiralty (as at Harwich). They probably owned over half of the burgages which qualified the owner to vote, or they had such influence in the town that few would dare go against their nominations for the seats. With election results guaranteed in advance, there was no point in anyone contesting an election.",
+                "route": 19
+
+            }
+        }
+    },
+    {
+        "index": 18,
+        "prev_route": 6,
+        "question": "Rotten boroughs. Do you live in a borough which has hardly any people living in it? (Example: Mitchell in Cornwall.)",
+        "explanation": "",
+        "answers": {
+            "no": {
+                "text": "no",
+                "consequence": "You don’t have a vote. ",
+                "route": 19,
+                "link": false
+            },
+            "yes": {
+                "text": "yes",
+                "consequence": "You might have a vote, if you fulfil all the other qualifications such as owning property, and being an adult male, but in reality there will seldom if ever be an election contest. So-called ‘rotten boroughs’ had the right to return two MPs to Westminster even if they had only a tiny number of inhabitants. Typically they had once been important places, but for one reason or another they had been largely depopulated by the eighteenth century. The most famous examples are Dunwich, much of which had fallen into the sea, and Old Sarum, from which the population had moved away to Salisbury. Mitchell had always been small, but by 1831 it had been reduced to just 7 voters. With tiny electorates, rotten boroughs could easily be dominated by the local landowners who effectively owned the borough and its parliamentary representation.",
+                "route": 19
+
+            }
+        }
+    }
+
+
+    , {
+        "index": 19,
+        "prev_route": 7,
+        "question": "now you know if you would have been able to vote in an eighteenth-century parliamentary election or not. Whether you have the vote depends on who you are, where you are, and in some cases, on your economic standing. You could actually vote in more than one constituency in the same election (‘plural voting’), if for example you were resident in one place and owned property in another, or were a member of a university senate. But bear in mind that if you put yourself forward to vote, you might be challenged. The agents of those candidates who you’re not supporting could seek to prevent you from voting, or to have your poll disqualified after you’d cast it, arguing that you don’t meet the criteria. Perhaps you don’t hold the right kind of property, or you haven’t lived in the constituency long enough. Can you prove that you are qualified to vote?",
+        "explanation": "",
+        "answers": {
+            "startagain": {
+                "text": "Start again",
+                "consequence": "",
+                "route": 20,
+                "link": false
+            }
+        }
+    }, {
+        "index": 20,
+        "prev_route": 19,
+        "question": "Alterations to borough franchises could be made by the House of Commons following election petitions by defeated candidates or double returns (when two MPs were elected to the same seat). In most cases the House voted to narrow electorates, either by replacing a franchise wholesale to a more restrictive category, or by introducing new residency or financial qualifications. However, by the later eighteenth century, as public concern grew over constituencies with particularly small electorates, a handful of franchises were significantly widened to incorporate the freeholders of surrounding hundreds: New Shoreham (1771), Cricklade (1782), and Aylesbury (1804).",
+        "explanation": "",
+        "answers": {
+            "startagain": {
+                "text": "Start again",
+                "consequence": "",
+                "route": 19,
+                "link": false
+            }
+        }
+    }
+
+]

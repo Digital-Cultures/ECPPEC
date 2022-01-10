@@ -20,19 +20,21 @@ import { GraphQLDemoComponent } from './graph-ql-demo/graph-ql-demo.component';
 import { GalleryComponent } from './gallery/gallery.component';
 import { NewcastleStoryComponent } from './newcastle-story/newcastle-story.component';
 import { StoriesComponent } from './stories/stories.component';
+import { WhoCanVoteStoryComponent } from './who-can-vote-story/who-can-vote-story.component';
+import { BasicMapComponent } from './basic-map/basic-map.component';
 
 const routes: Routes = [
   { path: '', redirectTo: '/about', pathMatch: 'full' },
-  
+
   { path: 'about', component: AboutComponent },
   // { path: 'viz', component: VizComponent },
   { path: 'team', component: TeamComponent },
   { path: 'api', component: ApiComponent },
   // { path: 'sandpit', component:  SandpitComponent},
-  { path: 'gallery', component: GalleryComponent  },
+  { path: 'gallery', component: GalleryComponent },
   { path: 'contested', component: ContestedStoryComponent },
   { path: 'stories', component: StoriesComponent },
-
+  { path: 'whocouldvote', component: WhoCanVoteStoryComponent },
   { path: 'newcastle', component: NewcastleStoryComponent },
   { path: 'data', component: DataComponent },
   { path: 'table', component: TableComponent },
@@ -42,7 +44,8 @@ const routes: Routes = [
   { path: 'heatmap', component: HeatmapComponent },
   { path: 'essays', component: EssaysComponent },
   { path: 'graphQL-demo', component: GraphQLDemoComponent },
-  { path: '**', component: AboutComponent}
+  { path: 'basicmap', component: BasicMapComponent},
+  { path: '**', component: AboutComponent }
 
 ];
 

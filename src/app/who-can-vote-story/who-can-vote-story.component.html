@@ -1,0 +1,77 @@
+<section style="height:100vh" class="text-gray-400 bg-gray-900 body-font">
+    <div class="h-screen py-14 mx-auto flex flex-wrap">
+        <div class="md:w-2/5 w-full md:pr-14 h-full overflow-scroll  container md:pl-6" #scrollContent (scroll)="onElementScroll($event)">
+
+            <section>
+                <h1 class="title-font font-medium md:text-3xl text-xl text-white">Who could vote?</h1>
+                <div class="wrapper" *ngIf="paras.length==0">
+                    <!-- style=" justify-content: center; align-items: center; text-align: center; border:2px solid; margin:auto 0px"> -->
+
+                    <mat-spinner class="inner"></mat-spinner>
+                </div>
+                <div *ngIf="paras.length==0">loading data story...</div>
+                <div *ngIf="paras.length>0" #div class="leading-relaxed mt-4">
+
+                    <h2>
+                        <span *ngIf="paras.length>0" class='text-xl' [@openClose]="isOpen ? 'open' : 'closed'" (@openClose.done)="animationDone($event)">
+                            {{paras[visIndex].question}}<br>
+                            {{paras[visIndex].explanation}}<br>
+                          
+                        
+
+                        </span>
+                        <br>
+                        <span class='text-base' [@openClose]="showAnswer ? 'open' : 'closed'">
+                           
+                            {{getConsequence(paras[visIndex])}}<br>
+
+                           <span  *ngIf="paras[visIndex].link"><a [href]="'https://baseurlTODO' + paras[visIndex].link">URL</a></span>
+
+
+                        </span>
+
+
+                        <br>
+                    </h2>
+
+
+
+                </div>
+
+                <nav *ngIf="visIndex===7 || visIndex===9 || visIndex===13">
+                    <div *ngIf="paras.length>0">
+                        <button *ngFor="let answer of paras[visIndex]['answers'] | keyvalue" class="mat-raised-button mat-primary " (click)="answered(answer.value.text)" mat-button>{{answer.value.text.toUpperCase()}}</button>
+                    </div>
+                </nav>
+
+                <nav *ngIf="visIndex!=7 && visIndex!=9 && visIndex!=13">
+
+                    <button [@openClose]="isOpen ? 'open' : 'closed'" *ngIf="qAnswered===false " (click)="answered( 'yes') " class="mat-raised-button mat-primary " mat-button>YES</button>
+                    <button [@openClose]="isOpen ? 'open' : 'closed'" *ngIf="qAnswered===false " (click)="answered( 'no') " class="mat-raised-button " mat-button>NO</button><br>
+
+                    <button [@openClose]="qAnswered ? 'visible' : 'hidden'" (click)="answered( 'back') " class="mat-raised-button mat-primary " mat-button>Go back</button>
+                    <button [@openClose]="qAnswered ? 'visible' : 'hidden'" (click)="answered( 'next') " class="mat-raised-button " mat-button>Next</button>
+                </nav>
+            </section>
+
+        </div>
+
+        <div class="md:w-3/5 w-full md:static bottom-0 fixed md:po md:pr-14 py-4 md:py-8 md:h-full overflow-scroll bg-gray-900 bg-opacity-80 container md:pl-6 ">
+            <section [ngStyle]="{'height': '100%'}">
+
+                <div [ngStyle]="{'height': '100%'}" *ngIf="visIndex>=7 && visIndex!=paras.length-2" [@inOutAnimation] class="w-full ">
+                    <app-map [ngStyle]="{'height': '100%'}" role="text " class="text-xs mt-3 h-full">
+                    </app-map>
+                </div>
+
+                <div *ngIf="visIndex>=paras.length-2" [@inOutAnimation] class="w-full  h-72">
+                    <div [ngStyle]="{'height': '100%'}" (click)="update('')" echarts (chartInit)="onChartInit($event)" [merge]="updateOptions" [options]="options" class="mx-auto rounded-lg  demo-chart bg-gray-100  w-full h-full"></div>
+
+                </div>
+
+
+            </section>
+
+        </div>
+    </div>
+</section>
