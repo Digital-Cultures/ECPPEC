@@ -133,12 +133,19 @@ foreach($rows as &$row) {
 	$voter_count = voter_count($row['election_id']);
 	$row['num_voters'] = $voter_count;
 }
+
+$n = count($rows);
 $response = array(
-	"num_results"=>count($rows),
+	"num_results"=>$n,
 	"earliest_year"=>$years['earliest'],
 	"latest_year"=>$years['latest'],
 	"elections"=>$rows
 );
+if(empty($n)) {
+	$response['earliest_year'] = "not applicable";
+	$response['latest_year'] = "not applicable";
+	$response['elections'] = "no elections found for criteria provided";
+}
 print json_encode($response);
 $conn->close();
 
