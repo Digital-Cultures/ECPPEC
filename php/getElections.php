@@ -128,10 +128,12 @@ if(isset($optimized['include_votes']) && in_array($optimized['include_votes'],$a
 	}
 }
 
-//always include number of distinct voters
-foreach($rows as &$row) {
-	$voter_count = voter_count($row['election_id']);
-	$row['num_voters'] = $voter_count;
+//number of distinct voters
+if(isset($optimized['include_voter_count']) && in_array($optimized['include_voter_count'],$acceptable_flags)) {
+	foreach($rows as &$row) {
+		$voter_count = voter_count($row['election_id']);
+		$row['num_voters'] = $voter_count;
+	}
 }
 
 $n = count($rows);
