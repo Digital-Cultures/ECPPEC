@@ -142,7 +142,7 @@ export class MapComponent implements OnInit, AfterViewInit, OnDestroy {
 		};
 
 
-			if(element.countyboroughuniv=="B" || element.countyboroughuniv=="C"){
+			if(element.countyboroughuniv=="B" || element.countyboroughuniv=="U"){
 			//	console.log("lat",element.lat)
 				this.markers.push({
 					position: {
@@ -440,49 +440,49 @@ export class MapComponent implements OnInit, AfterViewInit, OnDestroy {
 		// console.log(this.markers);
 	  }
 	
-	addGMarker() {
-		this.markers.push({
-		  position: {
-			lat: this.center.lat + ((Math.random() - 0.5) * 2) / 10,
-			lng: this.center.lng + ((Math.random() - 0.5) * 2) / 10,
-		  },
-		  label: {
-			color: 'red',
-			text: 'Marker label ' + (this.markers.length + 1),
-		  },
-		  title: 'Marker title ' + (this.markers.length + 1),
-		  options: { animation: google.maps.Animation.BOUNCE },
-		})
-	  }
+	// addGMarker() {
+	// 	this.markers.push({
+	// 	  position: {
+	// 		lat: this.center.lat + ((Math.random() - 0.5) * 2) / 10,
+	// 		lng: this.center.lng + ((Math.random() - 0.5) * 2) / 10,
+	// 	  },
+	// 	  label: {
+	// 		color: 'red',
+	// 		text: 'Marker label ' + (this.markers.length + 1),
+	// 	  },
+	// 	  title: 'Marker title ' + (this.markers.length + 1),
+	// 	  options: { animation: google.maps.Animation.BOUNCE },
+	// 	})
+	//   }
 
-	addMarker() {
-		// this.dynamicMarkers.push({
+	// addMarker() {
+	// 	// this.dynamicMarkers.push({
 		  
 		  
-		//   title: 'Marker title ' + (this.dynamicMarkers.length + 1),
-		//   options: { animation: google.maps.Animation.BOUNCE },
-		// })
-		var thisDynamicMarker = new google.maps.Marker();
-		//51.51056058608404, -0.061594143272712835
-				thisDynamicMarker.setPosition({lat: 51.51056058608404, lng: -0.061594143272712835 });
-				var image = {
-					url: './assets/images/dot.png',
-					size: new google.maps.Size(20, 20),
-					origin: new google.maps.Point(0, 0),
-					anchor: new google.maps.Point(10, 10),
-					scaledSize: new google.maps.Size(20, 20)
-				};
+	// 	//   title: 'Marker title ' + (this.dynamicMarkers.length + 1),
+	// 	//   options: { animation: google.maps.Animation.BOUNCE },
+	// 	// })
+	// 	var thisDynamicMarker = new google.maps.Marker();
+	// 	//51.51056058608404, -0.061594143272712835
+	// 			thisDynamicMarker.setPosition({lat: 51.51056058608404, lng: -0.061594143272712835 });
+	// 			var image = {
+	// 				url: './assets/images/dot.png',
+	// 				size: new google.maps.Size(20, 20),
+	// 				origin: new google.maps.Point(0, 0),
+	// 				anchor: new google.maps.Point(10, 10),
+	// 				scaledSize: new google.maps.Size(20, 20)
+	// 			};
 
-				var options = {
-					icon: image,
-					title: "TeST",
-					visible: true//element.countyboroughuniv == "C" ? false : true
-					// label: { text: element.constituency, color: "white" }
-				}
+	// 			var options = {
+	// 				icon: image,
+	// 				title: "TeST",
+	// 				visible: true//element.countyboroughuniv == "C" ? false : true
+	// 				// label: { text: element.constituency, color: "white" }
+	// 			}
 
 
-				thisDynamicMarker.setOptions(options);
-				thisDynamicMarker.setVisible(true);
-				this.dynamicMarkers.push(thisDynamicMarker);
-	  }
+	// 			thisDynamicMarker.setOptions(options);
+	// 			thisDynamicMarker.setVisible(true);
+	// 			this.dynamicMarkers.push(thisDynamicMarker);
+	//   }
 }

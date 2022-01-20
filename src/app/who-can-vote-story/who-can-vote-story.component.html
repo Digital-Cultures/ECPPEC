@@ -1,77 +1,102 @@
 <section style="height:100vh" class="text-gray-400 bg-gray-900 body-font">
     <div class="h-screen py-14 mx-auto flex flex-wrap">
         <div class="md:w-2/5 w-full md:pr-14 h-full overflow-scroll  container md:pl-6" #scrollContent (scroll)="onElementScroll($event)">
-
             <section>
-                <h1 class="title-font font-medium md:text-3xl text-xl text-white">Who could vote?</h1>
+                <h1 class="title-font font-medium md:text-3xl text-xl text-white">Who could vote?
+                </h1>
                 <div class="wrapper" *ngIf="paras.length==0">
-                    <!-- style=" justify-content: center; align-items: center; text-align: center; border:2px solid; margin:auto 0px"> -->
-
                     <mat-spinner class="inner"></mat-spinner>
                 </div>
                 <div *ngIf="paras.length==0">loading data story...</div>
                 <div *ngIf="paras.length>0" #div class="leading-relaxed mt-4">
-
                     <h2>
-                        <span *ngIf="paras.length>0" class='text-xl' [@openClose]="isOpen ? 'open' : 'closed'" (@openClose.done)="animationDone($event)">
-                            {{paras[visIndex].question}}<br>
-                            {{paras[visIndex].explanation}}<br>
-                          
-                        
-
-                        </span>
-                        <br>
-                        <span class='text-base' [@openClose]="showAnswer ? 'open' : 'closed'">
-                           
-                            {{getConsequence(paras[visIndex])}}<br>
-
-                           <span  *ngIf="paras[visIndex].link"><a [href]="'https://baseurlTODO' + paras[visIndex].link">URL</a></span>
-
-
-                        </span>
-
-
-                        <br>
-                    </h2>
-
-
-
+                        <span *ngIf="paras.length>0">
+                            <div id="question" *ngIf="questionState===1" [@inOutAnimation] class="w-full question">
+                                <span class='text-xl'>{{paras[visIndexMap[visIndex]].question}}</span>
                 </div>
+                <div id="question" *ngIf="questionState===1 && paras[visIndexMap[visIndex]].explanation.length>0" [@inOutAnimation] class="w-full question">
+                    <span class='text-base'>{{paras[visIndexMap[visIndex]].explanation}}</span>
+                </div>
+                </span>
+                <br>
+                <span *ngIf="paras.length>0">
 
-                <nav *ngIf="visIndex===7 || visIndex===9 || visIndex===13">
-                    <div *ngIf="paras.length>0">
-                        <button *ngFor="let answer of paras[visIndex]['answers'] | keyvalue" class="mat-raised-button mat-primary " (click)="answered(answer.value.text)" mat-button>{{answer.value.text.toUpperCase()}}</button>
-                    </div>
-                </nav>
+                            <span *ngIf="questionState===2">
+                                <span class='text-base' [@inOutAnimation]="questionState===2 ? 'open' : 'closed'"
+                                    (@inOutAnimation.done)="animationDone($event)">
+                                    {{qConsequence}}<br>
+                                    <span *ngIf="paras[visIndexMap[visIndex]].link.length>0">Find out more <a
+                                            style="color:white" href="{{paras[visIndexMap[visIndex]].link}}">here
+                                        </a></span>
+                </span>
+                </span>
+                </span>
+                </h2>
+        </div>
+        <nav>
+            <div *ngIf="paras.length>0">
+                <div *ngFor="let para of paras">
+                    <span *ngIf="visIndex==para['index']">
+                                <button [@openClose]=" questionState===1 ? 'open' : 'closed'"
+                                    *ngFor="let answer of para['answers'] | keyvalue"
+                                    class="mat-raised-button mat-primary " (click)="answered(answer.value.text)"
+                                    mat-button>{{answer.value.text.toUpperCase()}}</button>
+                            </span>
+                </div>
+            </div>
+        </nav>
+        <nav>
+            <button [@inOutAnimation]="questionState===2 || questionState===1 ? 'open' : 'closed'" (@inOutAnimation.done)="animationDone($event)" (click)=" answered( 'back') " class="mat-raised-button mat-primary " mat-button>Go back</button>
+            <span *ngIf="questionState===2">
+                        <button [@inOutAnimation]="questionState===2 ? 'open' : 'closed' "
+                            (@inOutAnimation.done)="animationDone($event)" (click)="answered( 'next') "
+                            class="mat-raised-button " mat-button>Next</button>
+                    </span>
 
-                <nav *ngIf="visIndex!=7 && visIndex!=9 && visIndex!=13">
+        </nav>
 
-                    <button [@openClose]="isOpen ? 'open' : 'closed'" *ngIf="qAnswered===false " (click)="answered( 'yes') " class="mat-raised-button mat-primary " mat-button>YES</button>
-                    <button [@openClose]="isOpen ? 'open' : 'closed'" *ngIf="qAnswered===false " (click)="answered( 'no') " class="mat-raised-button " mat-button>NO</button><br>
+        <div *ngIf="paras.length>0">
 
-                    <button [@openClose]="qAnswered ? 'visible' : 'hidden'" (click)="answered( 'back') " class="mat-raised-button mat-primary " mat-button>Go back</button>
-                    <button [@openClose]="qAnswered ? 'visible' : 'hidden'" (click)="answered( 'next') " class="mat-raised-button " mat-button>Next</button>
-                </nav>
-            </section>
 
         </div>
+        </section>
 
-        <div class="md:w-3/5 w-full md:static bottom-0 fixed md:po md:pr-14 py-4 md:py-8 md:h-full overflow-scroll bg-gray-900 bg-opacity-80 container md:pl-6 ">
-            <section [ngStyle]="{'height': '100%'}">
+    </div>
+    <div class="md:w-3/5 w-full md:static bottom-0 fixed md:po md:pr-14 py-4 md:py-8 md:h-full overflow-scroll bg-gray-900 bg-opacity-80 container md:pl-6 ">
+        <section [ngStyle]="{'height': '100%'}">
 
-                <div [ngStyle]="{'height': '100%'}" *ngIf="visIndex>=7 && visIndex!=paras.length-2" [@inOutAnimation] class="w-full ">
-                    <app-map [ngStyle]="{'height': '100%'}" role="text " class="text-xs mt-3 h-full">
-                    </app-map>
+            <div [ngStyle]="{'height': '100%'}" *ngIf="visIndex>=7 && visIndex!=paras.length-1" [@inOutAnimation] class="w-full ">
+                <app-map [ngStyle]="{'height': '100%'}" role="text " class="text-xs mt-3 h-full">
+                </app-map>
+            </div>
+
+            <div *ngIf="paras.length>0">
+                <div *ngIf="visIndex==5  || visIndex==4 || visIndex==2 || visIndex==0" [@inOutAnimation] class="w-full ">
+                    <img [@inOutAnimation] alt="gallery" class="object-cover w-full object-center block" [src]="'assets'+paras[visIndexMap[visIndex]].image.src">
+                    <div>{{paras[visIndexMap[visIndex]].image.caption}}</div>
+                    <div>{{paras[visIndexMap[visIndex]].image.license}}</div>
                 </div>
-
-                <div *ngIf="visIndex>=paras.length-2" [@inOutAnimation] class="w-full  h-72">
-                    <div [ngStyle]="{'height': '100%'}" (click)="update('')" echarts (chartInit)="onChartInit($event)" [merge]="updateOptions" [options]="options" class="mx-auto rounded-lg  demo-chart bg-gray-100  w-full h-full"></div>
-
-                </div>
+            </div>
+            <div *ngIf="visIndex==19" [@inOutAnimation] class="w-full  h-72">
+                <div [ngStyle]="{'height': '100%'}" (click)="update('')" echarts (chartInit)="onChartInit($event)" [merge]="updateOptions" [options]="options" class="mx-auto rounded-lg  demo-chart bg-gray-100  w-full h-full"></div>
 
 
-            </section>
+                <mat-form-field>
+                    See results for our case study constituencies
+                    <mat-label></mat-label>
+                    <mat-select style="background-color: white; padding:5px;border-radius: 10px;margin-top: 10px;" (selectionChange)="caseStudySelected($event.value)" multiple>
+                        <mat-option *ngFor="let constituency of totalVotesConstituencies" [value]="constituency">
+                            {{constituency}}
+                        </mat-option>
 
-        </div>
+                    </mat-select>
+                </mat-form-field>
+            </div>
+
+
+
+        </section>
+
+    </div>
     </div>
 </section>

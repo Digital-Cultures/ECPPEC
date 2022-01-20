@@ -7,10 +7,11 @@ import { HttpClient } from '@angular/common/http';
 export class GetVotersService {
 
   constructor(private http: HttpClient) { }
-  dataUrl='http://localhost:9999/ECCPEC_code/php/getElectionsGeo.php';
+  dataUrl='http://localhost:9999/ECCPEC_code/php/getElections.php';
 	getData(params) {
     var url = this.dataUrl+params;
-    //console.log(url);
+    //
+    console.log("fetching from",url);
 		return this.http.get(url);
 	}
 }

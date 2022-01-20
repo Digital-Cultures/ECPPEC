@@ -11,6 +11,7 @@ import { ApplicationRef } from '@angular/core';
 import { DataStoryService } from '../data-story.service';
 import { MatButtonModule } from '@angular/material/button';
 import { yearsPerPage } from '@angular/material';
+import { timeout } from 'rxjs/operators';
 @Component({
   animations: [
     trigger(
@@ -20,15 +21,15 @@ import { yearsPerPage } from '@angular/material';
           ':enter',
           [
             style({ height: 0, opacity: 0 }),
-            animate('1s ease-out',
-              style({ height: 300, opacity: 1 }))
+            animate('1.5s ease-out',
+              style({ height: '*', opacity: 1 }))
           ]
         ),
         transition(
           ':leave',
           [
-            style({ height: 300, opacity: 1 }),
-            animate('1s ease-in',
+            style({ height: '*', opacity: 1 }),
+            animate('1.5s ease-in',
               style({ height: 0, opacity: 0 }))
           ]
         )
@@ -39,22 +40,26 @@ import { yearsPerPage } from '@angular/material';
     trigger('openClose', [
       // ...
       state('open', style({
-        // height: 500,
+        // height: '*',
+        height:'*',
+        width: '*',
         opacity: 1
       })),
       state('closed', style({
-        // height:300,
-        opacity: 0,
-
-      })),
-      state('hidden', style({
-        // height:300,
-        width: 0,
+        height:'0px',
+        width: '0px',
         opacity: 0
 
       })),
+      state('hidden', style({
+         height:'0px',
+        width: '0px',
+        opacity: 0.5,
+        overflow:"hidden"
+
+      })),
       state('visible', style({
-        // height:300,
+       height:'*',
         width: '*',
         opacity: 1
 
@@ -93,12 +98,17 @@ export class WhoCanVoteStoryComponent implements OnInit {
 
   qAnswered: boolean = false;
   qAnswer: string = "";
+  qConsequence: string = "";
   isOpen = true;
   showAnswer = false;
   visIndex: number = 19;
   nextRoute = 19;
+  visIndexMap: number[] = [];
+  questionState: number = 0;
+  states: number[] = [0, 1, 2];
+  
   chartInstance: any;
-  totalVotesConstituencies: string[] = ["Liverpool", "Bristol", "Newcastle upon Tyne", "Grampound", "Westminster", "Bedford"];
+  totalVotesConstituencies: string[] = ["Liverpool", "Bristol", "Newcastle-upon-Tyne", "Grampound", "Westminster", "Bedford", "Bedfordshire", "Mitchell", "Worcester", "Pontefract", "Minehead", "Bath", "London", "Middlesex"];
   totalVotesConstituenciesSearchString: string = "";
   // trigger: any;
 
@@ -188,8 +198,12 @@ export class WhoCanVoteStoryComponent implements OnInit {
     this.datasourceService.getData();
 
     this.datasourceService.ready.subscribe(value => { this.gotElectionsData(value) });
+    var ind = 0;
     this.totalVotesConstituencies.forEach(element => {
-      this.totalVotesConstituenciesSearchString += element + ";";
+      if (ind < 6) {
+        this.totalVotesConstituenciesSearchString += element + ";";
+      }
+      ind++;
     });
     //trim trailing semi colon
     this.totalVotesConstituenciesSearchString = this.totalVotesConstituenciesSearchString.substring(0, this.totalVotesConstituenciesSearchString.length - 1);
@@ -200,6 +214,9 @@ export class WhoCanVoteStoryComponent implements OnInit {
     console.log("on init");
     this.getWhoCouldVoteService.getData();
     this.getWhoCouldVoteService.getData().subscribe(value => { this.gotWhoCouldVoteStoryData(value) });
+
+
+
 
     // this.getElectionsService.getData().subscribe(
     // 	(data: Elections) => this.electionsMeta = {
@@ -213,6 +230,16 @@ export class WhoCanVoteStoryComponent implements OnInit {
   gotWhoCouldVoteStoryData(value) {
     console.log(value);
     this.paras = value;
+    //map  array index to vis index
+
+    this.paras.forEach(element => {
+      this.visIndexMap.push(0);
+    });
+    var index = 0;
+    this.paras.forEach(element => {
+      this.visIndexMap[element.index] = index;
+      index++;
+    });
   }
   gotElectionsData(value) {
     console.log("all data", value);
@@ -225,108 +252,262 @@ export class WhoCanVoteStoryComponent implements OnInit {
     this.chartInstance = e;
 
   }
+  stateSelected(state) {
+    this.questionState = state;
+  }
+  caseStudySelected(constituencies) {
+    console.log("constituencies", constituencies)
+    this.totalVotesConstituenciesSearchString = "";
+    constituencies.forEach(element => {
+      this.totalVotesConstituenciesSearchString += element + ";";
+    });
+    //trim trailing semi colon
+    this.totalVotesConstituenciesSearchString = this.totalVotesConstituenciesSearchString.substring(0, this.totalVotesConstituenciesSearchString.length - 1);
+    console.log("this.totalVotesConstituenciesSearchString", this.totalVotesConstituenciesSearchString)
+    this.fetchVoters();
+  }
   answered(answer) {
     if (answer == "Start again") answer = "startagain";
     if (answer == "Scot and lot") answer = "Scotandlot";
 
     console.log("answer", answer);
-    console.log("answered", this.paras[this.visIndex].answers[answer]);
-
-    // if (this.visIndex === 7 || this.visIndex == 9 || this.visIndex == 13) {
-    //   this.nextRoute = this.paras[this.visIndex].answers[answer].route;
-    //   this.isOpen = false;
-
-    //   if (answer === "Freeman" || answer == "Burgage" || answer == "Corporation" || answer == "Householder" || answer == "Freeholder" || answer == "Scotandlot") {
-    //     if (answer == "Scotandlot") answer = "Scot and lot";
-    //     this.datasourceService.franchiseFilter.setValue(answer);
-    //   } else if (answer === "counties" || answer === "boroughs" || answer === "universities") {
-    //     console.log("setting county borogouh filters");
-    //     if (answer === "counties") {
-    //       this.datasourceService.countyFilter.setValue("C");
-    //     } else if (answer === "boroughs") {
-    //       this.datasourceService.countyFilter.setValue("B");
-    //     } else if (answer === "universities") {
-    //       this.datasourceService.countyFilter.setValue("U");
-    //     }
-
-    //   }
-    // }
-    // else
-    if (answer === "yes" || answer === "no") {
-      this.qAnswered = true;
-      this.nextRoute = this.paras[this.visIndex].answers[answer].route;
-      this.showAnswer = true;
-      // if (this.paras[this.visIndex].answers[answer].consequence == "next question") {
-      //   // this.visIndex = this.paras[this.visIndex].answers[answer].route;
-      //   this.nextRoute = this.paras[this.visIndex].answers[answer].route;
-      //   this.isOpen = false;
-      // } else {
-      //   this.qAnswered = true;
-      this.qAnswer = answer;
-      //   this.showAnswer = true;
-      // }
+    // console.log("answered", this.paras[this.visIndexMap[this.visIndex]].answers[answer]);
 
 
-    }
-    else if (answer === "next") {
-      console.log(this.paras[this.visIndex]);
+    if (answer === "next" ) {
 
-      this.showAnswer = false;
-
-
-      //this.visIndex = this.paras[this.visIndex].answers[aq].route;
-      this.nextRoute = this.paras[this.visIndex].answers[this.qAnswer].route;
-      this.isOpen = false;
-      this.qAnswered = false;
+      this.questionState = 0;
+      console.log("next", this.qAnswer);
+      this.nextRoute = this.paras[this.visIndexMap[this.visIndex]].answers[this.qAnswer].route;
+      console.log("next nexrouate", this.nextRoute);
       this.qAnswer = "";
+      this.qConsequence = "";
+    }
+    else if(answer === "startagain"){
+      this.questionState = 0;
+      console.log("startagain", this.qAnswer);
+      this.nextRoute = 0;
+      console.log("next nexrouate", this.nextRoute);
+      this.qAnswer = "";
+      this.qConsequence = "";
     }
     else if (answer === "back") {
-      console.log(this.paras[this.visIndex]);
 
-      this.showAnswer = false;
+      console.log("back", this.questionState, this.visIndex);
+      if (this.questionState === 1) {
+        this.nextRoute = this.paras[this.visIndexMap[this.visIndex]].prev_route;
+        console.log("set next route in back questions state 1", this.nextRoute);
+        this.qAnswer = "";
+        this.questionState = 0;
+      }
+      else if (this.questionState === 2) {
+        console.log(this.paras[this.visIndexMap[this.visIndex]]);
+        //set the next route to be the current one
+        this.nextRoute = this.paras[this.visIndexMap[this.visIndex]].index;
+
+        this.questionState = 1;
+        console.log("set next route in back questions state 2", this.nextRoute);
+        this.qAnswer = "";
+      }
 
 
-      //this.visIndex = this.paras[this.visIndex].answers[aq].route;
-      this.nextRoute = this.paras[this.visIndex].prev_route;
-      this.isOpen = false;
-      this.qAnswered = false;
-      this.qAnswer = "";
     }
     else {
-      this.nextRoute = this.paras[this.visIndex].answers[answer].route;
-      this.isOpen = false;
+      // if (answer === "Freeman" || answer == "Burgage" || answer == "Corporation" || answer == "Householder" || answer == "Freeholder" || answer == "Scotandlot") {
+      //   if (answer == "Scotandlot") answer = "Scot and lot";
+      //   this.datasourceService.franchiseFilter.setValue(answer);
+      // } else if (answer === "counties" || answer === "boroughs" || answer === "universities") {
+      //   console.log("setting county borogouh filters");
+      //   if (answer === "counties") {
+      //     this.datasourceService.countyFilter.setValue("C");
+      //   } else if (answer === "boroughs") {
+      //     this.datasourceService.countyFilter.setValue("B");
+      //   } else if (answer === "universities") {
+      //     this.datasourceService.countyFilter.setValue("U");
+      //   }
+
+      // }
+      
+      this.nextRoute = this.paras[this.visIndexMap[this.visIndex]].index;// this.paras[this.visIndexMap[this.visIndex]].answers[answer].route;
+        console.log("set next route in yes or no", this.nextRoute);
+      
+      if(this.visIndex==7 || this.visIndex===9){
+        this.nextRoute = this.paras[this.visIndexMap[this.visIndex]].answers[answer].route;
+      //TODO I
+        // if (answer === "counties") {
+        //   this.datasourceService.countyFilter.setValue("C");
+        // } else if (answer === "boroughs") {
+        //   this.datasourceService.countyFilter.setValue("B");
+        // } else if (answer === "universities") {
+        //   this.datasourceService.countyFilter.setValue("U");
+        // }
+
+        this.qConsequence = this.paras[this.visIndexMap[this.visIndex]].answers[answer].consequence;
+        this.questionState = 0;
+         this.qConsequence ="";
+         this.qAnswer ="";
+      }else{
+        this.questionState = 2;
+        
+      
+
+      this.qConsequence = this.paras[this.visIndexMap[this.visIndex]].answers[answer].consequence;
+      this.qAnswer = this.paras[this.visIndexMap[this.visIndex]].answers[answer].text;
+      // setTimeout(() => {                           // <<<---using ()=> syntax
+
+      }
+      // }, 500);
 
       if (answer === "Freeman" || answer == "Burgage" || answer == "Corporation" || answer == "Householder" || answer == "Freeholder" || answer == "Scotandlot") {
         if (answer == "Scotandlot") answer = "Scot and lot";
         this.datasourceService.franchiseFilter.setValue(answer);
-      } else if (answer === "counties" || answer === "boroughs" || answer === "universities") {
-        console.log("setting county borogouh filters");
-        if (answer === "counties") {
-          this.datasourceService.countyFilter.setValue("C");
-        } else if (answer === "boroughs") {
-          this.datasourceService.countyFilter.setValue("B");
-        } else if (answer === "universities") {
-          this.datasourceService.countyFilter.setValue("U");
-        }
-
-      }
+      } 
+     
     }
 
   }
+  fetchVoters() {
+    var search_url = "?constituency=" + this.totalVotesConstituenciesSearchString+"&include_voter_count=true";
+    console.log("fetching voters", search_url);
+    // this.updateOptions = this.options;
+    if (this.chartInstance != undefined) this.chartInstance.clear();
+    this.options = {
+      grid: {
+        bottom: 5,
+        top: 5,
+        containLabel: true
+      },
+      title: {
+        text: 'Votes cast by constituency in election years',
+        subtext: '',
+        x: 'center',
+        textStyle: {
+          fontSize: 12,
+          lineHeight: 12,
+        }
+      },
+      tooltip: {
+        trigger: 'axis',
+        axisPointer: {
+          type: 'cross',
+          label: {
+            backgroundColor: '#6a7985'
+          }
+        }
+      },
+      xAxis: {
+        type: 'category'
+
+      },
+      yAxis: {
+        type: 'value'
+      },
+      // dataset: {
+      //   source: [
+
+      //   ]
+      // },
+      series: [
+        {
+          type: 'line',
+          encode: {
+            // Map "amount" column to x-axis.
+            x: [0, 0],
+            // Map "product" row to y-axis.
+            y: [0, 1]
+          }
+        }
+      ]
+      // series: [
+      //   {
+      //     // encode: { x: 0, y: 1 },
+      //     data: [
+      //       [[2015,3], [2016,6]],
+      //       [[2015,4], [2016,1]]
+      //     ],
+      //     type: 'line',
+      //   },
+      // ],
+    };
+    this.updateOptions.series = [];
+
+    this.getVotersService.getData(search_url).subscribe(value => { this.gotVoterData(value) });
+  }
+
+  //1
+  // questionFadeInDone($event) {
+  //   if (this.questionState === 0) {
+  //     this.questionState = 1;
+  //   }
+  //   else if ($event.fromState != "void") {
+  //     console.log("questionFadeInDone", $event)
+
+  //   }
+  // }
+  // //2
+  // consequenceFadeInDone($event) {
+
+
+
+  //   if ($event.fromState != "void") {
+  //     // console.log("consequenceFadeInDone", $event)
+  //   }
+  // }
+  // nextFadeInDone($event) {
+
+
+  //   if ($event.fromState != "void") {
+  //     // console.log("nextFadeInDone", $event)
+  //     if ($event.toState == "closed") {
+  //       // if(this.questionState==2){
+  //       console.log("next has faded out")
+  //       //}
+  //       if (this.questionState === 1) {
+  //         // this.questionState = 1;
+  //         this.visIndex = this.nextRoute;
+  //         console.log("going to next route", this.visIndex);
+  //       }
+  //     }
+
+  //   }
+  // }
+  // backFadeInDone($event) {
+
+
+  //   if ($event.fromState != "void") {
+  //     if ($event.toState == "closed") {
+  //       // if(this.questionState==2){
+  //       console.log("back has faded out")
+  //       //}
+  //       if (this.questionState === 2) {
+  //         // this.questionState = 1;
+  //         this.visIndex = this.nextRoute;
+  //         console.log("going to next route", this.visIndex);
+  //       }
+  //     }
+
+  //     // console.log("backFadeInDone", $event)
+  //   }
+  // }
+
   animationDone($event) {
-    console.log("animation done");
-    this.isOpen = true;
+    if (this.questionState === 0) {
+      if ($event.fromState != "void") {
+      this.questionState = 1;
+      }
+      else{
+        setTimeout(() => {
+          this.questionState = 1;
+        }, 500);
+      }
+    }
+
     this.visIndex = this.nextRoute;
-
     //TODO UPDATE
-    if (this.visIndex === this.paras.length - 2 && this.paras.length > 0) {
-     
-      // this.getVotersService.getData("?constituency=Liverpool&include_votes=Y");//    "?constituency=Liverpool");
+    if (this.visIndex === 19 && this.paras.length > 0) {
 
-      //      this.getVotersService.getData("?constituency=" + this.totalVotesConstituenciesSearchString + "&include_results=Y").subscribe(value => { this.gotVoterData(value) });
-     var search_url = "?constituency=" + this.totalVotesConstituenciesSearchString + "&include_votes=Y";
-     console.log("fetching voters",search_url);
-       this.getVotersService.getData(search_url).subscribe(value => { this.gotVoterData(value) });
+
+      this.fetchVoters();
 
     }
   }
@@ -346,12 +527,10 @@ export class WhoCanVoteStoryComponent implements OnInit {
       value.elections.forEach(element => {
         if (element.constituency == consituencyName) {
           var totalVotes = 0;
-          if (Array.isArray(element.results)) {
-            element.results.forEach(element => {
-              totalVotes += element.votes;
-            });
+          if (element.num_voters != 0) {
 
-            data[parseInt(element.election_year) - value.earliest_year][1] = totalVotes;
+
+            data[parseInt(element.election_year) - value.earliest_year][1] = element.num_voters;
           }
 
 
@@ -384,7 +563,7 @@ export class WhoCanVoteStoryComponent implements OnInit {
     //this.showAnswer=f
   }
   getConsequence(para) {
-    if (this.qAnswer.length < 1) return "";
+    if (para.co.length < 1) return "";
 
     return para.answers[this.qAnswer].consequence;
   }
