@@ -48,19 +48,26 @@ import { ThisReceiver, ThrowStmt } from '@angular/compiler';
 export interface Election {
 	election_year: string;
 	election_month: string;
+	election_date: string;
 	constituency: string;
+	constituency_id: string;
+	office:string;
 	countyboroughuniv: string;
+	franchise_detail: string;
+	franchise_type: string;
 	by_election_general: string;
+	by_election_cause: string;
 	contested: string;
 	election_id: string;
-	franchise_type:string;
 	pollbook_id: string;
-	by_election_cause: string;
+	general_election_id: string;
 	notes: string;
 	latitude: string;
 	longitude: string;
 	lat:number;
 	lng:number;
+	results:any;
+	num_voters:any;
 }
 export interface PollBook {
 

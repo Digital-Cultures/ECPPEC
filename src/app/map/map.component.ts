@@ -31,6 +31,7 @@ export class MapComponent implements OnInit, AfterViewInit, OnDestroy {
 	myValueSub: Subscription;
 	dynamicMarkers: google.maps.Marker[] = [];
 	highlightColour: string = "#673ab7";
+	markers = [];
 
 	ngOnInit(): void {
 		this.w = window.innerWidth;
@@ -58,7 +59,8 @@ export class MapComponent implements OnInit, AfterViewInit, OnDestroy {
 		//var doubleCheck = this.datasourceService.getFilteredConstituencies();
 		this.updateIsActive(this.datasourceService.getFilteredConstituencies());
 		this.setMapStyle();
-
+		
+		//todod replace marker update here
 		this.dynamicMarkers.forEach(delement => {
 			var inData = false;
 			var cbu = "";
@@ -74,7 +76,7 @@ export class MapComponent implements OnInit, AfterViewInit, OnDestroy {
 			});
 			if (inData) {
 				var image = {
-					url: './assets/images/dot.svg', //smarker
+					url: './assets/images/dot.png', //smarker
 					size: new google.maps.Size(20, 20),
 					origin: new google.maps.Point(0, 0),
 					anchor: new google.maps.Point(10, 10),
@@ -83,7 +85,7 @@ export class MapComponent implements OnInit, AfterViewInit, OnDestroy {
 				var options = {
 					icon: image,
 					title: delement.getTitle(),
-					visible: cbu == "C" ? false : true
+					visible: true//cbu == "C" ? false : true
 					// label: { text: delement.getTitle(), color: "white" }
 				}
 
@@ -92,7 +94,7 @@ export class MapComponent implements OnInit, AfterViewInit, OnDestroy {
 
 			} else {
 				var image = {
-					url: './assets/images/dot.svg',
+					url: './assets/images/dot.png',
 					size: new google.maps.Size(20, 20),
 					origin: new google.maps.Point(0, 0),
 					anchor: new google.maps.Point(10, 10),
@@ -110,7 +112,9 @@ export class MapComponent implements OnInit, AfterViewInit, OnDestroy {
 
 			}
 		});
+		//console.log("markers,",this.dynamicMarkers);
 
+		this.appRef.tick();
 	}
 
 	gotData(value) {
@@ -120,38 +124,78 @@ export class MapComponent implements OnInit, AfterViewInit, OnDestroy {
 			this.datasourceService.getUniqueElections();
 		//	console.log("this.dynamicMarkers", this.dynamicMarkers);
 			this.dynamicMarkers = [];
-			this.datasourceService.uniqueElections.forEach(element => {
-				var thisDynamicMarker = new google.maps.Marker();
-
-				thisDynamicMarker.setPosition({ lat: +element.lat, lng: +element.lng });
-				var image = {
-					url: './assets/images/dot.svg',
-					size: new google.maps.Size(20, 20),
-					origin: new google.maps.Point(0, 0),
-					anchor: new google.maps.Point(10, 10),
-					scaledSize: new google.maps.Size(20, 20)
-				};
-
-				var options = {
-					icon: image,
-					title: element.constituency,
-					visible: element.countyboroughuniv == "C" ? false : true
-					// label: { text: element.constituency, color: "white" }
-				}
-
-
-				thisDynamicMarker.setOptions(options);
-
-				this.dynamicMarkers.push(thisDynamicMarker);
-
-			});
+			this.createMarkers();
+			
 		}
+		this.appRef.tick();
 	}
 
+	createMarkers(){
+		this.datasourceService.uniqueElections.forEach(element => {
+		//	console.log(element.constituency);
+		var image = {
+			url: './assets/images/dot.png',
+			size: new google.maps.Size(20, 20),
+			origin: new google.maps.Point(0, 0),
+			anchor: new google.maps.Point(10, 10),
+			scaledSize: new google.maps.Size(20, 20)
+		};
 
+
+			if(element.countyboroughuniv=="B" || element.countyboroughuniv=="U"){
+			//	console.log("lat",element.lat)
+				this.markers.push({
+					position: {
+					  lat: +element.lat,
+					  lng: +element.lng ,
+					},
+					// label: {
+					//   color: 'red',
+					//   text: 'Marker label ' + (this.markers.length + 1),
+					// },
+					options :{
+						icon:{
+						url: './assets/images/dot.png',
+						size: new google.maps.Size(20, 20),
+						origin: new google.maps.Point(0, 0),
+						anchor: new google.maps.Point(10, 10),
+						scaledSize: new google.maps.Size(20, 20)
+					}
+				},
+					visible:true,
+					title: element.constituency,
+					
+				  })
+
+
+			var thisDynamicMarker = new google.maps.Marker();
+
+			thisDynamicMarker.setPosition({ lat: +element.lat, lng: +element.lng });
+			
+			var options = {
+			 icon: image,
+				title: element.constituency,
+				visible: true//element.countyboroughuniv == "C" ? false : true
+				// label: { text: element.constituency, color: "white" }
+			}
+
+
+			thisDynamicMarker.setOptions(options);
+
+			this.dynamicMarkers.push(thisDynamicMarker);
+
+
+
+			}
+
+		});
+		//console.log("dynamicMarkers",this.dynamicMarkers);
+		//this.addGMarker();
+		//this.appRef.tick();
+	}
 
 	mapReady() {
-
+	//	this.addMarker();
 		this.myValueSub = this.datasourceService.ready.subscribe(value => { this.gotData(value) });
 		this.datasourceService.constituencyFilter.valueChanges.subscribe(() => this.dataChange("constituencyFilter"));
 		this.datasourceService.monthFilter.valueChanges.subscribe(() => this.dataChange("monthFilter"));
@@ -179,7 +223,6 @@ export class MapComponent implements OnInit, AfterViewInit, OnDestroy {
 		});
 		//shows centroid of county on mouse over
 		this.map.data.addListener('mouseover', (event) => {
-
 			this.setMatchingCountyMarkerVisibility(true, event.feature.getProperty("name"));
 		});
 		this.map.data.addListener('mouseout', (event) => {
@@ -293,7 +336,7 @@ export class MapComponent implements OnInit, AfterViewInit, OnDestroy {
 				//	element.setOptions(options);
 				//	element.setVisible(visible);
 				var image = {
-					url: './assets/images/dot.svg',
+					url: './assets/images/dot.png',
 					size: new google.maps.Size(5, 5),
 					origin: new google.maps.Point(0, 0),
 					anchor: new google.maps.Point(2, 2),
@@ -390,5 +433,56 @@ export class MapComponent implements OnInit, AfterViewInit, OnDestroy {
 		// if (this.m) this.m = null;
 		// if( this.dynamicMarkers) this.dynamicMarkers= [];
 	}
+	click(event: google.maps.MouseEvent) {
+		// console.log(event)
+		// //this.addGMarker();
+		 this.createMarkers();
+		// console.log(this.markers);
+	  }
+	
+	// addGMarker() {
+	// 	this.markers.push({
+	// 	  position: {
+	// 		lat: this.center.lat + ((Math.random() - 0.5) * 2) / 10,
+	// 		lng: this.center.lng + ((Math.random() - 0.5) * 2) / 10,
+	// 	  },
+	// 	  label: {
+	// 		color: 'red',
+	// 		text: 'Marker label ' + (this.markers.length + 1),
+	// 	  },
+	// 	  title: 'Marker title ' + (this.markers.length + 1),
+	// 	  options: { animation: google.maps.Animation.BOUNCE },
+	// 	})
+	//   }
 
+	// addMarker() {
+	// 	// this.dynamicMarkers.push({
+		  
+		  
+	// 	//   title: 'Marker title ' + (this.dynamicMarkers.length + 1),
+	// 	//   options: { animation: google.maps.Animation.BOUNCE },
+	// 	// })
+	// 	var thisDynamicMarker = new google.maps.Marker();
+	// 	//51.51056058608404, -0.061594143272712835
+	// 			thisDynamicMarker.setPosition({lat: 51.51056058608404, lng: -0.061594143272712835 });
+	// 			var image = {
+	// 				url: './assets/images/dot.png',
+	// 				size: new google.maps.Size(20, 20),
+	// 				origin: new google.maps.Point(0, 0),
+	// 				anchor: new google.maps.Point(10, 10),
+	// 				scaledSize: new google.maps.Size(20, 20)
+	// 			};
+
+	// 			var options = {
+	// 				icon: image,
+	// 				title: "TeST",
+	// 				visible: true//element.countyboroughuniv == "C" ? false : true
+	// 				// label: { text: element.constituency, color: "white" }
+	// 			}
+
+
+	// 			thisDynamicMarker.setOptions(options);
+	// 			thisDynamicMarker.setVisible(true);
+	// 			this.dynamicMarkers.push(thisDynamicMarker);
+	//   }
 }
