@@ -49,3 +49,4 @@ config.php
 /graphql-server/node_modules
 /graphql-server/.env
 /graphql-server/dist
+/graphql-server/.env
