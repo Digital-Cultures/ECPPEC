@@ -37,10 +37,12 @@ type Query {
   election_dates(election_year: Int = 0, election_year_gte: Int = 0, election_year_lte: Int = 9999, orderBy: OrderByDate): [electionDates!]!
   location(constituency: String): [locations!]!
   location_from(distance: Float = 1000, lat: Float, lng: Float): [locations_from!]!
+  occupations_group(occupation: String): [occupations_map!]!
   poll_book: [poll_books!]!
   stats(constituency: String, num_contested_all_gte: Int, num_contested_all_lte: Int, num_contested_by_gte: Int, num_contested_by_lte: Int, num_contested_general_gte: Int, num_contested_general_lte: Int, num_elections_all_gte: Int, num_elections_all_lte: Int, num_elections_by_gte: Int, num_elections_by_lte: Int, num_elections_general_gte: Int, num_elections_general_lte: Int, num_uncontested_all_gte: Int, num_uncontested_all_lte: Int, num_uncontested_by_gte: Int, num_uncontested_by_lte: Int, num_uncontested_general_gte: Int, num_uncontested_general_lte: Int, percent_contested_all_gte: Float, percent_contested_all_lte: Float, percent_contested_by_gte: Float, percent_contested_by_lte: Float, percent_contested_general_gte: Float, percent_contested_general_lte: Float, percent_uncontested_all_gte: Float, percent_uncontested_all_lte: Float, percent_uncontested_by_gte: Float, percent_uncontested_by_lte: Float, percent_uncontested_general_gte: Float, percent_uncontested_general_lte: Float): [stats!]!
-  vote: [vote!]!
+  vote(line: Int, page: Int): [vote!]!
   voter(forename: String, guild: String, occupation: String, surname: String): [voter!]!
+  voters_occupations(occupation: String): [voters_occupations!]!
 }
 
 enum SortOrder {
@@ -146,6 +148,13 @@ type locations_from {
   lng: Float
 }
 
+type occupations_map {
+  level_code: String
+  level_name: String
+  level_num: Int
+  voters: [voter]
+}
+
 type poll_books {
   Citation: String
   ElectionCode: String
@@ -181,8 +190,8 @@ type vote {
   candidate: [candidate]
   constituencies: [constituencies]
   elections: [election]
-  line: String
-  page: String
+  line: Int
+  page: Int
   poll_books: [poll_books]
   poll_date: String
   voter(forename: String, guild: String, occupation: String, surname: String): [voter]
@@ -199,6 +208,8 @@ type voter {
   notes: String
   occupation: String
   occupation_ideal: String
+  occupations_level1: [occupations_map]
+  occupations_level2: [occupations_map]
   parish: String
   street: String
   suffix: String
@@ -206,4 +217,12 @@ type voter {
   surname: String
   title: String
   vote: [vote]
+}
+
+type voters_occupations {
+  level1: [occupations_map]
+  level2: [occupations_map]
+  occupation: String
+  voter_id: String
+  voters: [voter]
 }

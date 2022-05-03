@@ -471,10 +471,54 @@ const Query = objectType({
 
     t.nonNull.list.nonNull.field('vote', {
       type: Vote,
+      args: {
+        page: intArg(),
+        line: intArg(),
+      },
       resolve: (_parent, args, context: Context) => {
-        return context.prisma.voters.findMany({})
+        return context.prisma.votes.findMany({
+          where: {
+            page: args.page || undefined,
+            line: args.line || undefined
+          }
+        })
       },
     })
+
+    t.nonNull.list.nonNull.field('voters_occupations', {
+      type: VotersOccupations,
+      args: {
+        occupation: stringArg(),
+      },
+      resolve: (_parent, _args, context: Context) => {
+        return context.prisma.voters_occupations.findMany({
+          where: {
+            occupation: {
+              contains:  _args.occupation
+             } || undefined,
+          }
+        })
+      },
+    })
+
+
+    t.nonNull.list.nonNull.field('occupations_group', {
+      type: OccupationsMap,
+      args: {
+        occupation: stringArg(),
+      },
+      resolve: (_parent, _args, context: Context) => {
+        return context.prisma.occupations_map.findMany({
+          where: {
+            level_name: {
+              contains:  _args.occupation
+             } || undefined,
+          }
+        })
+      },
+    })
+
+    
     
   },
 })
@@ -778,6 +822,28 @@ const Voter = objectType({
     t.string('class')
     t.string('occupation')
     t.string('occupation_ideal')
+    t.list.field('occupations_level1', {
+      type: OccupationsMap,
+      resolve: (parent, _, context: Context) => {
+        if (parent.occupations_level1!=null){
+          return context.prisma.occupations_map.findMany({
+            where: { level_code: parent.occupations_level1  }})
+        }else{
+          return null
+        }  
+      }
+    })
+    t.list.field('occupations_level2', {
+      type: OccupationsMap,
+      resolve: (parent, _, context: Context) => {
+        if (parent.occupations_level1!=null){
+          return context.prisma.occupations_map.findMany({
+            where: { level_code: parent.occupations_level2  }})
+        }else{
+          return null
+        }  
+      },
+    })
     t.string('guild')
     t.string('street')
     t.string('city')
@@ -852,8 +918,8 @@ const Vote = objectType({
         })
       },
     })
-    t.string('page')
-    t.string('line')
+    t.int('page')
+    t.int('line')
     t.list.field('candidate', {
       type: Candidate,
       resolve: (parent, _, context: Context) => {
@@ -862,6 +928,72 @@ const Vote = objectType({
         },
     })
     t.string('poll_date')
+  },
+})
+
+const OccupationsMap = objectType({
+  name: 'occupations_map',
+  definition(t) {
+    t.int('level_num')
+    t.string('level_code')
+    t.string('level_name')
+    t.list.field('voters', {
+      type: Voter,
+      resolve: (parent, _, context: Context) => {
+        if (parent.level_num==1){
+          return context.prisma.voters.findMany({
+            where: { occupations_level1: parent.level_code || undefined }})
+        }else{
+          return context.prisma.voters.findMany({
+            where: { occupations_level2: parent.level_code || undefined }})
+        }
+        },
+    })
+  },
+})
+
+const VotersOccupations = objectType({
+  name: 'voters_occupations',
+  definition(t) {
+    t.string('voter_id')
+    t.string('occupation')
+    t.list.field('voters', {
+      type: Voter,
+      resolve: (parent, _, context: Context) => {
+        return context.prisma.voters.findMany({
+          where: { voter_id: parent.voter_id || undefined }})
+        },
+    })
+    t.list.field('level1', {
+      type: OccupationsMap,
+      resolve: (parent, _, context: Context) => {
+        return context.prisma.occupations_map.findMany({
+          where: { level_code: parent.level1 || undefined }})
+        },
+    })
+    t.list.field('level2', {
+      type: OccupationsMap,
+      resolve: (parent, _, context: Context) => {
+        return context.prisma.occupations_map.findMany({
+          where: { level_code: parent.level2 || undefined }})
+        },
+    })
+    // t.string('level3')
+    // t.string('level4')
+    // t.list.field('level3_occupation', {
+    //   type: OccupationsMap,
+    //   resolve: (parent, _, context: Context) => {
+    //     return context.prisma.occupations_map.findMany({
+    //       where: { level_code: parent.level3 || undefined }})
+    //     },
+    // })
+    // t.list.field('level4_occupation', {
+    //   type: OccupationsMap,
+    //   resolve: (parent, _, context: Context) => {
+    //     return context.prisma.occupations_map.findMany({
+    //       where: { level_code: parent.level4 || undefined }})
+    //     },
+    // })
   },
 })
 
@@ -910,7 +1042,9 @@ export const schema = makeSchema({
     PollBooks,
     Stats,
     Voter,
-    Vote,  
+    Vote, 
+    VotersOccupations, 
+    OccupationsMap
   ],
   outputs: {
     schema: __dirname + '/../schema.graphql',

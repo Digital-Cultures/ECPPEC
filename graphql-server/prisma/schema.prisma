@@ -153,12 +153,12 @@ model stats {
   percent_contested_all       Decimal @default(0.0) @db.Decimal(25, 1)
   num_uncontested_all         Int     @default(0)
   percent_uncontested_all     Decimal @default(0.0) @db.Decimal(25, 1)
-  num_elections_by            BigInt  @default(0)
+  num_elections_by            Int     @default(0)
   num_contested_by            Int     @default(0)
   percent_contested_by        Decimal @default(0.0) @db.Decimal(25, 1)
   num_uncontested_by          Int     @default(0)
   percent_uncontested_by      Decimal @default(0.0) @db.Decimal(25, 1)
-  num_elections_general       BigInt  @default(0)
+  num_elections_general       Int     @default(0)
   num_contested_general       Int     @default(0)
   percent_contested_general   Decimal @default(0.0) @db.Decimal(25, 1)
   num_uncontested_general     Int     @default(0)
@@ -177,6 +177,8 @@ model voters {
   class                 String?   @default("") @db.VarChar(25)
   occupation            String?   @db.VarChar(150)
   occupation_ideal      String?   @db.VarChar(150)
+  occupations_level1    String?   @db.VarChar(12)
+  occupations_level2    String?   @db.VarChar(12)
   guild                 String?   @db.VarChar(75)
   alley                 String?   @db.VarChar(75)
   street                String?   @db.VarChar(75)
@@ -216,4 +218,20 @@ model votes {
 
   @@unique([voter_id, election_id, vote_round, candidate_id], name: "voter_id")
   @@index([election_id], name: "ElectionID")
+}
+
+model occupations_map {
+  level_num  String? @db.VarChar(12)
+  level_code String  @unique @db.VarChar(12)
+  level_name String? @db.VarChar(50)
+}
+
+model voters_occupations {
+  id         Int     @id @default(autoincrement())
+  voter_id   Int?
+  occupation String? @db.VarChar(100)
+  level1     String? @db.Char(2)
+  level2     String? @db.VarChar(12)
+  level3     String? @db.VarChar(12)
+  level4     String? @db.VarChar(12)
 }
