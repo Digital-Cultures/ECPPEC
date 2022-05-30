@@ -31,7 +31,7 @@ type Query {
   artefact(artefact_type: [String], description: String, display_name: String, filename: String): [artefact!]!
   artefact_attributes(artefact_id: Int, attribute_name: String): [artefact_attributes!]!
   candidate(born: Int, born_gte: Int, born_lte: Int, candidate_id: Int, candidate_name: String, died: Int, died_gte: Int, died_lte: Int, short_name: String, suffix: String, title: [String]): [candidate!]!
-  candidates_elections(candidate_id: Int, election_id: String, is_winner: Int, overturned_by: String, running_as: String, ultimate_winner: Int): [candidatesElection!]!
+  candidates_elections(candidate_id: Int, election_id: String, overturned_by: String, returned: Int, running_as: String, seated: Int): [candidatesElection!]!
   constituencies(constituency: String, constituency_id: Int, has_polling_data: Boolean): [constituencies!]!
   election(by_election_cause: String, by_election_general: String, constituency: String, constituency_id: Int, contested: String, countyboroughuniv: String, election_month: String, election_year_gte: Int = 1500, election_year_lte: Int = 2020, electorate_size_est_gte: Int, electorate_size_est_lte: Int, franchise_type: [String], office: String): [election!]!
   election_dates(election_year: Int = 0, election_year_gte: Int = 0, election_year_lte: Int = 9999, orderBy: OrderByDate): [electionDates!]!
@@ -75,7 +75,7 @@ type candidate {
   born: Int
   candidate_id: Int!
   candidate_name: String
-  candidates_elections(is_winner: Int, ultimate_winner: Int): [candidatesElection]
+  candidates_elections(returned: Int, seated: Int): [candidatesElection]
   died: Int
   short_name: String
   suffix: String
@@ -88,10 +88,10 @@ type candidatesElection {
   candidate_id: Int!
   election: [election]
   election_id: String!
-  is_winner: Boolean
   overturned_by: String
+  returned: Boolean
   running_as: String
-  ultimate_winner: Boolean
+  seated: Boolean
 }
 
 type constituencies {
@@ -113,12 +113,14 @@ type election {
   contested: String
   countyboroughuniv: String
   election_date: DateTime
+  election_id: String
   election_month: String
   election_year: String
   electorate_size_desc: String
   electorate_size_est: String
   franchise_detail: String
   franchise_type: String
+  has_data: Boolean
   latitude: String
   longitude: String
   notes: String

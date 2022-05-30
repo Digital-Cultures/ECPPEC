@@ -79,10 +79,10 @@ export interface NexusGenObjects {
   candidatesElection: { // root type
     candidate_id: number; // Int!
     election_id: string; // String!
-    is_winner?: boolean | null; // Boolean
     overturned_by?: string | null; // String
+    returned?: boolean | null; // Boolean
     running_as?: string | null; // String
-    ultimate_winner?: boolean | null; // Boolean
+    seated?: boolean | null; // Boolean
   }
   constituencies: { // root type
     constituency?: string | null; // String
@@ -98,6 +98,7 @@ export interface NexusGenObjects {
     contested?: string | null; // String
     countyboroughuniv?: string | null; // String
     election_date?: NexusGenScalars['DateTime'] | null; // DateTime
+    election_id?: string | null; // String
     election_month?: string | null; // String
     election_year?: string | null; // String
     electorate_size_desc?: string | null; // String
@@ -250,10 +251,10 @@ export interface NexusGenFieldTypes {
     candidate_id: number; // Int!
     election: Array<NexusGenRootTypes['election'] | null> | null; // [election]
     election_id: string; // String!
-    is_winner: boolean | null; // Boolean
     overturned_by: string | null; // String
+    returned: boolean | null; // Boolean
     running_as: string | null; // String
-    ultimate_winner: boolean | null; // Boolean
+    seated: boolean | null; // Boolean
   }
   constituencies: { // field return type
     constituency: string | null; // String
@@ -273,12 +274,14 @@ export interface NexusGenFieldTypes {
     contested: string | null; // String
     countyboroughuniv: string | null; // String
     election_date: NexusGenScalars['DateTime'] | null; // DateTime
+    election_id: string | null; // String
     election_month: string | null; // String
     election_year: string | null; // String
     electorate_size_desc: string | null; // String
     electorate_size_est: string | null; // String
     franchise_detail: string | null; // String
     franchise_type: string | null; // String
+    has_data: boolean | null; // Boolean
     latitude: string | null; // String
     longitude: string | null; // String
     notes: string | null; // String
@@ -431,10 +434,10 @@ export interface NexusGenFieldTypeNames {
     candidate_id: 'Int'
     election: 'election'
     election_id: 'String'
-    is_winner: 'Boolean'
     overturned_by: 'String'
+    returned: 'Boolean'
     running_as: 'String'
-    ultimate_winner: 'Boolean'
+    seated: 'Boolean'
   }
   constituencies: { // field return type name
     constituency: 'String'
@@ -454,12 +457,14 @@ export interface NexusGenFieldTypeNames {
     contested: 'String'
     countyboroughuniv: 'String'
     election_date: 'DateTime'
+    election_id: 'String'
     election_month: 'String'
     election_year: 'String'
     electorate_size_desc: 'String'
     electorate_size_est: 'String'
     franchise_detail: 'String'
     franchise_type: 'String'
+    has_data: 'Boolean'
     latitude: 'String'
     longitude: 'String'
     notes: 'String'
@@ -588,10 +593,10 @@ export interface NexusGenArgTypes {
     candidates_elections: { // args
       candidate_id?: number | null; // Int
       election_id?: string | null; // String
-      is_winner?: number | null; // Int
       overturned_by?: string | null; // String
+      returned?: number | null; // Int
       running_as?: string | null; // String
-      ultimate_winner?: number | null; // Int
+      seated?: number | null; // Int
     }
     constituencies: { // args
       constituency?: string | null; // String
@@ -679,8 +684,8 @@ export interface NexusGenArgTypes {
   }
   candidate: {
     candidates_elections: { // args
-      is_winner?: number | null; // Int
-      ultimate_winner?: number | null; // Int
+      returned?: number | null; // Int
+      seated?: number | null; // Int
     }
   }
   vote: {

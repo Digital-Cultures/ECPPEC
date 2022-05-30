@@ -23,15 +23,17 @@ model artefacts {
 }
 
 model candidates {
-  candidate_id   Int     @id @default(autoincrement())
+  candidate_id   Int       @id @default(autoincrement())
   source_id      Int?
-  source         String? @db.VarChar(25)
-  candidate_name String? @db.VarChar(75)
-  title          String? @db.VarChar(25)
-  suffix         String? @db.VarChar(25)
-  short_name     String? @db.VarChar(25)
+  source         String?   @db.VarChar(25)
+  candidate_name String?   @db.VarChar(75)
+  title          String?   @db.VarChar(25)
+  suffix         String?   @db.VarChar(25)
+  short_name     String?   @db.VarChar(25)
   born           Int?
   died           Int?
+  created        DateTime? @default(now()) @db.Timestamp(0)
+  modified       DateTime? @db.Timestamp(0)
 }
 
 model candidates_elections {
@@ -40,9 +42,9 @@ model candidates_elections {
   candidate_id            Int?
   running_as              String? @db.VarChar(50)
   rank_order              Int     @default(0)
-  is_winner               Int     @default(0) @db.TinyInt
+  returned                Int     @default(0) @db.TinyInt
   overturned_by           String? @db.VarChar(100)
-  ultimate_winner         Int     @default(0) @db.TinyInt
+  seated                  Int     @default(0) @db.TinyInt
 
   @@unique([election_id, candidate_id], name: "electionID")
 }

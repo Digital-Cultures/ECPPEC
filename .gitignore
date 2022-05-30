@@ -50,3 +50,4 @@ config.php
 /graphql-server/.env
 /graphql-server/dist
 /graphql-server/.env
+graphql-server/.env

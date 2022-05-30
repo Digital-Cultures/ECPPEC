@@ -150,20 +150,20 @@ const Query = objectType({
         candidate_id: intArg(),
         election_id:  stringArg(),
         running_as: stringArg(),
-        is_winner: intArg(),
+        returned: intArg(),
         overturned_by: stringArg(),
-        ultimate_winner: intArg()
+        seated: intArg()
       },
       resolve: (_parent, _args, context: Context) => {
         return context.prisma.candidates_elections.findMany({
           where: {  
             candidate_id: _args.candidate_id || undefined,
             election_id: _args.election_id || undefined,
-            is_winner: {
-              equals: _args.is_winner
+            returned: {
+              equals: _args.returned
             } || undefined,
-            ultimate_winner: {
-              equals: _args.ultimate_winner
+            seated: {
+              equals: _args.seated
             } || undefined
           },
         })
@@ -383,6 +383,7 @@ const Query = objectType({
       resolve: (_parent, _args, context: Context) => {
         return context.prisma.stats.findMany({
           where: {  
+            constituency: _args.constituency || undefined,
             num_elections_all: {
               gte: _args.num_elections_all_gte,
               lte: _args.num_elections_all_lte 
@@ -571,18 +572,18 @@ const Candidate = objectType({
     t.list.field('candidates_elections', {
       type: CandidatesElection,
       args: {
-        is_winner: intArg(),
-        ultimate_winner: intArg()
+        returned: intArg(),
+        seated: intArg()
       },
       resolve: (parent, _args, context: Context) => {
         return context.prisma.candidates_elections.findMany({
           where: { 
             candidate_id: parent.candidate_id || undefined,
-            is_winner: {
-              equals: _args.is_winner
+            returned: {
+              equals: _args.returned
             } || undefined,
-            ultimate_winner: {
-              equals: _args.ultimate_winner
+            seated: {
+              equals: _args.seated
             } || undefined
            }})
         },
@@ -612,9 +613,9 @@ const CandidatesElection = objectType({
     t.nonNull.string('election_id')
     t.nonNull.int('candidate_id')
     t.string('running_as')
-    t.boolean('is_winner')
+    t.boolean('returned')
     t.string('overturned_by')
-    t.boolean('ultimate_winner')
+    t.boolean('seated')
     t.list.field('election', {
       type: Election,
       resolve: (parent, _, context: Context) => {
@@ -633,6 +634,7 @@ const CandidatesElection = objectType({
 })
 
 const Constituencies = objectType({
+  // TO DO:  return ID
   name: 'constituencies',
   definition(t) {
     t.nonNull.int('constituency_id')
@@ -685,6 +687,7 @@ const ElectionDates = objectType({
 const Election = objectType({
   name: 'election',
   definition(t) {
+    t.string('election_id')
     t.string('election_year')
     t.string('election_month')
     t.date('election_date')
@@ -718,6 +721,12 @@ const Election = objectType({
           where: { ElectionCode: parent.election_id || undefined }
         })
       },
+    })
+    t.boolean('has_data', {
+      resolve: async (parent, _, context: Context) => {
+        const result = await context.prisma.$queryRaw(`SELECT EXISTS(SELECT * from ECPPEC.votes WHERE  election_id = "`+parent.election_id+`") as has_data`);
+        return result[0].has_data;
+      }
     })
   },
 })
