@@ -126,6 +126,7 @@ type election {
   notes: String
   office: String
   poll_books: [poll_books]
+  vote: [vote]
 }
 
 type electionDates {
@@ -197,6 +198,7 @@ type vote {
   poll_books: [poll_books]
   poll_date: String
   voter(forename: String, guild: String, occupation: String, surname: String): [voter]
+  votes_id: Int
 }
 
 type voter {
@@ -219,6 +221,7 @@ type voter {
   surname: String
   title: String
   vote: [vote]
+  voter_id: Int
 }
 
 type voters_occupations {

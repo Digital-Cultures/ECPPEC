@@ -164,6 +164,7 @@ export interface NexusGenObjects {
     line?: number | null; // Int
     page?: number | null; // Int
     poll_date?: string | null; // String
+    votes_id?: number | null; // Int
   }
   voter: { // root type
     abode?: string | null; // String
@@ -182,6 +183,7 @@ export interface NexusGenObjects {
     suffix_ideal?: string | null; // String
     surname?: string | null; // String
     title?: string | null; // String
+    voter_id?: number | null; // Int
   }
   voters_occupations: { // root type
     occupation?: string | null; // String
@@ -287,6 +289,7 @@ export interface NexusGenFieldTypes {
     notes: string | null; // String
     office: string | null; // String
     poll_books: Array<NexusGenRootTypes['poll_books'] | null> | null; // [poll_books]
+    vote: Array<NexusGenRootTypes['vote'] | null> | null; // [vote]
   }
   electionDates: { // field return type
     election: Array<NexusGenRootTypes['election'] | null> | null; // [election]
@@ -351,6 +354,7 @@ export interface NexusGenFieldTypes {
     poll_books: Array<NexusGenRootTypes['poll_books'] | null> | null; // [poll_books]
     poll_date: string | null; // String
     voter: Array<NexusGenRootTypes['voter'] | null> | null; // [voter]
+    votes_id: number | null; // Int
   }
   voter: { // field return type
     abode: string | null; // String
@@ -372,6 +376,7 @@ export interface NexusGenFieldTypes {
     surname: string | null; // String
     title: string | null; // String
     vote: Array<NexusGenRootTypes['vote'] | null> | null; // [vote]
+    voter_id: number | null; // Int
   }
   voters_occupations: { // field return type
     level1: Array<NexusGenRootTypes['occupations_map'] | null> | null; // [occupations_map]
@@ -470,6 +475,7 @@ export interface NexusGenFieldTypeNames {
     notes: 'String'
     office: 'String'
     poll_books: 'poll_books'
+    vote: 'vote'
   }
   electionDates: { // field return type name
     election: 'election'
@@ -534,6 +540,7 @@ export interface NexusGenFieldTypeNames {
     poll_books: 'poll_books'
     poll_date: 'String'
     voter: 'voter'
+    votes_id: 'Int'
   }
   voter: { // field return type name
     abode: 'String'
@@ -555,6 +562,7 @@ export interface NexusGenFieldTypeNames {
     surname: 'String'
     title: 'String'
     vote: 'vote'
+    voter_id: 'Int'
   }
   voters_occupations: { // field return type name
     level1: 'occupations_map'

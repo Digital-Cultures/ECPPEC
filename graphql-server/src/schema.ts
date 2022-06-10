@@ -728,6 +728,13 @@ const Election = objectType({
         return result[0].has_data;
       }
     })
+    t.list.field('vote', {
+      type: Vote,
+      resolve: (parent, _, context: Context) => {
+        return context.prisma.votes.findMany({
+          where: { election_id: parent.election_id || undefined }})
+        },
+    })
   },
 })
 
@@ -823,6 +830,7 @@ const Stats = objectType({
 const Voter = objectType({
   name: 'voter',
   definition(t) {
+    t.int('voter_id')
     t.string('forename')
     t.string('surname')
     t.string('suffix')
@@ -874,7 +882,7 @@ const Voter = objectType({
 const Vote = objectType({
   name: 'vote',
   definition(t) {
-
+    t.int('votes_id')
     t.list.field('voter', {
       type: Voter,
       args: {
