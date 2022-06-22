@@ -86,3 +86,28 @@ Date filtering:
 		election_date
   }
 ```
+
+
+# Update Database:
+
+- back up DB
+$ scp [filename].sql [user]@api-ecppec.ncl.ac.uk:/home/ecppec/sql-dump
+
+$ mysql -u root -p ECPPEC < [filename].sql 
+
+
+# Update graphQL:
+ssh into api-ecppec
+$ cd /home/ecppec/graphql-server/ECPPEC/
+
+# check on Modular branch
+$ git branch 
+
+$ cd graphql-server/
+
+$ npx prisma generate
+
+# restart server
+$ pm2 list
+$ pm2 delete 0
+$ pm2 start "npm run dev" --name graphql
