@@ -55,16 +55,25 @@ export interface NexusGenObjects {
     count?: number | null; // Int
   }
   artefact: { // root type
-    artefact_type?: string | null; // String
+    attribution?: string | null; // String
     description?: string | null; // String
     display_name?: string | null; // String
-    filename?: string | null; // String
     id: number; // Int!
+    license?: string | null; // String
+    manifest?: string | null; // String
+    source?: string | null; // String
+    source_link?: string | null; // String
   }
   artefact_attributes: { // root type
     artefact_id: number; // Int!
     attribute_name?: string | null; // String
     attribute_value?: string | null; // String
+    id: number; // Int!
+  }
+  artefact_files: { // root type
+    display_label?: string | null; // String
+    file_name?: string | null; // String
+    file_type?: string | null; // String
     id: number; // Int!
   }
   candidate: { // root type
@@ -107,8 +116,16 @@ export interface NexusGenObjects {
     franchise_type?: string | null; // String
     latitude?: string | null; // String
     longitude?: string | null; // String
+    notable_remarks?: string | null; // String
     notes?: string | null; // String
     office?: string | null; // String
+    pollbook_id?: string | null; // String
+    voterate?: string | null; // String
+  }
+  electionAttributes: { // root type
+    attribute_name: string; // String!
+    attribute_value: string; // String!
+    election_id: string; // String!
   }
   electionDates: { // root type
     election_date?: NexusGenScalars['DateTime'] | null; // DateTime
@@ -133,13 +150,14 @@ export interface NexusGenObjects {
     level_num?: number | null; // Int
   }
   poll_books: { // root type
-    Citation?: string | null; // String
-    ElectionCode?: string | null; // String
-    Holdings?: string | null; // String
-    Notes?: string | null; // String
-    PollBookCode?: string | null; // String
-    PrintMS?: string | null; // String
-    Source?: string | null; // String
+    citation?: string | null; // String
+    constituency_id?: string | null; // String
+    election_id?: string | null; // String
+    holdings?: string | null; // String
+    notes?: string | null; // String
+    pollbook_id?: string | null; // String
+    printms?: string | null; // String
+    source?: string | null; // String
   }
   stats: { // root type
     constituency?: string | null; // String
@@ -205,10 +223,12 @@ export interface NexusGenFieldTypes {
   Query: { // field return type
     artefact: NexusGenRootTypes['artefact'][]; // [artefact!]!
     artefact_attributes: NexusGenRootTypes['artefact_attributes'][]; // [artefact_attributes!]!
+    artefact_files: NexusGenRootTypes['artefact_files'][]; // [artefact_files!]!
     candidate: NexusGenRootTypes['candidate'][]; // [candidate!]!
     candidates_elections: NexusGenRootTypes['candidatesElection'][]; // [candidatesElection!]!
     constituencies: NexusGenRootTypes['constituencies'][]; // [constituencies!]!
     election: NexusGenRootTypes['election'][]; // [election!]!
+    election_attributes: NexusGenRootTypes['electionAttributes'][]; // [electionAttributes!]!
     election_dates: NexusGenRootTypes['electionDates'][]; // [electionDates!]!
     location: NexusGenRootTypes['locations'][]; // [locations!]!
     location_from: NexusGenRootTypes['locations_from'][]; // [locations_from!]!
@@ -224,17 +244,30 @@ export interface NexusGenFieldTypes {
   }
   artefact: { // field return type
     artefact_attributes: Array<NexusGenRootTypes['artefact_attributes'] | null> | null; // [artefact_attributes]
-    artefact_type: string | null; // String
+    attribution: string | null; // String
     description: string | null; // String
     display_name: string | null; // String
-    filename: string | null; // String
     id: number; // Int!
+    license: string | null; // String
+    manifest: string | null; // String
+    source: string | null; // String
+    source_link: string | null; // String
   }
   artefact_attributes: { // field return type
     artefact: Array<NexusGenRootTypes['artefact'] | null> | null; // [artefact]
+    artefact_files: Array<NexusGenRootTypes['artefact_files'] | null> | null; // [artefact_files]
     artefact_id: number; // Int!
     attribute_name: string | null; // String
     attribute_value: string | null; // String
+    candidates: Array<NexusGenRootTypes['candidate'] | null> | null; // [candidate]
+    constituencies: Array<NexusGenRootTypes['constituencies'] | null> | null; // [constituencies]
+    election: Array<NexusGenRootTypes['election'] | null> | null; // [election]
+    id: number; // Int!
+  }
+  artefact_files: { // field return type
+    display_label: string | null; // String
+    file_name: string | null; // String
+    file_type: string | null; // String
     id: number; // Int!
   }
   candidate: { // field return type
@@ -286,10 +319,19 @@ export interface NexusGenFieldTypes {
     has_data: boolean | null; // Boolean
     latitude: string | null; // String
     longitude: string | null; // String
+    notable_remarks: string | null; // String
     notes: string | null; // String
     office: string | null; // String
     poll_books: Array<NexusGenRootTypes['poll_books'] | null> | null; // [poll_books]
+    pollbook_id: string | null; // String
     vote: Array<NexusGenRootTypes['vote'] | null> | null; // [vote]
+    voterate: string | null; // String
+  }
+  electionAttributes: { // field return type
+    attribute_name: string; // String!
+    attribute_value: string; // String!
+    election: Array<NexusGenRootTypes['election'] | null> | null; // [election]
+    election_id: string; // String!
   }
   electionDates: { // field return type
     election: Array<NexusGenRootTypes['election'] | null> | null; // [election]
@@ -317,13 +359,14 @@ export interface NexusGenFieldTypes {
     voters: Array<NexusGenRootTypes['voter'] | null> | null; // [voter]
   }
   poll_books: { // field return type
-    Citation: string | null; // String
-    ElectionCode: string | null; // String
-    Holdings: string | null; // String
-    Notes: string | null; // String
-    PollBookCode: string | null; // String
-    PrintMS: string | null; // String
-    Source: string | null; // String
+    citation: string | null; // String
+    constituency_id: string | null; // String
+    election_id: string | null; // String
+    holdings: string | null; // String
+    notes: string | null; // String
+    pollbook_id: string | null; // String
+    printms: string | null; // String
+    source: string | null; // String
   }
   stats: { // field return type
     constituencies: Array<NexusGenRootTypes['constituencies'] | null> | null; // [constituencies]
@@ -391,10 +434,12 @@ export interface NexusGenFieldTypeNames {
   Query: { // field return type name
     artefact: 'artefact'
     artefact_attributes: 'artefact_attributes'
+    artefact_files: 'artefact_files'
     candidate: 'candidate'
     candidates_elections: 'candidatesElection'
     constituencies: 'constituencies'
     election: 'election'
+    election_attributes: 'electionAttributes'
     election_dates: 'electionDates'
     location: 'locations'
     location_from: 'locations_from'
@@ -410,17 +455,30 @@ export interface NexusGenFieldTypeNames {
   }
   artefact: { // field return type name
     artefact_attributes: 'artefact_attributes'
-    artefact_type: 'String'
+    attribution: 'String'
     description: 'String'
     display_name: 'String'
-    filename: 'String'
     id: 'Int'
+    license: 'String'
+    manifest: 'String'
+    source: 'String'
+    source_link: 'String'
   }
   artefact_attributes: { // field return type name
     artefact: 'artefact'
+    artefact_files: 'artefact_files'
     artefact_id: 'Int'
     attribute_name: 'String'
     attribute_value: 'String'
+    candidates: 'candidate'
+    constituencies: 'constituencies'
+    election: 'election'
+    id: 'Int'
+  }
+  artefact_files: { // field return type name
+    display_label: 'String'
+    file_name: 'String'
+    file_type: 'String'
     id: 'Int'
   }
   candidate: { // field return type name
@@ -472,10 +530,19 @@ export interface NexusGenFieldTypeNames {
     has_data: 'Boolean'
     latitude: 'String'
     longitude: 'String'
+    notable_remarks: 'String'
     notes: 'String'
     office: 'String'
     poll_books: 'poll_books'
+    pollbook_id: 'String'
     vote: 'vote'
+    voterate: 'String'
+  }
+  electionAttributes: { // field return type name
+    attribute_name: 'String'
+    attribute_value: 'String'
+    election: 'election'
+    election_id: 'String'
   }
   electionDates: { // field return type name
     election: 'election'
@@ -503,13 +570,14 @@ export interface NexusGenFieldTypeNames {
     voters: 'voter'
   }
   poll_books: { // field return type name
-    Citation: 'String'
-    ElectionCode: 'String'
-    Holdings: 'String'
-    Notes: 'String'
-    PollBookCode: 'String'
-    PrintMS: 'String'
-    Source: 'String'
+    citation: 'String'
+    constituency_id: 'String'
+    election_id: 'String'
+    holdings: 'String'
+    notes: 'String'
+    pollbook_id: 'String'
+    printms: 'String'
+    source: 'String'
   }
   stats: { // field return type name
     constituencies: 'constituencies'
@@ -576,14 +644,21 @@ export interface NexusGenFieldTypeNames {
 export interface NexusGenArgTypes {
   Query: {
     artefact: { // args
-      artefact_type?: Array<string | null> | null; // [String]
       description?: string | null; // String
       display_name?: string | null; // String
-      filename?: string | null; // String
+      manifest?: string | null; // String
+      source?: string | null; // String
     }
     artefact_attributes: { // args
       artefact_id?: number | null; // Int
       attribute_name?: string | null; // String
+      attribute_value?: string | null; // String
+    }
+    artefact_files: { // args
+      display_label?: string | null; // String
+      file_type?: string | null; // String
+      filename?: string | null; // String
+      id?: number | null; // Int
     }
     candidate: { // args
       born?: number | null; // Int
@@ -625,6 +700,10 @@ export interface NexusGenArgTypes {
       electorate_size_est_lte?: number | null; // Int
       franchise_type?: Array<string | null> | null; // [String]
       office?: string | null; // String
+    }
+    election_attributes: { // args
+      attribute_name?: string | null; // String
+      election_id?: string | null; // String
     }
     election_dates: { // args
       election_year?: number | null; // Int

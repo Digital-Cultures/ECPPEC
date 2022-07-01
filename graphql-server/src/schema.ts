@@ -13,26 +13,26 @@ const Query = objectType({
     t.nonNull.list.nonNull.field('artefact', {
       type: Artefact,
       args: {
-        filename: stringArg(),
         display_name: stringArg(),
         description: stringArg(),
-        artefact_type: list(stringArg()),
+        source: stringArg(),
+        manifest: stringArg(),
       },
       resolve: (_parent, _args, context: Context) => {
         return context.prisma.artefacts.findMany({
           where: { 
-            filename:{
-              contains:  _args.filename
-             } || undefined,
             display_name: {
               contains: _args.display_name
              } || undefined,
             description: {
               contains: _args.description 
             }|| undefined,
-            artefact_type: {
-              in: _args.artefact_type 
-            } || undefined
+            source: {
+              in: _args.source 
+            } || undefined,
+            manifest:{
+              contains:  _args.manifest
+             } || undefined
           },
         })
       },
@@ -42,13 +42,35 @@ const Query = objectType({
       type: ArtefactAttributes,
       args: {
         attribute_name: stringArg(),
-        artefact_id: intArg()
+        artefact_id: intArg(),
+        attribute_value: stringArg()
       },
       resolve:(_parent, _args, context: Context) => {
         return context.prisma.artefact_attributes.findMany({
           where: { 
             attribute_name: _args.attribute_name || undefined,
-            artefact_id: _args.artefact_id || undefined
+            artefact_id: _args.artefact_id || undefined,
+            attribute_value: _args.attribute_value || undefined
+          },
+        })
+      },
+    })
+
+    t.nonNull.list.nonNull.field('artefact_files', {
+      type: ArtefactFiles,
+      args: {
+        id: intArg(),
+        file_type: stringArg(),
+        display_label: stringArg(),
+        filename: stringArg()
+      },
+      resolve:(_parent, _args, context: Context) => {
+        return context.prisma.artefact_files.findMany({
+          where: { 
+            id: _args.id || undefined,
+            file_type: _args.file_type || undefined,
+            display_label: _args.display_label || undefined,
+            filename: _args.filename || undefined
           },
         })
       },
@@ -190,6 +212,67 @@ const Query = objectType({
       },
     })
 
+    t.nonNull.list.nonNull.field('election', {
+      type: Election,
+      args: {
+        election_year_gte: intArg({default:1500}),
+        election_year_lte: intArg({default:2020}),
+        election_month: stringArg(),
+        constituency: stringArg(),
+        constituency_id: intArg(),
+        office: stringArg(),
+        electorate_size_est_lte: intArg(),
+        electorate_size_est_gte: intArg(),
+        countyboroughuniv: stringArg(),
+        franchise_type: list(stringArg()),
+        by_election_general: stringArg(),
+        by_election_cause: stringArg(),
+        contested: stringArg()
+        // election_id:  stringArg(),
+      },
+      resolve: (_parent, _args, context: Context) => {
+        return context.prisma.elections.findMany({
+          where: {  
+            election_date: {
+              gte: new Date(_args.election_year_gte,1,1),
+              lte: new Date(_args.election_year_lte,12,31) 
+             } || undefined,
+            election_month: _args.election_month || undefined,
+            constituency: _args.constituency || undefined,
+            office: _args.office || undefined,
+            electorate_size_est: {
+              gte: _args.electorate_size_est_gte,
+              lte: _args.electorate_size_est_lte 
+             } || undefined,
+            countyboroughuniv: _args.countyboroughuniv || undefined,
+            franchise_type: {
+              in:_args.franchise_type 
+            } || undefined,
+            by_election_general: _args.by_election_general || undefined,
+            by_election_cause:  _args.by_election_cause || undefined,
+            contested: _args.contested || undefined,
+          },
+        })
+      },
+    })
+
+    t.nonNull.list.nonNull.field('election_attributes', {
+      type: ElectionAttributes,
+      args: {
+        election_id: stringArg(),
+        attribute_name: stringArg()
+      },
+      resolve: (_parent, _args, context: Context) => {
+        return context.prisma.election_attributes.findMany({
+          where: { 
+            id:  _args.id || undefined,
+            election_id:  _args.election_id || undefined,
+            attribute_name:  _args.attribute_name || undefined,
+          },
+        })
+      },
+    })
+
     t.nonNull.list.nonNull.field('election_dates', {
       type: ElectionDates,
       args: {
@@ -235,50 +318,6 @@ const Query = objectType({
             ]
           },
           orderBy: _args.orderBy || undefined,
-        })
-      },
-    })
-
-    t.nonNull.list.nonNull.field('election', {
-      type: Election,
-      args: {
-        election_year_gte: intArg({default:1500}),
-        election_year_lte: intArg({default:2020}),
-        election_month: stringArg(),
-        constituency: stringArg(),
-        constituency_id: intArg(),
-        office: stringArg(),
-        electorate_size_est_lte: intArg(),
-        electorate_size_est_gte: intArg(),
-        countyboroughuniv: stringArg(),
-        franchise_type: list(stringArg()),
-        by_election_general: stringArg(),
-        by_election_cause: stringArg(),
-        contested: stringArg()
-        // election_id:  stringArg(),
-      },
-      resolve: (_parent, _args, context: Context) => {
-        return context.prisma.elections.findMany({
-          where: {  
-            election_date: {
-              gte: new Date(_args.election_year_gte,1,1),
-              lte: new Date(_args.election_year_lte,12,31) 
-             } || undefined,
-            election_month: _args.election_month || undefined,
-            constituency: _args.constituency || undefined,
-            office: _args.office || undefined,
-            electorate_size_est: {
-              gte: _args.electorate_size_est_gte,
-              lte: _args.electorate_size_est_lte 
-             } || undefined,
-            countyboroughuniv: _args.countyboroughuniv || undefined,
-            franchise_type: {
-              in:_args.franchise_type 
-            } || undefined,
-            by_election_general: _args.by_election_general || undefined,
-            by_election_cause:  _args.by_election_cause || undefined,
-            contested: _args.contested || undefined,
-          },
         })
       },
     })
@@ -528,10 +567,13 @@ const Artefact = objectType({
   name: 'artefact',
   definition(t) {
     t.nonNull.int('id')
-    t.string('filename')
     t.string('display_name')
     t.string('description')
-    t.string('artefact_type')
+    t.string('source')
+    t.string('source_link')
+    t.string('license')
+    t.string('attribution')
+    t.string('manifest')
     t.list.field('artefact_attributes', {
       type: ArtefactAttributes,
       resolve: (parent, _, context: Context) => {
@@ -556,6 +598,69 @@ const ArtefactAttributes = objectType({
           where: { id: parent.artefact_id || undefined }})
         },
     })
+    t.list.field('artefact_files', {
+      type: ArtefactFiles,
+      resolve: (parent, _, context: Context) => {
+        if (parent.attribute_name=="file_id"){
+          return context.prisma.artefact_files.findMany({
+            where: { id: parseInt(parent.attribute_value)}})
+        }else{
+          return undefined
+        }
+      },
+    })
+    t.list.field('candidates', {
+      type: Candidate,
+      resolve: (parent, _, context: Context) => {
+        if (parent.attribute_name=="candidate_id"){
+          return context.prisma.candidates.findMany({
+            where: { candidate_id: parseInt(parent.attribute_value)}})
+        }else{
+          return undefined
+        }
+      },
+    })
+    t.list.field('constituencies', {
+      type: Constituencies,
+      resolve: (parent, _, context: Context) => {
+        if (parent.attribute_name=="constituency_id"){
+          return context.prisma.constituencies.findMany({
+            where: { constituency_id: parseInt(parent.attribute_value)}})
+        }else{
+          return undefined
+        }
+      },
+    })
+    t.list.field('election', {
+      type: Election,
+      resolve: (parent, _, context: Context) => {
+        // console.log(parent.attribute_name)
+        if (parent.attribute_name=="election_id"){
+          console.log(parent.attribute_value)
+          return context.prisma.elections.findMany({
+            where: { election_id: parent.attribute_value}})
+        }else{
+          return undefined
+        }
+      },
+    })
+  }
+})
+
+const ArtefactFiles = objectType({
+  name: 'artefact_files',
+  definition(t) {
+    t.nonNull.int('id')
+    t.string('file_type')
+    t.string('display_label')
+    t.string('file_name')
+    // t.list.field('artefact', {
+    //   type: Artefact,
+    //   resolve: (parent, _, context: Context) => {
+    //     return context.prisma.artefacts.findMany({
+    //       where: { id: parent.artefact_id || undefined }})
+    //     },
+    // })
   },
 })
 
@@ -668,6 +773,24 @@ const Constituencies = objectType({
   }
 })
 
+const ElectionAttributes = objectType({
+  name: 'electionAttributes',
+  definition(t) {
+    t.nonNull.string('election_id')
+    t.nonNull.string('attribute_name')
+    t.nonNull.string('attribute_value')
+    t.list.field('election', {
+      type: Election,
+      resolve: (parent, _, context: Context) => {
+        return context.prisma.elections.findMany({
+          where: { election_id: parent.election_id || undefined }
+        })
+      },
+    })
+  },
+})
+
+
 const ElectionDates = objectType({
   name: 'electionDates',
   definition(t) {
@@ -695,6 +818,7 @@ const Election = objectType({
     t.string('office')
     t.string('electorate_size_est')
     t.string('electorate_size_desc')
+    t.string('voterate')
     t.string('countyboroughuniv')
     t.string('franchise_detail')
     t.string('franchise_type')
@@ -702,8 +826,10 @@ const Election = objectType({
     t.string('by_election_cause')
     t.string('contested')
     t.string('notes')
+    t.string('notable_remarks')
     t.string('latitude')
     t.string('longitude')
+    t.string('pollbook_id')
     // t.nonNull.string('election_id')
     // t.nonNull.string('pollbook_id')  
     t.list.field('candidates_elections', {
@@ -718,7 +844,7 @@ const Election = objectType({
       type: PollBooks,
       resolve: (parent, _, context: Context) => {
         return context.prisma.poll_books.findMany({
-          where: { ElectionCode: parent.election_id || undefined }
+          where: { pollbook_id: parent.pollbook_id || undefined }
         })
       },
     })
@@ -785,13 +911,14 @@ const LocationsFrom = objectType({
 const PollBooks = objectType({
   name: 'poll_books',
   definition(t) {
-    t.string('PollBookCode')
-    t.string('PrintMS')
-    t.string('Citation')
-    t.string('Holdings')
-    t.string('Source')
-    t.string('ElectionCode')
-    t.string('Notes')
+    t.string('pollbook_id')
+    t.string('constituency_id')
+    t.string('printms')
+    t.string('citation')
+    t.string('holdings')
+    t.string('source')
+    t.string('election_id')
+    t.string('notes')
   },
 })
 
@@ -1042,15 +1169,15 @@ export const schema = makeSchema({
     DateTime,
     SortOrder,
     OrderByDate,
-    // groupings
     Aggregate,
     GroupCategory,
-    // ElectionGroupBy,
-    // tables
+    ArtefactFiles,
+    ArtefactAttributes,
     Artefact,
     Candidate,
     CandidatesElection,
     Constituencies,
+    ElectionAttributes,
     ElectionDates,
     Election,
     Locations,

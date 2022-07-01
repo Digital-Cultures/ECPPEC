@@ -28,12 +28,14 @@ input OrderByDate {
 }
 
 type Query {
-  artefact(artefact_type: [String], description: String, display_name: String, filename: String): [artefact!]!
-  artefact_attributes(artefact_id: Int, attribute_name: String): [artefact_attributes!]!
+  artefact(description: String, display_name: String, manifest: String, source: String): [artefact!]!
+  artefact_attributes(artefact_id: Int, attribute_name: String, attribute_value: String): [artefact_attributes!]!
+  artefact_files(display_label: String, file_type: String, filename: String, id: Int): [artefact_files!]!
   candidate(born: Int, born_gte: Int, born_lte: Int, candidate_id: Int, candidate_name: String, died: Int, died_gte: Int, died_lte: Int, short_name: String, suffix: String, title: [String]): [candidate!]!
   candidates_elections(candidate_id: Int, election_id: String, overturned_by: String, returned: Int, running_as: String, seated: Int): [candidatesElection!]!
   constituencies(constituency: String, constituency_id: Int, has_polling_data: Boolean): [constituencies!]!
   election(by_election_cause: String, by_election_general: String, constituency: String, constituency_id: Int, contested: String, countyboroughuniv: String, election_month: String, election_year_gte: Int = 1500, election_year_lte: Int = 2020, electorate_size_est_gte: Int, electorate_size_est_lte: Int, franchise_type: [String], office: String): [election!]!
+  election_attributes(attribute_name: String, election_id: String): [electionAttributes!]!
   election_dates(election_year: Int = 0, election_year_gte: Int = 0, election_year_lte: Int = 9999, orderBy: OrderByDate): [electionDates!]!
   location(constituency: String): [locations!]!
   location_from(distance: Float = 1000, lat: Float, lng: Float): [locations_from!]!
@@ -56,18 +58,32 @@ type aggregate {
 
 type artefact {
   artefact_attributes: [artefact_attributes]
-  artefact_type: String
+  attribution: String
   description: String
   display_name: String
-  filename: String
   id: Int!
+  license: String
+  manifest: String
+  source: String
+  source_link: String
 }
 
 type artefact_attributes {
   artefact: [artefact]
+  artefact_files: [artefact_files]
   artefact_id: Int!
   attribute_name: String
   attribute_value: String
+  candidates: [candidate]
+  constituencies: [constituencies]
+  election: [election]
+  id: Int!
+}
+
+type artefact_files {
+  display_label: String
+  file_name: String
+  file_type: String
   id: Int!
 }
 
@@ -123,10 +139,20 @@ type election {
   has_data: Boolean
   latitude: String
   longitude: String
+  notable_remarks: String
   notes: String
   office: String
   poll_books: [poll_books]
+  pollbook_id: String
   vote: [vote]
+  voterate: String
+}
+
+type electionAttributes {
+  attribute_name: String!
+  attribute_value: String!
+  election: [election]
+  election_id: String!
 }
 
 type electionDates {
@@ -159,13 +185,14 @@ type occupations_map {
 }
 
 type poll_books {
-  Citation: String
-  ElectionCode: String
-  Holdings: String
-  Notes: String
-  PollBookCode: String
-  PrintMS: String
-  Source: String
+  citation: String
+  constituency_id: String
+  election_id: String
+  holdings: String
+  notes: String
+  pollbook_id: String
+  printms: String
+  source: String
 }
 
 type stats {

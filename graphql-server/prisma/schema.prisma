@@ -8,20 +8,44 @@ datasource db {
 }
 
 model artefact_attributes {
-  id              Int     @id @default(autoincrement()) @db.UnsignedInt
+  id              Int       @id @default(autoincrement()) @db.UnsignedInt
   artefact_id     Int?
-  attribute_name  String? @db.VarChar(25)
-  attribute_value String? @db.VarChar(255)
+  attribute_name  String?   @db.VarChar(25)
+  attribute_value String?   @db.VarChar(255)
+  sort_order      Int?      @db.TinyInt
+  created         DateTime  @default(now()) @db.Timestamp(0)
+  modified        DateTime? @db.Timestamp(0)
+
+  @@unique([artefact_id, attribute_value, attribute_name], name: "artefact_id")
 }
 
 model artefacts {
-  id            Int     @id @default(autoincrement())
-  filename      String? @db.VarChar(225)
-  display_name  String? @db.VarChar(75)
-  description   String? @default("") @db.VarChar(225)
-  artefact_type String? @default("image") @db.VarChar(225)
-  source_name   String? @db.Text
-  source_link   String? @db.Text
+  id           Int     @id @default(0)
+  display_name String? @db.VarChar(255)
+  description  String? @db.Text
+  source       String? @db.Text
+  source_link  String? @db.Text
+  license      String? @db.Text
+  attribution  String? @db.Text
+  manifest     String? @db.VarChar(100)
+}
+
+model artefact_objects {
+  id          Int     @id @default(autoincrement()) @db.UnsignedInt
+  artefact_id Int?
+  object_type String? @db.VarChar(50)
+  object_name String? @db.VarChar(255)
+  filename    String? @db.VarChar(255)
+  sort_order  Int     @default(0)
+
+  @@ignore
+}
+
+model artefact_files {
+  id            Int     @id @default(autoincrement()) @db.UnsignedInt
+  file_type     String? @db.VarChar(50)
+  display_label String? @db.VarChar(255)
+  file_name     String? @db.VarChar(255)
 }
 
 model candidates {
@@ -88,6 +112,7 @@ model elections {
   office               String    @default("parliament") @db.VarChar(25)
   electorate_size_est  Int?
   electorate_size_desc String?   @db.VarChar(25)
+  voterate             Int?
   countyboroughuniv    String?   @db.VarChar(50)
   franchise_detail     String?   @db.VarChar(50)
   franchise_type       String?   @db.VarChar(50)
@@ -98,6 +123,7 @@ model elections {
   pollbook_id          String?   @db.VarChar(50)
   general_election_id  String?   @db.VarChar(12)
   notes                String?   @db.VarChar(250)
+  notable_remarks      String?   @db.Text
   latitude             String?   @db.VarChar(50)
   longitude            String?   @db.VarChar(50)
 }
@@ -134,6 +160,8 @@ model locations_old {
   lat           Decimal               @db.Decimal(10, 8)
   lng           Decimal               @db.Decimal(11, 8)
   location      Unsupported("point")?
+
+  @@ignore
 }
 
 model poll_books {
@@ -152,17 +180,17 @@ model poll_books {
 model stats {
   constituency_id             Int     @id
   constituency                String? @db.VarChar(50)
-  num_elections_all           Int     @default(0)
+  num_elections_all           BigInt  @default(0)
   num_contested_all           Int     @default(0)
   percent_contested_all       Decimal @default(0.0) @db.Decimal(25, 1)
   num_uncontested_all         Int     @default(0)
   percent_uncontested_all     Decimal @default(0.0) @db.Decimal(25, 1)
-  num_elections_by            Int     @default(0)
+  num_elections_by            BigInt  @default(0)
   num_contested_by            Int     @default(0)
   percent_contested_by        Decimal @default(0.0) @db.Decimal(25, 1)
   num_uncontested_by          Int     @default(0)
   percent_uncontested_by      Decimal @default(0.0) @db.Decimal(25, 1)
-  num_elections_general       Int     @default(0)
+  num_elections_general       BigInt  @default(0)
   num_contested_general       Int     @default(0)
   percent_contested_general   Decimal @default(0.0) @db.Decimal(25, 1)
   num_uncontested_general     Int     @default(0)
@@ -182,8 +210,8 @@ model voters {
   occupation            String?   @db.VarChar(150)
   occupation_ideal      String?   @db.VarChar(150)
   guild                 String?   @db.VarChar(75)
-  alley                 String?   @db.VarChar(75)
-  street                String?   @db.VarChar(75)
+  alley                 String    @db.VarChar(75)
+  street                String    @db.VarChar(75)
   city                  String    @default("") @db.VarChar(50)
   county                String    @default("") @db.VarChar(75)
   college               String?   @db.VarChar(100)
