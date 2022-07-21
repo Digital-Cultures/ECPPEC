@@ -373,17 +373,32 @@ const Query = objectType({
     t.nonNull.list.nonNull.field('poll_book', {
       type: PollBooks,
       args: {
-        // election_year: stringArg(),
-        // contested: stringArg(),
-        // election_id:  stringArg(),
+        constituency_id: intArg(),
       },
       resolve: (_parent, _args, context: Context) => {
         return context.prisma.poll_books.findMany({
-
+          where: {  
+            constituency_id:  _args.constituency_id || undefined
+          }
         })
       },
     })
 
+    t.int('stat_num_poll_books', {
+      args: {
+        constituency_id: intArg(),
+      },
+      resolve: (_parent, _args, context: Context) => {
+        return context.prisma.poll_books.count({
+          where: {  
+            constituency_id:  _args.constituency_id || undefined
+          }
+        })
+      },
+    })
+
+
+    //should rename to election stats
     t.nonNull.list.nonNull.field('stats', {
       type: Stats,
       args: {
@@ -919,15 +934,45 @@ const PollBooks = objectType({
     t.string('source')
     t.string('election_id')
     t.string('notes')
+    t.field('constituencies', {
+      type: Constituencies,
+      resolve: (parent, _, context: Context) => {
+        return context.prisma.constituencies.findFirst({
+          where: { constituency_id: parent.constituency_id || undefined }
+        })
+      },
+    })
+    t.field('elections', {
+      type: Election,
+      resolve: (parent, args, context: Context) => {
+        return context.prisma.elections.findFirst({
+          where: {  
+            election_id: parent.election_id
+          }
+        })
+      },
+    })
   },
 })
+
+// const PollBooksStats = objectType({
+//   name: 'poll_books_stats',
+//   definition(t) {
+//     t.field('count', {
+//       type: PollBooks,
+//       resolve: (parent, _, context: Context) => {
+//         return context.prisma.poll_books.count()
+//       },
+//     })
+//   },
+// })
 
 const Stats = objectType({
   name: 'stats',
   definition(t) {
     t.string('constituency_id')
     t.string('constituency')
-    t.string('num_elections_all')
+    t.int('num_elections_all')
     t.int('num_contested_all')
     t.float('percent_contested_all')
     t.int('num_uncontested_all')

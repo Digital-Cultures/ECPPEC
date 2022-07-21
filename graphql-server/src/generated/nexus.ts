@@ -165,7 +165,7 @@ export interface NexusGenObjects {
     num_contested_all?: number | null; // Int
     num_contested_by?: number | null; // Int
     num_contested_general?: number | null; // Int
-    num_elections_all?: string | null; // String
+    num_elections_all?: number | null; // Int
     num_elections_by?: number | null; // Int
     num_elections_general?: number | null; // Int
     num_uncontested_all?: number | null; // Int
@@ -234,6 +234,7 @@ export interface NexusGenFieldTypes {
     location_from: NexusGenRootTypes['locations_from'][]; // [locations_from!]!
     occupations_group: NexusGenRootTypes['occupations_map'][]; // [occupations_map!]!
     poll_book: NexusGenRootTypes['poll_books'][]; // [poll_books!]!
+    stat_num_poll_books: number | null; // Int
     stats: NexusGenRootTypes['stats'][]; // [stats!]!
     vote: NexusGenRootTypes['vote'][]; // [vote!]!
     voter: NexusGenRootTypes['voter'][]; // [voter!]!
@@ -360,8 +361,10 @@ export interface NexusGenFieldTypes {
   }
   poll_books: { // field return type
     citation: string | null; // String
+    constituencies: NexusGenRootTypes['constituencies'] | null; // constituencies
     constituency_id: string | null; // String
     election_id: string | null; // String
+    elections: NexusGenRootTypes['election'] | null; // election
     holdings: string | null; // String
     notes: string | null; // String
     pollbook_id: string | null; // String
@@ -375,7 +378,7 @@ export interface NexusGenFieldTypes {
     num_contested_all: number | null; // Int
     num_contested_by: number | null; // Int
     num_contested_general: number | null; // Int
-    num_elections_all: string | null; // String
+    num_elections_all: number | null; // Int
     num_elections_by: number | null; // Int
     num_elections_general: number | null; // Int
     num_uncontested_all: number | null; // Int
@@ -445,6 +448,7 @@ export interface NexusGenFieldTypeNames {
     location_from: 'locations_from'
     occupations_group: 'occupations_map'
     poll_book: 'poll_books'
+    stat_num_poll_books: 'Int'
     stats: 'stats'
     vote: 'vote'
     voter: 'voter'
@@ -571,8 +575,10 @@ export interface NexusGenFieldTypeNames {
   }
   poll_books: { // field return type name
     citation: 'String'
+    constituencies: 'constituencies'
     constituency_id: 'String'
     election_id: 'String'
+    elections: 'election'
     holdings: 'String'
     notes: 'String'
     pollbook_id: 'String'
@@ -586,7 +592,7 @@ export interface NexusGenFieldTypeNames {
     num_contested_all: 'Int'
     num_contested_by: 'Int'
     num_contested_general: 'Int'
-    num_elections_all: 'String'
+    num_elections_all: 'Int'
     num_elections_by: 'Int'
     num_elections_general: 'Int'
     num_uncontested_all: 'Int'
@@ -721,6 +727,12 @@ export interface NexusGenArgTypes {
     }
     occupations_group: { // args
       occupation?: string | null; // String
+    }
+    poll_book: { // args
+      constituency_id?: number | null; // Int
+    }
+    stat_num_poll_books: { // args
+      constituency_id?: number | null; // Int
     }
     stats: { // args
       constituency?: string | null; // String
