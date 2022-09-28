@@ -593,7 +593,7 @@ const Artefact = objectType({
       type: ArtefactAttributes,
       resolve: (parent, _, context: Context) => {
         return context.prisma.artefact_attributes.findMany({
-          where: { artefact_id: parent.id || undefined }})
+          where: { artefact_id: parent.id}})
         },
     })
   },
@@ -616,14 +616,18 @@ const ArtefactAttributes = objectType({
     t.list.field('artefact_files', {
       type: ArtefactFiles,
       resolve: (parent, _, context: Context) => {
+        // console.log(parent.attribute_name)
+        
         if (parent.attribute_name=="file_id"){
           return context.prisma.artefact_files.findMany({
-            where: { id: parseInt(parent.attribute_value)}})
-        }else{
-          return undefined
+            where: { 
+              id: parseInt(parent.attribute_value)
+            },
+            distinct: ['file_name']})
         }
       },
     })
+
     t.list.field('candidates', {
       type: Candidate,
       resolve: (parent, _, context: Context) => {
@@ -631,10 +635,11 @@ const ArtefactAttributes = objectType({
           return context.prisma.candidates.findMany({
             where: { candidate_id: parseInt(parent.attribute_value)}})
         }else{
-          return undefined
+          return null
         }
       },
     })
+  
     t.list.field('constituencies', {
       type: Constituencies,
       resolve: (parent, _, context: Context) => {
@@ -642,7 +647,7 @@ const ArtefactAttributes = objectType({
           return context.prisma.constituencies.findMany({
             where: { constituency_id: parseInt(parent.attribute_value)}})
         }else{
-          return undefined
+          return null
         }
       },
     })
@@ -651,11 +656,11 @@ const ArtefactAttributes = objectType({
       resolve: (parent, _, context: Context) => {
         // console.log(parent.attribute_name)
         if (parent.attribute_name=="election_id"){
-          console.log(parent.attribute_value)
+          // console.log(parent.attribute_value)
           return context.prisma.elections.findMany({
             where: { election_id: parent.attribute_value}})
         }else{
-          return undefined
+          return null
         }
       },
     })
@@ -666,7 +671,7 @@ const ArtefactFiles = objectType({
   name: 'artefact_files',
   definition(t) {
     t.nonNull.int('id')
-    t.string('file_type')
+    t.nonNull.string('file_type')
     t.string('display_label')
     t.string('file_name')
     // t.list.field('artefact', {

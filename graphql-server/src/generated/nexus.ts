@@ -73,7 +73,7 @@ export interface NexusGenObjects {
   artefact_files: { // root type
     display_label?: string | null; // String
     file_name?: string | null; // String
-    file_type?: string | null; // String
+    file_type: string; // String!
     id: number; // Int!
   }
   candidate: { // root type
@@ -268,7 +268,7 @@ export interface NexusGenFieldTypes {
   artefact_files: { // field return type
     display_label: string | null; // String
     file_name: string | null; // String
-    file_type: string | null; // String
+    file_type: string; // String!
     id: number; // Int!
   }
   candidate: { // field return type

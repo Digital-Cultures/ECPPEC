@@ -84,7 +84,7 @@ type artefact_attributes {
 type artefact_files {
   display_label: String
   file_name: String
-  file_type: String
+  file_type: String!
   id: Int!
 }
 
