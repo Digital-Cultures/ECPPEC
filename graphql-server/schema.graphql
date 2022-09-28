@@ -89,6 +89,7 @@ type artefact_files {
 }
 
 type candidate {
+  artefact: [artefact]
   born: Int
   candidate_id: Int!
   candidate_name: String
@@ -112,6 +113,7 @@ type candidatesElection {
 }
 
 type constituencies {
+  artefact: [artefact]
   constituency: String
   constituency_id: Int!
   elections: [election]
@@ -123,6 +125,7 @@ type constituencies {
 }
 
 type election {
+  artefact: [artefact]
   by_election_cause: String
   by_election_general: String
   candidates_elections: [candidatesElection]

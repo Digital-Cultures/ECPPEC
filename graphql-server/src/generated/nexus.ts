@@ -114,6 +114,7 @@ export interface NexusGenObjects {
     electorate_size_est?: string | null; // String
     franchise_detail?: string | null; // String
     franchise_type?: string | null; // String
+    has_data?: boolean | null; // Boolean
     latitude?: string | null; // String
     longitude?: string | null; // String
     notable_remarks?: string | null; // String
@@ -272,6 +273,7 @@ export interface NexusGenFieldTypes {
     id: number; // Int!
   }
   candidate: { // field return type
+    artefact: Array<NexusGenRootTypes['artefact'] | null> | null; // [artefact]
     born: number | null; // Int
     candidate_id: number; // Int!
     candidate_name: string | null; // String
@@ -293,6 +295,7 @@ export interface NexusGenFieldTypes {
     seated: boolean | null; // Boolean
   }
   constituencies: { // field return type
+    artefact: Array<NexusGenRootTypes['artefact'] | null> | null; // [artefact]
     constituency: string | null; // String
     constituency_id: number; // Int!
     elections: Array<NexusGenRootTypes['election'] | null> | null; // [election]
@@ -303,6 +306,7 @@ export interface NexusGenFieldTypes {
     stats: Array<NexusGenRootTypes['stats'] | null> | null; // [stats]
   }
   election: { // field return type
+    artefact: Array<NexusGenRootTypes['artefact'] | null> | null; // [artefact]
     by_election_cause: string | null; // String
     by_election_general: string | null; // String
     candidates_elections: Array<NexusGenRootTypes['candidatesElection'] | null> | null; // [candidatesElection]
@@ -486,6 +490,7 @@ export interface NexusGenFieldTypeNames {
     id: 'Int'
   }
   candidate: { // field return type name
+    artefact: 'artefact'
     born: 'Int'
     candidate_id: 'Int'
     candidate_name: 'String'
@@ -507,6 +512,7 @@ export interface NexusGenFieldTypeNames {
     seated: 'Boolean'
   }
   constituencies: { // field return type name
+    artefact: 'artefact'
     constituency: 'String'
     constituency_id: 'Int'
     elections: 'election'
@@ -517,6 +523,7 @@ export interface NexusGenFieldTypeNames {
     stats: 'stats'
   }
   election: { // field return type name
+    artefact: 'artefact'
     by_election_cause: 'String'
     by_election_general: 'String'
     candidates_elections: 'candidatesElection'

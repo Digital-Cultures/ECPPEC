@@ -721,6 +721,13 @@ const Candidate = objectType({
         })
       },
     })
+    t.list.field('artefact', {
+      type: Artefact,
+      resolve: async (parent, _, context: Context) => {
+        //get artifacts by election_id
+        return context.prisma.$queryRaw(`SELECT * FROM artefacts INNER JOIN (SELECT artefact_id FROM ECPPEC.artefact_attributes where attribute_name="candidate_id" and attribute_value="`+parent.candidate_id+`") c on artefacts.id=c.artefact_id;`)
+      }
+    })
     
     // t.int('voteCount', {
     //   type: 'Int',
@@ -790,6 +797,13 @@ const Constituencies = objectType({
         })
       },
     })
+    t.list.field('artefact', {
+      type: Artefact,
+      resolve: async (parent, _, context: Context) => {
+        //get artifacts by election_id
+        return context.prisma.$queryRaw(`SELECT * FROM artefacts INNER JOIN (SELECT artefact_id FROM ECPPEC.artefact_attributes where attribute_name="constituency_id" and attribute_value="`+parent.constituency_id+`") c on artefacts.id=c.artefact_id;`)
+      }
+    })
   }
 })
 
@@ -850,6 +864,7 @@ const Election = objectType({
     t.string('latitude')
     t.string('longitude')
     t.string('pollbook_id')
+    t.boolean('has_data')
     // t.nonNull.string('election_id')
     // t.nonNull.string('pollbook_id')  
     t.list.field('candidates_elections', {
@@ -868,18 +883,19 @@ const Election = objectType({
         })
       },
     })
-    t.boolean('has_data', {
-      resolve: async (parent, _, context: Context) => {
-        const result = await context.prisma.$queryRaw(`SELECT EXISTS(SELECT * from ECPPEC.votes WHERE  election_id = "`+parent.election_id+`") as has_data`);
-        return result[0].has_data;
-      }
-    })
     t.list.field('vote', {
       type: Vote,
       resolve: (parent, _, context: Context) => {
         return context.prisma.votes.findMany({
           where: { election_id: parent.election_id || undefined }})
         },
+    })
+    t.list.field('artefact', {
+      type: Artefact,
+      resolve: async (parent, _, context: Context) => {
+        //get artifacts by election_id
+        return context.prisma.$queryRaw(`SELECT * FROM artefacts INNER JOIN (SELECT artefact_id FROM ECPPEC.artefact_attributes where attribute_name="election_id" and attribute_value="`+parent.election_id+`") a on artefacts.id=a.artefact_id;`)
+      }
     })
   },
 })
