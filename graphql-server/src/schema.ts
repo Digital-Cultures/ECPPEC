@@ -322,26 +322,6 @@ const Query = objectType({
       },
     })
 
-    // t.nonNull.list.nonNull.field('election_group_by', {
-    //   type: ElectionGroupBy,
-    //   args: {
-    //     groupBy: list( GroupCategory),
-    //   },
-    //   resolve: (_parent, args, context: Context) => {
-    //     const election_count = context.prisma.elections.groupBy({
-    //       by: args.groupBy,
-    //       count: {
-    //         election_year: true,
-    //       },
-          
-    //       // orderBy: {
-    //       //   election_year: 'asc',
-    //       // },
-    //     })
-    //     return election_count;
-    //   },
-    // })
-
     t.nonNull.list.nonNull.field('location', {
       type: Locations,
       args: {
@@ -362,7 +342,6 @@ const Query = objectType({
         lat: floatArg(),
         lng: floatArg(),
         distance: floatArg({default:1000})
-
       },
       resolve: (_parent, _args, context: Context) => {
         //3959 is the Earth radius in miles. Earth radius in kilometres (km): 6371
@@ -374,10 +353,12 @@ const Query = objectType({
       type: PollBooks,
       args: {
         constituency_id: intArg(),
+          has_data: booleanArg(),
       },
       resolve: (_parent, _args, context: Context) => {
         return context.prisma.poll_books.findMany({
           where: {  
+            has_data: _args.has_data || undefined,
             constituency_id:  _args.constituency_id || undefined
           }
         })
@@ -568,6 +549,32 @@ const Query = objectType({
             level_name: {
               contains:  _args.occupation
              } || undefined,
+          }
+        })
+      },
+    })
+
+    t.nonNull.list.nonNull.field('geocodes', {
+      type: Geocode,
+      args: {
+        street: stringArg(),
+        city: stringArg(),
+        county: stringArg(),
+        parish: stringArg(),
+        abode: stringArg(),
+        address: stringArg(),
+        constituency: stringArg(),
+      },
+      resolve: (_parent, _args, context: Context) => {
+        return context.prisma.geocodes.findMany({
+          where: {
+            street: _args.street || undefined,
+            city: _args.city || undefined,
+            county: _args.county || undefined,
+            parish: _args.parish || undefined,
+            abode: _args.abode || undefined,
+            address: { contains: _args.address } || undefined,
+            constituency: _args.constituency || undefined,
           }
         })
       },
@@ -771,7 +778,7 @@ const Constituencies = objectType({
   definition(t) {
     t.nonNull.int('constituency_id')
     t.string('constituency')
-    t.boolean('has_polling_data')
+    t.boolean('has_data')
     t.float('lat')
     t.float('lng')
     t.list.field('elections', {
@@ -879,7 +886,7 @@ const Election = objectType({
       type: PollBooks,
       resolve: (parent, _, context: Context) => {
         return context.prisma.poll_books.findMany({
-          where: { pollbook_id: parent.pollbook_id || undefined }
+          where: { election_id: parent.election_id || undefined }
         })
       },
     })
@@ -890,7 +897,7 @@ const Election = objectType({
           where: { election_id: parent.election_id || undefined }})
         },
     })
-    t.list.field('artefact', {
+    t.list.field('artefacts', {
       type: Artefact,
       resolve: async (parent, _, context: Context) => {
         //get artifacts by election_id
@@ -955,6 +962,7 @@ const PollBooks = objectType({
     t.string('source')
     t.string('election_id')
     t.string('notes')
+    t.boolean('has_data')
     t.field('constituencies', {
       type: Constituencies,
       resolve: (parent, _, context: Context) => {
@@ -973,6 +981,12 @@ const PollBooks = objectType({
         })
       },
     })
+    // t.boolean('has_data', {
+    //   resolve: async (parent, _, context: Context) => {
+    //     const result = await context.prisma.$queryRaw(`SELECT EXISTS(SELECT * from ECPPEC.votes WHERE  pollbook_id = "`+parent.pollbook_id+`") as has_data`);
+    //     return result[0].has_data;
+    //   }
+    // })
   },
 })
 
@@ -1055,12 +1069,33 @@ const Voter = objectType({
       },
     })
     t.string('guild')
+    t.string('alley')
     t.string('street')
     t.string('city')
     t.string('county')
+    t.string('college')
+    t.string('fellowship')
+    t.string('degree')
+    t.string('oath')
     t.string('parish')
+    t.string('parish_of_freehold')
+    t.string('hundred')
+    t.string('ward_of_freehold')
+    t.string('occupier_and_freehold')
     t.string('abode')
     t.string('abode_std')
+    t.string('ward')
+    t.string('area')
+    t.int('geocode_id')
+    t.field('geocode', {
+      type: Geocode,
+      resolve: (parent, _, context: Context) => {
+        return context.prisma.geocodes.findFirst({
+          where: { geocode_id: parent.geocode_id || undefined }})
+        },
+    })
+    // t.int('geo_lat')
+    // t.int('geo_long')
     t.string('notes')
     t.list.field('vote', {
       type: Vote,
@@ -1108,9 +1143,13 @@ const Vote = objectType({
     })
     t.list.field('poll_books', {
       type: PollBooks,
+      args: {
+        has_data: booleanArg(),
+      },
       resolve: (parent, args, context: Context) => {
         return context.prisma.poll_books.findMany({
           where: {  
+            has_data: args.has_data || undefined,
             pollbook_id: parent.pollbook_id
           }
         })
@@ -1165,7 +1204,7 @@ const OccupationsMap = objectType({
 const VotersOccupations = objectType({
   name: 'voters_occupations',
   definition(t) {
-    t.string('voter_id')
+    t.int('voter_id')
     t.string('occupation')
     t.list.field('voters', {
       type: Voter,
@@ -1205,6 +1244,54 @@ const VotersOccupations = objectType({
     //     },
     // })
   },
+})
+
+const Geocode =  objectType({
+  name: 'geocodes',
+  definition(t) {
+    t.int('geocode_id')
+    t.string('concat_id')
+    t.string('street')
+    t.string('city')
+    t.string('county')
+    t.string('parish')
+    t.string('abode')
+    t.string('address_type')
+    t.string('address')
+    t.float('score')
+    t.float('lat')
+    t.float('lng')
+    // t.string('constituency')
+    t.int('constituency_id')
+    t.field('constituency', {
+      type: Constituencies,
+      resolve: (parent, _, context: Context) => {
+        return context.prisma.elections.findFirst({
+          where: { constituency_id: parent.constituency_id || undefined }
+        })
+      },
+    })
+    t.list.field('voter', {
+      type: Voter,
+      args: {
+        forename: stringArg(),
+        surname: stringArg(),
+        occupation: stringArg(),
+        guild: stringArg(),
+      },
+      resolve: (parent, args, context: Context) => {
+        return context.prisma.voters.findMany({
+          where: {  
+            forename: args.forename || undefined,
+            surname: args.surname || undefined,
+            occupation: args.occupation || undefined,
+            guild: args.guild || undefined,
+            geocode_id: parent.geocode_id 
+          }
+        })
+      },
+    })
+  }
 })
 
 const LocationType = enumType({

@@ -37,10 +37,11 @@ type Query {
   election(by_election_cause: String, by_election_general: String, constituency: String, constituency_id: Int, contested: String, countyboroughuniv: String, election_month: String, election_year_gte: Int = 1500, election_year_lte: Int = 2020, electorate_size_est_gte: Int, electorate_size_est_lte: Int, franchise_type: [String], office: String): [election!]!
   election_attributes(attribute_name: String, election_id: String): [electionAttributes!]!
   election_dates(election_year: Int = 0, election_year_gte: Int = 0, election_year_lte: Int = 9999, orderBy: OrderByDate): [electionDates!]!
+  geocodes(abode: String, address: String, city: String, constituency: String, county: String, parish: String, street: String): [geocodes!]!
   location(constituency: String): [locations!]!
   location_from(distance: Float = 1000, lat: Float, lng: Float): [locations_from!]!
   occupations_group(occupation: String): [occupations_map!]!
-  poll_book(constituency_id: Int): [poll_books!]!
+  poll_book(constituency_id: Int, has_data: Boolean): [poll_books!]!
   stat_num_poll_books(constituency_id: Int): Int
   stats(constituency: String, num_contested_all_gte: Int, num_contested_all_lte: Int, num_contested_by_gte: Int, num_contested_by_lte: Int, num_contested_general_gte: Int, num_contested_general_lte: Int, num_elections_all_gte: Int, num_elections_all_lte: Int, num_elections_by_gte: Int, num_elections_by_lte: Int, num_elections_general_gte: Int, num_elections_general_lte: Int, num_uncontested_all_gte: Int, num_uncontested_all_lte: Int, num_uncontested_by_gte: Int, num_uncontested_by_lte: Int, num_uncontested_general_gte: Int, num_uncontested_general_lte: Int, percent_contested_all_gte: Float, percent_contested_all_lte: Float, percent_contested_by_gte: Float, percent_contested_by_lte: Float, percent_contested_general_gte: Float, percent_contested_general_lte: Float, percent_uncontested_all_gte: Float, percent_uncontested_all_lte: Float, percent_uncontested_by_gte: Float, percent_uncontested_by_lte: Float, percent_uncontested_general_gte: Float, percent_uncontested_general_lte: Float): [stats!]!
   vote(line: Int, page: Int): [vote!]!
@@ -118,14 +119,14 @@ type constituencies {
   constituency_id: Int!
   elections: [election]
   electionsCount: Int
-  has_polling_data: Boolean
+  has_data: Boolean
   lat: Float
   lng: Float
   stats: [stats]
 }
 
 type election {
-  artefact: [artefact]
+  artefacts: [artefact]
   by_election_cause: String
   by_election_general: String
   candidates_elections: [candidatesElection]
@@ -165,6 +166,24 @@ type electionDates {
   election_id: String!
 }
 
+type geocodes {
+  abode: String
+  address: String
+  address_type: String
+  city: String
+  concat_id: String
+  constituency: constituencies
+  constituency_id: Int
+  county: String
+  geocode_id: Int
+  lat: Float
+  lng: Float
+  parish: String
+  score: Float
+  street: String
+  voter(forename: String, guild: String, occupation: String, surname: String): [voter]
+}
+
 type locations {
   constituencies: [constituencies]
   constituency: String
@@ -194,6 +213,7 @@ type poll_books {
   constituency_id: String
   election_id: String
   elections: election
+  has_data: Boolean
   holdings: String
   notes: String
   pollbook_id: String
@@ -228,7 +248,7 @@ type vote {
   elections: [election]
   line: Int
   page: Int
-  poll_books: [poll_books]
+  poll_books(has_data: Boolean): [poll_books]
   poll_date: String
   voter(forename: String, guild: String, occupation: String, surname: String): [voter]
   votes_id: Int
@@ -237,17 +257,28 @@ type vote {
 type voter {
   abode: String
   abode_std: String
+  alley: String
+  area: String
   city: String
   class: String
+  college: String
   county: String
+  degree: String
+  fellowship: String
   forename: String
+  geocode: geocodes
+  geocode_id: Int
   guild: String
+  hundred: String
   notes: String
+  oath: String
   occupation: String
   occupation_ideal: String
   occupations_level1: [occupations_map]
   occupations_level2: [occupations_map]
+  occupier_and_freehold: String
   parish: String
+  parish_of_freehold: String
   street: String
   suffix: String
   suffix_ideal: String
@@ -255,12 +286,14 @@ type voter {
   title: String
   vote: [vote]
   voter_id: Int
+  ward: String
+  ward_of_freehold: String
 }
 
 type voters_occupations {
   level1: [occupations_map]
   level2: [occupations_map]
   occupation: String
-  voter_id: String
+  voter_id: Int
   voters: [voter]
 }

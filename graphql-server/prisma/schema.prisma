@@ -65,12 +65,12 @@ model candidates_elections {
 }
 
 model constituencies {
-  constituency_id  Int                   @id @default(autoincrement()) @db.UnsignedInt
-  constituency     String?               @db.VarChar(50)
-  has_polling_data Int                   @default(0) @db.TinyInt
-  lat              Decimal?              @db.Decimal(10, 8)
-  lng              Decimal?              @db.Decimal(11, 8)
-  location         Unsupported("point")?
+  constituency_id Int                   @id @default(autoincrement()) @db.UnsignedInt
+  constituency    String?               @db.VarChar(50)
+  has_data        Int                   @default(0) @db.TinyInt
+  lat             Decimal?              @db.Decimal(10, 8)
+  lng             Decimal?              @db.Decimal(11, 8)
+  location        Unsupported("point")?
 }
 
 model election_attributes {
@@ -138,6 +138,7 @@ model poll_books {
   source          String? @db.VarChar(1000)
   election_id     String  @default("") @db.VarChar(100)
   notes           String? @db.VarChar(1000)
+  has_data        Int     @default(0) @db.TinyInt
 
   @@index([election_id], name: "ElectionCode")
 }
