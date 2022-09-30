@@ -322,21 +322,7 @@ const Query = objectType({
       },
     })
 
-    t.nonNull.list.nonNull.field('location', {
-      type: Locations,
-      args: {
-        constituency: stringArg(),
-      },
-      resolve: (_parent, _args, context: Context) => {
-        return context.prisma.locations.findMany({
-          where: {
-            constituency: _args.constituency || undefined,
-          },
-        })
-      },
-    })
-
-    t.nonNull.list.nonNull.field('location_from', {
+    t.nonNull.list.nonNull.field('location_from_lat_lng', {
       type: LocationsFrom,
       args: {
         lat: floatArg(),
@@ -345,7 +331,7 @@ const Query = objectType({
       },
       resolve: (_parent, _args, context: Context) => {
         //3959 is the Earth radius in miles. Earth radius in kilometres (km): 6371
-        return context.prisma.$queryRaw(Prisma.sql`SELECT locations.constituency, lat, lng, floor(3959 * acos( cos( radians(${_args.lat}) ) * cos( radians( locations.lat ) ) * cos( radians(locations.lng ) - radians(${_args.lng}) ) + sin( radians(${_args.lat}) ) * sin(radians(locations.lat)))) AS distance FROM ECPPEC.locations HAVING distance<${_args.distance} ORDER BY distance`)
+        return context.prisma.$queryRaw(Prisma.sql`SELECT constituency_id, has_data, constituency, lat, lng, floor(3959 * acos( cos( radians(${_args.lat}) ) * cos( radians( constituencies.lat ) ) * cos( radians(constituencies.lng ) - radians(${_args.lng}) ) + sin( radians(${_args.lat}) ) * sin(radians(constituencies.lat)))) AS distance FROM ECPPEC.constituencies HAVING distance<${_args.distance} ORDER BY distance`)
       },
     })
 
@@ -377,7 +363,6 @@ const Query = objectType({
         })
       },
     })
-
 
     //should rename to election stats
     t.nonNull.list.nonNull.field('stats', {
@@ -579,9 +564,6 @@ const Query = objectType({
         })
       },
     })
-
-    
-    
   },
 })
 
@@ -735,14 +717,6 @@ const Candidate = objectType({
         return context.prisma.$queryRaw(`SELECT * FROM artefacts INNER JOIN (SELECT artefact_id FROM ECPPEC.artefact_attributes where attribute_name="candidate_id" and attribute_value="`+parent.candidate_id+`") c on artefacts.id=c.artefact_id;`)
       }
     })
-    
-    // t.int('voteCount', {
-    //   type: 'Int',
-    //   resolve: (parent, _, context: Context) => {
-    //     return context.prisma.votes.count({
-    //       where: { candidate_id: parent.candidate_id || undefined }})
-    //     },
-    // })
   },
 })
 
@@ -855,7 +829,6 @@ const Election = objectType({
     t.string('election_year')
     t.string('election_month')
     t.date('election_date')
-    t.string('constituency')
     t.string('office')
     t.string('electorate_size_est')
     t.string('electorate_size_desc')
@@ -868,12 +841,16 @@ const Election = objectType({
     t.string('contested')
     t.string('notes')
     t.string('notable_remarks')
-    t.string('latitude')
-    t.string('longitude')
+    t.field('constituencies', {
+      type: Constituencies,
+      resolve: (parent, _, context: Context) => {
+        return context.prisma.constituencies.findFirst({
+          where: { constituency_id: parent.constituency_id }
+        })
+      },
+    })
     t.string('pollbook_id')
-    t.boolean('has_data')
-    // t.nonNull.string('election_id')
-    // t.nonNull.string('pollbook_id')  
+    t.boolean('has_data') 
     t.list.field('candidates_elections', {
       type: CandidatesElection,
       resolve: (parent, _, context: Context) => {
@@ -914,40 +891,45 @@ const Aggregate = objectType({
   },
 })
 
-const Locations = objectType({
-  name: 'locations',
+const LocationsFrom = objectType({
+  name: 'locations_from_lat_lng',
   definition(t) {
     t.string('constituency_id')
     t.string('constituency')
     t.float('lat')
     t.float('lng')
-    t.list.field('constituencies', {
-      type: Constituencies,
+    t.float('distance')
+    t.boolean('has_data')
+    t.list.field('elections', {
+      type: Election,
       resolve: (parent, _, context: Context) => {
         return context.prisma.elections.findMany({
           where: { constituency_id: parent.constituency_id || undefined }
         })
       },
     })
-  },
-})
-
-const LocationsFrom = objectType({
-  name: 'locations_from',
-  definition(t) {
-    t.string('constituency_id')
-    t.string('constituency_name')
-    t.float('lat')
-    t.float('lng')
-    t.float('distance')
-    // t.list.field('constituencies', {
-    //   type: Constituencies,
-    //   resolve: (parent, _, context: Context) => {
-    //     return context.prisma.elections.findMany({
-    //       where: { constituency_id: parent.constituency_id || undefined }
-    //     })
-    //   },
-    // })
+    t.int('electionsCount', {
+      type: 'Int',
+      resolve: (parent, _, context: Context) => {
+        return context.prisma.elections.count({
+          where: { constituency_id: parent.constituency_id }})
+        },
+    })
+    t.list.field('stats', {
+      type: Stats,
+      resolve: (parent, _, context: Context) => {
+        return context.prisma.stats.findMany({
+          where: { constituency_id: parent.constituency_id || undefined }
+        })
+      },
+    })
+    t.list.field('artefact', {
+      type: Artefact,
+      resolve: async (parent, _, context: Context) => {
+        //get artifacts by election_id
+        return context.prisma.$queryRaw(`SELECT * FROM artefacts INNER JOIN (SELECT artefact_id FROM ECPPEC.artefact_attributes where attribute_name="constituency_id" and attribute_value="`+parent.constituency_id+`") c on artefacts.id=c.artefact_id;`)
+      }
+    })
   }
 })
 
@@ -981,12 +963,6 @@ const PollBooks = objectType({
         })
       },
     })
-    // t.boolean('has_data', {
-    //   resolve: async (parent, _, context: Context) => {
-    //     const result = await context.prisma.$queryRaw(`SELECT EXISTS(SELECT * from ECPPEC.votes WHERE  pollbook_id = "`+parent.pollbook_id+`") as has_data`);
-    //     return result[0].has_data;
-    //   }
-    // })
   },
 })
 
@@ -1094,8 +1070,6 @@ const Voter = objectType({
           where: { geocode_id: parent.geocode_id || undefined }})
         },
     })
-    // t.int('geo_lat')
-    // t.int('geo_long')
     t.string('notes')
     t.list.field('vote', {
       type: Vote,
@@ -1227,22 +1201,6 @@ const VotersOccupations = objectType({
           where: { level_code: parent.level2 || undefined }})
         },
     })
-    // t.string('level3')
-    // t.string('level4')
-    // t.list.field('level3_occupation', {
-    //   type: OccupationsMap,
-    //   resolve: (parent, _, context: Context) => {
-    //     return context.prisma.occupations_map.findMany({
-    //       where: { level_code: parent.level3 || undefined }})
-    //     },
-    // })
-    // t.list.field('level4_occupation', {
-    //   type: OccupationsMap,
-    //   resolve: (parent, _, context: Context) => {
-    //     return context.prisma.occupations_map.findMany({
-    //       where: { level_code: parent.level4 || undefined }})
-    //     },
-    // })
   },
 })
 
@@ -1333,7 +1291,6 @@ export const schema = makeSchema({
     ElectionAttributes,
     ElectionDates,
     Election,
-    Locations,
     LocationsFrom,
     LocationType,
     PollBooks,

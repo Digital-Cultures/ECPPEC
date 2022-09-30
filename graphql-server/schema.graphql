@@ -38,8 +38,7 @@ type Query {
   election_attributes(attribute_name: String, election_id: String): [electionAttributes!]!
   election_dates(election_year: Int = 0, election_year_gte: Int = 0, election_year_lte: Int = 9999, orderBy: OrderByDate): [electionDates!]!
   geocodes(abode: String, address: String, city: String, constituency: String, county: String, parish: String, street: String): [geocodes!]!
-  location(constituency: String): [locations!]!
-  location_from(distance: Float = 1000, lat: Float, lng: Float): [locations_from!]!
+  location_from_lat_lng(distance: Float = 1000, lat: Float, lng: Float): [locations_from_lat_lng!]!
   occupations_group(occupation: String): [occupations_map!]!
   poll_book(constituency_id: Int, has_data: Boolean): [poll_books!]!
   stat_num_poll_books(constituency_id: Int): Int
@@ -130,7 +129,7 @@ type election {
   by_election_cause: String
   by_election_general: String
   candidates_elections: [candidatesElection]
-  constituency: String
+  constituencies: constituencies
   contested: String
   countyboroughuniv: String
   election_date: DateTime
@@ -142,8 +141,6 @@ type election {
   franchise_detail: String
   franchise_type: String
   has_data: Boolean
-  latitude: String
-  longitude: String
   notable_remarks: String
   notes: String
   office: String
@@ -184,20 +181,17 @@ type geocodes {
   voter(forename: String, guild: String, occupation: String, surname: String): [voter]
 }
 
-type locations {
-  constituencies: [constituencies]
+type locations_from_lat_lng {
+  artefact: [artefact]
   constituency: String
   constituency_id: String
-  lat: Float
-  lng: Float
-}
-
-type locations_from {
-  constituency_id: String
-  constituency_name: String
   distance: Float
+  elections: [election]
+  electionsCount: Int
+  has_data: Boolean
   lat: Float
   lng: Float
+  stats: [stats]
 }
 
 type occupations_map {

@@ -103,7 +103,6 @@ export interface NexusGenObjects {
   election: { // root type
     by_election_cause?: string | null; // String
     by_election_general?: string | null; // String
-    constituency?: string | null; // String
     contested?: string | null; // String
     countyboroughuniv?: string | null; // String
     election_date?: NexusGenScalars['DateTime'] | null; // DateTime
@@ -115,8 +114,6 @@ export interface NexusGenObjects {
     franchise_detail?: string | null; // String
     franchise_type?: string | null; // String
     has_data?: boolean | null; // Boolean
-    latitude?: string | null; // String
-    longitude?: string | null; // String
     notable_remarks?: string | null; // String
     notes?: string | null; // String
     office?: string | null; // String
@@ -147,16 +144,11 @@ export interface NexusGenObjects {
     score?: number | null; // Float
     street?: string | null; // String
   }
-  locations: { // root type
+  locations_from_lat_lng: { // root type
     constituency?: string | null; // String
     constituency_id?: string | null; // String
-    lat?: number | null; // Float
-    lng?: number | null; // Float
-  }
-  locations_from: { // root type
-    constituency_id?: string | null; // String
-    constituency_name?: string | null; // String
     distance?: number | null; // Float
+    has_data?: boolean | null; // Boolean
     lat?: number | null; // Float
     lng?: number | null; // Float
   }
@@ -260,8 +252,7 @@ export interface NexusGenFieldTypes {
     election_attributes: NexusGenRootTypes['electionAttributes'][]; // [electionAttributes!]!
     election_dates: NexusGenRootTypes['electionDates'][]; // [electionDates!]!
     geocodes: NexusGenRootTypes['geocodes'][]; // [geocodes!]!
-    location: NexusGenRootTypes['locations'][]; // [locations!]!
-    location_from: NexusGenRootTypes['locations_from'][]; // [locations_from!]!
+    location_from_lat_lng: NexusGenRootTypes['locations_from_lat_lng'][]; // [locations_from_lat_lng!]!
     occupations_group: NexusGenRootTypes['occupations_map'][]; // [occupations_map!]!
     poll_book: NexusGenRootTypes['poll_books'][]; // [poll_books!]!
     stat_num_poll_books: number | null; // Int
@@ -339,7 +330,7 @@ export interface NexusGenFieldTypes {
     by_election_cause: string | null; // String
     by_election_general: string | null; // String
     candidates_elections: Array<NexusGenRootTypes['candidatesElection'] | null> | null; // [candidatesElection]
-    constituency: string | null; // String
+    constituencies: NexusGenRootTypes['constituencies'] | null; // constituencies
     contested: string | null; // String
     countyboroughuniv: string | null; // String
     election_date: NexusGenScalars['DateTime'] | null; // DateTime
@@ -351,8 +342,6 @@ export interface NexusGenFieldTypes {
     franchise_detail: string | null; // String
     franchise_type: string | null; // String
     has_data: boolean | null; // Boolean
-    latitude: string | null; // String
-    longitude: string | null; // String
     notable_remarks: string | null; // String
     notes: string | null; // String
     office: string | null; // String
@@ -389,19 +378,17 @@ export interface NexusGenFieldTypes {
     street: string | null; // String
     voter: Array<NexusGenRootTypes['voter'] | null> | null; // [voter]
   }
-  locations: { // field return type
-    constituencies: Array<NexusGenRootTypes['constituencies'] | null> | null; // [constituencies]
+  locations_from_lat_lng: { // field return type
+    artefact: Array<NexusGenRootTypes['artefact'] | null> | null; // [artefact]
     constituency: string | null; // String
     constituency_id: string | null; // String
-    lat: number | null; // Float
-    lng: number | null; // Float
-  }
-  locations_from: { // field return type
-    constituency_id: string | null; // String
-    constituency_name: string | null; // String
     distance: number | null; // Float
+    elections: Array<NexusGenRootTypes['election'] | null> | null; // [election]
+    electionsCount: number | null; // Int
+    has_data: boolean | null; // Boolean
     lat: number | null; // Float
     lng: number | null; // Float
+    stats: Array<NexusGenRootTypes['stats'] | null> | null; // [stats]
   }
   occupations_map: { // field return type
     level_code: string | null; // String
@@ -509,8 +496,7 @@ export interface NexusGenFieldTypeNames {
     election_attributes: 'electionAttributes'
     election_dates: 'electionDates'
     geocodes: 'geocodes'
-    location: 'locations'
-    location_from: 'locations_from'
+    location_from_lat_lng: 'locations_from_lat_lng'
     occupations_group: 'occupations_map'
     poll_book: 'poll_books'
     stat_num_poll_books: 'Int'
@@ -588,7 +574,7 @@ export interface NexusGenFieldTypeNames {
     by_election_cause: 'String'
     by_election_general: 'String'
     candidates_elections: 'candidatesElection'
-    constituency: 'String'
+    constituencies: 'constituencies'
     contested: 'String'
     countyboroughuniv: 'String'
     election_date: 'DateTime'
@@ -600,8 +586,6 @@ export interface NexusGenFieldTypeNames {
     franchise_detail: 'String'
     franchise_type: 'String'
     has_data: 'Boolean'
-    latitude: 'String'
-    longitude: 'String'
     notable_remarks: 'String'
     notes: 'String'
     office: 'String'
@@ -638,19 +622,17 @@ export interface NexusGenFieldTypeNames {
     street: 'String'
     voter: 'voter'
   }
-  locations: { // field return type name
-    constituencies: 'constituencies'
+  locations_from_lat_lng: { // field return type name
+    artefact: 'artefact'
     constituency: 'String'
     constituency_id: 'String'
-    lat: 'Float'
-    lng: 'Float'
-  }
-  locations_from: { // field return type name
-    constituency_id: 'String'
-    constituency_name: 'String'
     distance: 'Float'
+    elections: 'election'
+    electionsCount: 'Int'
+    has_data: 'Boolean'
     lat: 'Float'
     lng: 'Float'
+    stats: 'stats'
   }
   occupations_map: { // field return type name
     level_code: 'String'
@@ -825,10 +807,7 @@ export interface NexusGenArgTypes {
       parish?: string | null; // String
       street?: string | null; // String
     }
-    location: { // args
-      constituency?: string | null; // String
-    }
-    location_from: { // args
+    location_from_lat_lng: { // args
       distance: number | null; // Float
       lat?: number | null; // Float
       lng?: number | null; // Float

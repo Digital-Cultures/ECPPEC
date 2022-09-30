@@ -104,29 +104,7 @@ model elections {
   general_election_id  String?   @db.VarChar(12)
   notes                String?   @db.VarChar(250)
   notable_remarks      String?   @db.Text
-  latitude             String?   @db.VarChar(50)
-  longitude            String?   @db.VarChar(50)
   has_data             Int       @default(0) @db.TinyInt
-}
-
-model locations {
-  constituency_id Int                   @id
-  constituency    String?               @db.VarChar(75)
-  lat             Decimal               @db.Decimal(10, 8)
-  lng             Decimal               @db.Decimal(11, 8)
-  location        Unsupported("point")?
-}
-
-model locations_old {
-  locations_id  Int                   @unique @default(autoincrement())
-  name_short    String?               @db.VarChar(25)
-  name_long     String?               @db.VarChar(75)
-  location_type String?               @db.VarChar(25)
-  lat           Decimal               @db.Decimal(10, 8)
-  lng           Decimal               @db.Decimal(11, 8)
-  location      Unsupported("point")?
-
-  @@ignore
 }
 
 model poll_books {
