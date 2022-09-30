@@ -103,6 +103,8 @@ export interface NexusGenObjects {
   election: { // root type
     by_election_cause?: string | null; // String
     by_election_general?: string | null; // String
+    constituency?: string | null; // String
+    constituency_id?: string | null; // String
     contested?: string | null; // String
     countyboroughuniv?: string | null; // String
     election_date?: NexusGenScalars['DateTime'] | null; // DateTime
@@ -331,6 +333,8 @@ export interface NexusGenFieldTypes {
     by_election_general: string | null; // String
     candidates_elections: Array<NexusGenRootTypes['candidatesElection'] | null> | null; // [candidatesElection]
     constituencies: NexusGenRootTypes['constituencies'] | null; // constituencies
+    constituency: string | null; // String
+    constituency_id: string | null; // String
     contested: string | null; // String
     countyboroughuniv: string | null; // String
     election_date: NexusGenScalars['DateTime'] | null; // DateTime
@@ -575,6 +579,8 @@ export interface NexusGenFieldTypeNames {
     by_election_general: 'String'
     candidates_elections: 'candidatesElection'
     constituencies: 'constituencies'
+    constituency: 'String'
+    constituency_id: 'String'
     contested: 'String'
     countyboroughuniv: 'String'
     election_date: 'DateTime'

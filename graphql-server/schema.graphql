@@ -130,6 +130,8 @@ type election {
   by_election_general: String
   candidates_elections: [candidatesElection]
   constituencies: constituencies
+  constituency: String
+  constituency_id: String
   contested: String
   countyboroughuniv: String
   election_date: DateTime

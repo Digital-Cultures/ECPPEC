@@ -841,6 +841,8 @@ const Election = objectType({
     t.string('contested')
     t.string('notes')
     t.string('notable_remarks')
+    t.string('constituency')
+    t.string('constituency_id')
     t.field('constituencies', {
       type: Constituencies,
       resolve: (parent, _, context: Context) => {
