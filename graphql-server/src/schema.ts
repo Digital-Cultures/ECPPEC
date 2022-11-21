@@ -197,7 +197,7 @@ const Query = objectType({
       args: {
         constituency_id: intArg(),
         constituency: stringArg(),
-        has_polling_data: booleanArg(),
+        has_data: booleanArg(),
       },
       resolve: (_parent, _args, context: Context) => {
         return context.prisma.constituencies.findMany({
@@ -206,7 +206,7 @@ const Query = objectType({
               contains:  _args.constituency
              } || undefined,
             constituency_id:  _args.constituency_id || undefined,
-            has_polling_data: _args.has_polling_data || undefined,
+            has_data: _args.has_data || undefined,
           },
         })
       },
@@ -495,12 +495,15 @@ const Query = objectType({
       args: {
         page: intArg(),
         line: intArg(),
+        rejected: booleanArg()
       },
       resolve: (_parent, args, context: Context) => {
         return context.prisma.votes.findMany({
+          take: 100,
           where: {
             page: args.page || undefined,
-            line: args.line || undefined
+            line: args.line || undefined,
+            rejected: args.rejected || undefined,
           }
         })
       },
@@ -560,6 +563,22 @@ const Query = objectType({
             abode: _args.abode || undefined,
             address: { contains: _args.address } || undefined,
             constituency: _args.constituency || undefined,
+          }
+        })
+      },
+    })
+
+    t.nonNull.list.nonNull.field('ms_comments', {
+      type: MsComments,
+      args: {
+        voter_id: intArg(),
+        election_id: stringArg(),
+      },
+      resolve: (_parent, _args, context: Context) => {
+        return context.prisma.ms_comments.findMany({
+          where: {  
+            voter_id: _args.voter_id || undefined,
+            election_id: _args.election_id || undefined,
           }
         })
       },
@@ -1049,21 +1068,28 @@ const Voter = objectType({
     t.string('guild')
     t.string('alley')
     t.string('street')
+    t.string('street_ideal')
     t.string('city')
     t.string('county')
+    t.string('county_ideal')
     t.string('college')
+    t.string('college_ideal')
     t.string('fellowship')
     t.string('degree')
     t.string('oath')
     t.string('parish')
+    t.string('parish_ideal')
     t.string('parish_of_freehold')
     t.string('hundred')
     t.string('ward_of_freehold')
     t.string('occupier_and_freehold')
     t.string('abode')
     t.string('abode_std')
+    t.string('abode_ideal')
     t.string('ward')
+    t.string('ward_ideal')
     t.string('area')
+    t.string('location_ideal')
     t.int('geocode_id')
     t.field('geocode', {
       type: Geocode,
@@ -1080,6 +1106,13 @@ const Voter = objectType({
           where: { voter_id: parent.voter_id || undefined }})
         },
     })
+    t.list.field('ms_comments', {
+      type: MsComments,
+      resolve: (parent, _, context: Context) => {
+        return context.prisma.votes.findMany({
+          where: { voter_id: parent.voter_id || undefined }})
+        },
+    })
   },
 })
 
@@ -1089,19 +1122,9 @@ const Vote = objectType({
     t.int('votes_id')
     t.list.field('voter', {
       type: Voter,
-      args: {
-        forename: stringArg(),
-        surname: stringArg(),
-        occupation: stringArg(),
-        guild: stringArg(),
-      },
       resolve: (parent, args, context: Context) => {
         return context.prisma.voters.findMany({
           where: {  
-            forename: args.forename || undefined,
-            surname: args.surname || undefined,
-            occupation: args.occupation || undefined,
-            guild: args.guild || undefined,
             voter_id: parent.voter_id 
           }
         })
@@ -1153,6 +1176,8 @@ const Vote = objectType({
         },
     })
     t.string('poll_date')
+    t.boolean('rejected')
+    t.string('reason_rejected')
   },
 })
 
@@ -1247,6 +1272,35 @@ const Geocode =  objectType({
             occupation: args.occupation || undefined,
             guild: args.guild || undefined,
             geocode_id: parent.geocode_id 
+          }
+        })
+      },
+    })
+  }
+})
+
+const MsComments =  objectType({
+  name: 'ms_comments',
+  definition(t) {
+    // t.int('voter_id')
+    // t.string('election_id')
+    t.string('ms_comment')
+    t.list.field('voter', {
+      type: Voter,
+      resolve: (parent, args, context: Context) => {
+        return context.prisma.voters.findMany({
+          where: {  
+            voter_id: parent.voter_id 
+          }
+        })
+      },
+    })
+    t.list.field('elections', {
+      type: Election,
+      resolve: (parent, args, context: Context) => {
+        return context.prisma.elections.findMany({
+          where: {  
+            election_id: parent.election_id
           }
         })
       },

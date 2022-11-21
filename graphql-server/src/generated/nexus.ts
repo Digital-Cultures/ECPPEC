@@ -154,6 +154,9 @@ export interface NexusGenObjects {
     lat?: number | null; // Float
     lng?: number | null; // Float
   }
+  ms_comments: { // root type
+    ms_comment?: string | null; // String
+  }
   occupations_map: { // root type
     level_code?: string | null; // String
     level_name?: string | null; // String
@@ -193,37 +196,46 @@ export interface NexusGenObjects {
     line?: number | null; // Int
     page?: number | null; // Int
     poll_date?: string | null; // String
+    reason_rejected?: string | null; // String
+    rejected?: boolean | null; // Boolean
     votes_id?: number | null; // Int
   }
   voter: { // root type
     abode?: string | null; // String
+    abode_ideal?: string | null; // String
     abode_std?: string | null; // String
     alley?: string | null; // String
     area?: string | null; // String
     city?: string | null; // String
     class?: string | null; // String
     college?: string | null; // String
+    college_ideal?: string | null; // String
     county?: string | null; // String
+    county_ideal?: string | null; // String
     degree?: string | null; // String
     fellowship?: string | null; // String
     forename?: string | null; // String
     geocode_id?: number | null; // Int
     guild?: string | null; // String
     hundred?: string | null; // String
+    location_ideal?: string | null; // String
     notes?: string | null; // String
     oath?: string | null; // String
     occupation?: string | null; // String
     occupation_ideal?: string | null; // String
     occupier_and_freehold?: string | null; // String
     parish?: string | null; // String
+    parish_ideal?: string | null; // String
     parish_of_freehold?: string | null; // String
     street?: string | null; // String
+    street_ideal?: string | null; // String
     suffix?: string | null; // String
     suffix_ideal?: string | null; // String
     surname?: string | null; // String
     title?: string | null; // String
     voter_id?: number | null; // Int
     ward?: string | null; // String
+    ward_ideal?: string | null; // String
     ward_of_freehold?: string | null; // String
   }
   voters_occupations: { // root type
@@ -255,6 +267,7 @@ export interface NexusGenFieldTypes {
     election_dates: NexusGenRootTypes['electionDates'][]; // [electionDates!]!
     geocodes: NexusGenRootTypes['geocodes'][]; // [geocodes!]!
     location_from_lat_lng: NexusGenRootTypes['locations_from_lat_lng'][]; // [locations_from_lat_lng!]!
+    ms_comments: NexusGenRootTypes['ms_comments'][]; // [ms_comments!]!
     occupations_group: NexusGenRootTypes['occupations_map'][]; // [occupations_map!]!
     poll_book: NexusGenRootTypes['poll_books'][]; // [poll_books!]!
     stat_num_poll_books: number | null; // Int
@@ -394,6 +407,11 @@ export interface NexusGenFieldTypes {
     lng: number | null; // Float
     stats: Array<NexusGenRootTypes['stats'] | null> | null; // [stats]
   }
+  ms_comments: { // field return type
+    elections: Array<NexusGenRootTypes['election'] | null> | null; // [election]
+    ms_comment: string | null; // String
+    voter: Array<NexusGenRootTypes['voter'] | null> | null; // [voter]
+  }
   occupations_map: { // field return type
     level_code: string | null; // String
     level_name: string | null; // String
@@ -441,18 +459,23 @@ export interface NexusGenFieldTypes {
     page: number | null; // Int
     poll_books: Array<NexusGenRootTypes['poll_books'] | null> | null; // [poll_books]
     poll_date: string | null; // String
+    reason_rejected: string | null; // String
+    rejected: boolean | null; // Boolean
     voter: Array<NexusGenRootTypes['voter'] | null> | null; // [voter]
     votes_id: number | null; // Int
   }
   voter: { // field return type
     abode: string | null; // String
+    abode_ideal: string | null; // String
     abode_std: string | null; // String
     alley: string | null; // String
     area: string | null; // String
     city: string | null; // String
     class: string | null; // String
     college: string | null; // String
+    college_ideal: string | null; // String
     county: string | null; // String
+    county_ideal: string | null; // String
     degree: string | null; // String
     fellowship: string | null; // String
     forename: string | null; // String
@@ -460,6 +483,8 @@ export interface NexusGenFieldTypes {
     geocode_id: number | null; // Int
     guild: string | null; // String
     hundred: string | null; // String
+    location_ideal: string | null; // String
+    ms_comments: Array<NexusGenRootTypes['ms_comments'] | null> | null; // [ms_comments]
     notes: string | null; // String
     oath: string | null; // String
     occupation: string | null; // String
@@ -468,8 +493,10 @@ export interface NexusGenFieldTypes {
     occupations_level2: Array<NexusGenRootTypes['occupations_map'] | null> | null; // [occupations_map]
     occupier_and_freehold: string | null; // String
     parish: string | null; // String
+    parish_ideal: string | null; // String
     parish_of_freehold: string | null; // String
     street: string | null; // String
+    street_ideal: string | null; // String
     suffix: string | null; // String
     suffix_ideal: string | null; // String
     surname: string | null; // String
@@ -477,6 +504,7 @@ export interface NexusGenFieldTypes {
     vote: Array<NexusGenRootTypes['vote'] | null> | null; // [vote]
     voter_id: number | null; // Int
     ward: string | null; // String
+    ward_ideal: string | null; // String
     ward_of_freehold: string | null; // String
   }
   voters_occupations: { // field return type
@@ -501,6 +529,7 @@ export interface NexusGenFieldTypeNames {
     election_dates: 'electionDates'
     geocodes: 'geocodes'
     location_from_lat_lng: 'locations_from_lat_lng'
+    ms_comments: 'ms_comments'
     occupations_group: 'occupations_map'
     poll_book: 'poll_books'
     stat_num_poll_books: 'Int'
@@ -640,6 +669,11 @@ export interface NexusGenFieldTypeNames {
     lng: 'Float'
     stats: 'stats'
   }
+  ms_comments: { // field return type name
+    elections: 'election'
+    ms_comment: 'String'
+    voter: 'voter'
+  }
   occupations_map: { // field return type name
     level_code: 'String'
     level_name: 'String'
@@ -687,18 +721,23 @@ export interface NexusGenFieldTypeNames {
     page: 'Int'
     poll_books: 'poll_books'
     poll_date: 'String'
+    reason_rejected: 'String'
+    rejected: 'Boolean'
     voter: 'voter'
     votes_id: 'Int'
   }
   voter: { // field return type name
     abode: 'String'
+    abode_ideal: 'String'
     abode_std: 'String'
     alley: 'String'
     area: 'String'
     city: 'String'
     class: 'String'
     college: 'String'
+    college_ideal: 'String'
     county: 'String'
+    county_ideal: 'String'
     degree: 'String'
     fellowship: 'String'
     forename: 'String'
@@ -706,6 +745,8 @@ export interface NexusGenFieldTypeNames {
     geocode_id: 'Int'
     guild: 'String'
     hundred: 'String'
+    location_ideal: 'String'
+    ms_comments: 'ms_comments'
     notes: 'String'
     oath: 'String'
     occupation: 'String'
@@ -714,8 +755,10 @@ export interface NexusGenFieldTypeNames {
     occupations_level2: 'occupations_map'
     occupier_and_freehold: 'String'
     parish: 'String'
+    parish_ideal: 'String'
     parish_of_freehold: 'String'
     street: 'String'
+    street_ideal: 'String'
     suffix: 'String'
     suffix_ideal: 'String'
     surname: 'String'
@@ -723,6 +766,7 @@ export interface NexusGenFieldTypeNames {
     vote: 'vote'
     voter_id: 'Int'
     ward: 'String'
+    ward_ideal: 'String'
     ward_of_freehold: 'String'
   }
   voters_occupations: { // field return type name
@@ -777,7 +821,7 @@ export interface NexusGenArgTypes {
     constituencies: { // args
       constituency?: string | null; // String
       constituency_id?: number | null; // Int
-      has_polling_data?: boolean | null; // Boolean
+      has_data?: boolean | null; // Boolean
     }
     election: { // args
       by_election_cause?: string | null; // String
@@ -817,6 +861,10 @@ export interface NexusGenArgTypes {
       distance: number | null; // Float
       lat?: number | null; // Float
       lng?: number | null; // Float
+    }
+    ms_comments: { // args
+      election_id?: string | null; // String
+      voter_id?: number | null; // Int
     }
     occupations_group: { // args
       occupation?: string | null; // String
@@ -864,6 +912,7 @@ export interface NexusGenArgTypes {
     vote: { // args
       line?: number | null; // Int
       page?: number | null; // Int
+      rejected?: boolean | null; // Boolean
     }
     voter: { // args
       forename?: string | null; // String
@@ -892,12 +941,6 @@ export interface NexusGenArgTypes {
   vote: {
     poll_books: { // args
       has_data?: boolean | null; // Boolean
-    }
-    voter: { // args
-      forename?: string | null; // String
-      guild?: string | null; // String
-      occupation?: string | null; // String
-      surname?: string | null; // String
     }
   }
 }
