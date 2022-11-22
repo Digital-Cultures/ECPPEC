@@ -202,40 +202,36 @@ export interface NexusGenObjects {
   }
   voter: { // root type
     abode?: string | null; // String
-    abode_ideal?: string | null; // String
     abode_std?: string | null; // String
     alley?: string | null; // String
     area?: string | null; // String
     city?: string | null; // String
     class?: string | null; // String
     college?: string | null; // String
-    college_ideal?: string | null; // String
+    college_std?: string | null; // String
     county?: string | null; // String
-    county_ideal?: string | null; // String
+    county_std?: string | null; // String
     degree?: string | null; // String
     fellowship?: string | null; // String
     forename?: string | null; // String
     geocode_id?: number | null; // Int
     guild?: string | null; // String
     hundred?: string | null; // String
-    location_ideal?: string | null; // String
+    location_sanitized?: string | null; // String
     notes?: string | null; // String
     oath?: string | null; // String
     occupation?: string | null; // String
-    occupation_ideal?: string | null; // String
+    occupation_std?: string | null; // String
     occupier_and_freehold?: string | null; // String
     parish?: string | null; // String
-    parish_ideal?: string | null; // String
     parish_of_freehold?: string | null; // String
     street?: string | null; // String
-    street_ideal?: string | null; // String
     suffix?: string | null; // String
-    suffix_ideal?: string | null; // String
+    suffix_std?: string | null; // String
     surname?: string | null; // String
     title?: string | null; // String
     voter_id?: number | null; // Int
     ward?: string | null; // String
-    ward_ideal?: string | null; // String
     ward_of_freehold?: string | null; // String
   }
   voters_occupations: { // root type
@@ -466,16 +462,15 @@ export interface NexusGenFieldTypes {
   }
   voter: { // field return type
     abode: string | null; // String
-    abode_ideal: string | null; // String
     abode_std: string | null; // String
     alley: string | null; // String
     area: string | null; // String
     city: string | null; // String
     class: string | null; // String
     college: string | null; // String
-    college_ideal: string | null; // String
+    college_std: string | null; // String
     county: string | null; // String
-    county_ideal: string | null; // String
+    county_std: string | null; // String
     degree: string | null; // String
     fellowship: string | null; // String
     forename: string | null; // String
@@ -483,28 +478,25 @@ export interface NexusGenFieldTypes {
     geocode_id: number | null; // Int
     guild: string | null; // String
     hundred: string | null; // String
-    location_ideal: string | null; // String
+    location_sanitized: string | null; // String
     ms_comments: Array<NexusGenRootTypes['ms_comments'] | null> | null; // [ms_comments]
     notes: string | null; // String
     oath: string | null; // String
     occupation: string | null; // String
-    occupation_ideal: string | null; // String
+    occupation_std: string | null; // String
     occupations_level1: Array<NexusGenRootTypes['occupations_map'] | null> | null; // [occupations_map]
     occupations_level2: Array<NexusGenRootTypes['occupations_map'] | null> | null; // [occupations_map]
     occupier_and_freehold: string | null; // String
     parish: string | null; // String
-    parish_ideal: string | null; // String
     parish_of_freehold: string | null; // String
     street: string | null; // String
-    street_ideal: string | null; // String
     suffix: string | null; // String
-    suffix_ideal: string | null; // String
+    suffix_std: string | null; // String
     surname: string | null; // String
     title: string | null; // String
     vote: Array<NexusGenRootTypes['vote'] | null> | null; // [vote]
     voter_id: number | null; // Int
     ward: string | null; // String
-    ward_ideal: string | null; // String
     ward_of_freehold: string | null; // String
   }
   voters_occupations: { // field return type
@@ -728,16 +720,15 @@ export interface NexusGenFieldTypeNames {
   }
   voter: { // field return type name
     abode: 'String'
-    abode_ideal: 'String'
     abode_std: 'String'
     alley: 'String'
     area: 'String'
     city: 'String'
     class: 'String'
     college: 'String'
-    college_ideal: 'String'
+    college_std: 'String'
     county: 'String'
-    county_ideal: 'String'
+    county_std: 'String'
     degree: 'String'
     fellowship: 'String'
     forename: 'String'
@@ -745,28 +736,25 @@ export interface NexusGenFieldTypeNames {
     geocode_id: 'Int'
     guild: 'String'
     hundred: 'String'
-    location_ideal: 'String'
+    location_sanitized: 'String'
     ms_comments: 'ms_comments'
     notes: 'String'
     oath: 'String'
     occupation: 'String'
-    occupation_ideal: 'String'
+    occupation_std: 'String'
     occupations_level1: 'occupations_map'
     occupations_level2: 'occupations_map'
     occupier_and_freehold: 'String'
     parish: 'String'
-    parish_ideal: 'String'
     parish_of_freehold: 'String'
     street: 'String'
-    street_ideal: 'String'
     suffix: 'String'
-    suffix_ideal: 'String'
+    suffix_std: 'String'
     surname: 'String'
     title: 'String'
     vote: 'vote'
     voter_id: 'Int'
     ward: 'String'
-    ward_ideal: 'String'
     ward_of_freehold: 'String'
   }
   voters_occupations: { // field return type name

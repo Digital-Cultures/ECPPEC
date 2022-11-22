@@ -1038,11 +1038,11 @@ const Voter = objectType({
     t.string('forename')
     t.string('surname')
     t.string('suffix')
-    t.string('suffix_ideal')
+    t.string('suffix_std')
     t.string('title')
     t.string('class')
     t.string('occupation')
-    t.string('occupation_ideal')
+    t.string('occupation_std')
     t.list.field('occupations_level1', {
       type: OccupationsMap,
       resolve: (parent, _, context: Context) => {
@@ -1068,34 +1068,30 @@ const Voter = objectType({
     t.string('guild')
     t.string('alley')
     t.string('street')
-    t.string('street_ideal')
     t.string('city')
     t.string('county')
-    t.string('county_ideal')
+    t.string('county_std')
     t.string('college')
-    t.string('college_ideal')
+    t.string('college_std')
     t.string('fellowship')
     t.string('degree')
     t.string('oath')
     t.string('parish')
-    t.string('parish_ideal')
     t.string('parish_of_freehold')
     t.string('hundred')
     t.string('ward_of_freehold')
     t.string('occupier_and_freehold')
     t.string('abode')
     t.string('abode_std')
-    t.string('abode_ideal')
     t.string('ward')
-    t.string('ward_ideal')
     t.string('area')
-    t.string('location_ideal')
+    t.string('location_sanitized')
     t.int('geocode_id')
     t.field('geocode', {
       type: Geocode,
       resolve: (parent, _, context: Context) => {
-        return context.prisma.geocodes.findFirst({
-          where: { geocode_id: parent.geocode_id || undefined }})
+        return context.prisma.geocodes.findUnique({
+          where: { geocode_id: parent.geocode_id }})
         },
     })
     t.string('notes')
@@ -1109,7 +1105,7 @@ const Voter = objectType({
     t.list.field('ms_comments', {
       type: MsComments,
       resolve: (parent, _, context: Context) => {
-        return context.prisma.votes.findMany({
+        return context.prisma.ms_comments.findMany({
           where: { voter_id: parent.voter_id || undefined }})
         },
     })
@@ -1190,13 +1186,7 @@ const OccupationsMap = objectType({
     t.list.field('voters', {
       type: Voter,
       resolve: (parent, _, context: Context) => {
-        if (parent.level_num==1){
-          return context.prisma.voters.findMany({
-            where: { occupations_level1: parent.level_code || undefined }})
-        }else{
-          return context.prisma.voters.findMany({
-            where: { occupations_level2: parent.level_code || undefined }})
-        }
+        return context.prisma.$queryRaw(`SELECT voters.* FROM voters INNER JOIN (SELECT * FROM ECPPEC.voters_occupations where level`+parent.level_num+`="`+parent.level_code+`") as o ON voters.voter_id = o.voter_id;`)
         },
     })
   },
