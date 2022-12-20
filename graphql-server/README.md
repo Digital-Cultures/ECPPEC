@@ -107,7 +107,12 @@ $ cd graphql-server/
 
 $ npx prisma generate
 
+//for production 
+$ npm run build
+
 # restart server
 $ pm2 list
 $ pm2 delete 0
 $ pm2 start "npm run dev" --name graphql
+//for production 
+$ pm2 start "npm run start"  --name graphql

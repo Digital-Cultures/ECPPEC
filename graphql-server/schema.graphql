@@ -227,7 +227,7 @@ type poll_books {
 type stats {
   constituencies: [constituencies]
   constituency: String
-  constituency_id: String
+  constituency_id: Int
   num_contested_all: Int
   num_contested_by: Int
   num_contested_general: Int

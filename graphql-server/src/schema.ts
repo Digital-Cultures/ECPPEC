@@ -1002,7 +1002,7 @@ const PollBooks = objectType({
 const Stats = objectType({
   name: 'stats',
   definition(t) {
-    t.string('constituency_id')
+    t.int('constituency_id')
     t.string('constituency')
     t.int('num_elections_all')
     t.int('num_contested_all')

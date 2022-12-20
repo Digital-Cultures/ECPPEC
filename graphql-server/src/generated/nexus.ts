@@ -175,7 +175,7 @@ export interface NexusGenObjects {
   }
   stats: { // root type
     constituency?: string | null; // String
-    constituency_id?: string | null; // String
+    constituency_id?: number | null; // Int
     num_contested_all?: number | null; // Int
     num_contested_by?: number | null; // Int
     num_contested_general?: number | null; // Int
@@ -430,7 +430,7 @@ export interface NexusGenFieldTypes {
   stats: { // field return type
     constituencies: Array<NexusGenRootTypes['constituencies'] | null> | null; // [constituencies]
     constituency: string | null; // String
-    constituency_id: string | null; // String
+    constituency_id: number | null; // Int
     num_contested_all: number | null; // Int
     num_contested_by: number | null; // Int
     num_contested_general: number | null; // Int
@@ -688,7 +688,7 @@ export interface NexusGenFieldTypeNames {
   stats: { // field return type name
     constituencies: 'constituencies'
     constituency: 'String'
-    constituency_id: 'String'
+    constituency_id: 'Int'
     num_contested_all: 'Int'
     num_contested_by: 'Int'
     num_contested_general: 'Int'
