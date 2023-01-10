@@ -116,6 +116,7 @@ export interface NexusGenObjects {
     franchise_detail?: string | null; // String
     franchise_type?: string | null; // String
     has_data?: boolean | null; // Boolean
+    id?: number | null; // Int
     notable_remarks?: string | null; // String
     notes?: string | null; // String
     office?: string | null; // String
@@ -355,6 +356,7 @@ export interface NexusGenFieldTypes {
     franchise_detail: string | null; // String
     franchise_type: string | null; // String
     has_data: boolean | null; // Boolean
+    id: number | null; // Int
     notable_remarks: string | null; // String
     notes: string | null; // String
     office: string | null; // String
@@ -613,6 +615,7 @@ export interface NexusGenFieldTypeNames {
     franchise_detail: 'String'
     franchise_type: 'String'
     has_data: 'Boolean'
+    id: 'Int'
     notable_remarks: 'String'
     notes: 'String'
     office: 'String'
@@ -791,11 +794,13 @@ export interface NexusGenArgTypes {
       born_lte?: number | null; // Int
       candidate_id?: number | null; // Int
       candidate_name?: string | null; // String
+      cursor_candidate_id?: number | null; // Int
       died?: number | null; // Int
       died_gte?: number | null; // Int
       died_lte?: number | null; // Int
       short_name?: string | null; // String
       suffix?: string | null; // String
+      take?: number | null; // Int
       title?: Array<string | null> | null; // [String]
     }
     candidates_elections: { // args
@@ -818,6 +823,7 @@ export interface NexusGenArgTypes {
       constituency_id?: number | null; // Int
       contested?: string | null; // String
       countyboroughuniv?: string | null; // String
+      cursor_id?: number | null; // Int
       election_month?: string | null; // String
       election_year_gte: number | null; // Int
       election_year_lte: number | null; // Int
@@ -825,6 +831,7 @@ export interface NexusGenArgTypes {
       electorate_size_est_lte?: number | null; // Int
       franchise_type?: Array<string | null> | null; // [String]
       office?: string | null; // String
+      take?: number | null; // Int
     }
     election_attributes: { // args
       attribute_name?: string | null; // String
@@ -903,10 +910,12 @@ export interface NexusGenArgTypes {
       rejected?: boolean | null; // Boolean
     }
     voter: { // args
+      cursor_voter_id?: number | null; // Int
       forename?: string | null; // String
       guild?: string | null; // String
       occupation?: string | null; // String
       surname?: string | null; // String
+      take?: number | null; // Int
     }
     voters_occupations: { // args
       occupation?: string | null; // String

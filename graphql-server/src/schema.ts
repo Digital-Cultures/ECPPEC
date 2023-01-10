@@ -89,10 +89,21 @@ const Query = objectType({
         born_lte: intArg(),
         died: intArg(),
         died_gte: intArg(),
-        died_lte: intArg()
+        died_lte: intArg(),
+        take: intArg(),
+        cursor_candidate_id: intArg(),
       },
       resolve: (_parent, _args, context: Context) => {
+        let skip = 1;
+        if (_args.cursor_candidate_id==undefined){
+         skip=0;
+        }
         return context.prisma.candidates.findMany({
+          take: _args.take || 5,
+          skip: skip, // Skip the cursor
+          cursor: {
+            candidate_id: _args.cursor_candidate_id || 1,
+          },
           where: { 
             AND: [
               {
@@ -162,6 +173,9 @@ const Query = objectType({
               }
             ]
           },
+          orderBy: {
+            candidate_id: 'asc',
+          },
         })
       },
     })
@@ -227,11 +241,22 @@ const Query = objectType({
         franchise_type: list(stringArg()),
         by_election_general: stringArg(),
         by_election_cause: stringArg(),
-        contested: stringArg()
+        contested: stringArg(),
+        take: intArg(),
+        cursor_id: intArg(),
         // election_id:  stringArg(),
       },
       resolve: (_parent, _args, context: Context) => {
+        let skip = 1;
+        if (_args.cursor_id==undefined){
+         skip=0;
+        }
         return context.prisma.elections.findMany({
+          take: _args.take || 5,
+          skip: skip, // Skip the cursor
+          cursor: {
+            id: _args.cursor_id || 1,
+          },
           where: {  
             election_date: {
               gte: new Date(_args.election_year_gte,1,1),
@@ -251,6 +276,9 @@ const Query = objectType({
             by_election_general: _args.by_election_general || undefined,
             by_election_cause:  _args.by_election_cause || undefined,
             contested: _args.contested || undefined,
+          },
+          orderBy: {
+            id: 'asc',
           },
         })
       },
@@ -476,15 +504,29 @@ const Query = objectType({
         surname: stringArg(),
         occupation: stringArg(),
         guild: stringArg(),
+        take: intArg(),
+        cursor_voter_id: intArg(),
         // election_id:  stringArg(),
       },
       resolve: (_parent, args, context: Context) => {
+        let skip = 1;
+        if (args.cursor_voter_id==undefined){
+         skip=0;
+        }
         return context.prisma.voters.findMany({
+          take: args.take || 5,
+          skip: skip, // Skip the cursor
+          cursor: {
+            voter_id: args.cursor_voter_id || 1,
+          },
           where: {  
             forename: args.forename || undefined,
             surname: args.surname || undefined,
             occupation: args.occupation || undefined,
             guild: args.guild || undefined
+          },
+          orderBy: {
+            voter_id: 'asc',
           },
         })
       },
@@ -844,6 +886,7 @@ const ElectionDates = objectType({
 const Election = objectType({
   name: 'election',
   definition(t) {
+    t.int('id')
     t.string('election_id')
     t.string('election_year')
     t.string('election_month')

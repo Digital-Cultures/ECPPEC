@@ -31,10 +31,10 @@ type Query {
   artefact(description: String, display_name: String, manifest: String, source: String): [artefact!]!
   artefact_attributes(artefact_id: Int, attribute_name: String, attribute_value: String): [artefact_attributes!]!
   artefact_files(display_label: String, file_type: String, filename: String, id: Int): [artefact_files!]!
-  candidate(born: Int, born_gte: Int, born_lte: Int, candidate_id: Int, candidate_name: String, died: Int, died_gte: Int, died_lte: Int, short_name: String, suffix: String, title: [String]): [candidate!]!
+  candidate(born: Int, born_gte: Int, born_lte: Int, candidate_id: Int, candidate_name: String, cursor_candidate_id: Int, died: Int, died_gte: Int, died_lte: Int, short_name: String, suffix: String, take: Int, title: [String]): [candidate!]!
   candidates_elections(candidate_id: Int, election_id: String, overturned_by: String, returned: Int, running_as: String, seated: Int): [candidatesElection!]!
   constituencies(constituency: String, constituency_id: Int, has_data: Boolean): [constituencies!]!
-  election(by_election_cause: String, by_election_general: String, constituency: String, constituency_id: Int, contested: String, countyboroughuniv: String, election_month: String, election_year_gte: Int = 1500, election_year_lte: Int = 2020, electorate_size_est_gte: Int, electorate_size_est_lte: Int, franchise_type: [String], office: String): [election!]!
+  election(by_election_cause: String, by_election_general: String, constituency: String, constituency_id: Int, contested: String, countyboroughuniv: String, cursor_id: Int, election_month: String, election_year_gte: Int = 1500, election_year_lte: Int = 2020, electorate_size_est_gte: Int, electorate_size_est_lte: Int, franchise_type: [String], office: String, take: Int): [election!]!
   election_attributes(attribute_name: String, election_id: String): [electionAttributes!]!
   election_dates(election_year: Int = 0, election_year_gte: Int = 0, election_year_lte: Int = 9999, orderBy: OrderByDate): [electionDates!]!
   geocodes(abode: String, address: String, city: String, constituency: String, county: String, parish: String, street: String): [geocodes!]!
@@ -45,7 +45,7 @@ type Query {
   stat_num_poll_books(constituency_id: Int): Int
   stats(constituency: String, num_contested_all_gte: Int, num_contested_all_lte: Int, num_contested_by_gte: Int, num_contested_by_lte: Int, num_contested_general_gte: Int, num_contested_general_lte: Int, num_elections_all_gte: Int, num_elections_all_lte: Int, num_elections_by_gte: Int, num_elections_by_lte: Int, num_elections_general_gte: Int, num_elections_general_lte: Int, num_uncontested_all_gte: Int, num_uncontested_all_lte: Int, num_uncontested_by_gte: Int, num_uncontested_by_lte: Int, num_uncontested_general_gte: Int, num_uncontested_general_lte: Int, percent_contested_all_gte: Float, percent_contested_all_lte: Float, percent_contested_by_gte: Float, percent_contested_by_lte: Float, percent_contested_general_gte: Float, percent_contested_general_lte: Float, percent_uncontested_all_gte: Float, percent_uncontested_all_lte: Float, percent_uncontested_by_gte: Float, percent_uncontested_by_lte: Float, percent_uncontested_general_gte: Float, percent_uncontested_general_lte: Float): [stats!]!
   vote(line: Int, page: Int, rejected: Boolean): [vote!]!
-  voter(forename: String, guild: String, occupation: String, surname: String): [voter!]!
+  voter(cursor_voter_id: Int, forename: String, guild: String, occupation: String, surname: String, take: Int): [voter!]!
   voters_occupations(occupation: String): [voters_occupations!]!
 }
 
@@ -144,6 +144,7 @@ type election {
   franchise_detail: String
   franchise_type: String
   has_data: Boolean
+  id: Int
   notable_remarks: String
   notes: String
   office: String
