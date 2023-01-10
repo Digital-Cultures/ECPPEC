@@ -99,7 +99,7 @@ const Query = objectType({
          skip=0;
         }
         return context.prisma.candidates.findMany({
-          take: _args.take || 5,
+          take: _args.take || 9999999,
           skip: skip, // Skip the cursor
           cursor: {
             candidate_id: _args.cursor_candidate_id || 1,
@@ -252,7 +252,7 @@ const Query = objectType({
          skip=0;
         }
         return context.prisma.elections.findMany({
-          take: _args.take || 5,
+          take: _args.take || 9999999,
           skip: skip, // Skip the cursor
           cursor: {
             id: _args.cursor_id || 1,
@@ -514,7 +514,7 @@ const Query = objectType({
          skip=0;
         }
         return context.prisma.voters.findMany({
-          take: args.take || 5,
+          take: args.take || 9999999,
           skip: skip, // Skip the cursor
           cursor: {
             voter_id: args.cursor_voter_id || 1,
@@ -541,7 +541,6 @@ const Query = objectType({
       },
       resolve: (_parent, args, context: Context) => {
         return context.prisma.votes.findMany({
-          take: 100,
           where: {
             page: args.page || undefined,
             line: args.line || undefined,
