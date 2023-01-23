@@ -435,6 +435,7 @@ export interface NexusGenFieldTypes {
     pollbook_id: string | null; // String
     printms: string | null; // String
     source: string | null; // String
+    vote: Array<NexusGenRootTypes['vote'] | null> | null; // [vote]
   }
   stats: { // field return type
     constituencies: Array<NexusGenRootTypes['constituencies'] | null> | null; // [constituencies]
@@ -698,6 +699,7 @@ export interface NexusGenFieldTypeNames {
     pollbook_id: 'String'
     printms: 'String'
     source: 'String'
+    vote: 'vote'
   }
   stats: { // field return type name
     constituencies: 'constituencies'
@@ -820,9 +822,9 @@ export interface NexusGenArgTypes {
       cursor_candidates_elections_id?: number | null; // Int
       election_id?: string | null; // String
       overturned_by?: string | null; // String
-      returned?: number | null; // Int
+      returned?: boolean | null; // Boolean
       running_as?: string | null; // String
-      seated?: number | null; // Int
+      seated?: boolean | null; // Boolean
       take?: number | null; // Int
     }
     constituencies: { // args
@@ -846,6 +848,7 @@ export interface NexusGenArgTypes {
       electorate_size_est_gte?: number | null; // Int
       electorate_size_est_lte?: number | null; // Int
       franchise_type?: Array<string | null> | null; // [String]
+      has_data?: boolean | null; // Boolean
       office?: string | null; // String
       take?: number | null; // Int
     }
@@ -888,6 +891,7 @@ export interface NexusGenArgTypes {
       constituency_id?: number | null; // Int
       cursor_pollbook_id?: string | null; // String
       has_data?: boolean | null; // Boolean
+      pollbook_id?: string | null; // String
       take?: number | null; // Int
     }
     stat_num_poll_books: { // args
@@ -947,10 +951,67 @@ export interface NexusGenArgTypes {
       take?: number | null; // Int
     }
   }
+  artefact: {
+    artefact_attributes: { // args
+      artefact_id?: number | null; // Int
+      attribute_name?: string | null; // String
+      attribute_value?: string | null; // String
+    }
+  }
   candidate: {
     candidates_elections: { // args
-      returned?: number | null; // Int
-      seated?: number | null; // Int
+      cursor_candidates_elections_id?: number | null; // Int
+      election_id?: string | null; // String
+      overturned_by?: string | null; // String
+      returned?: boolean | null; // Boolean
+      running_as?: string | null; // String
+      seated?: boolean | null; // Boolean
+      take?: number | null; // Int
+    }
+    votes: { // args
+      cursor_votes_id?: number | null; // Int
+      rejected?: boolean | null; // Boolean
+      take?: number | null; // Int
+    }
+  }
+  candidatesElection: {
+    election: { // args
+      by_election_cause?: string | null; // String
+      by_election_general?: string | null; // String
+      constituency?: string | null; // String
+      constituency_id?: number | null; // Int
+      contested?: string | null; // String
+      countyboroughuniv?: string | null; // String
+      cursor_id?: number | null; // Int
+      election_month?: string | null; // String
+      election_year_gte: number | null; // Int
+      election_year_lte: number | null; // Int
+      electorate_size_est_gte?: number | null; // Int
+      electorate_size_est_lte?: number | null; // Int
+      franchise_type?: Array<string | null> | null; // [String]
+      office?: string | null; // String
+      take?: number | null; // Int
+    }
+  }
+  election: {
+    candidates_elections: { // args
+      candidate_id?: number | null; // Int
+      cursor_candidates_elections_id?: number | null; // Int
+      overturned_by?: string | null; // String
+      returned?: boolean | null; // Boolean
+      running_as?: string | null; // String
+      seated?: boolean | null; // Boolean
+      take?: number | null; // Int
+    }
+    poll_books: { // args
+      has_data?: boolean | null; // Boolean
+    }
+    vote: { // args
+      cursor_votes_id?: number | null; // Int
+      line?: number | null; // Int
+      page?: number | null; // Int
+      rejected?: boolean | null; // Boolean
+      take?: number | null; // Int
     }
   }
   geocodes: {
@@ -961,9 +1022,22 @@ export interface NexusGenArgTypes {
       surname?: string | null; // String
     }
   }
+  poll_books: {
+    vote: { // args
+      line?: number | null; // Int
+      page?: number | null; // Int
+      rejected?: boolean | null; // Boolean
+    }
+  }
   vote: {
     poll_books: { // args
       has_data?: boolean | null; // Boolean
+    }
+    voter: { // args
+      forename?: string | null; // String
+      guild?: string | null; // String
+      occupation?: string | null; // String
+      surname?: string | null; // String
     }
   }
 }
