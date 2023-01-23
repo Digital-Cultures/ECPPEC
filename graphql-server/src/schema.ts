@@ -188,10 +188,21 @@ const Query = objectType({
         running_as: stringArg(),
         returned: intArg(),
         overturned_by: stringArg(),
-        seated: intArg()
+        seated: intArg(),
+        take: intArg(),
+        cursor_candidates_elections_id: intArg(),
       },
       resolve: (_parent, _args, context: Context) => {
+        let skip = 1;
+        if (_args.cursor_candidates_elections_id==undefined){
+         skip=0;
+        }
         return context.prisma.candidates_elections.findMany({
+          take: _args.take || 999999,
+          skip: skip, // Skip the cursor
+          cursor: {
+            candidates_elections_id: _args.cursor_candidates_elections_id || 1,
+          },
           where: {  
             candidate_id: _args.candidate_id || undefined,
             election_id: _args.election_id || undefined,
@@ -201,6 +212,9 @@ const Query = objectType({
             seated: {
               equals: _args.seated
             } || undefined
+          },
+          orderBy: {
+            candidates_elections_id: 'asc',
           },
         })
       },
@@ -212,15 +226,29 @@ const Query = objectType({
         constituency_id: intArg(),
         constituency: stringArg(),
         has_data: booleanArg(),
+        take: intArg(),
+        cursor_constituency_id: intArg(),
       },
       resolve: (_parent, _args, context: Context) => {
+        let skip = 1;
+        if (_args.cursor_constituency_id==undefined){
+         skip=0;
+        }
         return context.prisma.constituencies.findMany({
+          take: _args.take || 999999,
+          skip: skip, // Skip the cursor
+          cursor: {
+            constituency_id: _args.cursor_constituency_id || 1,
+          },
           where: { 
             constituency:{
               contains:  _args.constituency
              } || undefined,
             constituency_id:  _args.constituency_id || undefined,
             has_data: _args.has_data || undefined,
+          },
+          orderBy: {
+            constituency_id: 'asc',
           },
         })
       },
@@ -288,14 +316,28 @@ const Query = objectType({
       type: ElectionAttributes,
       args: {
         election_id: stringArg(),
-        attribute_name: stringArg()
+        attribute_name: stringArg(),
+        take: intArg(),
+        cursor_id: intArg()
       },
       resolve: (_parent, _args, context: Context) => {
+        let skip = 1;
+        if (_args.cursor_id==undefined){
+         skip=0;
+        }
         return context.prisma.election_attributes.findMany({
+          take: _args.take || 999999,
+          skip: skip, // Skip the cursor
+          cursor: {
+            election_id: _args.cursor_election_id || 1,
+          },
           where: { 
             id:  _args.id || undefined,
             election_id:  _args.election_id || undefined,
             attribute_name:  _args.attribute_name || undefined,
+          },
+          orderBy: {
+            id: 'asc',
           },
         })
       },
@@ -367,14 +409,28 @@ const Query = objectType({
       type: PollBooks,
       args: {
         constituency_id: intArg(),
-          has_data: booleanArg(),
+        has_data: booleanArg(),
+        take: intArg(),
+        cursor_pollbook_id: stringArg(),
       },
       resolve: (_parent, _args, context: Context) => {
+        let skip = 1;
+        if (_args.cursor_pollbook_id==undefined){
+         skip=0;
+        }
         return context.prisma.poll_books.findMany({
+          take: _args.take || 9999999,
+          skip: skip, // Skip the cursor
+          cursor: {
+            pollbook_id: _args.cursor_pollbook_id || 'Abingdon_1734a/1',
+          },
           where: {  
             has_data: _args.has_data || undefined,
             constituency_id:  _args.constituency_id || undefined
-          }
+          },
+          orderBy: {
+            pollbook_id: 'asc',
+          },
         })
       },
     })
@@ -537,15 +593,29 @@ const Query = objectType({
       args: {
         page: intArg(),
         line: intArg(),
-        rejected: booleanArg()
+        rejected: booleanArg(),
+        take: intArg(),
+        cursor_votes_id: intArg(),
       },
-      resolve: (_parent, args, context: Context) => {
+      resolve: (_parent, _args, context: Context) => {
+        let skip = 1;
+        if (_args.cursor_votes_id==undefined){
+         skip=0;
+        }
         return context.prisma.votes.findMany({
+          take: _args.take || 999999,
+          skip: skip, // Skip the cursor
+          cursor: {
+            votes_id: _args.cursor_votes_id || 1,
+          },
           where: {
-            page: args.page || undefined,
-            line: args.line || undefined,
-            rejected: args.rejected || undefined,
-          }
+            page: _args.page || undefined,
+            line: _args.line || undefined,
+            rejected: _args.rejected || undefined,
+          },
+          orderBy: {
+            votes_id: 'asc',
+          },
         })
       },
     })
@@ -554,14 +624,28 @@ const Query = objectType({
       type: VotersOccupations,
       args: {
         occupation: stringArg(),
+        take: intArg(),
+        cursor_id: intArg(),
       },
       resolve: (_parent, _args, context: Context) => {
+        let skip = 1;
+        if (_args.cursor_id==undefined){
+         skip=0;
+        }
         return context.prisma.voters_occupations.findMany({
+          take: _args.take || 999999,
+          skip: skip, // Skip the cursor
+          cursor: {
+            id: _args.cursor_id || 1,
+          },
           where: {
             occupation: {
               contains:  _args.occupation
              } || undefined,
-          }
+          },
+          orderBy: {
+            id: 'asc',
+          },
         })
       },
     })
@@ -614,14 +698,27 @@ const Query = objectType({
       args: {
         voter_id: intArg(),
         election_id: stringArg(),
+        take: intArg(),
+        cursor_id: intArg(),
       },
       resolve: (_parent, _args, context: Context) => {
+        let skip = 1;
+        if (_args.cursor_id==undefined){
+         skip=0;
+        }
         return context.prisma.ms_comments.findMany({
+          take: _args.take || 999999,
+          skip: skip, // Skip the cursor
+          cursor: {
+            id: _args.cursor_id || 1,
+          },
           where: {  
             voter_id: _args.voter_id || undefined,
             election_id: _args.election_id || undefined,
-          }
-        })
+          }, 
+          orderBy: {
+            id: 'asc',
+          },        })
       },
     })
   },
@@ -783,6 +880,7 @@ const Candidate = objectType({
 const CandidatesElection = objectType({
   name: 'candidatesElection',
   definition(t) {
+    t.nonNull.int('candidates_elections_id')
     t.nonNull.string('election_id')
     t.nonNull.int('candidate_id')
     t.string('running_as')
@@ -851,6 +949,7 @@ const Constituencies = objectType({
 const ElectionAttributes = objectType({
   name: 'electionAttributes',
   definition(t) {
+    t.nonNull.int('id')
     t.nonNull.string('election_id')
     t.nonNull.string('attribute_name')
     t.nonNull.string('attribute_value')
@@ -1237,6 +1336,7 @@ const OccupationsMap = objectType({
 const VotersOccupations = objectType({
   name: 'voters_occupations',
   definition(t) {
+    t.int('id')
     t.int('voter_id')
     t.string('occupation')
     t.list.field('voters', {
@@ -1314,7 +1414,7 @@ const Geocode =  objectType({
 const MsComments =  objectType({
   name: 'ms_comments',
   definition(t) {
-    // t.int('voter_id')
+    t.int('id')
     // t.string('election_id')
     t.string('ms_comment')
     t.list.field('voter', {

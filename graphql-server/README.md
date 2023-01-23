@@ -102,12 +102,13 @@ $ cd /home/ecppec/graphql-server/ECPPEC/
 
 # check on Modular branch
 $ git branch 
+$ git pull
 
 $ cd graphql-server/
 
 $ npx prisma generate
 
-//for production 
+//for production (it will kick out a few errors, but ignore)
 $ npm run build
 
 # restart server
