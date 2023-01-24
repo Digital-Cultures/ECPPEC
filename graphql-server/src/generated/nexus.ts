@@ -367,8 +367,8 @@ export interface NexusGenFieldTypes {
     office: string | null; // String
     poll_books: Array<NexusGenRootTypes['poll_books'] | null> | null; // [poll_books]
     pollbook_id: string | null; // String
-    vote: Array<NexusGenRootTypes['vote'] | null> | null; // [vote]
     voterate: string | null; // String
+    votes: Array<NexusGenRootTypes['vote'] | null> | null; // [vote]
   }
   electionAttributes: { // field return type
     attribute_name: string; // String!
@@ -435,10 +435,10 @@ export interface NexusGenFieldTypes {
     pollbook_id: string | null; // String
     printms: string | null; // String
     source: string | null; // String
-    vote: Array<NexusGenRootTypes['vote'] | null> | null; // [vote]
+    votes: Array<NexusGenRootTypes['vote'] | null> | null; // [vote]
   }
   stats: { // field return type
-    constituencies: Array<NexusGenRootTypes['constituencies'] | null> | null; // [constituencies]
+    constituencies: NexusGenRootTypes['constituencies'] | null; // constituencies
     constituency: string | null; // String
     constituency_id: number | null; // Int
     num_contested_all: number | null; // Int
@@ -504,8 +504,8 @@ export interface NexusGenFieldTypes {
     suffix_std: string | null; // String
     surname: string | null; // String
     title: string | null; // String
-    vote: Array<NexusGenRootTypes['vote'] | null> | null; // [vote]
     voter_id: number | null; // Int
+    votes: Array<NexusGenRootTypes['vote'] | null> | null; // [vote]
     ward: string | null; // String
     ward_of_freehold: string | null; // String
   }
@@ -631,8 +631,8 @@ export interface NexusGenFieldTypeNames {
     office: 'String'
     poll_books: 'poll_books'
     pollbook_id: 'String'
-    vote: 'vote'
     voterate: 'String'
+    votes: 'vote'
   }
   electionAttributes: { // field return type name
     attribute_name: 'String'
@@ -699,7 +699,7 @@ export interface NexusGenFieldTypeNames {
     pollbook_id: 'String'
     printms: 'String'
     source: 'String'
-    vote: 'vote'
+    votes: 'vote'
   }
   stats: { // field return type name
     constituencies: 'constituencies'
@@ -768,8 +768,8 @@ export interface NexusGenFieldTypeNames {
     suffix_std: 'String'
     surname: 'String'
     title: 'String'
-    vote: 'vote'
     voter_id: 'Int'
+    votes: 'vote'
     ward: 'String'
     ward_of_freehold: 'String'
   }
@@ -1006,7 +1006,7 @@ export interface NexusGenArgTypes {
     poll_books: { // args
       has_data?: boolean | null; // Boolean
     }
-    vote: { // args
+    votes: { // args
       cursor_votes_id?: number | null; // Int
       line?: number | null; // Int
       page?: number | null; // Int
@@ -1023,10 +1023,12 @@ export interface NexusGenArgTypes {
     }
   }
   poll_books: {
-    vote: { // args
+    votes: { // args
+      cursor_votes_id?: number | null; // Int
       line?: number | null; // Int
       page?: number | null; // Int
       rejected?: boolean | null; // Boolean
+      take?: number | null; // Int
     }
   }
   vote: {

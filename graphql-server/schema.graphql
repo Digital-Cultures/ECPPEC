@@ -151,8 +151,8 @@ type election {
   office: String
   poll_books(has_data: Boolean): [poll_books]
   pollbook_id: String
-  vote(cursor_votes_id: Int, line: Int, page: Int, rejected: Boolean, take: Int): [vote]
   voterate: String
+  votes(cursor_votes_id: Int, line: Int, page: Int, rejected: Boolean, take: Int): [vote]
 }
 
 type electionAttributes {
@@ -226,11 +226,11 @@ type poll_books {
   pollbook_id: String
   printms: String
   source: String
-  vote(line: Int, page: Int, rejected: Boolean): [vote]
+  votes(cursor_votes_id: Int, line: Int, page: Int, rejected: Boolean, take: Int): [vote]
 }
 
 type stats {
-  constituencies: [constituencies]
+  constituencies: constituencies
   constituency: String
   constituency_id: Int
   num_contested_all: Int
@@ -298,8 +298,8 @@ type voter {
   suffix_std: String
   surname: String
   title: String
-  vote: [vote]
   voter_id: Int
+  votes: [vote]
   ward: String
   ward_of_freehold: String
 }

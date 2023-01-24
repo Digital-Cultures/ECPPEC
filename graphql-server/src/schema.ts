@@ -1170,7 +1170,7 @@ const Election = objectType({
         })
       },
     })
-    t.list.field('vote', {
+    t.list.field('votes', {
       type: Vote,
       args: {
         page: intArg(),
@@ -1185,7 +1185,7 @@ const Election = objectType({
          skip=0;
         }
         return context.prisma.votes.findMany({
-          take: _args.take || 100,
+          take: _args.take || 100, // default to limit 100
           skip: skip, // Skip the cursor
           cursor: {
             votes_id: _args.cursor_votes_id || 1,
@@ -1287,16 +1287,27 @@ const PollBooks = objectType({
         })
       },
     })
-    t.list.field('vote', {
+    t.list.field('votes', {
       type: Vote,
       args: {
         page: intArg(),
         line: intArg(),
         rejected: booleanArg(),
+        take: intArg(),
+        cursor_votes_id: intArg(),
       },
       resolve: (_parent, _args, context: Context) => {
         console.log(_parent.pollbook_id)
+        let skip = 1;
+        if (_args.cursor_votes_id==undefined){
+         skip=0;
+        }
         return context.prisma.votes.findMany({
+          take: _args.take || 100, // default to limit 100
+          skip: skip, // Skip the cursor
+          cursor: {
+            votes_id: _args.cursor_votes_id || 1,
+          },
           where: {
             pollbook_id: _parent.pollbook_id,
             page: _args.page || undefined,
@@ -1344,10 +1355,10 @@ const Stats = objectType({
     t.float('percent_contested_general')
     t.int('num_uncontested_general')
     t.float('percent_uncontested_general')
-    t.list.field('constituencies', {
+    t.field('constituencies', {
       type: Constituencies,
       resolve: (parent, _, context: Context) => {
-        return context.prisma.elections.findMany({
+        return context.prisma.elections.findFirst({
           where: { constituency_id: parent.constituency_id || undefined }
         })
       },
@@ -1420,7 +1431,7 @@ const Voter = objectType({
         },
     })
     t.string('notes')
-    t.list.field('vote', {
+    t.list.field('votes', {
       type: Vote,
       resolve: (parent, _, context: Context) => {
         return context.prisma.votes.findMany({
