@@ -1185,7 +1185,7 @@ const Election = objectType({
          skip=0;
         }
         return context.prisma.votes.findMany({
-          take: _args.take || 100, // default to limit 100
+          take: _args.take || 999999, 
           skip: skip, // Skip the cursor
           cursor: {
             votes_id: _args.cursor_votes_id || 1,
@@ -1303,7 +1303,7 @@ const PollBooks = objectType({
          skip=0;
         }
         return context.prisma.votes.findMany({
-          take: _args.take || 100, // default to limit 100
+          take: _args.take || 999999,
           skip: skip, // Skip the cursor
           cursor: {
             votes_id: _args.cursor_votes_id || 1,
