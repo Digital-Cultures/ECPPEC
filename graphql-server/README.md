@@ -117,3 +117,6 @@ $ pm2 delete 0
 $ pm2 start "npm run dev" --name graphql
 //for production 
 $ pm2 start "npm run start"  --name graphql
+
+//or
+pm2 start "npm run start"  --name graphql --max-memory-restart 1G --cron-restart="0 0 * * *"

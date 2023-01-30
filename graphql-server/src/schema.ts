@@ -1464,7 +1464,7 @@ const Vote = objectType({
       resolve: (_parent, args, context: Context) => {
         return context.prisma.voters.findMany({
           where: {  
-            voter_id: parent.voter_id, 
+            voter_id: _parent.voter_id, 
             forename: args.forename || undefined,
             surname: args.surname || undefined,
             occupation: args.occupation || undefined,
