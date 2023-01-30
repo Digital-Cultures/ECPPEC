@@ -5,18 +5,18 @@ export interface Context {
 }
 
 const prisma = new PrismaClient(
-//   {  log: [
-//   {
-//     emit: "event",
-//     level: "query",
-//   },
-// ],}
+  {  log: [
+  {
+    emit: "event",
+    level: "query",
+  },
+],}
 )
 
-// prisma.$on("query", async (e) => {
-//   console.log(Date.now());
-//   console.log(`${e.query} ${e.params}`)
-// });
+prisma.$on("query", async (e) => {
+  console.log(Date.now());
+  console.log(`${e.query} ${e.params}`)
+});
 
 export const context: Context = {
   prisma: prisma,

@@ -16,7 +16,7 @@ model artefact_attributes {
   created         DateTime  @default(now()) @db.Timestamp(0)
   modified        DateTime? @db.Timestamp(0)
 
-  @@unique([artefact_id, attribute_value, attribute_name], name: "artefact_id")
+  // @@unique([artefact_id, attribute_value, attribute_name], name: "artefact_id")
 }
 
 model artefacts {
@@ -240,7 +240,7 @@ model ms_comments {
   ms_comment  String?   @db.VarChar(255)
   created     DateTime? @default(now()) @db.Timestamp(0)
 
-  @@unique([voter_id, election_id], name: "voter_id")
+  // @@unique([voter_id, election_id], name: "voter_id")
 }
 
 model occupations {
