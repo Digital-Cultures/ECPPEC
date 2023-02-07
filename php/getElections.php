@@ -2,6 +2,25 @@
 require_once('config.php');
 require_once('functions.php');
 
+/**
+ * 	Available criteria (can be multiple, separate with semicolons, e.g., constituency=London;Bath;Bristol):
+ * 	For yes/no criteria, acceptable flags = any of "1","Y","y","yes","true"
+ * 	year
+ * 	from_year
+ * 	to_year
+ * 	general_election_id
+ * 	election_id
+ * 	month
+ * 	constituency (named)
+ * 	countyboroughuniv (c, b, or u)
+ * 	byelectiongeneral (b or g)
+ * 	contested (takes acceptable flags)
+ * 	include_results (who won and lost, takes acceptable flags)
+ * 	include_votes (voter info and how they voted, takes acceptable flags)
+ * 	has_data (restrict to those where we have polling data, takes acceptable flags)
+ * 	candidate (candidate name
+ */
+
 $conn = new mysqli($servername, $username, $password, $dbname);
 
 //initialize some variables, add geo
@@ -19,6 +38,36 @@ if(is_array($_GET)) {
 	$optimized = optimizer($_GET);
 }
 
+if (isset($optimized["election_id"])) {
+	$array = explode(";",$optimized['election_id']);
+	$big_array = array_merge($big_array,$array);
+	$options['election_id'] = "e.election_id IN ("
+		.	str_repeat("?,",count($array)-1)
+		.	"?)";
+}
+
+//candidate name?
+if(isset($optimized['candidate']) && !empty($optimized['candidate'])) {
+	$election_ids = get_elections_from_candidates($optimized['candidate']);
+	$other_ids = array();
+	// now we have election_ids BUT: did they also request specific election_ids?
+	if(isset($optimized['election_id'])) {
+		$other_ids = explode(";",$optimized['election_id']);
+	}
+
+	$array = array_unique(array_merge($election_ids,$other_ids));
+	$big_array = $array; //starting over with big_array
+	$options['election_id'] = "e.election_id IN ("
+		.	str_repeat("?,",count($array)-1)
+		.	"?)";
+
+	$optimized['include_results'] = 1; //make sure to include results if candidate requested
+}
+
+//limit to elections with data?
+if(isset($optimized['has_data'])) {
+	$options[] = "e.has_data = 1";
+}
 //cast all years as integers for safety
 
 //single year requested?
@@ -48,25 +97,36 @@ if(isset($optimized['general_election_id'])) {
 		.	"?)";
 }
 
-if (isset($optimized["election_id"])) {
-	$array = explode(";",$optimized['election_id']);
-	$big_array = array_merge($big_array,$array);
-	$options[] = "e.election_id IN ("
-		.	str_repeat("?,",count($array)-1)
-		.	"?)";
-}
-
-
 if (isset($optimized["month"])) {
 	$array = explode(";",$optimized['month']);
-	$big_array = array_merge($big_array,$array);
+	$ok_months = array();
+	foreach($array as $month) {
+		$month = strtolower($month);
+		if(isset($months[$month])) {
+			$ok_months[] = $months[$month]; //will be valid
+		} else {
+			$ok_months[] = $month; //could be valid or invalid but hey we did our best
+		}
+	}
+	$big_array = array_merge($big_array,$ok_months);
 	$options[] = "e.election_month IN ("
-	.	str_repeat("?,",count($array)-1)
+	.	str_repeat("?,",count($ok_months)-1)
 	.	"?)";
 }
 
 if (isset($optimized["constituency"])) {
 	$array = explode(";",$optimized['constituency']);
+	foreach($array as &$constituency) {
+		if(strstr($constituency,'Newcastle')) {
+			if(strstr($constituency,'Lyme')) {
+				$constituency = 'Newcastle-under-Lyme';
+			} else $constituency = 'Newcastle-upon-Tyne';
+		} elseif (strstr($constituency,'Berwick')) {
+			$constituency = 'Berwick-upon-Tweed';
+		} elseif (strstr($constituency,'Kingston')) {
+			$constituency = 'Kingston-upon-Hull';
+		}
+	}
 	$big_array = array_merge($big_array,$array);
 	$options[] = "e.constituency IN ("
 	.	str_repeat("?,",count($array)-1)
@@ -148,7 +208,7 @@ if(empty($n)) {
 	$response['latest_year'] = "not applicable";
 	$response['elections'] = "no elections found for criteria provided";
 }
-print json_encode($response);
+print json_encode($response,JSON_HEX_QUOT | JSON_HEX_TAG);
 $conn->close();
 
 
