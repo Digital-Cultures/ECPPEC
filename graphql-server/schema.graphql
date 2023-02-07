@@ -303,7 +303,7 @@ type voter {
   surname: String
   title: String
   voter_id: Int
-  votes: [vote]
+  votes(cursor_votes_id: Int, line: Int, page: Int, rejected: Boolean, take: Int): [vote]
   ward: String
   ward_of_freehold: String
 }

@@ -1066,6 +1066,13 @@ export interface NexusGenArgTypes {
       take?: number | null; // Int
       voter_id?: number | null; // Int
     }
+    votes: { // args
+      cursor_votes_id?: number | null; // Int
+      line?: number | null; // Int
+      page?: number | null; // Int
+      rejected?: boolean | null; // Boolean
+      take?: number | null; // Int
+    }
   }
 }
 

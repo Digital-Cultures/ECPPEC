@@ -285,7 +285,7 @@ const Query = objectType({
         if (_args.cursor_id==undefined){
          skip=0;
         }
-        // const select = new PrismaSelect(info).value;
+        // const select = new PrismaSelect(info).value;        
         return context.prisma.elections.findMany({
           take: _args.take || 9999999,
           skip: skip, // Skip the cursor
@@ -294,8 +294,8 @@ const Query = objectType({
           },
           where: {  
             election_date: {
-              gte: new Date(_args.election_year_gte,1,1),
-              lte: new Date(_args.election_year_lte,12,31) 
+              gte: new Date(_args.election_year_gte,0,0),
+              lte: new Date(_args.election_year_lte,11,31) 
              } || undefined,
             election_month: _args.election_month || undefined,
             constituency: _args.constituency || undefined,
@@ -1460,10 +1460,37 @@ const Voter = objectType({
     t.string('notes')
     t.list.field('votes', {
       type: Vote,
-      resolve: (parent, _, context: Context) => {
+      args: {
+        page: intArg(),
+        line: intArg(),
+        rejected: booleanArg(),
+        take: intArg(),
+        cursor_votes_id: intArg(),
+      },
+      resolve: (parent, args, context: Context) => {
+        let skip = 1;
+        if (args.cursor_votes_id==undefined){
+         skip=0;
+        }
+        console.log(parent.voter_id);
+
         return context.prisma.votes.findMany({
-          where: { voter_id: parent.voter_id || undefined }})
-        },
+          take: args.take || 999999,
+          skip: skip, // Skip the cursor
+          cursor: {
+            votes_id: args.cursor_votes_id || 1,
+          },
+          where: {
+            voter_id: parent.voter_id,
+            page: args.page || undefined,
+            line: args.line || undefined,
+            rejected: args.rejected || undefined,
+          },
+          orderBy: {
+            votes_id: 'asc',
+          },
+        })
+      },
     })
     t.list.field('ms_comments', {
       type: MsComments,
