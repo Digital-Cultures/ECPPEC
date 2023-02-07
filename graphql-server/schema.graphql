@@ -28,25 +28,25 @@ input OrderByDate {
 }
 
 type Query {
-  artefact(description: String, display_name: String, manifest: String, source: String): [artefact!]!
   artefact_attributes(artefact_id: Int, attribute_name: String, attribute_value: String): [artefact_attributes!]!
   artefact_files(display_label: String, file_type: String, filename: String, id: Int): [artefact_files!]!
-  candidate(born: Int, born_gte: Int, born_lte: Int, candidate_id: Int, candidate_name: String, cursor_candidate_id: Int, died: Int, died_gte: Int, died_lte: Int, short_name: String, suffix: String, take: Int, title: [String]): [candidate!]!
-  candidates_elections(candidate_id: Int, cursor_candidates_elections_id: Int, election_id: String, overturned_by: String, returned: Boolean, running_as: String, seated: Boolean, take: Int): [candidatesElection!]!
-  constituencies(constituency: String, constituency_id: Int, cursor_constituency_id: Int, has_data: Boolean, take: Int): [constituencies!]!
-  election(by_election_cause: String, by_election_general: String, constituency: String, constituency_id: Int, contested: String, countyboroughuniv: String, cursor_id: Int, election_month: String, election_year_gte: Int = 1500, election_year_lte: Int = 2020, electorate_size_est_gte: Int, electorate_size_est_lte: Int, franchise_type: [String], has_data: Boolean, office: String, take: Int): [election!]!
-  election_attributes(attribute_name: String, cursor_id: Int, election_id: String, take: Int): [electionAttributes!]!
-  election_dates(election_year: Int = 0, election_year_gte: Int = 0, election_year_lte: Int = 9999, orderBy: OrderByDate): [electionDates!]!
+  artefacts(description: String, display_name: String, manifest: String, source: String): [artefact!]!
+  candidates(born: Int, born_gte: Int, born_lte: Int, candidate_id: Int, candidate_name: String, cursor_candidate_id: Int, died: Int, died_gte: Int, died_lte: Int, short_name: String, suffix: String, take: Int, title: [String]): [candidate!]!
+  candidates_elections(candidate_id: Int, cursor_candidates_elections_id: Int, election_id: String, overturned_by: String, returned: Boolean, running_as: String, seated: Boolean, take: Int): [candidates_election!]!
+  constituencies(constituency: String, constituency_id: Int, cursor_constituency_id: Int, has_data: Boolean, take: Int): [constituency!]!
+  election_attributes(attribute_name: String, cursor_id: Int, election_id: String, take: Int): [election_attribute!]!
+  election_dates(election_year: Int = 0, election_year_gte: Int = 0, election_year_lte: Int = 9999, orderBy: OrderByDate): [election_dates!]!
+  elections(by_election_cause: String, by_election_general: String, constituency: String, constituency_id: Int, contested: String, countyboroughuniv: String, cursor_id: Int, election_month: String, election_year_gte: Int = 1500, election_year_lte: Int = 2020, electorate_size_est_gte: Int, electorate_size_est_lte: Int, franchise_type: [String], has_data: Boolean, office: String, take: Int): [election!]!
   geocodes(abode: String, address: String, city: String, constituency: String, county: String, parish: String, street: String): [geocodes!]!
   location_from_lat_lng(distance: Float = 1000, lat: Float, lng: Float): [locations_from_lat_lng!]!
   ms_comments(cursor_id: Int, election_id: String, rejected: Boolean, take: Int, voter_id: Int): [ms_comments!]!
   occupations_group(occupation: String): [occupations_map!]!
-  poll_book(constituency_id: Int, cursor_pollbook_id: String, has_data: Boolean, pollbook_id: String, take: Int): [poll_books!]!
+  poll_books(constituency_id: Int, cursor_pollbook_id: String, has_data: Boolean, pollbook_id: String, take: Int): [poll_book!]!
   stat_num_poll_books(constituency_id: Int): Int
   stats(constituency: String, num_contested_all_gte: Int, num_contested_all_lte: Int, num_contested_by_gte: Int, num_contested_by_lte: Int, num_contested_general_gte: Int, num_contested_general_lte: Int, num_elections_all_gte: Int, num_elections_all_lte: Int, num_elections_by_gte: Int, num_elections_by_lte: Int, num_elections_general_gte: Int, num_elections_general_lte: Int, num_uncontested_all_gte: Int, num_uncontested_all_lte: Int, num_uncontested_by_gte: Int, num_uncontested_by_lte: Int, num_uncontested_general_gte: Int, num_uncontested_general_lte: Int, percent_contested_all_gte: Float, percent_contested_all_lte: Float, percent_contested_by_gte: Float, percent_contested_by_lte: Float, percent_contested_general_gte: Float, percent_contested_general_lte: Float, percent_uncontested_all_gte: Float, percent_uncontested_all_lte: Float, percent_uncontested_by_gte: Float, percent_uncontested_by_lte: Float, percent_uncontested_general_gte: Float, percent_uncontested_general_lte: Float): [stats!]!
-  vote(cursor_votes_id: Int, line: Int, page: Int, rejected: Boolean, take: Int): [vote!]!
-  voter(cursor_voter_id: Int, forename: String, guild: String, occupation: String, surname: String, take: Int): [voter!]!
+  voters(cursor_voter_id: Int, forename: String, guild: String, occupation: String, surname: String, take: Int): [voter!]!
   voters_occupations(cursor_id: Int, occupation: String, take: Int): [voters_occupations!]!
+  votes(cursor_votes_id: Int, line: Int, page: Int, rejected: Boolean, take: Int): [vote!]!
 }
 
 enum SortOrder {
@@ -77,7 +77,7 @@ type artefact_attributes {
   attribute_name: String
   attribute_value: String
   candidates: [candidate]
-  constituencies: [constituencies]
+  constituencies: [constituency]
   election: [election]
   id: Int!
 }
@@ -90,11 +90,11 @@ type artefact_files {
 }
 
 type candidate {
-  artefact: [artefact]
+  artefacts: [artefact]
   born: Int
   candidate_id: Int!
   candidate_name: String
-  candidates_elections(cursor_candidates_elections_id: Int, election_id: String, overturned_by: String, returned: Boolean, running_as: String, seated: Boolean, take: Int): [candidatesElection]
+  candidates_elections(cursor_candidates_elections_id: Int, election_id: String, overturned_by: String, returned: Boolean, running_as: String, seated: Boolean, take: Int): [candidates_election]
   died: Int
   short_name: String
   suffix: String
@@ -102,7 +102,7 @@ type candidate {
   votes(cursor_votes_id: Int, rejected: Boolean, take: Int): [vote]
 }
 
-type candidatesElection {
+type candidates_election {
   candidate: [candidate]
   candidate_id: Int!
   candidates_elections_id: Int!
@@ -114,7 +114,7 @@ type candidatesElection {
   seated: Boolean
 }
 
-type constituencies {
+type constituency {
   artefact: [artefact]
   constituency: String
   constituency_id: Int!
@@ -130,8 +130,8 @@ type election {
   artefacts: [artefact]
   by_election_cause: String
   by_election_general: String
-  candidates_elections(candidate_id: Int, cursor_candidates_elections_id: Int, overturned_by: String, returned: Boolean, running_as: String, seated: Boolean, take: Int): [candidatesElection]
-  constituencies: constituencies
+  candidates_elections(candidate_id: Int, cursor_candidates_elections_id: Int, overturned_by: String, returned: Boolean, running_as: String, seated: Boolean, take: Int): [candidates_election]
+  constituencies: constituency
   constituency: String
   constituency_id: String
   contested: String
@@ -150,13 +150,14 @@ type election {
   notable_remarks: String
   notes: String
   office: String
-  poll_books(has_data: Boolean): [poll_books]
+  poll_books(has_data: Boolean): [poll_book]
   pollbook_id: String
   voterate: String
+  voters: [voter]
   votes(cursor_votes_id: Int, line: Int, page: Int, rejected: Boolean, take: Int): [vote]
 }
 
-type electionAttributes {
+type election_attribute {
   attribute_name: String!
   attribute_value: String!
   election: [election]
@@ -164,7 +165,7 @@ type electionAttributes {
   id: Int!
 }
 
-type electionDates {
+type election_dates {
   election: [election]
   election_date: DateTime
   election_id: String!
@@ -176,7 +177,7 @@ type geocodes {
   address_type: String
   city: String
   concat_id: String
-  constituency: constituencies
+  constituency: constituency
   constituency_id: Int
   county: String
   geocode_id: Int
@@ -218,9 +219,9 @@ type occupations_map {
   voters: [voter]
 }
 
-type poll_books {
+type poll_book {
   citation: String
-  constituencies: constituencies
+  constituency: constituency
   constituency_id: String
   election_id: String
   elections: election
@@ -234,8 +235,7 @@ type poll_books {
 }
 
 type stats {
-  constituencies: constituencies
-  constituency: String
+  constituency: constituency
   constituency_id: Int
   num_contested_all: Int
   num_contested_by: Int
@@ -256,11 +256,11 @@ type stats {
 
 type vote {
   candidate: [candidate]
-  constituencies: [constituencies]
+  constituencies: [constituency]
   elections: [election]
   line: Int
   page: Int
-  poll_books(has_data: Boolean): [poll_books]
+  poll_books(has_data: Boolean): [poll_book]
   poll_date: String
   reason_rejected: String
   rejected: Boolean
@@ -273,6 +273,7 @@ type voter {
   abode_std: String
   alley: String
   area: String
+  candidates: [candidate]
   city: String
   class: String
   college: String

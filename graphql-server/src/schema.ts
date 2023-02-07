@@ -12,7 +12,7 @@ const Query = objectType({
   name: 'Query',
   definition(t) {
 
-    t.nonNull.list.nonNull.field('artefact', {
+    t.nonNull.list.nonNull.field('artefacts', {
       type: Artefact,
       args: {
         display_name: stringArg(),
@@ -78,7 +78,7 @@ const Query = objectType({
       },
     })
 
-    t.nonNull.list.nonNull.field('candidate', {
+    t.nonNull.list.nonNull.field('candidates', {
       type: Candidate,
       args: {
         candidate_id: intArg(),
@@ -226,7 +226,7 @@ const Query = objectType({
     })
 
     t.nonNull.list.nonNull.field('constituencies', {
-      type: Constituencies,
+      type: Constituency,
       args: {
         constituency_id: intArg(),
         constituency: stringArg(),
@@ -259,7 +259,7 @@ const Query = objectType({
       },
     })
 
-    t.nonNull.list.nonNull.field('election', {
+    t.nonNull.list.nonNull.field('elections', {
       type: Election,
       args: {
         election_year_gte: intArg({default:1500}),
@@ -322,7 +322,7 @@ const Query = objectType({
     })
 
     t.nonNull.list.nonNull.field('election_attributes', {
-      type: ElectionAttributes,
+      type: ElectionAttribute,
       args: {
         election_id: stringArg(),
         attribute_name: stringArg(),
@@ -414,8 +414,8 @@ const Query = objectType({
       },
     })
 
-    t.nonNull.list.nonNull.field('poll_book', {
-      type: PollBooks,
+    t.nonNull.list.nonNull.field('poll_books', {
+      type: PollBook,
       args: {
         pollbook_id: stringArg(),
         constituency_id: intArg(),
@@ -564,7 +564,7 @@ const Query = objectType({
       },
     })
 
-    t.nonNull.list.nonNull.field('voter', {
+    t.nonNull.list.nonNull.field('voters', {
       type: Voter,
       args: {
         forename: stringArg(),
@@ -599,7 +599,7 @@ const Query = objectType({
       },
     })
 
-    t.nonNull.list.nonNull.field('vote', {
+    t.nonNull.list.nonNull.field('votes', {
       type: Vote,
       args: {
         page: intArg(),
@@ -810,7 +810,7 @@ const ArtefactAttributes = objectType({
     })
   
     t.list.field('constituencies', {
-      type: Constituencies,
+      type: Constituency,
       resolve: (parent, _, context: Context) => {
         if (parent.attribute_name=="constituency_id"){
           return context.prisma.constituencies.findMany({
@@ -925,18 +925,18 @@ const Candidate = objectType({
         })
       },
     })
-    t.list.field('artefact', {
+    t.list.field('artefacts', {
       type: Artefact,
       resolve: async (parent, _, context: Context) => {
         //get artifacts by election_id
-        return context.prisma.$queryRaw(`SELECT * FROM artefacts INNER JOIN (SELECT artefact_id FROM ECPPEC.artefact_attributes where attribute_name="candidate_id" and attribute_value="`+parent.candidate_id+`") c on artefacts.id=c.artefact_id;`)
+        return context.prisma.$queryRaw`SELECT * FROM artefacts INNER JOIN (SELECT artefact_id FROM ECPPEC.artefact_attributes where attribute_name="candidate_id" and attribute_value=${parent.candidate_id}) c on artefacts.id=c.artefact_id;`
       }
     })
   },
 })
 
 const CandidatesElection = objectType({
-  name: 'candidatesElection',
+  name: 'candidates_election',
   definition(t) {
     t.nonNull.int('candidates_elections_id')
     t.nonNull.string('election_id')
@@ -1013,9 +1013,9 @@ const CandidatesElection = objectType({
   },
 })
 
-const Constituencies = objectType({
+const Constituency = objectType({
   // TO DO:  return ID
-  name: 'constituencies',
+  name: 'constituency',
   definition(t) {
     t.nonNull.int('constituency_id')
     t.string('constituency')
@@ -1055,8 +1055,8 @@ const Constituencies = objectType({
   }
 })
 
-const ElectionAttributes = objectType({
-  name: 'electionAttributes',
+const ElectionAttribute = objectType({
+  name: 'election_attribute',
   definition(t) {
     t.nonNull.int('id')
     t.nonNull.string('election_id')
@@ -1075,7 +1075,7 @@ const ElectionAttributes = objectType({
 
 
 const ElectionDates = objectType({
-  name: 'electionDates',
+  name: 'election_dates',
   definition(t) {
     t.nonNull.string('election_id')
     t.field('election_date', { type: 'DateTime' })
@@ -1113,7 +1113,7 @@ const Election = objectType({
     t.string('constituency')
     t.string('constituency_id')
     t.field('constituencies', {
-      type: Constituencies,
+      type: Constituency,
       resolve: (parent, _, context: Context) => {
         return context.prisma.constituencies.findFirst({
           where: { constituency_id: parent.constituency_id }
@@ -1185,7 +1185,7 @@ const Election = objectType({
       },
     })
     t.list.field('poll_books', {
-      type: PollBooks,
+      type: PollBook,
       args: {
         has_data: booleanArg(),
       },
@@ -1230,7 +1230,14 @@ const Election = objectType({
       type: Artefact,
       resolve: async (parent, _, context: Context) => {
         //get artifacts by election_id
-        return context.prisma.$queryRaw(`SELECT * FROM artefacts INNER JOIN (SELECT artefact_id FROM ECPPEC.artefact_attributes where attribute_name="election_id" and attribute_value="`+parent.election_id+`") a on artefacts.id=a.artefact_id;`)
+        return context.prisma.$queryRaw`SELECT * FROM artefacts INNER JOIN (SELECT artefact_id FROM ECPPEC.artefact_attributes where attribute_name="election_id" and attribute_value= ${parent.election_id}) a on artefacts.id=a.artefact_id;`
+      }
+    })
+    t.list.field('voters', {
+      type: Voter,
+      resolve: async (parent, _, context: Context) => {
+        //get artifacts by election_id
+        return context.prisma.$queryRaw`SELECT voters.* FROM voters INNER JOIN votes ON voters.voter_id=votes.voter_id INNER JOIN elections ON votes.election_id=elections.election_id where elections.election_id = ${parent.election_id} GROUP BY voters.voter_id`
       }
     })
   },
@@ -1279,14 +1286,14 @@ const LocationsFrom = objectType({
       type: Artefact,
       resolve: async (parent, _, context: Context) => {
         //get artifacts by election_id
-        return context.prisma.$queryRaw(`SELECT * FROM artefacts INNER JOIN (SELECT artefact_id FROM ECPPEC.artefact_attributes where attribute_name="constituency_id" and attribute_value="`+parent.constituency_id+`") c on artefacts.id=c.artefact_id;`)
+        return context.prisma.$queryRaw`SELECT * FROM artefacts INNER JOIN (SELECT artefact_id FROM ECPPEC.artefact_attributes where attribute_name="constituency_id" and attribute_value=${parent.constituency_id}) c on artefacts.id=c.artefact_id;`
       }
     })
   }
 })
 
-const PollBooks = objectType({
-  name: 'poll_books',
+const PollBook = objectType({
+  name: 'poll_book',
   definition(t) {
     t.string('pollbook_id')
     t.string('constituency_id')
@@ -1297,8 +1304,8 @@ const PollBooks = objectType({
     t.string('election_id')
     t.string('notes')
     t.boolean('has_data')
-    t.field('constituencies', {
-      type: Constituencies,
+    t.field('constituency', {
+      type: Constituency,
       resolve: (parent, _, context: Context) => {
         return context.prisma.constituencies.findFirst({
           where: { constituency_id: parent.constituency_id || undefined }
@@ -1382,8 +1389,8 @@ const Stats = objectType({
     t.float('percent_contested_general')
     t.int('num_uncontested_general')
     t.float('percent_uncontested_general')
-    t.field('constituencies', {
-      type: Constituencies,
+    t.field('constituency', {
+      type: Constituency,
       resolve: (parent, _, context: Context) => {
         return context.prisma.elections.findFirst({
           where: { constituency_id: parent.constituency_id || undefined }
@@ -1492,6 +1499,13 @@ const Voter = objectType({
         })
       },
     })
+    t.list.field('candidates', {
+      type: Candidate,
+      resolve: async (parent, _, context: Context) => {
+        //get artifacts by election_id
+        return context.prisma.$queryRaw`SELECT candidates.* FROM candidates INNER JOIN votes ON candidates.candidate_id=votes.candidate_id where votes.voter_id = ${parent.voter_id};`
+      }
+    })
     t.list.field('ms_comments', {
       type: MsComments,
       args: {
@@ -1568,7 +1582,7 @@ const Vote = objectType({
       },
     })
     t.list.field('poll_books', {
-      type: PollBooks,
+      type: PollBook,
       args: {
         has_data: booleanArg(),
       },
@@ -1582,7 +1596,7 @@ const Vote = objectType({
       }
     })
     t.list.field('constituencies', {
-      type: Constituencies,
+      type: Constituency,
       args: {
       },
       resolve: (parent, args, context: Context) => {
@@ -1617,7 +1631,7 @@ const OccupationsMap = objectType({
     t.list.field('voters', {
       type: Voter,
       resolve: (parent, _, context: Context) => {
-        return context.prisma.$queryRaw(`SELECT voters.* FROM voters INNER JOIN (SELECT * FROM ECPPEC.voters_occupations where level`+parent.level_num+`="`+parent.level_code+`") as o ON voters.voter_id = o.voter_id;`)
+        return context.prisma.$queryRaw`SELECT voters.* FROM voters INNER JOIN (SELECT * FROM ECPPEC.voters_occupations where ${`level`+parent.level_num} = ${parent.level_code}) as o ON voters.voter_id = o.voter_id;`
         },
     })
   },
@@ -1671,7 +1685,7 @@ const Geocode =  objectType({
     // t.string('constituency')
     t.int('constituency_id')
     t.field('constituency', {
-      type: Constituencies,
+      type: Constituency,
       resolve: (parent, _, context: Context) => {
         return context.prisma.elections.findFirst({
           where: { constituency_id: parent.constituency_id || undefined }
@@ -1767,13 +1781,13 @@ export const schema = makeSchema({
     Artefact,
     Candidate,
     CandidatesElection,
-    Constituencies,
-    ElectionAttributes,
+    Constituency,
+    ElectionAttribute,
     ElectionDates,
     Election,
     LocationsFrom,
     LocationType,
-    PollBooks,
+    PollBook,
     Stats,
     Voter,
     Vote, 
