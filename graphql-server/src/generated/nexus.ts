@@ -158,8 +158,11 @@ export interface NexusGenObjects {
     lng?: number | null; // Float
   }
   ms_comments: { // root type
+    election_id?: string | null; // String
     id?: number | null; // Int
+    in_votes?: boolean | null; // Boolean
     ms_comment?: string | null; // String
+    rejected?: boolean | null; // Boolean
   }
   occupations_map: { // root type
     level_code?: string | null; // String
@@ -362,6 +365,7 @@ export interface NexusGenFieldTypes {
     franchise_type: string | null; // String
     has_data: boolean | null; // Boolean
     id: number | null; // Int
+    ms_comments: Array<NexusGenRootTypes['ms_comments'] | null> | null; // [ms_comments]
     notable_remarks: string | null; // String
     notes: string | null; // String
     office: string | null; // String
@@ -412,9 +416,12 @@ export interface NexusGenFieldTypes {
     stats: Array<NexusGenRootTypes['stats'] | null> | null; // [stats]
   }
   ms_comments: { // field return type
+    election_id: string | null; // String
     elections: Array<NexusGenRootTypes['election'] | null> | null; // [election]
     id: number | null; // Int
+    in_votes: boolean | null; // Boolean
     ms_comment: string | null; // String
+    rejected: boolean | null; // Boolean
     voter: Array<NexusGenRootTypes['voter'] | null> | null; // [voter]
   }
   occupations_map: { // field return type
@@ -626,6 +633,7 @@ export interface NexusGenFieldTypeNames {
     franchise_type: 'String'
     has_data: 'Boolean'
     id: 'Int'
+    ms_comments: 'ms_comments'
     notable_remarks: 'String'
     notes: 'String'
     office: 'String'
@@ -676,9 +684,12 @@ export interface NexusGenFieldTypeNames {
     stats: 'stats'
   }
   ms_comments: { // field return type name
+    election_id: 'String'
     elections: 'election'
     id: 'Int'
+    in_votes: 'Boolean'
     ms_comment: 'String'
+    rejected: 'Boolean'
     voter: 'voter'
   }
   occupations_map: { // field return type name
@@ -881,6 +892,7 @@ export interface NexusGenArgTypes {
     ms_comments: { // args
       cursor_id?: number | null; // Int
       election_id?: string | null; // String
+      rejected?: boolean | null; // Boolean
       take?: number | null; // Int
       voter_id?: number | null; // Int
     }
@@ -1003,6 +1015,10 @@ export interface NexusGenArgTypes {
       seated?: boolean | null; // Boolean
       take?: number | null; // Int
     }
+    ms_comments: { // args
+      in_votes?: boolean | null; // Boolean
+      rejected?: boolean | null; // Boolean
+    }
     poll_books: { // args
       has_data?: boolean | null; // Boolean
     }
@@ -1040,6 +1056,15 @@ export interface NexusGenArgTypes {
       guild?: string | null; // String
       occupation?: string | null; // String
       surname?: string | null; // String
+    }
+  }
+  voter: {
+    ms_comments: { // args
+      cursor_id?: number | null; // Int
+      election_id?: string | null; // String
+      rejected?: boolean | null; // Boolean
+      take?: number | null; // Int
+      voter_id?: number | null; // Int
     }
   }
 }

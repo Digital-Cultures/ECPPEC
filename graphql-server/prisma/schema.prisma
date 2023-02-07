@@ -16,7 +16,14 @@ model artefact_attributes {
   created         DateTime  @default(now()) @db.Timestamp(0)
   modified        DateTime? @db.Timestamp(0)
 
-  // @@unique([artefact_id, attribute_value, attribute_name], name: "artefact_id")
+  @@unique([artefact_id, attribute_value, attribute_name], map: "artefact_id")
+}
+
+model artefact_files {
+  id            Int     @id @default(autoincrement()) @db.UnsignedInt
+  file_type     String? @db.VarChar(50)
+  display_label String? @db.VarChar(255)
+  file_name     String? @db.VarChar(255)
 }
 
 model artefacts {
@@ -28,13 +35,6 @@ model artefacts {
   license      String? @db.Text
   attribution  String? @db.Text
   manifest     String? @db.VarChar(100)
-}
-
-model artefact_files {
-  id            Int     @id @default(autoincrement()) @db.UnsignedInt
-  file_type     String? @db.VarChar(50)
-  display_label String? @db.VarChar(255)
-  file_name     String? @db.VarChar(255)
 }
 
 model candidates {
@@ -57,11 +57,11 @@ model candidates_elections {
   candidate_id            Int?
   running_as              String? @db.VarChar(50)
   rank_order              Int     @default(0)
-  returned                Boolean     @default(false) @db.TinyInt
+  returned                Boolean @default(false) @db.TinyInt
   overturned_by           String? @db.VarChar(100)
-  seated                  Boolean     @default(false) @db.TinyInt
+  seated                  Boolean @default(false) @db.TinyInt
 
-  @@unique([election_id, candidate_id], name: "electionID")
+  @@unique([election_id, candidate_id], map: "electionID")
 }
 
 model constituencies {
@@ -83,28 +83,75 @@ model election_attributes {
 }
 
 model elections {
-  id                   Int       @id @default(autoincrement())
-  election_year        String?   @db.VarChar(50)
-  election_month       String?   @db.VarChar(50)
-  election_date        DateTime? @db.Date
-  constituency         String?   @db.VarChar(50)
+  id                   Int           @id @default(autoincrement())
+  election_year        String?       @db.VarChar(50)
+  election_month       String?       @db.VarChar(50)
+  election_date        DateTime?     @db.Date
+  constituency         String?       @db.VarChar(50)
   constituency_id      Int?
-  office               String    @default("parliament") @db.VarChar(25)
+  office               String        @default("parliament") @db.VarChar(25)
   electorate_size_est  Int?
-  electorate_size_desc String?   @db.VarChar(25)
+  electorate_size_desc String?       @db.VarChar(25)
   voterate             Int?
-  countyboroughuniv    String?   @db.VarChar(50)
-  franchise_detail     String?   @db.VarChar(50)
-  franchise_type       String?   @db.VarChar(50)
-  by_election_general  String?   @db.VarChar(50)
-  by_election_cause    String?   @db.VarChar(50)
-  contested            String?   @db.VarChar(50)
-  election_id          String?   @db.VarChar(50)
-  pollbook_id          String?   @db.VarChar(50)
-  general_election_id  String?   @db.VarChar(12)
-  notes                String?   @db.VarChar(250)
-  notable_remarks      String?   @db.Text
-  has_data             Boolean   @default(false) @db.TinyInt
+  countyboroughuniv    String?       @db.VarChar(50)
+  franchise_detail     String?       @db.VarChar(50)
+  franchise_type       String?       @db.VarChar(50)
+  by_election_general  String?       @db.VarChar(50)
+  by_election_cause    String?       @db.VarChar(50)
+  contested            String?       @db.VarChar(50)
+  election_id          String?       @unique @db.VarChar(50)
+  pollbook_id          String?       @db.VarChar(50)
+  general_election_id  String?       @db.VarChar(12)
+  notes                String?       @db.VarChar(250)
+  notable_remarks      String?       @db.Text
+  has_data             Boolean       @default(false) @db.TinyInt
+  ms_comments          ms_comments[]
+}
+
+model geocodes {
+  geocode_id      Int      @id @default(autoincrement()) @db.UnsignedInt
+  concat_id       String?  @unique(map: "concat_id") @default("") @db.VarChar(250)
+  street          String?  @db.VarChar(150)
+  city            String?  @db.VarChar(150)
+  county          String?  @db.VarChar(150)
+  parish          String?  @db.VarChar(150)
+  abode           String?  @db.VarChar(150)
+  address_type    String?  @db.VarChar(75)
+  address         String?  @db.VarChar(255)
+  score           Decimal? @db.Decimal(5, 2)
+  lat             Decimal? @db.Decimal(12, 10)
+  lng             Decimal? @db.Decimal(12, 10)
+  constituency    String?  @db.VarChar(150)
+  constituency_id Int?
+}
+
+model ms_comments {
+  id          Int       @id @default(autoincrement()) @db.UnsignedInt
+  voter_id    Int?
+  election_id String?   @db.VarChar(50)
+  ms_comment  String?   @db.VarChar(255)
+  rejected    Boolean   @default(false) @db.TinyInt
+  created     DateTime? @default(now()) @db.Timestamp(0)
+  in_votes    Boolean   @default(true) @db.TinyInt
+
+  election elections? @relation(fields: [election_id], references: [election_id])
+
+  @@unique([voter_id, election_id], map: "voter_id")
+}
+
+model occupations {
+  occupation String  @id @unique(map: "occupation") @db.VarChar(150)
+  level1     String? @db.VarChar(12)
+  level2     String? @db.VarChar(12)
+  level3     String? @db.VarChar(12)
+  level4     String? @db.VarChar(12)
+}
+
+model occupations_map {
+  id         Int     @id @default(autoincrement()) @db.UnsignedInt
+  level_num  String? @db.VarChar(12)
+  level_code String? @db.VarChar(12)
+  level_name String? @db.VarChar(50)
 }
 
 model poll_books {
@@ -116,25 +163,25 @@ model poll_books {
   source          String? @db.VarChar(1000)
   election_id     String  @default("") @db.VarChar(100)
   notes           String? @db.VarChar(1000)
-  has_data        Boolean     @default(false) @db.TinyInt
+  has_data        Boolean @default(false) @db.TinyInt
 
-  @@index([election_id], name: "ElectionCode")
+  @@index([election_id], map: "ElectionCode")
 }
 
 model stats {
-  constituency_id             Int     @id
+  constituency_id             Int     @id @unique(map: "constituency_id_UNIQUE")
   constituency                String? @db.VarChar(50)
-  num_elections_all           Int  @default(0)
+  num_elections_all           Int     @default(0)
   num_contested_all           Int     @default(0)
   percent_contested_all       Decimal @default(0.0) @db.Decimal(25, 1)
   num_uncontested_all         Int     @default(0)
   percent_uncontested_all     Decimal @default(0.0) @db.Decimal(25, 1)
-  num_elections_by            Int  @default(0)
+  num_elections_by            Int     @default(0)
   num_contested_by            Int     @default(0)
   percent_contested_by        Decimal @default(0.0) @db.Decimal(25, 1)
   num_uncontested_by          Int     @default(0)
   percent_uncontested_by      Decimal @default(0.0) @db.Decimal(25, 1)
-  num_elections_general       Int  @default(0)
+  num_elections_general       Int     @default(0)
   num_contested_general       Int     @default(0)
   percent_contested_general   Decimal @default(0.0) @db.Decimal(25, 1)
   num_uncontested_general     Int     @default(0)
@@ -174,12 +221,22 @@ model voters {
   ward                  String?   @db.VarChar(75)
   area                  String?   @db.VarChar(75)
   location_sanitized    String?   @db.VarChar(1000)
-  geocode_id            Int?
+  geocode_id            Int       @default(0)
   geo_lat               Decimal?  @db.Decimal(12, 10)
   geo_long              Decimal?  @db.Decimal(12, 10)
   notes                 String?   @db.Text
   created               DateTime  @db.Timestamp(0)
   modified              DateTime? @default(now()) @db.Timestamp(0)
+}
+
+model voters_occupations {
+  id         Int     @id @default(autoincrement())
+  voter_id   Int?
+  occupation String? @db.VarChar(100)
+  level1     String? @db.Char(2)
+  level2     String? @db.VarChar(12)
+  level3     String? @db.VarChar(12)
+  level4     String? @db.VarChar(12)
 }
 
 model votes {
@@ -197,56 +254,4 @@ model votes {
   day_of_poll     Int?
   poll_date       DateTime? @db.Date
   created         DateTime  @default(now()) @db.Timestamp(0)
-}
-
-model occupations_map {
-  id         Int     @id @default(autoincrement()) @db.UnsignedInt
-  level_num  String? @db.VarChar(12)
-  level_code String? @db.VarChar(12)
-  level_name String? @db.VarChar(50)
-}
-
-model voters_occupations {
-  id         Int     @id @default(autoincrement())
-  voter_id   Int?
-  occupation String? @db.VarChar(100)
-  level1     String? @db.Char(2)
-  level2     String? @db.VarChar(12)
-  level3     String? @db.VarChar(12)
-  level4     String? @db.VarChar(12)
-}
-
-model geocodes {
-  geocode_id      Int      @id @default(autoincrement()) @db.UnsignedInt
-  concat_id       String?  @unique @default("") @db.VarChar(250)
-  street          String?  @db.VarChar(150)
-  city            String?  @db.VarChar(150)
-  county          String?  @db.VarChar(150)
-  parish          String?  @db.VarChar(150)
-  abode           String?  @db.VarChar(150)
-  address_type    String?  @db.VarChar(75)
-  address         String?  @db.VarChar(255)
-  score           Decimal? @db.Decimal(5, 2)
-  lat             Decimal? @db.Decimal(12, 10)
-  lng             Decimal? @db.Decimal(12, 10)
-  constituency    String?  @db.VarChar(150)
-  constituency_id Int?
-}
-
-model ms_comments {
-  id          Int       @id @default(autoincrement()) @db.UnsignedInt
-  voter_id    Int?
-  election_id String?   @db.VarChar(50)
-  ms_comment  String?   @db.VarChar(255)
-  created     DateTime? @default(now()) @db.Timestamp(0)
-
-  // @@unique([voter_id, election_id], name: "voter_id")
-}
-
-model occupations {
-  occupation String  @id @db.VarChar(150)
-  level1     String? @db.VarChar(12)
-  level2     String? @db.VarChar(12)
-  level3     String? @db.VarChar(12)
-  level4     String? @db.VarChar(12)
 }

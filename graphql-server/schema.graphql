@@ -39,7 +39,7 @@ type Query {
   election_dates(election_year: Int = 0, election_year_gte: Int = 0, election_year_lte: Int = 9999, orderBy: OrderByDate): [electionDates!]!
   geocodes(abode: String, address: String, city: String, constituency: String, county: String, parish: String, street: String): [geocodes!]!
   location_from_lat_lng(distance: Float = 1000, lat: Float, lng: Float): [locations_from_lat_lng!]!
-  ms_comments(cursor_id: Int, election_id: String, take: Int, voter_id: Int): [ms_comments!]!
+  ms_comments(cursor_id: Int, election_id: String, rejected: Boolean, take: Int, voter_id: Int): [ms_comments!]!
   occupations_group(occupation: String): [occupations_map!]!
   poll_book(constituency_id: Int, cursor_pollbook_id: String, has_data: Boolean, pollbook_id: String, take: Int): [poll_books!]!
   stat_num_poll_books(constituency_id: Int): Int
@@ -146,6 +146,7 @@ type election {
   franchise_type: String
   has_data: Boolean
   id: Int
+  ms_comments(in_votes: Boolean, rejected: Boolean): [ms_comments]
   notable_remarks: String
   notes: String
   office: String
@@ -201,9 +202,12 @@ type locations_from_lat_lng {
 }
 
 type ms_comments {
+  election_id: String
   elections: [election]
   id: Int
+  in_votes: Boolean
   ms_comment: String
+  rejected: Boolean
   voter: [voter]
 }
 
@@ -283,7 +287,7 @@ type voter {
   guild: String
   hundred: String
   location_sanitized: String
-  ms_comments: [ms_comments]
+  ms_comments(cursor_id: Int, election_id: String, rejected: Boolean, take: Int, voter_id: Int): [ms_comments]
   notes: String
   oath: String
   occupation: String

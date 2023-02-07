@@ -3,6 +3,8 @@ import { core, intArg, makeSchema, nonNull, objectType, stringArg, floatArg, inp
 import { DateTimeResolver } from 'graphql-scalars'
 import { Context } from './context'
 import { Prisma } from '.prisma/client'
+import { PrismaSelect } from '@paljs/plugins';
+
 
 export const DateTime = asNexusMethod(DateTimeResolver, 'date')
 
@@ -278,11 +280,12 @@ const Query = objectType({
         cursor_id: intArg(),
         // election_id:  stringArg(),
       },
-      resolve: (_parent, _args, context: Context) => {
+      resolve: (_parent, _args, context: Context, info) => {
         let skip = 1;
         if (_args.cursor_id==undefined){
          skip=0;
         }
+        // const select = new PrismaSelect(info).value;
         return context.prisma.elections.findMany({
           take: _args.take || 9999999,
           skip: skip, // Skip the cursor
@@ -313,6 +316,7 @@ const Query = objectType({
           orderBy: {
             id: 'asc',
           },
+          // ...select,
         })
       },
     })
@@ -705,6 +709,7 @@ const Query = objectType({
       args: {
         voter_id: intArg(),
         election_id: stringArg(),
+        rejected: booleanArg(),
         take: intArg(),
         cursor_id: intArg(),
       },
@@ -722,6 +727,7 @@ const Query = objectType({
           where: {  
             voter_id: _args.voter_id || undefined,
             election_id: _args.election_id || undefined,
+            rejected: _args.rejected || undefined,
           }, 
           orderBy: {
             id: 'asc',
@@ -1116,6 +1122,27 @@ const Election = objectType({
     })
     t.string('pollbook_id')
     t.boolean('has_data') 
+    t.list.field('ms_comments', {
+      type: MsComments,
+      args: {
+        rejected: booleanArg(),
+        in_votes: booleanArg()
+      },
+      resolve: (parent, args, context: Context) => {
+        // const select = new PrismaSelect(info).value;
+        console.log(parent);
+        
+        return context.prisma.ms_comments.findMany({
+          where: {
+            election_id: parent.election_id,
+            rejected: args.rejected || undefined,
+            in_votes: args.in_votes || undefined
+          },
+          // ...args,
+          // ...select,
+        })
+      }
+    })
     t.list.field('candidates_elections', {
       type: CandidatesElection,
       args: {
@@ -1195,7 +1222,8 @@ const Election = objectType({
             page: _args.page || undefined,
             line: _args.line || undefined,
             rejected: _args.rejected || undefined,
-           }})
+           }
+          })
         },
     })
     t.list.field('artefacts', {
@@ -1297,7 +1325,6 @@ const PollBooks = objectType({
         cursor_votes_id: intArg(),
       },
       resolve: (_parent, _args, context: Context) => {
-        console.log(_parent.pollbook_id)
         let skip = 1;
         if (_args.cursor_votes_id==undefined){
          skip=0;
@@ -1440,10 +1467,35 @@ const Voter = objectType({
     })
     t.list.field('ms_comments', {
       type: MsComments,
-      resolve: (parent, _, context: Context) => {
+      args: {
+        voter_id: intArg(),
+        election_id: stringArg(),
+        rejected: booleanArg(),
+        take: intArg(),
+        cursor_id: intArg(),
+      },
+      resolve: (parent, args, context: Context) => {
+        let skip = 1;
+        if (args.cursor_id==undefined){
+         skip=0;
+        }
+        
         return context.prisma.ms_comments.findMany({
-          where: { voter_id: parent.voter_id || undefined }})
-        },
+          take: args.take || 999999,
+          skip: skip, // Skip the cursor
+          cursor: {
+            id: args.cursor_id || 1,
+          },
+          where: {  
+            voter_id: parent.voter_id,
+            election_id: args.election_id || undefined,
+            rejected: args.rejected || undefined,
+          }, 
+          orderBy: {
+            id: 'asc',
+          },        
+        })
+      },
     })
   },
 })
@@ -1462,6 +1514,8 @@ const Vote = objectType({
         // election_id:  stringArg(),
       },
       resolve: (_parent, args, context: Context) => {
+        console.log(_parent.voter_id);
+        
         return context.prisma.voters.findMany({
           where: {  
             voter_id: _parent.voter_id, 
@@ -1624,8 +1678,10 @@ const MsComments =  objectType({
   name: 'ms_comments',
   definition(t) {
     t.int('id')
-    // t.string('election_id')
+    t.string('election_id')
     t.string('ms_comment')
+    t.boolean('rejected')
+    t.boolean('in_votes')
     t.list.field('voter', {
       type: Voter,
       resolve: (parent, args, context: Context) => {
