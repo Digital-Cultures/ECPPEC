@@ -1237,7 +1237,15 @@ const Election = objectType({
       type: Voter,
       resolve: async (parent, _, context: Context) => {
         //get artifacts by election_id
-        return context.prisma.$queryRaw`SELECT voters.* FROM voters INNER JOIN votes ON voters.voter_id=votes.voter_id INNER JOIN elections ON votes.election_id=elections.election_id where elections.election_id = ${parent.election_id} GROUP BY voters.voter_id`
+        
+        let voters = context.prisma.$queryRaw<Voter[]>`SELECT voters.* FROM voters INNER JOIN votes ON voters.voter_id=votes.voter_id INNER JOIN elections ON votes.election_id=elections.election_id where elections.election_id = ${parent.election_id} GROUP BY voters.voter_id`;
+        
+        voters.then(function(voters) {     
+         for (var voter of voters) {
+          voter.voter_id = parseInt(voter.voter_id);
+         }
+      });
+        return voters;
       }
     })
   },
@@ -1502,7 +1510,6 @@ const Voter = objectType({
     t.list.field('candidates', {
       type: Candidate,
       resolve: async (parent, _, context: Context) => {
-        //get artifacts by election_id
         return context.prisma.$queryRaw`SELECT candidates.* FROM candidates INNER JOIN votes ON candidates.candidate_id=votes.candidate_id where votes.voter_id = ${parent.voter_id};`
       }
     })
