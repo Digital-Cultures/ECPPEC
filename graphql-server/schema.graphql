@@ -99,7 +99,7 @@ type candidate {
   short_name: String
   suffix: String
   title: String
-  votes(cursor_votes_id: Int, rejected: Boolean, take: Int): [vote]
+  votes(cursor_votes_id: Int, line: Int, page: Int, rejected: Boolean, take: Int): [vote]
 }
 
 type candidates_election {

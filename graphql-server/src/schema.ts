@@ -900,6 +900,8 @@ const Candidate = objectType({
     t.list.field('votes', {
       type: Vote,
       args: {
+        page: intArg(),
+        line: intArg(),
         rejected: booleanArg(),
         take: intArg(),
         cursor_votes_id: intArg(),
@@ -916,8 +918,10 @@ const Candidate = objectType({
             votes_id: _args.cursor_votes_id || 1,
           },
           where: { 
-            candidate_id: parent.candidate_id || undefined,
-            rejected: _args.rejected || undefined, 
+            candidate_id: parent.candidate_id,
+            page: _args.page || undefined,
+            line: _args.line || undefined,
+            rejected: _args.rejected || undefined,
           },
           orderBy: {
             votes_id: 'asc',
