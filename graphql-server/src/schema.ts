@@ -410,7 +410,10 @@ const Query = objectType({
       },
       resolve: (_parent, _args, context: Context) => {
         //3959 is the Earth radius in miles. Earth radius in kilometres (km): 6371
-        return context.prisma.$queryRaw(Prisma.sql`SELECT constituency_id, has_data, constituency, lat, lng, floor(3959 * acos( cos( radians(${_args.lat}) ) * cos( radians( constituencies.lat ) ) * cos( radians(constituencies.lng ) - radians(${_args.lng}) ) + sin( radians(${_args.lat}) ) * sin(radians(constituencies.lat)))) AS distance FROM ECPPEC.constituencies HAVING distance<${_args.distance} ORDER BY distance`)
+        console.log(`SELECT constituency_id, has_data, constituency, lat, lng, floor(3959 * acos( cos( radians(${_args.lat}) ) * cos( radians( constituencies.lat ) ) * cos( radians(constituencies.lng ) - radians(${_args.lng}) ) + sin( radians(${_args.lat}) ) * sin(radians(constituencies.lat)))) AS distance FROM ECPPEC.constituencies HAVING distance<${_args.distance} ORDER BY distance`)
+        // return context.prisma.$queryRaw(Prisma.sql`SELECT constituency_id, has_data, constituency, lat, lng, floor(3959 * acos( cos( radians(${_args.lat}) ) * cos( radians( constituencies.lat ) ) * cos( radians(constituencies.lng ) - radians(${_args.lng}) ) + sin( radians(${_args.lat}) ) * sin(radians(constituencies.lat)))) AS distance FROM ECPPEC.constituencies HAVING distance<${_args.distance} ORDER BY distance`)
+        return context.prisma.$queryRaw`SELECT constituency_id, has_data, constituency, lat, lng, floor(3959 * acos( cos( radians(${_args.lat}) ) * cos( radians( constituencies.lat ) ) * cos( radians(constituencies.lng ) - radians(${_args.lng}) ) + sin( radians(${_args.lat}) ) * sin(radians(constituencies.lat)))) AS distance FROM ECPPEC.constituencies HAVING distance<${_args.distance} ORDER BY distance;`
+        // return context.prisma.$queryRaw`SELECT * FROM artefacts INNER JOIN (SELECT artefact_id FROM ECPPEC.artefact_attributes where attribute_name="candidate_id" and attribute_value=${parent.candidate_id}) c on artefacts.id=c.artefact_id;`
       },
     })
 
@@ -1053,7 +1056,8 @@ const Constituency = objectType({
       type: Artefact,
       resolve: async (parent, _, context: Context) => {
         //get artifacts by election_id
-        return context.prisma.$queryRaw(`SELECT * FROM artefacts INNER JOIN (SELECT artefact_id FROM ECPPEC.artefact_attributes where attribute_name="constituency_id" and attribute_value="`+parent.constituency_id+`") c on artefacts.id=c.artefact_id;`)
+        console.log(parent.constituency_id)
+        return context.prisma.$queryRaw`SELECT * FROM artefacts INNER JOIN (SELECT artefact_id FROM ECPPEC.artefact_attributes where attribute_name="constituency_id" and attribute_value=${parent.constituency_id}) c on artefacts.id=c.artefact_id;`
       }
     })
   }
