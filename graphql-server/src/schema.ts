@@ -410,10 +410,7 @@ const Query = objectType({
       },
       resolve: (_parent, _args, context: Context) => {
         //3959 is the Earth radius in miles. Earth radius in kilometres (km): 6371
-        console.log(`SELECT constituency_id, has_data, constituency, lat, lng, floor(3959 * acos( cos( radians(${_args.lat}) ) * cos( radians( constituencies.lat ) ) * cos( radians(constituencies.lng ) - radians(${_args.lng}) ) + sin( radians(${_args.lat}) ) * sin(radians(constituencies.lat)))) AS distance FROM ECPPEC.constituencies HAVING distance<${_args.distance} ORDER BY distance`)
-        // return context.prisma.$queryRaw(Prisma.sql`SELECT constituency_id, has_data, constituency, lat, lng, floor(3959 * acos( cos( radians(${_args.lat}) ) * cos( radians( constituencies.lat ) ) * cos( radians(constituencies.lng ) - radians(${_args.lng}) ) + sin( radians(${_args.lat}) ) * sin(radians(constituencies.lat)))) AS distance FROM ECPPEC.constituencies HAVING distance<${_args.distance} ORDER BY distance`)
         return context.prisma.$queryRaw`SELECT constituency_id, has_data, constituency, lat, lng, floor(3959 * acos( cos( radians(${_args.lat}) ) * cos( radians( constituencies.lat ) ) * cos( radians(constituencies.lng ) - radians(${_args.lng}) ) + sin( radians(${_args.lat}) ) * sin(radians(constituencies.lat)))) AS distance FROM ECPPEC.constituencies HAVING distance<${_args.distance} ORDER BY distance;`
-        // return context.prisma.$queryRaw`SELECT * FROM artefacts INNER JOIN (SELECT artefact_id FROM ECPPEC.artefact_attributes where attribute_name="candidate_id" and attribute_value=${parent.candidate_id}) c on artefacts.id=c.artefact_id;`
       },
     })
 
@@ -1056,7 +1053,7 @@ const Constituency = objectType({
       type: Artefact,
       resolve: async (parent, _, context: Context) => {
         //get artifacts by election_id
-        console.log(parent.constituency_id)
+        // console.log(parent.constituency_id)
         return context.prisma.$queryRaw`SELECT * FROM artefacts INNER JOIN (SELECT artefact_id FROM ECPPEC.artefact_attributes where attribute_name="constituency_id" and attribute_value=${parent.constituency_id}) c on artefacts.id=c.artefact_id;`
       }
     })
@@ -1138,7 +1135,7 @@ const Election = objectType({
       },
       resolve: (parent, args, context: Context) => {
         // const select = new PrismaSelect(info).value;
-        console.log(parent);
+        // console.log(parent);
         
         return context.prisma.ms_comments.findMany({
           where: {
@@ -1432,23 +1429,13 @@ const Voter = objectType({
     t.list.field('occupations_level1', {
       type: OccupationsMap,
       resolve: (parent, _, context: Context) => {
-        if (parent.occupations_level1!=null){
-          return context.prisma.occupations_map.findMany({
-            where: { level_code: parent.occupations_level1  }})
-        }else{
-          return null
-        }  
+        return context.prisma.$queryRaw`SELECT occupations_map.level_num, occupations_map.level_code, level_name FROM ECPPEC.voters_occupations INNER JOIN occupations_map ON voters_occupations.level1 = occupations_map.level_code where voters_occupations.voter_id = ${parent.voter_id};`
       }
     })
     t.list.field('occupations_level2', {
       type: OccupationsMap,
       resolve: (parent, _, context: Context) => {
-        if (parent.occupations_level1!=null){
-          return context.prisma.occupations_map.findMany({
-            where: { level_code: parent.occupations_level2  }})
-        }else{
-          return null
-        }  
+        return context.prisma.$queryRaw`SELECT occupations_map.level_num, occupations_map.level_code, level_name FROM ECPPEC.voters_occupations INNER JOIN occupations_map ON voters_occupations.level2 = occupations_map.level_code where voters_occupations.voter_id = ${parent.voter_id};`
       },
     })
     t.string('guild')
@@ -1495,7 +1482,7 @@ const Voter = objectType({
         if (args.cursor_votes_id==undefined){
          skip=0;
         }
-        console.log(parent.voter_id);
+        // console.log(parent.voter_id);
 
         return context.prisma.votes.findMany({
           take: args.take || 999999,
@@ -1570,7 +1557,7 @@ const Vote = objectType({
         // election_id:  stringArg(),
       },
       resolve: (_parent, args, context: Context) => {
-        console.log(_parent.voter_id);
+        // console.log(_parent.voter_id);
         
         return context.prisma.voters.findMany({
           where: {  
