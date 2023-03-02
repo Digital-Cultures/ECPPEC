@@ -56,6 +56,25 @@ function voter_count($election_id) {
     return $n[0]['n'];
 }
 
+/**
+ * @param string $constituency
+ * @return string constituency in the form the database expects
+ */
+
+function get_constituency($constituency) {
+    if(empty($constituency)) return;
+    if(strstr($constituency,'newcastle')) {
+        if(strstr($constituency,'lyme')) {
+            $constituency = 'Newcastle-under-Lyme';
+        } else $constituency = 'Newcastle-upon-Tyne';
+    } elseif (strstr($constituency,'berwick')) {
+        $constituency = 'Berwick-upon-Tweed';
+    } elseif (strstr($constituency,'k§ingston')) {
+        $constituency = 'Kingston-upon-Hull';
+    }
+    return $constituency;
+}
+
 
 /**
  *
@@ -233,35 +252,129 @@ function debug($thingy) {
 }
 
 //try our best to accommodate various ways of indicating a month
-//keys in $months are things people might try, values are what database uses
+/**
+ * @param $month
+ * @return false|string|void (on success return database-friendly month format)
+ */
+function get_month($month)
+{
+    if(!$month) return;
+    $month = strtolower($month);
+    $m = false;
+    switch($month) {
+        case "jan":
+        case "january":
+        case "1":
+            $m = "Jan";
+            break;
+        case "feb":
+        case "february":
+        case "2":
+            $m = "Feb";
+            break;
+        case "mar":
+        case "march":
+        case "3":
+            $m = "Mar";
+            break;
+        case "apr":
+        case "april":
+        case "4":
+            $m = "Apr";
+            break;
+        case "may":
+        case "5":
+            $m = "May";
+            break;
+        case "june":
+        case "jun":
+        case "6":
+            $m = "June";
+            break;
+        case "july":
+        case "jul":
+        case "7":
+            $m = "July";
+            break;
+        case "aug":
+        case "august":
+        case "8":
+            $m = "Aug";
+            break;
+        case "september":
+        case "sep":
+        case "sept":
+        case "9":
+            $m = "Sept";
+            break;
+        case "october":
+        case "oct":
+        case "10":
+            $m = "Oct";
+            break;
+        case "november":
+        case "nov":
+        case "11":
+            $m = "Nov";
+            break;
+        case "december":
+        case "dec":
+        case "12":
+            $m = "Dec";
+            break;
+    }
+    return $m;
+}
 
-$months = array(
-    "january" => "Jan",
-    1 => "Jan",
-    "february" => "Feb",
-    2 => "Feb",
-    "march" => "Mar",
-    3 => "Mar",
-    "april" => "Apr",
-    4 => "Apr",
-    5 => "May",
-    "jun" => "June",
-    6 => "June",
-    "jul" => "July",
-    7 => "July",
-    "august" => "Aug",
-    8 => "Aug",
-    "september" => "Sept",
-    "sep" => "Sept",
-    9 => "Sept",
-    "october" => "Oct",
-    10 => "Oct",
-    "november" => "Nov",
-    11 => "Nov",
-    "december" => "Dec",
-    12 => "Dec"
-);
+function get_election_id($constituency,$year,$month) {
+    global $conn;
 
+    $sql = "select election_id from elections where constituency = ? and election_year = ? and election_month = ?";
+    $my = array();
+    $my[] = get_constituency($constituency);
+    $my[] = (int) $year;
+    $my[] = get_month($month);
+    $stmt  = $conn->prepare($sql); // prepare
+    $stmt->bind_param('sss', ...$my); // bind array
+    $stmt->execute();
+    $result = $stmt->get_result(); // get the mysqli result
+    $rows = $result->fetch_row(); // fetch the data
+    return isset($rows[0]) ? $rows[0] : false;
+}
+
+function get_candidates_from_election_id($election_id) {
+    global $conn;
+    $candidates = array();
+    $sql = "select c.candidate_name, ce.candidate_id from candidates_elections ce
+join candidates c on c.candidate_id = ce.candidate_id where election_id = ?";
+
+    $stmt = $conn->prepare($sql);
+    $stmt->bind_param('s',$election_id);
+    $stmt->execute();
+    $result = $stmt->get_result();
+    $rows = $result->fetch_all(MYSQLI_ASSOC);
+    //will be helpful to have id as index
+    foreach($rows as $r) {
+        $candidates[$r['candidate_id']]['candidate_name'] = $r['candidate_name'];
+        $candidates[$r['candidate_id']]['candidate_id'] = $r['candidate_id'];
+    }
+    return $candidates;
+}
+
+function get_voter_occupation_distribution($election_id) {
+    global $conn;
+
+    $sql = "select v.candidate_id, v.election_id, v.rejected, v.poll_date, vr.voter_id, vr.occupation_std, vr.guild, vo.level1, vo.level2, o.level_name
+    from votes v join voters vr on vr.voter_id = v.voter_id
+    join voters_occupations vo on vo.voter_id = v.voter_id
+    join occupations_map o on o.level_code = vo.level2
+    where v.election_id = ?";
+    $stmt = $conn->prepare($sql);
+    $stmt->bind_param('s',$election_id);
+    $stmt->execute();
+    $result = $stmt->get_result();
+    return $result->fetch_all(MYSQLI_ASSOC);
+}
 
 //if election results are requested (via 'include_results' flag), get them
 $acceptable_flags = array("1","Y","y","yes","true");
