@@ -364,7 +364,7 @@ join candidates c on c.candidate_id = ce.candidate_id where election_id = ?";
 function get_voter_occupation_distribution($election_id) {
     global $conn;
 
-    $sql = "select v.candidate_id, v.election_id, v.rejected, v.poll_date, vr.voter_id, vr.occupation_std, vr.guild, vo.level1, vo.level2, o.level_name
+    $sql = "select v.candidate_id, vr.suffix_std, v.election_id, v.rejected, v.poll_date, vr.voter_id, vr.occupation_std, vr.guild, vo.level1, vo.level2, o.level_name
     from votes v join voters vr on vr.voter_id = v.voter_id
     join voters_occupations vo on vo.voter_id = v.voter_id
     join occupations_map o on o.level_code = vo.level2
@@ -375,6 +375,28 @@ function get_voter_occupation_distribution($election_id) {
     $result = $stmt->get_result();
     return $result->fetch_all(MYSQLI_ASSOC);
 }
+
+function get_voter_occupation_stats($election_id) {
+    global $conn;
+
+    $sql = "select * from occupations_map where level_num = 2";
+    $result = $conn->query($sql);
+    $occ_list = $result->fetch_all(MYSQLI_ASSOC);
+    $data = array();
+    foreach($occ_list as $d) {
+        $sql = "select count(*) n, rejected from votes 
+    where election_id = ? and voter_id in (select voter_id 
+    from voters_occupations where level2 = ?) group by rejected";
+        $stmt = $conn->prepare($sql);
+        $stmt->bind_param('ss',$election_id, $d['level_code']);
+        $stmt->execute();
+        $result = $stmt->get_result();
+        if($result->num_rows)
+        $data[$d['level_code']] = $result->fetch_all(MYSQLI_ASSOC);
+    }
+    debug($data);
+}
+
 
 //if election results are requested (via 'include_results' flag), get them
 $acceptable_flags = array("1","Y","y","yes","true");
