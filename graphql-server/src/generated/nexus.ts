@@ -199,9 +199,12 @@ export interface NexusGenObjects {
     percent_uncontested_general?: number | null; // Float
   }
   vote: { // root type
+    candidate_id?: number | null; // Int
+    constituency_id?: string | null; // String
     line?: number | null; // Int
     page?: number | null; // Int
     poll_date?: string | null; // String
+    pollbook_id?: string | null; // String
     reason_rejected?: string | null; // String
     rejected?: boolean | null; // Boolean
     votes_id?: number | null; // Int
@@ -465,12 +468,15 @@ export interface NexusGenFieldTypes {
   }
   vote: { // field return type
     candidate: Array<NexusGenRootTypes['candidate'] | null> | null; // [candidate]
+    candidate_id: number | null; // Int
     constituencies: Array<NexusGenRootTypes['constituency'] | null> | null; // [constituency]
+    constituency_id: string | null; // String
     elections: Array<NexusGenRootTypes['election'] | null> | null; // [election]
     line: number | null; // Int
     page: number | null; // Int
     poll_books: Array<NexusGenRootTypes['poll_book'] | null> | null; // [poll_book]
     poll_date: string | null; // String
+    pollbook_id: string | null; // String
     reason_rejected: string | null; // String
     rejected: boolean | null; // Boolean
     voter: Array<NexusGenRootTypes['voter'] | null> | null; // [voter]
@@ -734,12 +740,15 @@ export interface NexusGenFieldTypeNames {
   }
   vote: { // field return type name
     candidate: 'candidate'
+    candidate_id: 'Int'
     constituencies: 'constituency'
+    constituency_id: 'String'
     elections: 'election'
     line: 'Int'
     page: 'Int'
     poll_books: 'poll_book'
     poll_date: 'String'
+    pollbook_id: 'String'
     reason_rejected: 'String'
     rejected: 'Boolean'
     voter: 'voter'

@@ -256,12 +256,15 @@ type stats {
 
 type vote {
   candidate: [candidate]
+  candidate_id: Int
   constituencies: [constituency]
+  constituency_id: String
   elections: [election]
   line: Int
   page: Int
   poll_books(has_data: Boolean): [poll_book]
   poll_date: String
+  pollbook_id: String
   reason_rejected: String
   rejected: Boolean
   voter(forename: String, guild: String, occupation: String, surname: String): [voter]

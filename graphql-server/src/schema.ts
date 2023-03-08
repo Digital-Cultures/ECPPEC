@@ -1583,6 +1583,7 @@ const Vote = objectType({
         })
       },
     })
+    t.string('pollbook_id')
     t.list.field('poll_books', {
       type: PollBook,
       args: {
@@ -1597,6 +1598,7 @@ const Vote = objectType({
         })
       }
     })
+    t.string('constituency_id')
     t.list.field('constituencies', {
       type: Constituency,
       args: {
@@ -1611,11 +1613,16 @@ const Vote = objectType({
     })
     t.int('page')
     t.int('line')
+    t.int('candidate_id')
     t.list.field('candidate', {
       type: Candidate,
       resolve: (parent, _, context: Context) => {
+        
+        if (parent.rejected==true){
+          return null;
+        }
         return context.prisma.candidates.findMany({
-          where: { candidate_id: parent.candidate_id || undefined }})
+          where: { candidate_id: parent.candidate_id  }})
         },
     })
     t.string('poll_date')
