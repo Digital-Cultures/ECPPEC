@@ -75,7 +75,6 @@ function get_constituency($constituency) {
     return $constituency;
 }
 
-
 /**
  *
  * @param string $election_id
@@ -157,6 +156,19 @@ function get_elections_from_candidates($candidates) {
     return $ids;
 }
 
+function get_elections_from_constituency($constituency) {
+    global $conn;
+    $constituency = get_constituency($constituency);
+    $sql = "SELECT election_id, election_year, election_month, election_date, 
+        by_election_general, contested, electorate_size_est, has_data 
+        FROM elections WHERE constituency = ?";
+    $stmt = $conn->prepare($sql);
+    $stmt->bind_param('s', $constituency);
+    $stmt->execute();
+    $result = $stmt->get_result(); // get the mysqli result
+    return $result->fetch_all(MYSQLI_ASSOC);
+}
+
 /**
  * @param $election_id
  * @return array of voter details and votes for a given election
@@ -208,6 +220,7 @@ function get_votes($election_id) {
     }
     return $votes;
 }
+
 function safe_json_encode($value){
 	if (version_compare(PHP_VERSION, '5.4.0') >= 0) {
 		$encoded = json_encode($value, JSON_PRETTY_PRINT);
@@ -232,7 +245,6 @@ function safe_json_encode($value){
 			return 'Unknown error'; // or trigger_error() or throw new Exception()
 	}
 }
-
 
 function utf8ize($mixed) {
 	if (is_array($mixed)) {
@@ -345,7 +357,7 @@ function get_election_id($constituency,$year,$month) {
 function get_candidates_from_election_id($election_id) {
     global $conn;
     $candidates = array();
-    $sql = "select c.candidate_name, ce.candidate_id from candidates_elections ce
+    $sql = "select c.candidate_name, c.short_name, ce.candidate_id, ce.seated from candidates_elections ce
 join candidates c on c.candidate_id = ce.candidate_id where election_id = ?";
 
     $stmt = $conn->prepare($sql);
@@ -353,40 +365,46 @@ join candidates c on c.candidate_id = ce.candidate_id where election_id = ?";
     $stmt->execute();
     $result = $stmt->get_result();
     $rows = $result->fetch_all(MYSQLI_ASSOC);
-    //will be helpful to have id as index
+
     foreach($rows as $r) {
         $candidates[$r['candidate_id']]['candidate_name'] = $r['candidate_name'];
+        $candidates[$r['candidate_id']]['short_name'] = $r['short_name'];
         $candidates[$r['candidate_id']]['candidate_id'] = $r['candidate_id'];
+        $candidates[$r['candidate_id']]['seated'] = $r['seated'];
     }
     return $candidates;
 }
 
 function get_pollbook_reconstruction($election_id) {
     global $conn;
-
-    $sql = "select v.candidate_id, vr.suffix_std, v.election_id, 
+    $conn->query('set sql_mode = ""');
+    $data = array();
+    $sql = "select group_concat(v.candidate_id separator ';') candidate_id, vr.suffix_std, v.election_id, 
        v.page, v.line, v.votes_id,
        v.rejected, v.reason_rejected, v.poll_date, vr.voter_id, vr.occupation_std, 
        vr.forename, vr.surname, vr.location_sanitized
     from votes v join voters vr on vr.voter_id = v.voter_id
-    join voters_occupations vo on vo.voter_id = v.voter_id
-    where v.election_id = ?";
+    /*join voters_occupations vo on vo.voter_id = v.voter_id*/
+    where v.election_id = ?
+    group by vr.voter_id";
     $stmt = $conn->prepare($sql);
     $stmt->bind_param('s',$election_id);
     $stmt->execute();
     $result = $stmt->get_result();
     return $result->fetch_all(MYSQLI_ASSOC);
 }
-
 
 function get_voter_occupation_distribution($election_id) {
     global $conn;
 
-    $sql = "select v.candidate_id, vr.suffix_std, v.election_id, v.rejected, v.poll_date, vr.voter_id, vr.occupation_std, vr.guild, vo.level1, vo.level2, o.level_name
+    $conn->query('set sql_mode = ""');
+    $sql = "select group_concat(v.candidate_id separator ';') candidate_id, vr.suffix_std, v.election_id, v.rejected, 
+       v.poll_date, vr.voter_id, vr.occupation_std, vr.guild, vo.level1, vo.level2, o.level_name
     from votes v join voters vr on vr.voter_id = v.voter_id
     join voters_occupations vo on vo.voter_id = v.voter_id
     join occupations_map o on o.level_code = vo.level2
-    where v.election_id = ?";
+    where v.election_id = ?
+    group by vr.voter_id";
     $stmt = $conn->prepare($sql);
     $stmt->bind_param('s',$election_id);
     $stmt->execute();
@@ -394,6 +412,17 @@ function get_voter_occupation_distribution($election_id) {
     return $result->fetch_all(MYSQLI_ASSOC);
 }
 
+function get_candidates_from_voter($voter_id, $election_id) {
+    global $conn;
+    $sql = "SELECT c.candidate_name, c.short_name, v.candidate_id 
+            FROM votes v JOIN candidates c on c.candidate_id = v.candidate_id
+            WHERE v.voter_id = ? AND v.election_id = ?";
+    $stmt = $conn->prepare($sql);
+    $stmt->bind_param('ss',$voter_id,$election_id);
+    $stmt->execute();
+    $result = $stmt->get_result();
+    return $result->fetch_all(MYSQLI_ASSOC);
+}
 function get_voter_occupation_stats($election_id) {
     global $conn;
 
