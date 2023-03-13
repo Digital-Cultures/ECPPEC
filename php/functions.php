@@ -399,17 +399,35 @@ function get_voter_occupation_distribution($election_id) {
 
     $conn->query('set sql_mode = ""');
     $sql = "select group_concat(v.candidate_id separator ';') candidate_id, vr.suffix_std, v.election_id, v.rejected, 
-       v.poll_date, vr.voter_id, vr.occupation_std, vr.guild, vo.level1, vo.level2, o.level_name
+       v.poll_date, vr.voter_id, vr.occupation_std, vr.guild
     from votes v join voters vr on vr.voter_id = v.voter_id
-    join voters_occupations vo on vo.voter_id = v.voter_id
-    join occupations_map o on o.level_code = vo.level2
     where v.election_id = ?
     group by vr.voter_id";
     $stmt = $conn->prepare($sql);
     $stmt->bind_param('s',$election_id);
     $stmt->execute();
     $result = $stmt->get_result();
-    return $result->fetch_all(MYSQLI_ASSOC);
+    $rows = $result->fetch_all(MYSQLI_ASSOC);
+    $sql = "select vo.level1, vo.level2, o.level_name 
+        from voters_occupations vo join occupations_map o on o.level_code = vo.level2
+        where voter_id = ? limit 1";
+    $stmt = $conn->prepare($sql);
+    $level1 = $level2 = $level_name = null;
+    foreach($rows as &$d) {
+        $stmt->bind_param('s',$d['voter_id']);
+        $stmt->execute();
+        $result = $stmt->get_result();
+        if($result->num_rows) {
+            $o_data =       $result->fetch_all(MYSQLI_ASSOC);
+            $level1 =       $o_data[0]['level1'];
+            $level2 =       $o_data[0]['level2'];
+            $level_name =   $o_data[0]['level_name'];
+        }
+        $d['level1'] = $level1;
+        $d['level2'] = $level2;
+        $d['level_name'] = $level_name;
+    }
+    return $rows;
 }
 
 function get_candidates_from_voter($voter_id, $election_id) {
