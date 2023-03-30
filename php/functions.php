@@ -378,19 +378,16 @@ join candidates c on c.candidate_id = ce.candidate_id where election_id = ?";
 function get_pollbook_reconstruction($election_id) {
     global $conn;
     $conn->query('set sql_mode = ""');
-    $data = array();
+
     $sql = "select group_concat(v.candidate_id separator ';') candidate_id, vr.suffix_std, v.election_id, 
        v.page, v.line, v.votes_id,
        v.rejected, v.reason_rejected, v.poll_date, vr.voter_id, vr.occupation_std, 
        vr.forename, vr.surname, vr.location_sanitized
     from votes v join voters vr on vr.voter_id = v.voter_id
     /*join voters_occupations vo on vo.voter_id = v.voter_id*/
-    where v.election_id = ?
+    where v.election_id = '$election_id'
     group by vr.voter_id";
-    $stmt = $conn->prepare($sql);
-    $stmt->bind_param('s',$election_id);
-    $stmt->execute();
-    $result = $stmt->get_result();
+    $result = $conn->query($sql);
     return $result->fetch_all(MYSQLI_ASSOC);
 }
 
