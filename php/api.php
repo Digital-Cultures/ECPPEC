@@ -30,8 +30,7 @@ else:
 
 $election_id = get_election_id($optimized['constituency'],$optimized['year'],$optimized['month']);
 if($election_id):
-
-$candidates = get_candidates_from_election_id($election_id);
+    $candidates = get_candidates_from_election_id($election_id);
 
 if(isset($optimized['job']) && $optimized['job'] == 'pollbook') {
     $voters = get_pollbook_reconstruction($election_id);
@@ -56,9 +55,10 @@ foreach($voters as $d) {
         'guild'                 => isset($d['guild']) ? $d['guild'] : false,
         'suffix_std'            => isset($d['suffix_std']) ? $d['suffix_std'] : false,
         'occupation_std'        => isset($d['occupation_std']) ? $d['occupation_std'] : false,
-        'level1'                => isset($d['level1']) ? $d['level1'] : false,
-        'level2'                => isset($d['level2']) ? $d['level2'] : false,
-        'level_name'            => isset($d['level_name']) ? $d['level_name'] : false,
+        //'level1'                => isset($d['level1']) ? $d['level1'] : false,
+        //'level2'                => isset($d['level2']) ? $d['level2'] : false,
+        //'level_name'            => isset($d['level_name']) ? $d['level_name'] : false,
+        'occupation'            => isset($d['occupation']) ? $d['occupation'] : false,
         'surname'               => isset($d['surname']) ? $d['surname'] : false,
         'forename'              => isset($d['forename']) ? $d['forename'] : false,
         'page'                  => isset($d['page']) ? $d['page'] : false,
