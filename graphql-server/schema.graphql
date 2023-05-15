@@ -35,6 +35,7 @@ type Query {
   candidates_elections(candidate_id: Int, cursor_candidates_elections_id: Int, election_id: String, overturned_by: String, returned: Boolean, running_as: String, seated: Boolean, take: Int): [candidates_election!]!
   constituencies(constituency: String, constituency_id: Int, cursor_constituency_id: Int, has_data: Boolean, take: Int): [constituency!]!
   election_attributes(attribute_name: String, cursor_id: Int, election_id: String, take: Int): [election_attribute!]!
+  election_dailies(candidate_id: Int, election_id: String): [election_dailies!]!
   election_dates(election_year: Int = 0, election_year_gte: Int = 0, election_year_lte: Int = 9999, orderBy: OrderByDate): [election_dates!]!
   elections(by_election_cause: String, by_election_general: String, constituency: String, constituency_id: Int, contested: String, countyboroughuniv: String, cursor_id: Int, election_month: String, election_year_gte: Int = 1500, election_year_lte: Int = 2020, electorate_size_est_gte: Int, electorate_size_est_lte: Int, franchise_type: [String], has_data: Boolean, office: String, take: Int): [election!]!
   geocodes(abode: String, address: String, city: String, constituency: String, county: String, parish: String, street: String): [geocodes!]!
@@ -165,6 +166,21 @@ type election_attribute {
   id: Int!
 }
 
+type election_dailies {
+  candidate: [candidate]
+  candidate_id: Int!
+  candidate_name: String
+  daily_votes: Int
+  day_num: Int
+  day_of_week: String
+  election: [election]
+  election_id: String!
+  id: Int!
+  polldate: DateTime
+  total_votes: Int
+  with_voters: Int
+}
+
 type election_dates {
   election: [election]
   election_date: DateTime
@@ -286,6 +302,8 @@ type voter {
   degree: String
   fellowship: String
   forename: String
+  geo_lat: Int
+  geo_long: Int
   geocode: geocodes
   geocode_id: Int
   guild: String

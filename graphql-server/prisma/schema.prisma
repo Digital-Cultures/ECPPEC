@@ -105,7 +105,7 @@ model elections {
   notes                String?       @db.VarChar(250)
   notable_remarks      String?       @db.Text
   has_data             Boolean       @default(false) @db.TinyInt
-  ms_comments          ms_comments[]
+  // ms_comments          ms_comments[]
 }
 
 model geocodes {
@@ -134,7 +134,7 @@ model ms_comments {
   created     DateTime? @default(now()) @db.Timestamp(0)
   in_votes    Boolean   @default(true) @db.TinyInt
 
-  election elections? @relation(fields: [election_id], references: [election_id])
+  // election elections? @relation(fields: [election_id], references: [election_id])
 
   @@unique([voter_id, election_id], map: "voter_id")
 }
@@ -249,9 +249,25 @@ model votes {
   page            Int?
   line            Int?
   candidate_id    Int?
-  rejected        Boolean   @default(false) @db.TinyInt
-  reason_rejected String?   @db.VarChar(65000)
+  rejected        Int       @default(0) @db.TinyInt
+  reason_rejected String?   @db.VarChar(500)
+  ms_comment      String?   @db.VarChar(500)
   day_of_poll     Int?
   poll_date       DateTime? @db.Date
   created         DateTime  @default(now()) @db.Timestamp(0)
+
+  @@unique([voter_id, election_id, vote_round, candidate_id], map: "voter_id")
+}
+
+model election_dailies {
+  id             Int       @id @default(autoincrement())
+  election_id    String?   @db.VarChar(25)
+  candidate_id   Int?
+  candidate_name String?   @db.VarChar(75)
+  day_num        Int?
+  polldate       DateTime? @db.Date
+  day_of_week    String?   @db.VarChar(25)
+  daily_votes    Int?
+  total_votes    Int?
+  with_voters    Int       @default(0) @db.TinyInt
 }

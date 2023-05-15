@@ -352,6 +352,23 @@ const Query = objectType({
       },
     })
 
+    t.nonNull.list.nonNull.field('election_dailies', {
+      type: ElectionDailies,
+      args: {
+        election_id: stringArg(),
+        candidate_id: intArg(),
+      },
+      resolve: (_parent, _args, context: Context) => {
+        return context.prisma.election_dailies.findMany({
+          where: {
+            election_id: _args.election_id || undefined,
+            candidate_id: _args.candidate_id || undefined,
+          },
+          orderBy: _args.orderBy || undefined,
+        })
+      },
+    })
+
     t.nonNull.list.nonNull.field('election_dates', {
       type: ElectionDates,
       args: {
@@ -1078,6 +1095,36 @@ const ElectionAttribute = objectType({
   },
 })
 
+const ElectionDailies = objectType({
+  name: 'election_dailies',
+  definition(t) {
+    t.nonNull.int('id')
+    t.nonNull.string('election_id')
+    t.nonNull.int('candidate_id')
+    t.string('candidate_name')
+    t.int('day_num')
+    t.field('polldate', { type: 'DateTime' })
+    t.string('day_of_week')
+    t.int('daily_votes')
+    t.int('total_votes')
+    t.int('with_voters')
+    t.list.field('election', {
+      type: Election,
+      resolve: (parent, _, context: Context) => {
+        return context.prisma.elections.findMany({
+          where: { election_id: parent.election_id || undefined }
+        })
+      },
+    })
+    t.list.field('candidate', {
+      type: Candidate,
+      resolve: (parent, _, context: Context) => {
+        return context.prisma.candidates.findMany({
+          where: { candidate_id: parent.candidate_id || undefined }})
+        },
+    })
+  },
+})
 
 const ElectionDates = objectType({
   name: 'election_dates',
@@ -1467,6 +1514,8 @@ const Voter = objectType({
           where: { geocode_id: parent.geocode_id }})
         },
     })
+    t.int('geo_lat')
+    t.int('geo_long')
     t.string('notes')
     t.list.field('votes', {
       type: Vote,
@@ -1792,6 +1841,7 @@ export const schema = makeSchema({
     CandidatesElection,
     Constituency,
     ElectionAttribute,
+    ElectionDailies,
     ElectionDates,
     Election,
     LocationsFrom,

@@ -130,6 +130,18 @@ export interface NexusGenObjects {
     election_id: string; // String!
     id: number; // Int!
   }
+  election_dailies: { // root type
+    candidate_id: number; // Int!
+    candidate_name?: string | null; // String
+    daily_votes?: number | null; // Int
+    day_num?: number | null; // Int
+    day_of_week?: string | null; // String
+    election_id: string; // String!
+    id: number; // Int!
+    polldate?: NexusGenScalars['DateTime'] | null; // DateTime
+    total_votes?: number | null; // Int
+    with_voters?: number | null; // Int
+  }
   election_dates: { // root type
     election_date?: NexusGenScalars['DateTime'] | null; // DateTime
     election_id: string; // String!
@@ -223,6 +235,8 @@ export interface NexusGenObjects {
     degree?: string | null; // String
     fellowship?: string | null; // String
     forename?: string | null; // String
+    geo_lat?: number | null; // Int
+    geo_long?: number | null; // Int
     geocode_id?: number | null; // Int
     guild?: string | null; // String
     hundred?: string | null; // String
@@ -269,6 +283,7 @@ export interface NexusGenFieldTypes {
     candidates_elections: NexusGenRootTypes['candidates_election'][]; // [candidates_election!]!
     constituencies: NexusGenRootTypes['constituency'][]; // [constituency!]!
     election_attributes: NexusGenRootTypes['election_attribute'][]; // [election_attribute!]!
+    election_dailies: NexusGenRootTypes['election_dailies'][]; // [election_dailies!]!
     election_dates: NexusGenRootTypes['election_dates'][]; // [election_dates!]!
     elections: NexusGenRootTypes['election'][]; // [election!]!
     geocodes: NexusGenRootTypes['geocodes'][]; // [geocodes!]!
@@ -384,6 +399,20 @@ export interface NexusGenFieldTypes {
     election_id: string; // String!
     id: number; // Int!
   }
+  election_dailies: { // field return type
+    candidate: Array<NexusGenRootTypes['candidate'] | null> | null; // [candidate]
+    candidate_id: number; // Int!
+    candidate_name: string | null; // String
+    daily_votes: number | null; // Int
+    day_num: number | null; // Int
+    day_of_week: string | null; // String
+    election: Array<NexusGenRootTypes['election'] | null> | null; // [election]
+    election_id: string; // String!
+    id: number; // Int!
+    polldate: NexusGenScalars['DateTime'] | null; // DateTime
+    total_votes: number | null; // Int
+    with_voters: number | null; // Int
+  }
   election_dates: { // field return type
     election: Array<NexusGenRootTypes['election'] | null> | null; // [election]
     election_date: NexusGenScalars['DateTime'] | null; // DateTime
@@ -497,6 +526,8 @@ export interface NexusGenFieldTypes {
     degree: string | null; // String
     fellowship: string | null; // String
     forename: string | null; // String
+    geo_lat: number | null; // Int
+    geo_long: number | null; // Int
     geocode: NexusGenRootTypes['geocodes'] | null; // geocodes
     geocode_id: number | null; // Int
     guild: string | null; // String
@@ -541,6 +572,7 @@ export interface NexusGenFieldTypeNames {
     candidates_elections: 'candidates_election'
     constituencies: 'constituency'
     election_attributes: 'election_attribute'
+    election_dailies: 'election_dailies'
     election_dates: 'election_dates'
     elections: 'election'
     geocodes: 'geocodes'
@@ -656,6 +688,20 @@ export interface NexusGenFieldTypeNames {
     election_id: 'String'
     id: 'Int'
   }
+  election_dailies: { // field return type name
+    candidate: 'candidate'
+    candidate_id: 'Int'
+    candidate_name: 'String'
+    daily_votes: 'Int'
+    day_num: 'Int'
+    day_of_week: 'String'
+    election: 'election'
+    election_id: 'String'
+    id: 'Int'
+    polldate: 'DateTime'
+    total_votes: 'Int'
+    with_voters: 'Int'
+  }
   election_dates: { // field return type name
     election: 'election'
     election_date: 'DateTime'
@@ -769,6 +815,8 @@ export interface NexusGenFieldTypeNames {
     degree: 'String'
     fellowship: 'String'
     forename: 'String'
+    geo_lat: 'Int'
+    geo_long: 'Int'
     geocode: 'geocodes'
     geocode_id: 'Int'
     guild: 'String'
@@ -860,6 +908,10 @@ export interface NexusGenArgTypes {
       cursor_id?: number | null; // Int
       election_id?: string | null; // String
       take?: number | null; // Int
+    }
+    election_dailies: { // args
+      candidate_id?: number | null; // Int
+      election_id?: string | null; // String
     }
     election_dates: { // args
       election_year?: number | null; // Int
