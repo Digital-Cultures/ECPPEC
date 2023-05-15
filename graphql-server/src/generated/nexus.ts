@@ -372,6 +372,7 @@ export interface NexusGenFieldTypes {
     constituency_id: string | null; // String
     contested: string | null; // String
     countyboroughuniv: string | null; // String
+    election_dailies: Array<NexusGenRootTypes['election_dailies'] | null> | null; // [election_dailies]
     election_date: NexusGenScalars['DateTime'] | null; // DateTime
     election_id: string | null; // String
     election_month: string | null; // String
@@ -661,6 +662,7 @@ export interface NexusGenFieldTypeNames {
     constituency_id: 'String'
     contested: 'String'
     countyboroughuniv: 'String'
+    election_dailies: 'election_dailies'
     election_date: 'DateTime'
     election_id: 'String'
     election_month: 'String'

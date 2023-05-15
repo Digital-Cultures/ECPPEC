@@ -137,6 +137,7 @@ type election {
   constituency_id: String
   contested: String
   countyboroughuniv: String
+  election_dailies: [election_dailies]
   election_date: DateTime
   election_id: String
   election_month: String

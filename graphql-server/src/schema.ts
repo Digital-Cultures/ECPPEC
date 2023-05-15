@@ -1300,6 +1300,16 @@ const Election = objectType({
         return voters;
       }
     })
+    t.list.field('election_dailies', {
+      type: ElectionDailies,
+      resolve: async (parent, _, context: Context) => {
+        return context.prisma.election_dailies.findMany({
+          where: {
+            election_id: parent.election_id || undefined,
+          }
+        })
+      }
+    })    
   },
 })
 
