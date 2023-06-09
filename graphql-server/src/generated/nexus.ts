@@ -235,8 +235,8 @@ export interface NexusGenObjects {
     degree?: string | null; // String
     fellowship?: string | null; // String
     forename?: string | null; // String
-    geo_lat?: number | null; // Int
-    geo_long?: number | null; // Int
+    geo_lat?: number | null; // Float
+    geo_long?: number | null; // Float
     geocode_id?: number | null; // Int
     guild?: string | null; // String
     hundred?: string | null; // String
@@ -527,8 +527,8 @@ export interface NexusGenFieldTypes {
     degree: string | null; // String
     fellowship: string | null; // String
     forename: string | null; // String
-    geo_lat: number | null; // Int
-    geo_long: number | null; // Int
+    geo_lat: number | null; // Float
+    geo_long: number | null; // Float
     geocode: NexusGenRootTypes['geocodes'] | null; // geocodes
     geocode_id: number | null; // Int
     guild: string | null; // String
@@ -817,8 +817,8 @@ export interface NexusGenFieldTypeNames {
     degree: 'String'
     fellowship: 'String'
     forename: 'String'
-    geo_lat: 'Int'
-    geo_long: 'Int'
+    geo_lat: 'Float'
+    geo_long: 'Float'
     geocode: 'geocodes'
     geocode_id: 'Int'
     guild: 'String'

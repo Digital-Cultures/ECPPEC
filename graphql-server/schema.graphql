@@ -303,8 +303,8 @@ type voter {
   degree: String
   fellowship: String
   forename: String
-  geo_lat: Int
-  geo_long: Int
+  geo_lat: Float
+  geo_long: Float
   geocode: geocodes
   geocode_id: Int
   guild: String

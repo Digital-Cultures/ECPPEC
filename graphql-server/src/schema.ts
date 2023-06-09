@@ -1524,8 +1524,8 @@ const Voter = objectType({
           where: { geocode_id: parent.geocode_id }})
         },
     })
-    t.int('geo_lat')
-    t.int('geo_long')
+    t.float('geo_lat')
+    t.float('geo_long')
     t.string('notes')
     t.list.field('votes', {
       type: Vote,
