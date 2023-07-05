@@ -97,6 +97,7 @@ type candidate {
   candidate_name: String
   candidates_elections(cursor_candidates_elections_id: Int, election_id: String, overturned_by: String, returned: Boolean, running_as: String, seated: Boolean, take: Int): [candidates_election]
   died: Int
+  elections: [election]
   short_name: String
   suffix: String
   title: String
@@ -285,6 +286,7 @@ type vote {
   reason_rejected: String
   rejected: Boolean
   voter(forename: String, guild: String, occupation: String, surname: String): [voter]
+  voter_id: Int
   votes_id: Int
 }
 
@@ -301,6 +303,7 @@ type voter {
   county: String
   county_std: String
   degree: String
+  election: [election]
   fellowship: String
   forename: String
   geo_lat: Float

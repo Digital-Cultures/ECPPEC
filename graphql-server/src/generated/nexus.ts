@@ -219,6 +219,7 @@ export interface NexusGenObjects {
     pollbook_id?: string | null; // String
     reason_rejected?: string | null; // String
     rejected?: boolean | null; // Boolean
+    voter_id?: number | null; // Int
     votes_id?: number | null; // Int
   }
   voter: { // root type
@@ -335,6 +336,7 @@ export interface NexusGenFieldTypes {
     candidate_name: string | null; // String
     candidates_elections: Array<NexusGenRootTypes['candidates_election'] | null> | null; // [candidates_election]
     died: number | null; // Int
+    elections: Array<NexusGenRootTypes['election'] | null> | null; // [election]
     short_name: string | null; // String
     suffix: string | null; // String
     title: string | null; // String
@@ -510,6 +512,7 @@ export interface NexusGenFieldTypes {
     reason_rejected: string | null; // String
     rejected: boolean | null; // Boolean
     voter: Array<NexusGenRootTypes['voter'] | null> | null; // [voter]
+    voter_id: number | null; // Int
     votes_id: number | null; // Int
   }
   voter: { // field return type
@@ -525,6 +528,7 @@ export interface NexusGenFieldTypes {
     county: string | null; // String
     county_std: string | null; // String
     degree: string | null; // String
+    election: Array<NexusGenRootTypes['election'] | null> | null; // [election]
     fellowship: string | null; // String
     forename: string | null; // String
     geo_lat: number | null; // Float
@@ -625,6 +629,7 @@ export interface NexusGenFieldTypeNames {
     candidate_name: 'String'
     candidates_elections: 'candidates_election'
     died: 'Int'
+    elections: 'election'
     short_name: 'String'
     suffix: 'String'
     title: 'String'
@@ -800,6 +805,7 @@ export interface NexusGenFieldTypeNames {
     reason_rejected: 'String'
     rejected: 'Boolean'
     voter: 'voter'
+    voter_id: 'Int'
     votes_id: 'Int'
   }
   voter: { // field return type name
@@ -815,6 +821,7 @@ export interface NexusGenFieldTypeNames {
     county: 'String'
     county_std: 'String'
     degree: 'String'
+    election: 'election'
     fellowship: 'String'
     forename: 'String'
     geo_lat: 'Float'

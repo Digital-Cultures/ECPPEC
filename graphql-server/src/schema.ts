@@ -953,6 +953,12 @@ const Candidate = objectType({
         return context.prisma.$queryRaw`SELECT * FROM artefacts INNER JOIN (SELECT artefact_id FROM ECPPEC.artefact_attributes where attribute_name="candidate_id" and attribute_value=${parent.candidate_id}) c on artefacts.id=c.artefact_id;`
       }
     })
+    t.list.field('elections', {
+      type: Election,
+      resolve: async (parent, _, context: Context) => {
+        return context.prisma.$queryRaw`SELECT elections.* FROM elections INNER JOIN candidates_elections ON elections.election_id=candidates_elections.election_id where candidates_elections.candidate_id = ${parent.candidate_id} ;`
+      }
+    })
   },
 })
 
@@ -1567,6 +1573,12 @@ const Voter = objectType({
         return context.prisma.$queryRaw`SELECT candidates.* FROM candidates INNER JOIN votes ON candidates.candidate_id=votes.candidate_id where votes.voter_id = ${parent.voter_id};`
       }
     })
+    t.list.field('election', {
+      type: Election,
+      resolve: async (parent, _, context: Context) => {
+        return context.prisma.$queryRaw`SELECT elections.* FROM elections INNER JOIN votes ON elections.election_id=votes.election_id where votes.voter_id = ${parent.voter_id} limit 1;`
+      }
+    })
     t.list.field('ms_comments', {
       type: MsComments,
       args: {
@@ -1606,6 +1618,7 @@ const Vote = objectType({
   name: 'vote',
   definition(t) {
     t.int('votes_id')
+    t.int('voter_id')
     t.list.field('voter', {
       type: Voter,
       args: {
@@ -1615,12 +1628,12 @@ const Vote = objectType({
         guild: stringArg(),
         // election_id:  stringArg(),
       },
-      resolve: (_parent, args, context: Context) => {
+      resolve: (parent, args, context: Context) => {
         // console.log(_parent.voter_id);
         
         return context.prisma.voters.findMany({
-          where: {  
-            voter_id: _parent.voter_id, 
+          where: {
+            voter_id: parent.voter_id, 
             forename: args.forename || undefined,
             surname: args.surname || undefined,
             occupation: args.occupation || undefined,

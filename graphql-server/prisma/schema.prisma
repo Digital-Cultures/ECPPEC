@@ -189,7 +189,7 @@ model stats {
 }
 
 model voters {
-  voter_id              Int       @id @default(autoincrement()) @db.UnsignedInt
+  voter_id              Int       @id @default(autoincrement())
   orig_id               String?   @db.VarChar(75)
   source                String?   @db.VarChar(50)
   forename              String?   @db.VarChar(50)
