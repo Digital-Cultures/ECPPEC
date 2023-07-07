@@ -40,7 +40,7 @@ type Query {
   elections(by_election_cause: String, by_election_general: String, constituency: String, constituency_id: Int, contested: String, countyboroughuniv: String, cursor_id: Int, election_month: String, election_year_gte: Int = 1500, election_year_lte: Int = 2020, electorate_size_est_gte: Int, electorate_size_est_lte: Int, franchise_type: [String], has_data: Boolean, office: String, take: Int): [election!]!
   geocodes(abode: String, address: String, city: String, constituency: String, county: String, parish: String, street: String): [geocodes!]!
   location_from_lat_lng(distance: Float = 1000, lat: Float, lng: Float): [locations_from_lat_lng!]!
-  ms_comments(cursor_id: Int, election_id: String, rejected: Boolean, take: Int, voter_id: Int): [ms_comments!]!
+  ms_comments(comment: String, cursor_id: Int, election_id: String, rejected: Boolean, take: Int, voter_id: Int): [ms_comments!]!
   occupations_group(occupation: String): [occupations_map!]!
   poll_books(constituency_id: Int, cursor_pollbook_id: String, has_data: Boolean, pollbook_id: String, take: Int): [poll_book!]!
   stat_num_poll_books(constituency_id: Int): Int

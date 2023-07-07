@@ -961,6 +961,7 @@ export interface NexusGenArgTypes {
       lng?: number | null; // Float
     }
     ms_comments: { // args
+      comment?: string | null; // String
       cursor_id?: number | null; // Int
       election_id?: string | null; // String
       rejected?: boolean | null; // Boolean

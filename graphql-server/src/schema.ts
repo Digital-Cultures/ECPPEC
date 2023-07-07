@@ -727,6 +727,7 @@ const Query = objectType({
         voter_id: intArg(),
         election_id: stringArg(),
         rejected: booleanArg(),
+        comment: stringArg(),
         take: intArg(),
         cursor_id: intArg(),
       },
@@ -745,6 +746,7 @@ const Query = objectType({
             voter_id: _args.voter_id || undefined,
             election_id: _args.election_id || undefined,
             rejected: _args.rejected || undefined,
+            ms_comment: { contains:  _args.comment } || undefined,
           }, 
           orderBy: {
             id: 'asc',
